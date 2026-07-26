@@ -26,7 +26,7 @@ export function AdminAuthorRequests({ requests }: { requests: PendingAuthorReque
   })
 
   return (
-    <section className="space-y-3 rounded-2xl border border-line bg-bg-surface p-5 shadow-elevation-xs">
+    <section aria-label={t('adminRequests.title')} className="space-y-3 rounded-2xl border border-line bg-bg-surface p-5 shadow-elevation-xs">
       <div className="flex items-center gap-2.5">
         <Inbox className="h-4 w-4 text-coral-500" strokeWidth={2} />
         <h2 className="text-sm font-bold uppercase tracking-wider text-coral-600">{t('adminRequests.title')}</h2>

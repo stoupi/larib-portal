@@ -38,6 +38,16 @@ export async function createDraftArticle(userId: string): Promise<{ id: string }
   })
 }
 
+export type ArticlePdf = { url: string; key: string } | null
+
+export async function setArticlePdf(articleId: string, pdf: ArticlePdf): Promise<{ id: string }> {
+  return prisma.article.update({
+    where: { id: articleId },
+    data: { pdfUrl: pdf?.url ?? null, pdfKey: pdf?.key ?? null },
+    select: { id: true },
+  })
+}
+
 export async function userIsFirstAuthor(userId: string, articleId: string): Promise<boolean> {
   const found = await prisma.authorship.findFirst({
     where: { articleId, order: 1, author: { userId } },
@@ -60,6 +70,8 @@ export async function getPublicationForEdit(articleId: string) {
       pubmedId: true,
       doi: true,
       contributorsNote: true,
+      pdfUrl: true,
+      pdfKey: true,
       publishedAt: true,
       publishedJournal: { select: { name: true, abbreviation: true } },
       authorships: {

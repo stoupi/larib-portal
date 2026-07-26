@@ -12,7 +12,7 @@ async function login(page: Page, email: string): Promise<void> {
 
 test('admin imports the PubMed backlog with curation, idempotent on re-run', async ({ page }) => {
   await login(page, 'publications-admin@larib-portal.test')
-  await page.goto('/en/publications/admin', { timeout: 60000 })
+  await page.goto('/en/publications/admin/import', { timeout: 60000 })
   await expect(page.getByRole('heading', { name: /import from pubmed/i })).toBeVisible()
 
   const rows = page.locator('tbody tr')

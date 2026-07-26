@@ -1,3 +1,4 @@
+import { FileText } from 'lucide-react'
 import { getTranslations } from 'next-intl/server'
 import { redirect, notFound } from 'next/navigation'
 import { requireAuth } from '@/lib/auth-guard'
@@ -49,6 +50,17 @@ export default async function ArticleDetailPage({ params }: PageParams) {
         {article.doi && (
           <a className="text-sm text-navy-600 hover:underline" href={`https://doi.org/${article.doi}`} target="_blank" rel="noreferrer">
             {t('articles.openDoi')}
+          </a>
+        )}
+        {article.pdfUrl && (
+          <a
+            className="inline-flex items-center gap-1.5 rounded-lg border border-line bg-bg-surface px-3 py-1.5 text-sm font-bold text-navy-600 transition hover:bg-gray-50 dark:hover:bg-white/5"
+            href={article.pdfUrl}
+            target="_blank"
+            rel="noreferrer"
+          >
+            <FileText className="h-4 w-4" strokeWidth={2.2} />
+            {t('articles.openPdf')}
           </a>
         )}
       </div>

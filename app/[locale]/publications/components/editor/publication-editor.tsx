@@ -21,6 +21,7 @@ import { EditorAuthors } from './editor-authors'
 import { EditorReferences } from './editor-references'
 import { EditorSubmissions } from './editor-submissions'
 import { EditorJournalQueue } from './editor-journal-queue'
+import { EditorPdf } from './editor-pdf'
 
 const FormSchema = z.object({
   title: z.string(),
@@ -159,6 +160,7 @@ export function PublicationEditor({
           </div>
           <div className="space-y-5">
             <EditorSubmissions articleId={article.id} submissions={article.submissions} locale={locale} journalNames={journalNames} />
+            <EditorPdf articleId={article.id} pdfUrl={article.pdfUrl} />
             <EditorJournalQueue targets={journalTargets} />
           </div>
         </div>

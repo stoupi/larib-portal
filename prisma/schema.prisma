@@ -447,6 +447,12 @@ model Journal {
   sjrYear      Int?
   category     String?
   url          String?
+
+  specialty        String?
+  subSpecialty     String?
+  openAccess       Boolean @default(false)
+  typicalDelayDays Int?
+
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 

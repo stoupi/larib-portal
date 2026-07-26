@@ -1002,7 +1002,21 @@
       "confirmReject": "Confirmer et rejeter la précédente",
       "journalListTitle": "Liste de journaux",
       "journalQueueSubtitle": "File de soumission proposée par l'admin · lecture seule.",
-      "journalQueueEmpty": "Aucun journal cible proposé pour l'instant."
+      "journalQueueEmpty": "Aucun journal cible proposé pour l'instant.",
+      "pdf": {
+        "title": "Texte intégral (PDF)",
+        "select": "Téléverser le PDF de l’article",
+        "hint": "PDF uniquement, 30 Mo maximum. Visible par tous les co-auteurs sur la page de l’article.",
+        "uploading": "Téléversement…",
+        "open": "Ouvrir le PDF",
+        "replace": "Remplacer",
+        "remove": "Supprimer",
+        "saved": "PDF ajouté",
+        "removed": "PDF supprimé",
+        "invalidType": "Seuls les fichiers PDF sont acceptés.",
+        "tooLarge": "Ce fichier dépasse 30 Mo.",
+        "uploadFailed": "Le téléversement a échoué. Réessayez."
+      }
     },
     "adminRequests": {
       "title": "Demandes de liste d'auteurs",
@@ -1301,7 +1315,16 @@
         "ACCEPTED": "Accepté",
         "PUBLISHED": "Publié",
         "ABANDONED": "Abandonné"
-      }
+      },
+      "adminSubtitle": "Gérez toute la bibliothèque : statuts, revues, études et historique des soumissions de chaque article.",
+      "filters": {
+        "allJournals": "Toutes les revues"
+      },
+      "stats": {
+        "byStudy": "Par étude",
+        "noStudy": "Aucune étude liée pour l’instant."
+      },
+      "openPdf": "PDF"
     },
     "journals": {
       "title": "Journaux",
@@ -1339,7 +1362,86 @@
       "errorInUse": "Ce journal est référencé et ne peut pas être supprimé.",
       "manageLink": "Gérer les journaux",
       "hubDescription": "Revues cibles, facteurs d’impact et abréviations.",
-      "viewJournals": "Voir les revues"
+      "viewJournals": "Voir les revues",
+      "bankSubtitle": "Banque de revues — métriques d’impact, nombre d’articles publiés, taux d’acceptation et délai moyen entre soumission et publication.",
+      "bankSearch": "Rechercher une revue ou un éditeur…",
+      "refreshMetrics": "Actualiser les métriques",
+      "refreshError": "Impossible d’actualiser les métriques. Réessayez.",
+      "addJournal": "Ajouter une revue",
+      "addTitle": "Ajouter une revue",
+      "addHint": "Cherchez une revue sur Crossref par son nom, puis ajoutez celles dont vous avez besoin.",
+      "tabAll": "Toutes",
+      "empty": "Aucune revue ne correspond à ces filtres.",
+      "colPublished": "Publ.",
+      "colOngoing": "En cours",
+      "colAcceptance": "Accept. / soum.",
+      "colDelay": "Délai moyen",
+      "colEdit": "Modifier",
+      "monthsValue": "{value} mois",
+      "impact": {
+        "high": "IF ≥ 20",
+        "mid": "IF 5–20",
+        "low": "IF < 5"
+      },
+      "summary": {
+        "section": "Chiffres clés des revues",
+        "allTime": "depuis le début",
+        "articlesPublished": "Articles publiés",
+        "articlesHint": "{ongoing} en cours · {journals} revues",
+        "acceptBadge": "accept. / soum.",
+        "acceptanceRate": "Taux d’acceptation",
+        "acceptanceHint": "{accepted} acceptés / {submitted} soumis",
+        "weighted": "pondéré",
+        "submissionToPublication": "Soumission → publication",
+        "daysHint": "≈ {days} jours en moyenne",
+        "bestDelay": "meilleur délai",
+        "fastestJournal": "Revue la plus rapide",
+        "months": "mois",
+        "noDelayData": "Pas encore assez de données"
+      },
+      "addSubtitle": "Enregistrez une revue pour pouvoir la sélectionner lors d’une soumission. Recherchez-la par ISSN pour préremplir ses métriques.",
+      "lookupSection": "Recherche",
+      "journalSection": "Revue",
+      "metricsSection": "Métriques",
+      "metricsHint": "Le facteur d’impact et le SJR proviennent de la revue. Votre taux d’acceptation et votre délai sont calculés à partir de vos soumissions.",
+      "issnHint": "(optionnel — préremplit le nom, l’éditeur, l’IF et le SJR)",
+      "lookup": "Rechercher",
+      "lookingUp": "Recherche…",
+      "lookupDone": "Informations de la revue préremplies",
+      "lookupNotFound": "Aucune revue trouvée pour cet ISSN.",
+      "lookupError": "La recherche a échoué. Réessayez.",
+      "nameLabel": "Nom de la revue",
+      "shortCode": "Code court",
+      "specialty": "Spécialité médicale",
+      "subSpecialty": "Sous-spécialité",
+      "openAccess": "Accès libre",
+      "openAccessHint": "Les articles sont librement accessibles — signalés « OA » dans la liste des revues.",
+      "openAccessBadge": "OA",
+      "impactFactorLabel": "Facteur d’impact",
+      "typicalDelay": "Délai habituel",
+      "days": "(jours)",
+      "previewNewJournal": "Nouvelle revue",
+      "previewMissingPublisher": "Ajoutez un éditeur pour compléter la fiche",
+      "specialties": {
+        "CARDIOLOGY": "Cardiologie",
+        "GENERAL_MEDICINE": "Médecine générale",
+        "NEUROLOGY": "Neurologie",
+        "ONCOLOGY": "Oncologie",
+        "RADIOLOGY": "Radiologie",
+        "SURGERY": "Chirurgie"
+      },
+      "subSpecialties": {
+        "GENERAL": "Général",
+        "IMAGING": "Imagerie",
+        "INTERVENTIONAL": "Interventionnel",
+        "CARDIO_ONCOLOGY": "Cardio-oncologie",
+        "ELECTROPHYSIOLOGY": "Électrophysiologie",
+        "HEART_FAILURE": "Insuffisance cardiaque",
+        "RHYTHMOLOGY": "Rythmologie",
+        "NEURO_IMAGING": "Neuro-imagerie",
+        "ONCO_IMAGING": "Onco-imagerie",
+        "SURGICAL_TECHNIQUES": "Techniques chirurgicales"
+      }
     },
     "studies": {
       "title": "Études",
@@ -1467,8 +1569,42 @@
       }
     },
     "adminHome": {
-      "title": "Publications Admin Dashboard",
-      "subtitle": "Gérez les auteurs, centres, études et revues de l’application Publications."
+      "title": "Administration des publications",
+      "subtitle": "Gérez la bibliothèque bibliographique de l’équipe : articles, auteurs, centres, revues et études.",
+      "filters": {
+        "study": "Étude",
+        "year": "Année",
+        "status": "Statut",
+        "all": "Toutes"
+      },
+      "kpi": {
+        "section": "Chiffres clés",
+        "articles": "Articles (filtrés)",
+        "published": "Publiés",
+        "inProgress": "En cours",
+        "coAuthors": "Co-auteurs actifs",
+        "thisYear": "+{count} cette année",
+        "share": "{value} %",
+        "inProgressHint": "brouillons + revue",
+        "studies": "{count} études"
+      },
+      "charts": {
+        "byCoAuthor": "Articles par co-auteur",
+        "byYear": "Articles par année",
+        "byStatus": "Par statut",
+        "all": "Tous",
+        "noData": "Aucun article ne correspond à ces filtres."
+      },
+      "colStudy": "Étude",
+      "openLibrary": "Ouvrir la bibliothèque",
+      "noArticles": "Aucun article ne correspond à ces filtres.",
+      "modules": "Modules",
+      "importDescription": "Importer des publications depuis PubMed",
+      "articlesDescription": "Bibliothèque, statuts et auteurs",
+      "authorsDescription": "ORCID, centres, doublons",
+      "centresDescription": "Affiliations, centres « maison »",
+      "journalsDescription": "Facteur d’impact et SJR",
+      "studiesDescription": "Investigateurs et centres"
     }
   }
 }

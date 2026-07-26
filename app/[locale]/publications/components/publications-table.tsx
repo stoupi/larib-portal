@@ -180,6 +180,17 @@ function PublicationRow({
         </div>
 
         <div className="flex items-center justify-end gap-1.5">
+          {item.pdfUrl && (
+            <a
+              href={item.pdfUrl}
+              target="_blank"
+              rel="noreferrer"
+              title={t('articles.openPdf')}
+              className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-line bg-bg-surface text-navy-600 transition hover:bg-gray-50 dark:text-navy-300 dark:hover:bg-white/5"
+            >
+              <FileText className="h-3.5 w-3.5" strokeWidth={2} />
+            </a>
+          )}
           {item.doi && (
             <a
               href={`https://doi.org/${item.doi}`}

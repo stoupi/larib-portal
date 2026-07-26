@@ -27,3 +27,55 @@ export async function searchCrossref(query: string): Promise<JournalCandidate[]>
     publisher: item.publisher ?? null,
   }))
 }
+
+export type JournalLookupResult = {
+  title: string
+  issn: string
+  publisher: string | null
+  sjr: number | null
+}
+
+// Crossref exposes one journal per ISSN; SJR is not part of that payload and is read
+// from the local Scimago dataset when the admin has provided one.
+export async function lookupJournalByIssn(issn: string): Promise<JournalLookupResult | null> {
+  const { normalizeIssn } = await import('./sjr')
+  const normalized = normalizeIssn(issn)
+  if (normalized.length !== 8) return null
+
+  if (FIXTURE_DIR) {
+    const { readFile } = await import('node:fs/promises')
+    const { join } = await import('node:path')
+    const candidates = JSON.parse(await readFile(join(FIXTURE_DIR, 'crossref-journals.json'), 'utf8')) as JournalCandidate[]
+    const match = candidates.find((candidate) => candidate.issn && normalizeIssn(candidate.issn) === normalized)
+    if (!match) return null
+    return { title: match.title, issn: match.issn ?? issn, publisher: match.publisher, sjr: await sjrForIssn(normalized) }
+  }
+
+  const res = await fetch(`https://api.crossref.org/journals/${encodeURIComponent(issn.trim())}`, {
+    headers: { 'User-Agent': 'LaribPortal/1.0 (mailto:publications@larib.fr)' },
+    cache: 'no-store',
+  })
+  if (res.status === 404) return null
+  if (!res.ok) throw new Error('CROSSREF_FAILED')
+  const json = (await res.json()) as { message?: { title?: string; ISSN?: string[]; publisher?: string } }
+  const message = json.message
+  if (!message?.title) return null
+  return {
+    title: message.title,
+    issn: message.ISSN?.[0] ?? issn.trim(),
+    publisher: message.publisher ?? null,
+    sjr: await sjrForIssn(normalized),
+  }
+}
+
+async function sjrForIssn(normalizedIssn: string): Promise<number | null> {
+  const { readFile } = await import('node:fs/promises')
+  const { join } = await import('node:path')
+  const { parseSjrCsv } = await import('./sjr')
+  try {
+    const text = await readFile(join(process.cwd(), 'data', 'scimago.csv'), 'utf8')
+    return parseSjrCsv(text).get(normalizedIssn) ?? null
+  } catch {
+    return null
+  }
+}

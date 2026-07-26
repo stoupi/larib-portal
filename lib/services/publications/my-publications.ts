@@ -26,6 +26,7 @@ export type MyPublicationItem = {
   currentJournal: string | null
   currentJournalFull: string | null
   doi: string | null
+  pdfUrl: string | null
   order: number
   totalAuthors: number
   positionBucket: PositionBucket
@@ -59,6 +60,7 @@ export async function listMyPublications(userId: string, now: Date = new Date())
       type: true,
       status: true,
       doi: true,
+      pdfUrl: true,
       publishedAt: true,
       receivedAt: true,
       acceptedAt: true,
@@ -119,6 +121,7 @@ export async function listMyPublications(userId: string, now: Date = new Date())
       currentJournal,
       currentJournalFull,
       doi: article.doi,
+      pdfUrl: article.pdfUrl,
       order,
       totalAuthors,
       positionBucket,

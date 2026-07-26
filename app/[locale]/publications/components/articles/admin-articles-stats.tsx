@@ -3,39 +3,44 @@
 import { useTranslations } from 'next-intl'
 import { ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import type { PublicationStats } from '@/lib/publications/stats'
 import { ARTICLE_STATUS_TONE, TONE_DOT_HEX } from '@/lib/publications/status-display'
 import { ARTICLE_TYPE_BAR_HEX } from '@/lib/publications/article-type'
-import type { FiltersValue } from './publications-filters'
-import { StatBar, StatSectionLabel } from './stat-bar'
+import {
+  ALL_ADMIN_FILTER,
+  type AdminArticleFilters,
+  type AdminArticleStats,
+} from '@/lib/publications/admin-article-stats'
+import { StatBar, StatSectionLabel } from '../stat-bar'
 
-export function PublicationsStats({
+const CORAL_BAR = { className: 'bg-gradient-to-r from-coral-500 to-coral-600' }
+const NAVY_BAR = { className: 'bg-gradient-to-r from-navy-500 to-navy-600' }
+
+export function AdminArticlesStats({
   stats,
-  open,
-  onToggle,
   filters,
   onFilter,
+  panel,
 }: {
-  stats: PublicationStats
-  open: boolean
-  onToggle: () => void
-  filters: FiltersValue
-  onFilter: (patch: Partial<FiltersValue>) => void
+  stats: AdminArticleStats
+  filters: AdminArticleFilters
+  onFilter: (patch: Partial<AdminArticleFilters>) => void
+  panel: { open: boolean; onToggle: () => void }
 }) {
   const t = useTranslations('publications')
   const maxYear = Math.max(1, ...stats.perYear.map((entry) => entry.count))
   const maxStatus = Math.max(1, ...stats.byStatus.map((entry) => entry.count))
-  const maxPosition = Math.max(1, ...stats.byPosition.map((entry) => entry.count))
+  const maxStudy = Math.max(1, ...stats.byStudy.map((entry) => entry.count))
   const maxJournal = Math.max(1, ...stats.byJournal.map((entry) => entry.count))
   const maxType = Math.max(1, ...stats.byType.map((entry) => entry.count))
-  const coral = { className: 'bg-gradient-to-r from-coral-500 to-coral-600' }
-  const navy = { className: 'bg-gradient-to-r from-navy-500 to-navy-600' }
-  const toggle = (key: keyof FiltersValue, value: string) => () =>
-    onFilter({ [key]: filters[key] === value ? 'all' : value })
+
+  const toggle = (key: keyof AdminArticleFilters, value: string) => ({
+    active: filters[key] === value,
+    onClick: () => onFilter({ [key]: filters[key] === value ? ALL_ADMIN_FILTER : value }),
+  })
 
   return (
     <div className="rounded-2xl border border-line bg-bg-surface p-5 shadow-elevation-xs">
-      <div className={cn('flex items-center justify-between gap-3', open && 'mb-4')}>
+      <div className={cn('flex items-center justify-between gap-3', panel.open && 'mb-4')}>
         <div className="flex items-baseline gap-2">
           <span className="text-2xl font-extrabold leading-none tracking-tight text-text-primary tabular-nums">
             {stats.total}
@@ -44,15 +49,15 @@ export function PublicationsStats({
         </div>
         <button
           type="button"
-          onClick={onToggle}
+          onClick={panel.onToggle}
           className="inline-flex h-8 items-center gap-2 rounded-lg border border-line bg-bg-surface px-3 text-xs font-bold text-text-secondary transition hover:bg-gray-50 dark:hover:bg-white/5"
         >
-          {open ? t('myPub.stats.hide') : t('myPub.stats.show')}
-          <ChevronDown className={cn('h-3.5 w-3.5 transition-transform', !open && '-rotate-90')} strokeWidth={2.4} />
+          {panel.open ? t('myPub.stats.hide') : t('myPub.stats.show')}
+          <ChevronDown className={cn('h-3.5 w-3.5 transition-transform', !panel.open && '-rotate-90')} strokeWidth={2.4} />
         </button>
       </div>
 
-      {open && (
+      {panel.open && (
         <div className="grid grid-cols-1 gap-x-6 gap-y-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
           <div>
             <StatSectionLabel>{t('myPub.stats.perYear')}</StatSectionLabel>
@@ -72,13 +77,13 @@ export function PublicationsStats({
                 ))}
               </div>
             )}
-            {stats.undated > 0 && (
+            {stats.pending > 0 && (
               <div className="mt-3 max-w-[260px] border-t border-line pt-3">
                 <StatBar
                   label={t('myPub.stats.inSubmission')}
-                  count={stats.undated}
-                  pct={Math.round((stats.undated / Math.max(1, stats.total)) * 100)}
-                  color={navy}
+                  count={stats.pending}
+                  pct={Math.round((stats.pending / Math.max(1, stats.total)) * 100)}
+                  color={NAVY_BAR}
                 />
               </div>
             )}
@@ -94,25 +99,29 @@ export function PublicationsStats({
                   count={entry.count}
                   pct={Math.round((entry.count / maxStatus) * 100)}
                   color={{ hex: TONE_DOT_HEX[ARTICLE_STATUS_TONE[entry.status]] }}
-                  toggle={{ active: filters.status === entry.status, onClick: toggle('status', entry.status) }}
+                  toggle={toggle('status', entry.status)}
                 />
               ))}
             </div>
           </div>
 
           <div>
-            <StatSectionLabel>{t('myPub.stats.byPosition')}</StatSectionLabel>
+            <StatSectionLabel>{t('articles.stats.byStudy')}</StatSectionLabel>
             <div className="mt-3 flex flex-col gap-2.5">
-              {stats.byPosition.map((entry) => (
-                <StatBar
-                  key={entry.bucket}
-                  label={t(`myPub.position.${entry.bucket}`)}
-                  count={entry.count}
-                  pct={Math.round((entry.count / maxPosition) * 100)}
-                  color={entry.count > 0 ? coral : {}}
-                  toggle={{ active: filters.role === entry.bucket, onClick: toggle('role', entry.bucket) }}
-                />
-              ))}
+              {stats.byStudy.length === 0 ? (
+                <p className="text-xs text-text-muted">{t('articles.stats.noStudy')}</p>
+              ) : (
+                stats.byStudy.map((entry) => (
+                  <StatBar
+                    key={entry.study}
+                    label={entry.study}
+                    count={entry.count}
+                    pct={Math.round((entry.count / maxStudy) * 100)}
+                    color={CORAL_BAR}
+                    toggle={toggle('study', entry.study)}
+                  />
+                ))
+              )}
             </div>
           </div>
 
@@ -128,8 +137,8 @@ export function PublicationsStats({
                     label={entry.journal}
                     count={entry.count}
                     pct={Math.round((entry.count / maxJournal) * 100)}
-                    color={navy}
-                    toggle={{ active: filters.journal === entry.journal, onClick: toggle('journal', entry.journal) }}
+                    color={NAVY_BAR}
+                    toggle={toggle('journal', entry.journal)}
                   />
                 ))
               )}
@@ -146,7 +155,7 @@ export function PublicationsStats({
                   count={entry.count}
                   pct={Math.round((entry.count / maxType) * 100)}
                   color={{ hex: ARTICLE_TYPE_BAR_HEX[entry.type] }}
-                  toggle={{ active: filters.type === entry.type, onClick: toggle('type', entry.type) }}
+                  toggle={toggle('type', entry.type)}
                 />
               ))}
             </div>

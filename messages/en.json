@@ -1004,7 +1004,21 @@
       "confirmReject": "Confirm & reject previous",
       "journalListTitle": "Journal list",
       "journalQueueSubtitle": "Submission queue proposed by the admin · read-only.",
-      "journalQueueEmpty": "No target journals proposed yet."
+      "journalQueueEmpty": "No target journals proposed yet.",
+      "pdf": {
+        "title": "Full text (PDF)",
+        "select": "Upload the article PDF",
+        "hint": "PDF only, up to 30 MB. Visible to every co-author on the article page.",
+        "uploading": "Uploading…",
+        "open": "Open the PDF",
+        "replace": "Replace",
+        "remove": "Remove",
+        "saved": "PDF attached",
+        "removed": "PDF removed",
+        "invalidType": "Only PDF files are accepted.",
+        "tooLarge": "This file exceeds 30 MB.",
+        "uploadFailed": "The upload failed. Please try again."
+      }
     },
     "adminRequests": {
       "title": "Author list requests",
@@ -1303,7 +1317,16 @@
         "ACCEPTED": "Accepted",
         "PUBLISHED": "Published",
         "ABANDONED": "Abandoned"
-      }
+      },
+      "adminSubtitle": "Curate the whole library: statuses, journals, studies and the submission history of every article.",
+      "filters": {
+        "allJournals": "All journals"
+      },
+      "stats": {
+        "byStudy": "By study",
+        "noStudy": "No study linked yet."
+      },
+      "openPdf": "PDF"
     },
     "journals": {
       "title": "Journals",
@@ -1341,7 +1364,86 @@
       "errorInUse": "This journal is referenced and cannot be deleted.",
       "manageLink": "Manage journals",
       "hubDescription": "Target journals, impact factors and abbreviations.",
-      "viewJournals": "View journals"
+      "viewJournals": "View journals",
+      "bankSubtitle": "Journal bank — impact metrics, how many articles you published there, your acceptance rate and the average time from submission to publication.",
+      "bankSearch": "Search journal or publisher…",
+      "refreshMetrics": "Refresh metrics",
+      "refreshError": "Could not refresh the metrics. Please try again.",
+      "addJournal": "Add journal",
+      "addTitle": "Add a journal",
+      "addHint": "Search Crossref by journal name, then add the ones you need.",
+      "tabAll": "All",
+      "empty": "No journal matches these filters.",
+      "colPublished": "Pub.",
+      "colOngoing": "Ongoing",
+      "colAcceptance": "Accept / subm.",
+      "colDelay": "Avg. delay",
+      "colEdit": "Edit",
+      "monthsValue": "{value} mo",
+      "impact": {
+        "high": "IF ≥ 20",
+        "mid": "IF 5–20",
+        "low": "IF < 5"
+      },
+      "summary": {
+        "section": "Journal key figures",
+        "allTime": "all time",
+        "articlesPublished": "Articles published",
+        "articlesHint": "{ongoing} in progress · {journals} journals",
+        "acceptBadge": "accept / subm.",
+        "acceptanceRate": "Acceptance rate",
+        "acceptanceHint": "{accepted} accepted / {submitted} submitted",
+        "weighted": "weighted",
+        "submissionToPublication": "Submission → publication",
+        "daysHint": "≈ {days} days on average",
+        "bestDelay": "best delay",
+        "fastestJournal": "Fastest journal",
+        "months": "mo",
+        "noDelayData": "Not enough data yet"
+      },
+      "addSubtitle": "Register a journal so it can be selected when submitting an article. Look it up by ISSN to prefill its metrics.",
+      "lookupSection": "Lookup",
+      "journalSection": "Journal",
+      "metricsSection": "Metrics",
+      "metricsHint": "Impact factor and SJR come from the journal. Your own acceptance rate and delay are computed from your submissions once you have some.",
+      "issnHint": "(optional — prefills name, publisher, IF and SJR)",
+      "lookup": "Look up",
+      "lookingUp": "Looking up…",
+      "lookupDone": "Journal details prefilled",
+      "lookupNotFound": "No journal found for this ISSN.",
+      "lookupError": "The lookup failed. Please try again.",
+      "nameLabel": "Journal name",
+      "shortCode": "Short code",
+      "specialty": "Medical specialty",
+      "subSpecialty": "Sub-specialty",
+      "openAccess": "Open access",
+      "openAccessHint": "Articles are freely available — flagged “OA” in the journal list.",
+      "openAccessBadge": "OA",
+      "impactFactorLabel": "Impact factor",
+      "typicalDelay": "Typical delay",
+      "days": "(days)",
+      "previewNewJournal": "New journal",
+      "previewMissingPublisher": "Add a publisher to complete the record",
+      "specialties": {
+        "CARDIOLOGY": "Cardiology",
+        "GENERAL_MEDICINE": "General medicine",
+        "NEUROLOGY": "Neurology",
+        "ONCOLOGY": "Oncology",
+        "RADIOLOGY": "Radiology",
+        "SURGERY": "Surgery"
+      },
+      "subSpecialties": {
+        "GENERAL": "General",
+        "IMAGING": "Imaging",
+        "INTERVENTIONAL": "Interventional",
+        "CARDIO_ONCOLOGY": "Cardio-oncology",
+        "ELECTROPHYSIOLOGY": "Electrophysiology",
+        "HEART_FAILURE": "Heart failure",
+        "RHYTHMOLOGY": "Rhythmology",
+        "NEURO_IMAGING": "Neuro-imaging",
+        "ONCO_IMAGING": "Onco-imaging",
+        "SURGICAL_TECHNIQUES": "Surgical techniques"
+      }
     },
     "studies": {
       "title": "Studies",
@@ -1469,8 +1571,42 @@
       }
     },
     "adminHome": {
-      "title": "Publications Admin Dashboard",
-      "subtitle": "Manage authors, centres, studies and journals for the Publications app."
+      "title": "Publications administration",
+      "subtitle": "Manage the team's bibliographic library: articles, authors, centres, journals and studies.",
+      "filters": {
+        "study": "Study",
+        "year": "Year",
+        "status": "Status",
+        "all": "All"
+      },
+      "kpi": {
+        "section": "Key figures",
+        "articles": "Articles (filtered)",
+        "published": "Published",
+        "inProgress": "In progress",
+        "coAuthors": "Active co-authors",
+        "thisYear": "+{count} this year",
+        "share": "{value} %",
+        "inProgressHint": "drafts + review",
+        "studies": "{count} studies"
+      },
+      "charts": {
+        "byCoAuthor": "Articles by co-author",
+        "byYear": "Articles by year",
+        "byStatus": "By status",
+        "all": "All",
+        "noData": "No article matches these filters."
+      },
+      "colStudy": "Study",
+      "openLibrary": "Open library",
+      "noArticles": "No article matches these filters.",
+      "modules": "Modules",
+      "importDescription": "Import publications from PubMed",
+      "articlesDescription": "Library, statuses and authors",
+      "authorsDescription": "ORCID, centres, duplicates",
+      "centresDescription": "Affiliations, “ours” flagged",
+      "journalsDescription": "Impact factor and SJR",
+      "studiesDescription": "Investigators and centres"
     }
   }
 }

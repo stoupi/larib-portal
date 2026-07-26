@@ -7,7 +7,7 @@ import { canAccessApp, canAdminApp } from '@/lib/permissions'
 import { prisma } from '@/lib/prisma'
 import { addSubmission, updateSubmissionStatus, updateSubmission, deleteSubmission, userOwnsSubmission, SUBMISSION_STATUSES } from '@/lib/services/publications/submissions'
 import { userIsAuthorOfArticle } from '@/lib/services/publications/my-publications'
-import { createDraftArticle, updateArticleCore, deleteDraft, userIsFirstAuthor } from '@/lib/services/publications/publication-editor'
+import { createDraftArticle, updateArticleCore, deleteDraft, userIsFirstAuthor, setArticlePdf } from '@/lib/services/publications/publication-editor'
 import { createAuthorListRequest, resolveAuthorRequest, PUBLICATIONS_REQUESTS_TAG } from '@/lib/services/publications/author-requests'
 import { searchByAuthor, fetchByPmids } from '@/lib/services/publications/pubmed'
 import {
@@ -24,7 +24,8 @@ import { renameCentre, setCentreOwn, deleteCentre, mergeCentres, getCentreAuthor
 import { updateArticleStatus, updateArticleType, ARTICLE_STATUSES } from '@/lib/services/publications/articles'
 import { ARTICLE_TYPE_VALUES } from '@/lib/publications/article-type'
 import { createJournal, updateJournal, deleteJournal, isPrismaKnownError as isJournalError } from '@/lib/services/publications/journals'
-import { searchCrossref } from '@/lib/services/publications/journals-catalog'
+import { searchCrossref, lookupJournalByIssn } from '@/lib/services/publications/journals-catalog'
+import { JOURNAL_SPECIALTIES, JOURNAL_SUB_SPECIALTIES } from '@/lib/publications/journal-taxonomy'
 import { refreshJournalSjr } from '@/lib/services/publications/sjr'
 import { createStudy, updateStudy, deleteStudy, importClinicalTrialStudy, setStudyStatus, linkCentreToStudy, unlinkCentreFromStudy, setStudyInvestigator, removeStudyInvestigator, linkArticleToStudy, unlinkArticleFromStudy, STUDY_STATUSES, PUBLICATIONS_STUDIES_TAG } from '@/lib/services/publications/studies'
 import { fetchClinicalTrial, normaliseNctId } from '@/lib/services/publications/clinicaltrials'
@@ -196,12 +197,21 @@ export const updateArticleTypeAction = appAdminAction('PUBLICATIONS')
 
 const JournalInput = z.object({
   name: z.string().min(1),
+  abbreviation: z.string().optional().nullable(),
   issn: z.string().optional().nullable(),
   publisher: z.string().optional().nullable(),
   impactFactor: z.number().min(0).max(1000).optional().nullable(),
   sjr: z.number().min(0).max(1000).optional().nullable(),
   url: z.string().optional().nullable(),
+  specialty: z.enum(JOURNAL_SPECIALTIES).optional().nullable(),
+  subSpecialty: z.enum(JOURNAL_SUB_SPECIALTIES).optional().nullable(),
+  openAccess: z.boolean().optional(),
+  typicalDelayDays: z.number().int().min(0).max(3650).optional().nullable(),
 })
+
+export const lookupJournalIssnAction = appAdminAction('PUBLICATIONS')
+  .inputSchema(z.object({ issn: z.string().min(4) }))
+  .action(async ({ parsedInput }) => lookupJournalByIssn(parsedInput.issn))
 
 export const searchCrossrefAction = appAdminAction('PUBLICATIONS')
   .inputSchema(z.object({ query: z.string().min(1) }))
@@ -457,7 +467,11 @@ export const importClinicalTrialAction = appAdminAction('PUBLICATIONS')
     }
   })
 
-// ---- My Publications: submission tracking (user-owned) ----
+// ---- Submission tracking: first authors curate their own, publications admins curate any ----
+
+function canCurateAnySubmission(user: Parameters<typeof canAccessApp>[0]): boolean {
+  return canAdminApp(user, 'PUBLICATIONS')
+}
 
 export const addSubmissionAction = authenticatedAction
   .inputSchema(
@@ -469,7 +483,8 @@ export const addSubmissionAction = authenticatedAction
   )
   .action(async ({ parsedInput, ctx }) => {
     if (!canAccessApp(ctx.user, 'PUBLICATIONS')) throw new Error('Forbidden')
-    if (!(await userIsAuthorOfArticle(ctx.userId, parsedInput.articleId))) throw new Error('Forbidden')
+    if (!canCurateAnySubmission(ctx.user) && !(await userIsAuthorOfArticle(ctx.userId, parsedInput.articleId)))
+      throw new Error('Forbidden')
     return addSubmission({
       articleId: parsedInput.articleId,
       journalName: parsedInput.journalName,
@@ -487,7 +502,8 @@ export const updateSubmissionStatusAction = authenticatedAction
   )
   .action(async ({ parsedInput, ctx }) => {
     if (!canAccessApp(ctx.user, 'PUBLICATIONS')) throw new Error('Forbidden')
-    if (!(await userOwnsSubmission(ctx.userId, parsedInput.submissionId))) throw new Error('Forbidden')
+    if (!canCurateAnySubmission(ctx.user) && !(await userOwnsSubmission(ctx.userId, parsedInput.submissionId)))
+      throw new Error('Forbidden')
     return updateSubmissionStatus({
       submissionId: parsedInput.submissionId,
       status: parsedInput.status,
@@ -534,6 +550,26 @@ export const updateArticleCoreAction = authenticatedAction
     return updated
   })
 
+export const saveArticlePdfAction = authenticatedAction
+  .inputSchema(z.object({ id: z.string().min(1), url: z.string().url(), key: z.string().min(1) }))
+  .action(async ({ parsedInput, ctx }) => {
+    const canEdit = canAdminApp(ctx.user, 'PUBLICATIONS') || (await userIsFirstAuthor(ctx.userId, parsedInput.id))
+    if (!canEdit) throw new Error('Forbidden')
+    const saved = await setArticlePdf(parsedInput.id, { url: parsedInput.url, key: parsedInput.key })
+    revalidateTag(PUBLICATIONS_ARTICLES_TAG)
+    return saved
+  })
+
+export const removeArticlePdfAction = authenticatedAction
+  .inputSchema(z.object({ id: z.string().min(1) }))
+  .action(async ({ parsedInput, ctx }) => {
+    const canEdit = canAdminApp(ctx.user, 'PUBLICATIONS') || (await userIsFirstAuthor(ctx.userId, parsedInput.id))
+    if (!canEdit) throw new Error('Forbidden')
+    const saved = await setArticlePdf(parsedInput.id, null)
+    revalidateTag(PUBLICATIONS_ARTICLES_TAG)
+    return saved
+  })
+
 export const deleteDraftArticleAction = authenticatedAction
   .inputSchema(z.object({ id: z.string().min(1) }))
   .action(async ({ parsedInput, ctx }) => {
@@ -546,7 +582,8 @@ export const updateSubmissionAction = authenticatedAction
   .inputSchema(z.object({ submissionId: z.string().min(1), journalName: z.string().min(1), submittedAt: z.string().min(1) }))
   .action(async ({ parsedInput, ctx }) => {
     if (!canAccessApp(ctx.user, 'PUBLICATIONS')) throw new Error('Forbidden')
-    if (!(await userOwnsSubmission(ctx.userId, parsedInput.submissionId))) throw new Error('Forbidden')
+    if (!canCurateAnySubmission(ctx.user) && !(await userOwnsSubmission(ctx.userId, parsedInput.submissionId)))
+      throw new Error('Forbidden')
     return updateSubmission({
       submissionId: parsedInput.submissionId,
       journalName: parsedInput.journalName,
@@ -558,7 +595,8 @@ export const deleteSubmissionAction = authenticatedAction
   .inputSchema(z.object({ submissionId: z.string().min(1) }))
   .action(async ({ parsedInput, ctx }) => {
     if (!canAccessApp(ctx.user, 'PUBLICATIONS')) throw new Error('Forbidden')
-    if (!(await userOwnsSubmission(ctx.userId, parsedInput.submissionId))) throw new Error('Forbidden')
+    if (!canCurateAnySubmission(ctx.user) && !(await userOwnsSubmission(ctx.userId, parsedInput.submissionId)))
+      throw new Error('Forbidden')
     return deleteSubmission(parsedInput.submissionId)
   })
 
