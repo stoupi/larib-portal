@@ -2,6 +2,7 @@ import type { ArticleStatusValue } from '@/lib/services/publications/articles'
 import type { ArticleTypeValue } from './article-type'
 import type { MyPublicationSubmission } from '@/lib/services/publications/my-publications'
 import { ARTICLE_STATUS_VALUES } from './status-display'
+import { matchesArticleQuery } from './admin-article-stats'
 
 export type DashboardArticleItem = {
   id: string
@@ -26,6 +27,7 @@ export type DashboardFilters = {
   study: string
   year: string
   status: string
+  query: string
 }
 
 export const ALL_FILTER = 'all'
@@ -34,6 +36,7 @@ export const DEFAULT_DASHBOARD_FILTERS: DashboardFilters = {
   study: ALL_FILTER,
   year: ALL_FILTER,
   status: ALL_FILTER,
+  query: '',
 }
 
 const IN_PROGRESS_STATUSES: ArticleStatusValue[] = ['IN_PREPARATION', 'UNDER_REVIEW', 'TO_RESUBMIT', 'ACCEPTED']
@@ -65,7 +68,7 @@ export function filterDashboardArticles(
     if (filters.study !== ALL_FILTER && article.studyId !== filters.study) return false
     if (filters.year !== ALL_FILTER && String(article.year ?? '') !== filters.year) return false
     if (filters.status !== ALL_FILTER && article.status !== filters.status) return false
-    return true
+    return matchesArticleQuery(article, filters.query)
   })
 }
 

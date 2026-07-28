@@ -1577,7 +1577,9 @@
         "study": "Study",
         "year": "Year",
         "status": "Status",
-        "all": "All"
+        "all": "All",
+        "search": "Search",
+        "searchPlaceholder": "Author, journal, article, study…"
       },
       "kpi": {
         "section": "Key figures",

@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import {
   ALL_FILTER,
+  DEFAULT_DASHBOARD_FILTERS,
   computeDashboardMetrics,
   dashboardYearOptions,
   filterDashboardArticles,
@@ -37,13 +38,25 @@ const articles: DashboardArticleItem[] = [
 
 describe('filterDashboardArticles', () => {
   it('keeps every article when all filters are open', () => {
-    expect(filterDashboardArticles(articles, { study: ALL_FILTER, year: ALL_FILTER, status: ALL_FILTER })).toHaveLength(4)
+    expect(filterDashboardArticles(articles, { study: ALL_FILTER, year: ALL_FILTER, status: ALL_FILTER, query: '' })).toHaveLength(4)
   })
 
   it('combines study, year and status filters', () => {
-    expect(filterDashboardArticles(articles, { study: 'eacvi', year: ALL_FILTER, status: ALL_FILTER }).map((item) => item.id)).toEqual(['2'])
-    expect(filterDashboardArticles(articles, { study: ALL_FILTER, year: '2022', status: ALL_FILTER }).map((item) => item.id)).toEqual(['3'])
-    expect(filterDashboardArticles(articles, { study: ALL_FILTER, year: '2025', status: 'UNDER_REVIEW' })).toHaveLength(0)
+    expect(filterDashboardArticles(articles, { study: 'eacvi', year: ALL_FILTER, status: ALL_FILTER, query: '' }).map((item) => item.id)).toEqual(['2'])
+    expect(filterDashboardArticles(articles, { study: ALL_FILTER, year: '2022', status: ALL_FILTER, query: '' }).map((item) => item.id)).toEqual(['3'])
+    expect(filterDashboardArticles(articles, { study: ALL_FILTER, year: '2025', status: 'UNDER_REVIEW', query: '' })).toHaveLength(0)
+  })
+})
+
+describe('filterDashboardArticles search', () => {
+  it('matches title, journal, study and author names', () => {
+    const search = (query: string) =>
+      filterDashboardArticles(articles, { ...DEFAULT_DASHBOARD_FILTERS, query }).map((item) => item.id)
+    expect(search('eacvi')).toEqual(['2'])
+    expect(search('lefèvre')).toEqual(['1', '2'])
+    expect(search('n engl')).toEqual(['1', '2', '3'])
+    expect(search('  ')).toHaveLength(4)
+    expect(search('nothing-here')).toEqual([])
   })
 })
 

@@ -30,6 +30,15 @@ test('admin dashboard shows metrics, filters the library and opens its modules',
   await expect(page.locator('span', { hasText: /^MULTIVALVE registry$/ }).first()).toBeVisible()
   await expect(page.locator('span', { hasText: /^Under review$/ }).first()).toBeVisible()
 
+  // The search bar matches on co-author, journal, study or title
+  const search = page.getByLabel('Search')
+  await search.fill('coauthor')
+  await expect(articleLink).toBeVisible()
+  await search.fill('zzz-no-match')
+  await expect(articleLink).toHaveCount(0)
+  await search.fill('')
+  await expect(articleLink).toBeVisible()
+
   // Filtering by a status the article does not have empties the table, then resets
   const statusFilter = page.getByLabel('Status')
   await statusFilter.selectOption('PUBLISHED')

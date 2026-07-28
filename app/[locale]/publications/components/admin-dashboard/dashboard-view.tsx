@@ -2,8 +2,9 @@
 
 import { useMemo, useState } from 'react'
 import { useTranslations } from 'next-intl'
-import { ChevronDown } from 'lucide-react'
+import { ChevronDown, Search } from 'lucide-react'
 import { Select } from '@/components/ui/select'
+import { Input } from '@/components/ui/input'
 import { ARTICLE_STATUS_VALUES } from '@/lib/publications/status-display'
 import {
   ALL_FILTER,
@@ -92,6 +93,16 @@ export function PublicationsDashboardView({
           </div>
         </div>
         <div className="flex flex-wrap items-center gap-3 rounded-2xl border border-line bg-bg-surface px-4 py-3 shadow-elevation-xs">
+          <div className="relative w-[240px]">
+            <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-text-muted" />
+            <Input
+              value={filters.query}
+              onChange={(event) => updateFilter({ query: event.target.value })}
+              placeholder={t('filters.searchPlaceholder')}
+              aria-label={t('filters.search')}
+              className="h-9 rounded-full bg-gray-50 pl-9 text-sm dark:bg-white/10"
+            />
+          </div>
           <FilterSelect id="dashboard-filter-study" label={t('filters.study')} value={filters.study} onChange={(study) => updateFilter({ study })}>
             <option value={ALL_FILTER}>{t('filters.all')}</option>
             {studies.map((study) => (

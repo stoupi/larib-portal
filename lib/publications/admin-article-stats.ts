@@ -53,7 +53,8 @@ export function adminArticleFiltersActive(filters: AdminArticleFilters): boolean
   )
 }
 
-function matchesQuery(article: DashboardArticleItem, needle: string): boolean {
+export function matchesArticleQuery(article: DashboardArticleItem, query: string): boolean {
+  const needle = query.trim().toLowerCase()
   if (!needle) return true
   return (
     article.title.toLowerCase().includes(needle) ||
@@ -69,7 +70,6 @@ export function filterAdminArticles(
   group: AdminArticleGroup,
   query: string,
 ): DashboardArticleItem[] {
-  const needle = query.trim().toLowerCase()
   return articles.filter((article) => {
     if (group !== 'all' && articleGroup(article.status) !== group) return false
     if (filters.status !== ALL_ADMIN_FILTER && article.status !== filters.status) return false
@@ -79,7 +79,7 @@ export function filterAdminArticles(
       if (filters.study === NO_STUDY_FILTER ? article.studyLabel != null : article.studyLabel !== filters.study)
         return false
     }
-    return matchesQuery(article, needle)
+    return matchesArticleQuery(article, query)
   })
 }
 
