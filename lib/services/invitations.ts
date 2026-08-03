@@ -1,5 +1,7 @@
 import { prisma } from '@/lib/prisma'
 
+type ApplicationName = 'BESTOF_LARIB' | 'CONGES' | 'PUBLICATIONS'
+
 export type InvitationPayload = {
   email: string
   locale: 'en' | 'fr'
@@ -7,10 +9,39 @@ export type InvitationPayload = {
   lastName?: string
   role: 'ADMIN' | 'USER'
   position?: string | null
-  applications: Array<'BESTOF_LARIB' | 'CONGES' | 'PUBLICATIONS'>
-  adminApplications?: Array<'BESTOF_LARIB' | 'CONGES' | 'PUBLICATIONS'>
+  applications: Array<ApplicationName>
+  adminApplications?: Array<ApplicationName>
   arrivalDate?: Date | null
   departureDate?: Date | null
+  congesTotalDays?: number
+}
+
+export type InvitationUserData = {
+  role: 'ADMIN' | 'USER'
+  firstName: string | null
+  lastName: string | null
+  language: 'FR' | 'EN'
+  position: string | null
+  applications: Array<ApplicationName>
+  adminApplications: Array<ApplicationName>
+  arrivalDate: Date | null
+  departureDate: Date | null
+  congesTotalDays: number
+}
+
+export function invitationPayloadToUserData(payload: InvitationPayload): InvitationUserData {
+  return {
+    role: payload.role,
+    firstName: payload.firstName ?? null,
+    lastName: payload.lastName ?? null,
+    language: payload.locale === 'fr' ? 'FR' : 'EN',
+    position: payload.position ?? null,
+    applications: payload.applications,
+    adminApplications: payload.adminApplications ?? [],
+    arrivalDate: payload.arrivalDate ?? null,
+    departureDate: payload.departureDate ?? null,
+    congesTotalDays: payload.congesTotalDays ?? 0,
+  }
 }
 
 export async function createInvitation(payload: InvitationPayload): Promise<{ token: string; expiresAt: Date }>

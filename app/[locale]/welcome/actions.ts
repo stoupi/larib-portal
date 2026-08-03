@@ -2,7 +2,7 @@
 import { z } from 'zod'
 import { unauthenticatedAction } from '@/actions/safe-action'
 import { readInvitationByToken, consumeInvitation } from '@/lib/services/invitations'
-import { prisma } from '@/lib/prisma'
+import { activateInvitedUser } from '@/lib/services/user-activation'
 import { auth } from '@/lib/auth'
 
 const SetPasswordSchema = z.object({
@@ -21,41 +21,13 @@ export const setPasswordFromInviteAction = unauthenticatedAction
     }
     const { payload } = invite
 
-    // Remove placeholder user if exists to avoid unique email conflict
-    try {
-      await prisma.user.delete({ where: { email: payload.email } })
-    } catch {}
+    await activateInvitedUser(payload, password)
 
-    // Create user via Better Auth (creates User + Account with hashed password and session)
-    const result = await auth.api.signUpEmail({
-      body: {
-        email: payload.email,
-        password,
-        name: [payload.firstName, payload.lastName].filter(Boolean).join(' ') || payload.email,
-      },
-    })
-
-    if ('error' in result && result.error) {
-      throw new Error((result.error as { message?: string }).message || 'SIGNUP_FAILED')
-    }
-
-    // Update role/applications/metadata
-    await prisma.user.update({
-      where: { email: payload.email },
-      data: {
-        role: payload.role,
-        firstName: payload.firstName ?? null,
-        lastName: payload.lastName ?? null,
-        language: payload.locale === 'fr' ? 'FR' : 'EN',
-        position: payload.position ?? null,
-        applications: payload.applications,
-        adminApplications: payload.adminApplications ?? [],
-        departureDate: payload.departureDate ?? null,
-      },
+    await auth.api.signInEmail({
+      body: { email: payload.email, password },
     })
 
     await consumeInvitation(invite.rowId)
 
     return { ok: true }
   })
-

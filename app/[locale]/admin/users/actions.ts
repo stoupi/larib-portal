@@ -145,6 +145,7 @@ export const createUserInviteAction = superAdminAction
       adminApplications,
       arrivalDate,
       departureDate,
+      congesTotalDays: parsedInput.congesTotalDays,
     })
 
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || ''
@@ -215,6 +216,7 @@ export const resendInvitationAction = superAdminAction
         adminApplications: true,
         arrivalDate: true,
         departureDate: true,
+        congesTotalDays: true,
         accounts: {
           where: { providerId: 'credential' },
           select: { password: true },
@@ -247,6 +249,7 @@ export const resendInvitationAction = superAdminAction
       adminApplications: user.adminApplications as Array<'BESTOF_LARIB' | 'CONGES' | 'PUBLICATIONS'>,
       arrivalDate: user.arrivalDate,
       departureDate: user.departureDate,
+      congesTotalDays: user.congesTotalDays,
     })
 
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || ''

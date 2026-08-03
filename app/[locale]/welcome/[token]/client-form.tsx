@@ -1,31 +1,43 @@
 "use client"
 import { useState } from 'react'
 import { useAction } from 'next-safe-action/hooks'
+import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { setPasswordFromInviteAction } from '../actions'
 import { useTranslations } from 'next-intl'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 
+type WelcomeErrorKey = 'invalidLink' | 'passwordsNotMatch' | 'genericError'
+
+function resolveErrorKey(serverError: string | undefined, confirmErrors: string[]): WelcomeErrorKey {
+  if (confirmErrors.includes('PASSWORDS_NOT_MATCH')) return 'passwordsNotMatch'
+  if (serverError === 'INVALID_OR_EXPIRED_TOKEN') return 'invalidLink'
+  return 'genericError'
+}
+
 export function ClientForm({ token, locale }: { token: string; locale: string }) {
   const t = useTranslations('welcome')
-  const { execute, isExecuting } = useAction(setPasswordFromInviteAction, {
-    onSuccess() {
-      window.location.href = `/${locale}/dashboard`
-    },
-  })
   const [password, setPassword] = useState('')
   const [confirm, setConfirm] = useState('')
   const [error, setError] = useState<string | null>(null)
 
-  async function onSubmit(e: React.FormEvent) {
-    e.preventDefault()
+  const { execute, isExecuting } = useAction(setPasswordFromInviteAction, {
+    onSuccess() {
+      window.location.href = `/${locale}/dashboard`
+    },
+    onError({ error: { serverError, validationErrors } }) {
+      const confirmErrors = validationErrors?.confirm?._errors ?? []
+      const message = t(resolveErrorKey(serverError, confirmErrors))
+      setError(message)
+      toast.error(message)
+    },
+  })
+
+  function onSubmit(event: React.FormEvent) {
+    event.preventDefault()
     setError(null)
-    try {
-      await execute({ token, password, confirm })
-    } catch (e) {
-      setError(t('genericError'))
-    }
+    execute({ token, password, confirm })
   }
 
   return (

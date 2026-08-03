@@ -147,7 +147,9 @@
     "setPassword": "Set password",
     "saving": "Saving...",
     "errorTitle": "Something went wrong",
-    "genericError": "We couldn't complete your request. Please try again."
+    "genericError": "We couldn't complete your request. Please try again.",
+    "invalidLink": "This invitation link is invalid or has expired. Ask an administrator to send you a new one.",
+    "passwordsNotMatch": "Both passwords must be identical."
   },
   "admin": {
     "title": "Admin",
