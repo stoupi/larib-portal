@@ -491,6 +491,10 @@ export async function getAdminLeaveDashboard(
   }
 }
 
+export async function countPendingLeaveRequests(): Promise<number> {
+  return prisma.leaveRequest.count({ where: { status: LeaveRequestStatus.PENDING } })
+}
+
 export async function getAdminEmails(): Promise<string[]> {
   const admins = await prisma.user.findMany({
     where: { OR: [{ role: 'ADMIN' }, { adminApplications: { has: 'CONGES' } }] },

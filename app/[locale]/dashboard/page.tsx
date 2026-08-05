@@ -7,6 +7,8 @@ import { isSuperAdmin, accessibleApplications, canAdminApp } from '@/lib/permiss
 import * as motion from "framer-motion/client"
 import { ArrowRight, User, Shield } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { PendingCountBadge } from '@/components/ui/pending-count-badge'
+import { countPendingLeaveRequests } from '@/lib/services/conges'
 
 export default async function DashboardPage({
   params
@@ -21,6 +23,9 @@ export default async function DashboardPage({
   const allApps = accessibleApplications(session.user) as Array<'BESTOF_LARIB' | 'CONGES' | 'PUBLICATIONS'>
   const appOrder: Array<'BESTOF_LARIB' | 'CONGES' | 'PUBLICATIONS'> = ['BESTOF_LARIB', 'CONGES', 'PUBLICATIONS']
   const apps = appOrder.filter(app => allApps.includes(app))
+
+  const canAdminConges = canAdminApp(session.user, 'CONGES')
+  const pendingLeaveRequestsCount = canAdminConges ? await countPendingLeaveRequests() : 0
 
   function appSlug(app: 'BESTOF_LARIB' | 'CONGES' | 'PUBLICATIONS'): string {
     return app === 'BESTOF_LARIB'
@@ -150,6 +155,17 @@ export default async function DashboardPage({
                 return (
                 <motion.div key={app} variants={item}>
                   <div className="group h-full relative overflow-hidden rounded-2xl border border-line bg-bg-surface shadow-elevation-sm transition-all duration-500 hover:shadow-elevation-md hover:-translate-y-1">
+                    {app === 'CONGES' && pendingLeaveRequestsCount > 0 && (
+                      <div className="absolute top-4 right-4 z-10 flex items-center gap-2 rounded-full border border-coral-200 bg-coral-50 py-1 pl-1 pr-3">
+                        <PendingCountBadge
+                          count={pendingLeaveRequestsCount}
+                          label={t('pendingLeaveRequests', { count: pendingLeaveRequestsCount })}
+                        />
+                        <span className="text-xs font-medium text-coral-700">
+                          {t('pendingLeaveRequests', { count: pendingLeaveRequestsCount })}
+                        </span>
+                      </div>
+                    )}
                     <div className="p-6 h-full flex flex-col">
                       <div className="mb-4">
                         <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-coral-50 p-2.5 text-coral-500 transition-transform duration-500 group-hover:scale-110">

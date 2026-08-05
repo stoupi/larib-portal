@@ -132,7 +132,8 @@
       "Au plaisir de vous accompagner"
     ],
     "btnUserAccess": "Accès utilisateur",
-    "btnAdmin": "Admin"
+    "btnAdmin": "Admin",
+    "pendingLeaveRequests": "{count, plural, one {# demande en attente} other {# demandes en attente}}"
   },
   "metadata": {
     "title": "Larib Portal",

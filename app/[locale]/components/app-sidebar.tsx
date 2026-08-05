@@ -32,6 +32,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { authClient } from '@/lib/auth-client'
 import { applicationLink } from '@/lib/application-link'
+import { PendingCountBadge } from '@/components/ui/pending-count-badge'
 
 type SidebarUser = {
   email: string
@@ -51,6 +52,7 @@ type SidebarItem = {
   label: string
   icon: LucideIcon
   adminBadge?: boolean
+  pendingCount?: number
 }
 
 type SidebarSection = {
@@ -58,7 +60,13 @@ type SidebarSection = {
   items: SidebarItem[]
 }
 
-export function AppSidebar({ user }: { user: SidebarUser }) {
+export function AppSidebar({
+  user,
+  pendingLeaveRequestsCount = 0,
+}: {
+  user: SidebarUser
+  pendingLeaveRequestsCount?: number
+}) {
   const t = useTranslations('navigation')
   const tDashboard = useTranslations('dashboard')
   const tAdmin = useTranslations('admin')
@@ -128,7 +136,13 @@ export function AppSidebar({ user }: { user: SidebarUser }) {
     adminItems.push({ href: '/bestof-larib/admin', label: tAdmin('app_BESTOF_LARIB'), icon: GraduationCap, adminBadge: true })
   }
   if (accessible.includes('CONGES') && canAdminApp(user, 'CONGES')) {
-    adminItems.push({ href: '/conges/admin', label: tAdmin('app_CONGES'), icon: CalendarDays, adminBadge: true })
+    adminItems.push({
+      href: '/conges/admin',
+      label: tAdmin('app_CONGES'),
+      icon: CalendarDays,
+      adminBadge: true,
+      pendingCount: pendingLeaveRequestsCount,
+    })
   }
   if (accessible.includes('PUBLICATIONS') && canAdminApp(user, 'PUBLICATIONS')) {
     adminItems.push({ href: '/publications/admin', label: tAdmin('app_PUBLICATIONS'), icon: BookOpen, adminBadge: true })
@@ -187,6 +201,7 @@ export function AppSidebar({ user }: { user: SidebarUser }) {
               {section.items.map((item) => {
                 const active = item.href === activeHref
                 const Icon = item.icon
+                const hasPending = (item.pendingCount ?? 0) > 0
                 return (
                   <li key={item.href}>
                     <Link
@@ -201,10 +216,23 @@ export function AppSidebar({ user }: { user: SidebarUser }) {
                       )}
                     >
                       <Icon className={cn('h-4 w-4 shrink-0', active ? 'text-coral-400' : 'text-navy-200')} />
+                      {collapsed && hasPending && (
+                        <span
+                          aria-hidden
+                          className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-coral-500"
+                        />
+                      )}
                       {!collapsed && (
                         <span className="flex flex-1 items-center gap-1.5">
                           {item.label}
                           {item.adminBadge && <Shield className="h-3.5 w-3.5 shrink-0 text-coral-400" />}
+                          {hasPending && (
+                            <PendingCountBadge
+                              className="ml-auto"
+                              count={item.pendingCount ?? 0}
+                              label={tDashboard('pendingLeaveRequests', { count: item.pendingCount ?? 0 })}
+                            />
+                          )}
                         </span>
                       )}
                     </Link>

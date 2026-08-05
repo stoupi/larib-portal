@@ -134,7 +134,8 @@
       "Happy to assist you"
     ],
     "btnUserAccess": "User access",
-    "btnAdmin": "Admin"
+    "btnAdmin": "Admin",
+    "pendingLeaveRequests": "{count, plural, one {# pending request} other {# pending requests}}"
   },
   "metadata": {
     "title": "Larib Portal",

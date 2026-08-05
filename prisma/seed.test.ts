@@ -439,6 +439,39 @@ async function main() {
 		},
 	});
 
+	const pendingStart = new Date();
+	pendingStart.setMonth(pendingStart.getMonth() + 2);
+	pendingStart.setDate(10);
+	const pendingEnd = new Date(pendingStart);
+	pendingEnd.setDate(pendingStart.getDate() + 3);
+
+	await prisma.leaveRequest.create({
+		data: {
+			id: randomUUID(),
+			userId: regularUser.id,
+			startDate: pendingStart,
+			endDate: pendingEnd,
+			reason: 'Pending request awaiting admin decision',
+			status: 'PENDING',
+		},
+	});
+
+	const secondPendingStart = new Date(pendingStart);
+	secondPendingStart.setMonth(pendingStart.getMonth() + 1);
+	const secondPendingEnd = new Date(secondPendingStart);
+	secondPendingEnd.setDate(secondPendingStart.getDate() + 1);
+
+	await prisma.leaveRequest.create({
+		data: {
+			id: randomUUID(),
+			userId: regularUser.id,
+			startDate: secondPendingStart,
+			endDate: secondPendingEnd,
+			reason: 'Second pending request awaiting admin decision',
+			status: 'PENDING',
+		},
+	});
+
 	// Create a leave for the user WITHOUT CONGES access (should be filtered out in admin view)
 	const today = new Date();
 	const noCongesLeaveStart = new Date(today);

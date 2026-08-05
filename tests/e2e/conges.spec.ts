@@ -112,6 +112,29 @@ test.describe('Conges - Leave Management', () => {
 	});
 
 	test.describe('Admin Workflow', () => {
+		test('should flag pending leave requests on the portal dashboard card and the sidebar', async ({
+			page,
+		}) => {
+			await loginAs(page, ADMIN_USER);
+
+			const sidebar = page.locator('aside');
+			const congesAdminLink = sidebar.getByRole('link', { name: /pending request/i });
+			await expect(congesAdminLink).toBeVisible({ timeout: 10000 });
+
+			const congesCard = page.locator('div.group').filter({ hasText: /leave|conges|congés/i }).first();
+			await expect(congesCard.getByText(/pending request/i).first()).toBeVisible({ timeout: 10000 });
+
+			// The badge links to the CONGES admin view
+			await congesAdminLink.click();
+			await page.waitForURL('**/conges/admin', { timeout: 30000 });
+
+			// Test French locale
+			await page.goto('/fr/dashboard', { timeout: 60000 });
+			await expect(
+				page.locator('aside').getByRole('link', { name: /demandes? en attente/i })
+			).toBeVisible({ timeout: 10000 });
+		});
+
 		test('should display admin dashboard with pending requests and allow approval', async ({
 			page,
 		}) => {
