@@ -4,7 +4,7 @@ import { useTranslations } from 'next-intl'
 import { ChevronRight, ChevronsUpDown, ArrowUp, ArrowDown, Star, Pencil, Eye, Clock, FileText, ExternalLink } from 'lucide-react'
 import { Link } from '@/app/i18n/navigation'
 import { cn } from '@/lib/utils'
-import { ArticleScopeStar } from './articles/article-scope-star'
+import { ArticleScopeSwitch } from './articles/article-scope-switch'
 import { ARTICLE_STATUS_TONE, pillClassName } from '@/lib/publications/status-display'
 import { ARTICLE_TYPE_BADGE } from '@/lib/publications/article-type'
 import type { MyPublicationItem } from '@/lib/services/publications/my-publications'
@@ -118,7 +118,7 @@ function PublicationRow({
               >
                 {t(`myPub.type.${item.type}`)}
               </span>
-                <ArticleScopeStar articleId={item.id} articleTitle={item.title} scope={item.scope} />
+                <ArticleScopeSwitch articleId={item.id} articleTitle={item.title} scope={item.scope} />
             </span>
             <Link
               href={item.isFirst ? `/publications/articles/${item.id}/edit` : `/publications/articles/${item.id}`}

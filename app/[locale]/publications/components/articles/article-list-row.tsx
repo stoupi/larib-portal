@@ -11,7 +11,7 @@ import { ARTICLE_SORT_KEYS, type ArticleSort, type ArticleSortKey } from '@/lib/
 import type { StudyOption } from '@/lib/services/publications/studies'
 import { SubmissionHistory } from '../submission-history'
 import { ArticleStudySelect } from './article-study-select'
-import { ArticleScopeStar } from './article-scope-star'
+import { ArticleScopeSwitch } from './article-scope-switch'
 import { ArticleDeleteButton } from './article-delete-button'
 
 export const ARTICLES_GRID =
@@ -124,7 +124,7 @@ export function ArticleListRow({
         </div>
 
         <div className="min-w-0">
-          <ArticleScopeStar
+          <ArticleScopeSwitch
             articleId={article.id}
             articleTitle={article.title || t('myPub.untitled')}
             scope={article.scope}

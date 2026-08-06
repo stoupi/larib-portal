@@ -2,10 +2,12 @@
 
 import { useMemo, useState } from 'react'
 import { useTranslations } from 'next-intl'
-import { ChevronDown, Search, Star, X } from 'lucide-react'
+import { ChevronDown, Search, X } from 'lucide-react'
 import { MultiSelect } from '@/components/ui/multiselect'
 import { Input } from '@/components/ui/input'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
+import { ScopePill } from '../articles/article-scope-switch'
 import { ARTICLE_STATUS_VALUES } from '@/lib/publications/status-display'
 import {
   ALL_FILTER,
@@ -135,24 +137,20 @@ export function PublicationsDashboardView({
             />
           </div>
 
-          <button
-            type="button"
-            aria-pressed={teamOnly}
-            aria-label={t('filters.teamOnly')}
-            title={t('filters.teamOnly')}
-            onClick={() => updateFilter({ scopes: teamOnly ? [] : ['LARIB_TEAM'] })}
-            className={cn(
-              'inline-flex h-9 shrink-0 flex-col items-center justify-center gap-0.5 rounded-full border px-3 transition',
-              teamOnly
-                ? 'border-coral-500 bg-gradient-to-b from-coral-500 to-coral-600 text-white shadow-[0_6px_14px_-6px_rgba(214,31,85,0.55)]'
-                : 'border-line text-text-muted hover:bg-gray-50 hover:text-text-secondary dark:hover:bg-white/5',
-            )}
-          >
-            <Star className={cn('size-3.5', teamOnly ? 'fill-current' : 'fill-none')} strokeWidth={2.2} />
-            <span className="text-[8px] font-extrabold uppercase leading-none tracking-wide">
-              {tArticles('scopeShortLabel')}
-            </span>
-          </button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                type="button"
+                aria-pressed={teamOnly}
+                aria-label={t('filters.teamOnly')}
+                onClick={() => updateFilter({ scopes: teamOnly ? [] : ['LARIB_TEAM'] })}
+                className="inline-flex shrink-0"
+              >
+                <ScopePill checked={teamOnly} size="lg" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent>{t('filters.teamOnly')}</TooltipContent>
+          </Tooltip>
 
           {hasActiveFilters && (
             <button

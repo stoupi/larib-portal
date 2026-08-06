@@ -9,7 +9,7 @@ import { ARTICLE_TYPE_VALUES } from '@/lib/publications/article-type'
 import type { PublicationEditData } from '@/lib/services/publications/publication-editor'
 import type { StudyOption } from '@/lib/services/publications/studies'
 import type { EditorForm, EditorViewer } from './publication-editor'
-import { ArticleScopeStar } from '../articles/article-scope-star'
+import { ArticleScopeSwitch } from '../articles/article-scope-switch'
 
 function relativeMonths(from: Date, locale: string): string {
   const months = Math.round((Date.now() - from.getTime()) / (1000 * 60 * 60 * 24 * 30))
@@ -107,11 +107,12 @@ export function EditorHeader({
             </label>
             <span className="flex items-center gap-2 text-[13px] font-semibold text-text-secondary">
               {tArticles('scopeLabel')}
-              <ArticleScopeStar
+              <ArticleScopeSwitch
                 articleId={article.id}
                 articleTitle={article.title || t('myPub.untitled')}
                 scope={article.scope}
                 editable={viewer.isAdmin || viewer.isFirstAuthor}
+                size="lg"
               />
             </span>
           </div>

@@ -1377,8 +1377,7 @@
       "scope": {
         "LARIB_TEAM": "Led by Larib",
         "OUTSIDE_TEAM": "Led by others"
-      },
-      "scopeShortLabel": "LARIB"
+      }
     },
     "journals": {
       "title": "Journals",
