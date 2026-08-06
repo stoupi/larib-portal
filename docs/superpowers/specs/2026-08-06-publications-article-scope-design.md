@@ -15,7 +15,7 @@ Faute de distinction, les KPI et les graphes du tableau de bord comptent tout, e
 
 ## Décision
 
-Un tag binaire porté par l'article : **Équipe Lariboisière** ou **Hors équipe**. Les cas 1 et 2 partagent la valeur « Équipe Lariboisière » : l'administrateur veut voir les deux. Le cas 3 est « Hors équipe ».
+Un tag binaire porté par l'article : **Équipe Lariboisière** ou **Hors équipe**. Seul le cas 1 — le travail mené par l'équipe — porte « Équipe Lariboisière ». Les cas 2 et 3 partagent « Hors équipe » : ils ne comptent pas dans les chiffres de l'équipe, et le filtre les ramène en un clic quand l'administrateur veut les consulter.
 
 Wording retenu — champ « Rattachement » (EN : *Affiliation scope*), valeurs « Équipe Lariboisière » / « Hors équipe » (EN : *Lariboisière team* / *Outside the team*).
 
@@ -44,7 +44,7 @@ Fonction pure `proposeArticleScope(authors)` dans `lib/publications/article-scop
 
 `OUR_TEAM` est la seule notion d'équipe de l'application : elle est déjà éditable dans la page Auteurs et alimente le filtre « Our team / External » du tableau de bord.
 
-Conséquence assumée : une publication co-signée par un ou deux membres de l'équipe arrive en « Hors équipe » et sort de la liste par défaut. L'administrateur la requalifie depuis le tableau d'import ou depuis la bibliothèque.
+Le seuil traduit la règle métier : au-delà de trois signataires de l'équipe, le travail a été mené chez nous. Une publication co-signée par un ou deux membres arrive donc en « Hors équipe », ce qui est le comportement voulu ; l'administrateur la requalifie depuis le tableau d'import ou depuis la bibliothèque quand le papier a bien été piloté par l'équipe.
 
 ## Où se pose le tag
 
@@ -58,7 +58,7 @@ Une ligne du tableau d'import se déplie pour afficher le détail du papier : li
 
 ## Affichage et filtrage
 
-- **Tableau de bord et bibliothèque admin** : le filtre `scope` démarre sur « Équipe Lariboisière ». KPI, cartes et tableau ne comptent donc que l'équipe. Une carte « Rattachement », au même gabarit que « By study » et « By status », donne les deux compteurs et inclut « Hors équipe » en un clic. « Effacer les filtres » revient au défaut équipe, pas à « tout ».
+- **Tableau de bord et bibliothèque admin** : le filtre `scope` démarre sur « Équipe Lariboisière ». KPI, cartes et tableau ne comptent donc que les publications menées par l'équipe. Une carte « Rattachement », au même gabarit que « By study » et « By status », donne les deux compteurs et inclut « Hors équipe » — co-signées comme personnelles — en un clic. « Effacer les filtres » revient au défaut équipe, pas à « tout ».
 - **Badge** : les lignes « Hors équipe » portent un badge gris, pour qu'on ne se demande jamais pourquoi une publication apparaît.
 - **My Publications** : aucun filtre par défaut. L'utilisateur voit toutes ses publications, équipe ou non, avec le badge — l'usage « chiffres de mon CV ».
 
@@ -88,6 +88,6 @@ Une ligne du tableau d'import se déplie pour afficher le détail du papier : li
 
 ## Hors périmètre
 
-- Pas de sous-catégorie « menée » / « co-signée » : le tag est binaire tant que le besoin n'est pas confirmé.
+- Pas de troisième valeur « co-signée » : les publications simplement co-signées vivent avec les personnelles derrière « Hors équipe » tant que le besoin de les distinguer n'est pas confirmé.
 - Pas de recalcul rétroactif du tag sur les articles existants : la migration les met tous en « Équipe Lariboisière ».
 - Pas de règle par centre (`Centre.isOwn`) ni par compte portail : `Author.type` reste la seule définition de l'équipe.
