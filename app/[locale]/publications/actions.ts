@@ -7,9 +7,9 @@ import { canAccessApp, canAdminApp } from '@/lib/permissions'
 import { prisma } from '@/lib/prisma'
 import { addSubmission, updateSubmissionStatus, updateSubmission, deleteSubmission, userOwnsSubmission, SUBMISSION_STATUSES } from '@/lib/services/publications/submissions'
 import { userIsAuthorOfArticle } from '@/lib/services/publications/my-publications'
-import { createDraftArticle, updateArticleCore, deleteDraft, userIsFirstAuthor, setArticlePdf } from '@/lib/services/publications/publication-editor'
+import { createDraftArticle, updateArticleCore, deleteDraft, userIsFirstAuthor, setArticlePdf, setArticleAuthors } from '@/lib/services/publications/publication-editor'
 import { createAuthorListRequest, resolveAuthorRequest, PUBLICATIONS_REQUESTS_TAG } from '@/lib/services/publications/author-requests'
-import { searchByAuthor, fetchByPmids } from '@/lib/services/publications/pubmed'
+import { searchByAuthor, searchPubmed, fetchByPmids } from '@/lib/services/publications/pubmed'
 import {
   importRecords,
   PUBLICATIONS_JOURNALS_TAG,
@@ -21,8 +21,11 @@ import { findAuthorDuplicates, matchAuthorsAgainstBank, normalizeName } from '@/
 import { fetchPublicationByIdentifier } from '@/lib/services/publications/publication-lookup'
 import { backfillAffiliations, PUBLICATIONS_CENTRES_TAG, PUBLICATIONS_AFFILIATIONS_TAG } from '@/lib/services/publications/affiliations'
 import { renameCentre, setCentreOwn, deleteCentre, mergeCentres, getCentreAuthors, createCentre, updateCentre } from '@/lib/services/publications/centres'
-import { updateArticleStatus, updateArticleType, ARTICLE_STATUSES } from '@/lib/services/publications/articles'
+import { updateArticleStatus, updateArticleType, updateArticleStudy, updateArticleScope, deleteArticle, findKnownPublications, listPublicationTitles, ARTICLE_STATUSES } from '@/lib/services/publications/articles'
 import { ARTICLE_TYPE_VALUES } from '@/lib/publications/article-type'
+import { ARTICLE_SCOPES } from '@/lib/publications/article-scope'
+import { matchCandidates } from '@/lib/publications/import-candidates'
+import { findLibraryDuplicates } from '@/lib/services/publications/duplicates'
 import { createJournal, updateJournal, deleteJournal, isPrismaKnownError as isJournalError } from '@/lib/services/publications/journals'
 import { searchCrossref, lookupJournalByIssn } from '@/lib/services/publications/journals-catalog'
 import { JOURNAL_SPECIALTIES, JOURNAL_SUB_SPECIALTIES } from '@/lib/publications/journal-taxonomy'
@@ -31,9 +34,14 @@ import { createStudy, updateStudy, deleteStudy, importClinicalTrialStudy, setStu
 import { fetchClinicalTrial, normaliseNctId } from '@/lib/services/publications/clinicaltrials'
 
 export const searchBacklogAction = appAdminAction('PUBLICATIONS')
-  .inputSchema(z.object({ anchor: z.string().min(1), retmax: z.number().int().min(1).max(500).optional() }))
+  .inputSchema(z.object({ query: z.string().min(1), retmax: z.number().int().min(1).max(500).optional() }))
   .action(async ({ parsedInput }) => {
-    return searchByAuthor(parsedInput.anchor, parsedInput.retmax ?? 200)
+    const candidates = await searchPubmed(parsedInput.query, parsedInput.retmax ?? 200)
+    const [known, library] = await Promise.all([
+      findKnownPublications(candidates.map(({ pmid, doi }) => ({ pmid, doi }))),
+      listPublicationTitles(),
+    ])
+    return matchCandidates(candidates, known, library)
   })
 
 export const importBacklogAction = appAdminAction('PUBLICATIONS')
@@ -41,10 +49,11 @@ export const importBacklogAction = appAdminAction('PUBLICATIONS')
   .action(async ({ parsedInput, ctx }) => {
     const records = await fetchByPmids(parsedInput.pmids)
     const report = await importRecords(records, ctx.userId)
+    const duplicates = await findLibraryDuplicates()
     revalidateTag(PUBLICATIONS_JOURNALS_TAG)
     revalidateTag(PUBLICATIONS_AUTHORS_TAG)
     revalidateTag(PUBLICATIONS_ARTICLES_TAG)
-    return report
+    return { report, duplicates }
   })
 
 const AuthorInput = z.object({
@@ -183,6 +192,35 @@ export const updateArticleStatusAction = appAdminAction('PUBLICATIONS')
   .inputSchema(z.object({ id: z.string().min(1), status: z.enum(ARTICLE_STATUSES) }))
   .action(async ({ parsedInput }) => {
     const updated = await updateArticleStatus(parsedInput.id, parsedInput.status)
+    revalidateTag(PUBLICATIONS_ARTICLES_TAG)
+    return updated
+  })
+
+export const deleteArticleAction = appAdminAction('PUBLICATIONS')
+  .inputSchema(z.object({ id: z.string().min(1) }))
+  .action(async ({ parsedInput }) => {
+    const result = await deleteArticle(parsedInput.id)
+    revalidateTag(PUBLICATIONS_ARTICLES_TAG)
+    revalidateTag(PUBLICATIONS_STUDIES_TAG)
+    return result
+  })
+
+export const updateArticleStudyAction = appAdminAction('PUBLICATIONS')
+  .inputSchema(z.object({ id: z.string().min(1), studyId: z.string().nullable() }))
+  .action(async ({ parsedInput }) => {
+    const updated = await updateArticleStudy(parsedInput.id, parsedInput.studyId)
+    revalidateTag(PUBLICATIONS_ARTICLES_TAG)
+    revalidateTag(PUBLICATIONS_STUDIES_TAG)
+    return updated
+  })
+
+export const updateArticleScopeAction = authenticatedAction
+  .inputSchema(z.object({ id: z.string().min(1), scope: z.enum(ARTICLE_SCOPES) }))
+  .action(async ({ parsedInput, ctx }) => {
+    if (!canAccessApp(ctx.user, 'PUBLICATIONS')) throw new Error('Forbidden')
+    const canEdit = canAdminApp(ctx.user, 'PUBLICATIONS') || (await userIsFirstAuthor(ctx.userId, parsedInput.id))
+    if (!canEdit) throw new Error('Forbidden')
+    const updated = await updateArticleScope(parsedInput.id, parsedInput.scope)
     revalidateTag(PUBLICATIONS_ARTICLES_TAG)
     return updated
   })
@@ -514,10 +552,24 @@ export const updateSubmissionStatusAction = authenticatedAction
 // ---- User publication editor ----
 
 export const createDraftArticleAction = authenticatedAction
-  .inputSchema(z.object({}))
-  .action(async ({ ctx }) => {
+  .inputSchema(z.object({ asAdmin: z.boolean().default(false) }))
+  .action(async ({ parsedInput, ctx }) => {
     if (!canAccessApp(ctx.user, 'PUBLICATIONS')) throw new Error('Forbidden')
-    return createDraftArticle(ctx.userId)
+    const asAdmin = parsedInput.asAdmin && canAdminApp(ctx.user, 'PUBLICATIONS')
+    return createDraftArticle(ctx.userId, { withCreatorAsFirstAuthor: !asAdmin })
+  })
+
+export const setArticleAuthorsAction = appAdminAction('PUBLICATIONS')
+  .inputSchema(
+    z.object({
+      articleId: z.string().min(1),
+      authors: z.array(z.object({ authorId: z.string().min(1), isCorresponding: z.boolean() })),
+    }),
+  )
+  .action(async ({ parsedInput }) => {
+    const updated = await setArticleAuthors(parsedInput.articleId, parsedInput.authors)
+    revalidateTag(PUBLICATIONS_ARTICLES_TAG)
+    return updated
   })
 
 export const updateArticleCoreAction = authenticatedAction
