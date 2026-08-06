@@ -1364,11 +1364,11 @@
       "studySaved": "Study updated",
       "noStudy": "No study",
       "assignStudy": "Assign a study",
-      "scopeLabel": "Affiliation scope",
-      "scopeSaved": "Affiliation scope updated",
+      "scopeLabel": "Scope",
+      "scopeSaved": "Scope updated",
       "scope": {
-        "LARIB_TEAM": "Lariboisière team",
-        "OUTSIDE_TEAM": "Outside the team"
+        "LARIB_TEAM": "Led by Larib",
+        "OUTSIDE_TEAM": "Led by others"
       },
       "deleteArticle": "Delete publication",
       "deleteArticleConfirm": "This permanently removes “{title}”, its authors, submissions and PDF. This cannot be undone.",
@@ -1638,8 +1638,8 @@
         "clearAll": "Clear filters",
         "noJournal": "No journal",
         "clearJournal": "Clear the journal filter",
-        "teamOnly": "Lariboisière team only",
-        "everyScope": "Every scope"
+        "teamOnly": "Led by Larib",
+        "everyScope": "All scopes"
       },
       "overview": {
         "hide": "Hide overview",

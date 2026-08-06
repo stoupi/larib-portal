@@ -1056,7 +1056,7 @@
       "colSelect": "Importer",
       "colTitle": "Titre",
       "colJournal": "Journal",
-      "colScope": "Rattachement",
+      "colScope": "Scope",
       "colYear": "Année",
       "colAuthors": "Auteurs",
       "selectAll": "Tout sélectionner",
@@ -1362,11 +1362,11 @@
       "studySaved": "Étude mise à jour",
       "noStudy": "Aucune étude",
       "assignStudy": "Associer une étude",
-      "scopeLabel": "Rattachement",
-      "scopeSaved": "Rattachement mis à jour",
+      "scopeLabel": "Scope",
+      "scopeSaved": "Scope mis à jour",
       "scope": {
-        "LARIB_TEAM": "Équipe Lariboisière",
-        "OUTSIDE_TEAM": "Hors équipe"
+        "LARIB_TEAM": "Menée par Larib",
+        "OUTSIDE_TEAM": "Menée par d’autres"
       },
       "deleteArticle": "Supprimer la publication",
       "deleteArticleConfirm": "Cela supprime définitivement « {title} », ses auteurs, ses soumissions et son PDF. Action irréversible.",
@@ -1636,8 +1636,8 @@
         "clearAll": "Effacer les filtres",
         "noJournal": "Aucune revue",
         "clearJournal": "Annuler le filtre de revue",
-        "teamOnly": "Équipe Lariboisière seule",
-        "everyScope": "Tous les rattachements"
+        "teamOnly": "Menée par Larib",
+        "everyScope": "Tous les scopes"
       },
       "overview": {
         "hide": "Masquer la synthèse",
