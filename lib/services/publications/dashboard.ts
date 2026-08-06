@@ -17,6 +17,7 @@ export async function listDashboardArticles(now: Date = new Date()): Promise<Das
       title: true,
       type: true,
       status: true,
+      scope: true,
       doi: true,
       pdfUrl: true,
       publishedAt: true,
@@ -36,7 +37,7 @@ export async function listDashboardArticles(now: Date = new Date()): Promise<Das
       },
       authorships: {
         orderBy: { order: 'asc' },
-        select: { author: { select: { id: true, firstName: true, lastName: true } } },
+        select: { author: { select: { id: true, firstName: true, lastName: true, type: true } } },
       },
     },
   })
@@ -60,9 +61,11 @@ export async function listDashboardArticles(now: Date = new Date()): Promise<Das
       studyId: article.study?.id ?? null,
       studyLabel: article.study ? article.study.acronym ?? article.study.title : null,
       status: article.status,
+      scope: article.scope,
       authors: article.authorships.map((authorship) => ({
         id: authorship.author.id,
         name: `${authorship.author.firstName} ${authorship.author.lastName}`.trim(),
+        team: authorship.author.type === 'OUR_TEAM',
       })),
       doi: article.doi,
       pdfUrl: article.pdfUrl,
