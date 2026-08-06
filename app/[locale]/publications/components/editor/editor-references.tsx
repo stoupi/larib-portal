@@ -3,11 +3,24 @@
 import { useTranslations } from 'next-intl'
 import { Input } from '@/components/ui/input'
 import type { StudyOption } from '@/lib/services/publications/studies'
-import type { EditorForm } from './publication-editor'
+import type { EditorForm } from '../article/article-page'
 import { CollapsibleCard } from './collapsible-card'
 
-export function EditorReferences({ form, studyOptions }: { form: EditorForm; studyOptions: StudyOption[] }) {
+export function EditorReferences({
+  form,
+  studyOptions,
+  editable,
+}: {
+  form: EditorForm
+  studyOptions: StudyOption[]
+  editable: boolean
+}) {
   const t = useTranslations('publications')
+  const pubmedId = form.watch('pubmedId')
+  const doi = form.watch('doi')
+  const studyId = form.watch('studyId')
+  const studyLabel = studyOptions.find((option) => option.id === studyId)?.label ?? null
+
   return (
     <CollapsibleCard
       title={
@@ -22,25 +35,37 @@ export function EditorReferences({ form, studyOptions }: { form: EditorForm; stu
       <div className="mt-4 space-y-3">
         <label className="grid grid-cols-[80px_1fr] items-center gap-3">
           <span className="text-sm font-semibold text-text-secondary">{t('editor.pmid')}</span>
-          <Input {...form.register('pubmedId')} placeholder={t('editor.addPmid')} />
+          {editable ? (
+            <Input {...form.register('pubmedId')} placeholder={t('editor.addPmid')} />
+          ) : (
+            <span className="text-sm text-text-primary">{pubmedId || '—'}</span>
+          )}
         </label>
         <label className="grid grid-cols-[80px_1fr] items-center gap-3">
           <span className="text-sm font-semibold text-text-secondary">{t('editor.doi')}</span>
-          <Input {...form.register('doi')} placeholder={t('editor.addDoi')} />
+          {editable ? (
+            <Input {...form.register('doi')} placeholder={t('editor.addDoi')} />
+          ) : (
+            <span className="text-sm text-text-primary">{doi || '—'}</span>
+          )}
         </label>
         <label className="grid grid-cols-[80px_1fr] items-center gap-3">
           <span className="text-sm font-semibold text-text-secondary">{t('editor.linkedStudy')}</span>
-          <select
-            {...form.register('studyId')}
-            className="h-10 rounded-lg border border-line bg-bg-surface px-3 text-sm text-text-primary outline-none focus:border-coral-400"
-          >
-            <option value="">{t('editor.selectStudy')}</option>
-            {studyOptions.map((option) => (
-              <option key={option.id} value={option.id}>
-                {option.label}
-              </option>
-            ))}
-          </select>
+          {editable ? (
+            <select
+              {...form.register('studyId')}
+              className="h-10 rounded-lg border border-line bg-bg-surface px-3 text-sm text-text-primary outline-none focus:border-coral-400"
+            >
+              <option value="">{t('editor.selectStudy')}</option>
+              {studyOptions.map((option) => (
+                <option key={option.id} value={option.id}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          ) : (
+            <span className="text-sm text-text-primary">{studyLabel ?? '—'}</span>
+          )}
         </label>
       </div>
     </CollapsibleCard>
