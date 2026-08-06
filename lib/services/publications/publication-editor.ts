@@ -3,6 +3,7 @@ import { Prisma } from '@/app/generated/prisma'
 import type { ArticleStatusValue } from './articles'
 import { PUBLICATIONS_ARTICLES_TAG } from './import'
 import { ARTICLE_TYPE_VALUES, type ArticleTypeValue } from '@/lib/publications/article-type'
+import { planAuthorshipChanges, type AuthorshipEntry } from '@/lib/publications/author-list'
 
 export { PUBLICATIONS_ARTICLES_TAG, ARTICLE_TYPE_VALUES }
 
@@ -24,18 +25,42 @@ async function findOrCreateAuthorForUser(userId: string): Promise<string> {
   return author.id
 }
 
-export async function createDraftArticle(userId: string): Promise<{ id: string }> {
-  const authorId = await findOrCreateAuthorForUser(userId)
+export async function createDraftArticle(
+  userId: string,
+  options: { withCreatorAsFirstAuthor: boolean } = { withCreatorAsFirstAuthor: true },
+): Promise<{ id: string }> {
+  const authorId = options.withCreatorAsFirstAuthor ? await findOrCreateAuthorForUser(userId) : null
   return prisma.article.create({
     data: {
       title: '',
       status: 'IN_PREPARATION',
       type: 'ORIGINAL',
       createdById: userId,
-      authorships: { create: { authorId, order: 1, isCorresponding: false } },
+      ...(authorId ? { authorships: { create: { authorId, order: 1, isCorresponding: false } } } : {}),
     },
     select: { id: true },
   })
+}
+
+export async function setArticleAuthors(articleId: string, desired: AuthorshipEntry[]): Promise<{ id: string }> {
+  const current = await prisma.authorship.findMany({ where: { articleId }, select: { authorId: true } })
+  const plan = planAuthorshipChanges(current.map((authorship) => authorship.authorId), desired)
+
+  await prisma.$transaction(async (tx) => {
+    if (plan.removeAuthorIds.length) {
+      await tx.authorship.deleteMany({ where: { articleId, authorId: { in: plan.removeAuthorIds } } })
+    }
+    await tx.authorship.updateMany({ where: { articleId }, data: { order: { multiply: -1 } } })
+    for (const upsert of plan.upserts) {
+      await tx.authorship.upsert({
+        where: { articleId_authorId: { articleId, authorId: upsert.authorId } },
+        create: { articleId, authorId: upsert.authorId, order: upsert.order, isCorresponding: upsert.isCorresponding },
+        update: { order: upsert.order, isCorresponding: upsert.isCorresponding },
+      })
+    }
+  })
+
+  return { id: articleId }
 }
 
 export type ArticlePdf = { url: string; key: string } | null
