@@ -17,6 +17,12 @@ test('Publications access: member reaches app in EN and FR, blocked from portal 
   await expect(page).toHaveURL(/\/en\/publications/)
   await expect(page.getByRole('heading', { name: /my publications/i })).toBeVisible()
 
+  // The user lists every publication of theirs, whoever led it, each carrying its scope
+  await expect(page.getByText('Outcomes of multi-valve intervention: a retrospective cohort')).toBeVisible()
+  await expect(page.getByText('Personal cohort study from a previous laboratory')).toBeVisible()
+  await expect(page.getByText('Led by others').first()).toBeVisible()
+  await expect(page.getByText('Led by Larib').first()).toBeVisible()
+
   await page.goto('/fr/publications', { timeout: 60000 })
   await expect(page).toHaveURL(/\/fr\/publications/)
   await expect(page.getByRole('heading', { name: /mes publications/i })).toBeVisible()

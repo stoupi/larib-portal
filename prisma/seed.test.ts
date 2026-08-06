@@ -307,6 +307,16 @@ async function main() {
 			},
 		},
 	});
+	await prisma.article.create({
+		data: {
+			title: 'Personal cohort study from a previous laboratory',
+			type: 'ORIGINAL',
+			status: 'PUBLISHED',
+			scope: 'OUTSIDE_TEAM',
+			createdBy: { connect: { id: publicationsUser.id } },
+			authorships: { create: [{ order: 1, author: { connect: { id: publicationsFirstAuthor.id } } }] },
+		},
+	});
 	console.log('✅ Created publications sample data');
 
 	// Create exam types first (using upsert to handle duplicates)
