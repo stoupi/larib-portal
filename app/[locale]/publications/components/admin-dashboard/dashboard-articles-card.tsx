@@ -7,7 +7,6 @@ import type { DashboardArticleItem } from '@/lib/publications/admin-dashboard'
 import type { StudyOption } from '@/lib/services/publications/studies'
 import { nextArticleSort, sortArticles, type ArticleSort } from '@/lib/publications/article-sort'
 import { ArticleListRow, ArticlesHeaderRow } from '../articles/article-list-row'
-import { NewPublicationButton } from '../new-publication-button'
 
 export function DashboardArticlesCard({
   articles,
@@ -43,9 +42,6 @@ export function DashboardArticlesCard({
           <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-bold text-gray-600 tabular-nums dark:bg-white/10 dark:text-text-secondary">
             {articles.length}
           </span>
-        </div>
-        <div className="flex items-center gap-3">
-          <NewPublicationButton compact asAdmin />
         </div>
       </div>
 

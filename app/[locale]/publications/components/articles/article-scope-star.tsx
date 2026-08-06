@@ -15,6 +15,10 @@ function starClassName(scope: ArticleScopeValue): string {
     : 'fill-none text-text-muted'
 }
 
+function labelClassName(scope: ArticleScopeValue): string {
+  return scope === 'LARIB_TEAM' ? 'text-coral-600' : 'text-text-muted'
+}
+
 export function ArticleScopeStar({
   articleId,
   articleTitle,
@@ -42,8 +46,15 @@ export function ArticleScopeStar({
 
   if (!editable) {
     return (
-      <span title={tooltip} aria-label={`${tooltip}: ${articleTitle}`} className="inline-flex">
+      <span
+        title={tooltip}
+        aria-label={`${tooltip}: ${articleTitle}`}
+        className="inline-flex flex-col items-center gap-0.5"
+      >
         <Star className={cn('size-4', starClassName(scope))} strokeWidth={2} />
+        <span className={cn('text-[9px] font-extrabold uppercase tracking-wide', labelClassName(scope))}>
+          {t('scopeShortLabel')}
+        </span>
       </span>
     )
   }
@@ -58,9 +69,12 @@ export function ArticleScopeStar({
       onClick={() =>
         execute({ id: articleId, scope: scope === 'LARIB_TEAM' ? 'OUTSIDE_TEAM' : 'LARIB_TEAM' })
       }
-      className="inline-flex size-8 items-center justify-center rounded-lg transition hover:bg-gray-50 disabled:opacity-60 dark:hover:bg-white/5"
+      className="inline-flex w-10 flex-col items-center gap-0.5 rounded-lg py-1 transition hover:bg-gray-50 disabled:opacity-60 dark:hover:bg-white/5"
     >
       <Star className={cn('size-4', starClassName(scope))} strokeWidth={2} />
+      <span className={cn('text-[9px] font-extrabold uppercase tracking-wide', labelClassName(scope))}>
+        {t('scopeShortLabel')}
+      </span>
     </button>
   )
 }

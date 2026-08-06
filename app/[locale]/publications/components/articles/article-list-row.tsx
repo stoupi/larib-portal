@@ -15,7 +15,7 @@ import { ArticleScopeStar } from './article-scope-star'
 import { ArticleDeleteButton } from './article-delete-button'
 
 export const ARTICLES_GRID =
-  'grid grid-cols-[minmax(240px,1fr)_150px_128px_56px_128px_176px_132px] items-center gap-3.5'
+  'grid grid-cols-[minmax(240px,1fr)_150px_128px_72px_128px_176px_132px] items-center gap-3.5'
 
 export type ArticleRowExpansion = {
   open: boolean

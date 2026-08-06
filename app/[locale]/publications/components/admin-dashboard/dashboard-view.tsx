@@ -24,6 +24,7 @@ import { DashboardCharts } from './dashboard-charts'
 import { DashboardAuthorFocus } from './dashboard-author-focus'
 import { DashboardArticlesCard } from './dashboard-articles-card'
 import { DashboardModules, type ModuleCounts } from './dashboard-modules'
+import { NewPublicationButton } from '../new-publication-button'
 import type { StudyOption } from '@/lib/services/publications/studies'
 
 
@@ -71,12 +72,15 @@ export function PublicationsDashboardView({
 
   return (
     <div className="space-y-6">
-      <header className="flex items-stretch gap-3.5">
-        <span aria-hidden className="w-[5px] shrink-0 rounded bg-gradient-to-b from-coral-500 to-coral-600" />
-        <div>
-          <h1 className="text-3xl font-extrabold tracking-tight text-text-primary">{t('title')}</h1>
-          <p className="mt-1.5 max-w-xl text-sm leading-relaxed text-text-secondary">{t('subtitle')}</p>
+      <header className="flex flex-wrap items-stretch justify-between gap-3.5">
+        <div className="flex items-stretch gap-3.5">
+          <span aria-hidden className="w-[5px] shrink-0 rounded bg-gradient-to-b from-coral-500 to-coral-600" />
+          <div>
+            <h1 className="text-3xl font-extrabold tracking-tight text-text-primary">{t('title')}</h1>
+            <p className="mt-1.5 max-w-xl text-sm leading-relaxed text-text-secondary">{t('subtitle')}</p>
+          </div>
         </div>
+        <NewPublicationButton asAdmin />
       </header>
 
       <section className="space-y-3 rounded-2xl border border-line bg-bg-surface p-3 shadow-elevation-xs">
