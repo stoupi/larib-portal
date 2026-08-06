@@ -8,7 +8,7 @@ import { UserPlus, Mail, Send, User } from 'lucide-react'
 import { Textarea } from '@/components/ui/textarea'
 import type { PublicationEditData } from '@/lib/services/publications/publication-editor'
 import { requestAuthorListAction } from '../../actions'
-import type { EditorForm, EditorViewer } from './publication-editor'
+import type { EditorForm, EditorViewer } from '../article/article-page'
 import { CollapsibleCard } from './collapsible-card'
 
 function degreeBadges(degrees: string | null): string[] {
@@ -23,10 +23,12 @@ export function EditorAuthors({
   article,
   viewer,
   form,
+  editable,
 }: {
   article: PublicationEditData
   viewer: EditorViewer
   form: EditorForm
+  editable: boolean
 }) {
   const t = useTranslations('publications')
   const router = useRouter()
@@ -63,7 +65,9 @@ export function EditorAuthors({
         {article.authorships.map((authorship) => {
           const author = authorship.author
           const isYou = author.userId === viewer.userId
-          const place = author.centre?.name ?? author.defaultAffiliation?.name ?? null
+          const affiliationNames = authorship.affiliations
+            .map((link) => link.affiliation.centre?.name ?? t('articles.noCentre'))
+            .join(' · ')
           return (
             <li key={authorship.order} className="flex items-start gap-3">
               <span className="mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-gray-100 text-[11px] font-bold text-text-secondary tabular-nums dark:bg-white/10">
@@ -95,40 +99,46 @@ export function EditorAuthors({
                     </span>
                   )}
                 </div>
-                {place && <span className="mt-0.5 block text-xs text-text-muted">{place}</span>}
+                {authorship.affiliations.length > 0 && (
+                  <span className="mt-0.5 block text-xs text-text-muted">{affiliationNames}</span>
+                )}
               </div>
             </li>
           )
         })}
       </ol>
 
-      <div className="mt-5 border-t border-dashed border-line pt-4">
-        <div className="flex items-start gap-3">
-          <span className="mt-0.5 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-coral-50 text-coral-500 dark:bg-coral-500/15 dark:text-coral-300">
-            <UserPlus className="h-4 w-4" strokeWidth={2} />
-          </span>
-          <div className="min-w-0">
-            <p className="text-sm font-semibold text-text-primary">{t('editor.contributorsLabel')}</p>
-            <p className="mt-0.5 text-xs leading-relaxed text-text-muted">{t('editor.contributorsHint')}</p>
+      {editable && (
+        <div className="mt-5 border-t border-dashed border-line pt-4">
+          <div className="flex items-start gap-3">
+            <span className="mt-0.5 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-coral-50 text-coral-500 dark:bg-coral-500/15 dark:text-coral-300">
+              <UserPlus className="h-4 w-4" strokeWidth={2} />
+            </span>
+            <div className="min-w-0">
+              <p className="text-sm font-semibold text-text-primary">{t('editor.contributorsLabel')}</p>
+              <p className="mt-0.5 text-xs leading-relaxed text-text-muted">{t('editor.contributorsHint')}</p>
+            </div>
           </div>
+          <Textarea
+            {...form.register('contributorsNote')}
+            rows={3}
+            placeholder={t('editor.contributorsPlaceholder')}
+            className="mt-3 resize-y"
+          />
         </div>
-        <Textarea
-          {...form.register('contributorsNote')}
-          rows={3}
-          placeholder={t('editor.contributorsPlaceholder')}
-          className="mt-3 resize-y"
-        />
-      </div>
+      )}
 
-      <button
-        type="button"
-        disabled={alreadyRequested || request.isExecuting}
-        onClick={() => request.execute({ articleId: article.id, note: form.getValues('contributorsNote').trim() || null })}
-        className="mt-4 inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-b from-coral-500 to-coral-600 text-sm font-bold text-white shadow-[0_8px_18px_-6px_rgba(214,31,85,0.55)] transition hover:brightness-105 disabled:opacity-60"
-      >
-        <Send className="h-4 w-4" strokeWidth={2.2} />
-        {alreadyRequested ? t('editor.alreadyRequested') : t('editor.requestAuthorList')}
-      </button>
+      {editable && (
+        <button
+          type="button"
+          disabled={alreadyRequested || request.isExecuting}
+          onClick={() => request.execute({ articleId: article.id, note: form.getValues('contributorsNote').trim() || null })}
+          className="mt-4 inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-b from-coral-500 to-coral-600 text-sm font-bold text-white shadow-[0_8px_18px_-6px_rgba(214,31,85,0.55)] transition hover:brightness-105 disabled:opacity-60"
+        >
+          <Send className="h-4 w-4" strokeWidth={2.2} />
+          {alreadyRequested ? t('editor.alreadyRequested') : t('editor.requestAuthorList')}
+        </button>
+      )}
     </CollapsibleCard>
   )
 }
