@@ -89,6 +89,7 @@ export async function getPublicationForEdit(articleId: string) {
     select: {
       id: true,
       title: true,
+      abstract: true,
       type: true,
       status: true,
       scope: true,
@@ -99,6 +100,9 @@ export async function getPublicationForEdit(articleId: string) {
       pdfUrl: true,
       pdfKey: true,
       publishedAt: true,
+      receivedAt: true,
+      acceptedAt: true,
+      reviewDelayDays: true,
       publishedJournal: { select: { name: true, abbreviation: true } },
       authorships: {
         orderBy: { order: 'asc' },
@@ -107,13 +111,16 @@ export async function getPublicationForEdit(articleId: string) {
           isCorresponding: true,
           author: {
             select: {
+              id: true,
               firstName: true,
               lastName: true,
               degrees: true,
               userId: true,
-              centre: { select: { name: true } },
-              defaultAffiliation: { select: { name: true } },
             },
+          },
+          affiliations: {
+            orderBy: { order: 'asc' },
+            select: { order: true, affiliation: { select: { centre: { select: { name: true } } } } },
           },
         },
       },
