@@ -34,7 +34,7 @@ test('admin dashboard shows metrics, filters the library and opens its modules',
   // Publications led by others stay out of the default admin view, one toggle brings them back
   const outsideArticle = page.getByRole('link', { name: 'Personal cohort study from a previous laboratory' })
   await expect(outsideArticle).toHaveCount(0)
-  const scopeToggle = page.getByRole('button', { name: 'Led by Larib' })
+  const scopeToggle = page.getByRole('button', { name: "Publication led by Larib's team" }).first()
   await expect(scopeToggle).toHaveAttribute('aria-pressed', 'true')
   await scopeToggle.click()
   await expect(scopeToggle).toHaveAttribute('aria-pressed', 'false')
@@ -137,15 +137,15 @@ test('admin dashboard shows metrics, filters the library and opens its modules',
   await expect(page.getByText(SEEDED_ARTICLE)).toBeVisible()
 
   // An admin can flip a publication's scope straight from the table
-  const scopeSelect = page.getByLabel(`Scope: ${SEEDED_ARTICLE}`)
-  await expect(scopeSelect).toHaveValue('LARIB_TEAM')
-  await scopeSelect.selectOption('OUTSIDE_TEAM')
+  const scopeStar = page.getByRole('button', { name: `Scope: ${SEEDED_ARTICLE}` })
+  await expect(scopeStar).toHaveAttribute('aria-pressed', 'true')
+  await scopeStar.click()
   // The default view only keeps what Larib led, so the row leaves the table right away
   await expect(articleLink).toHaveCount(0, { timeout: 20000 })
-  const libraryScopeToggle = page.getByRole('button', { name: 'Led by Larib' })
+  const libraryScopeToggle = page.getByRole('button', { name: "Publication led by Larib's team" }).first()
   await libraryScopeToggle.click()
   await expect(articleLink).toBeVisible()
-  await page.getByLabel(`Scope: ${SEEDED_ARTICLE}`).selectOption('LARIB_TEAM')
+  await page.getByRole('button', { name: `Scope: ${SEEDED_ARTICLE}` }).click()
   await libraryScopeToggle.click()
   await expect(articleLink).toBeVisible()
 

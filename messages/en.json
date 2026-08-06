@@ -1365,15 +1365,19 @@
       "assignStudy": "Assign a study",
       "scopeLabel": "Scope",
       "scopeSaved": "Scope updated",
-      "scope": {
-        "LARIB_TEAM": "Led by Larib",
-        "OUTSIDE_TEAM": "Led by others"
-      },
       "deleteArticle": "Delete publication",
       "deleteArticleConfirm": "This permanently removes “{title}”, its authors, submissions and PDF. This cannot be undone.",
       "articleDeleted": "Publication deleted",
       "cancel": "Cancel",
-      "downloadPdf": "Download the PDF"
+      "downloadPdf": "Download the PDF",
+      "scopeTooltip": {
+        "LARIB_TEAM": "Publication led by Larib's team",
+        "OUTSIDE_TEAM": "Publication led by another team"
+      },
+      "scope": {
+        "LARIB_TEAM": "Led by Larib",
+        "OUTSIDE_TEAM": "Led by others"
+      }
     },
     "journals": {
       "title": "Journals",
@@ -1638,7 +1642,7 @@
         "clearAll": "Clear filters",
         "noJournal": "No journal",
         "clearJournal": "Clear the journal filter",
-        "teamOnly": "Led by Larib"
+        "teamOnly": "Publication led by Larib's team"
       },
       "overview": {
         "hide": "Hide overview",

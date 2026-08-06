@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react'
 import { useTranslations } from 'next-intl'
-import { ChevronDown, Search, Users, X } from 'lucide-react'
+import { ChevronDown, Search, Star, X } from 'lucide-react'
 import { MultiSelect } from '@/components/ui/multiselect'
 import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
@@ -144,7 +144,7 @@ export function PublicationsDashboardView({
                 : 'border-line text-text-muted hover:bg-gray-50 hover:text-text-secondary dark:hover:bg-white/5',
             )}
           >
-            <Users className="size-4" strokeWidth={2.2} />
+            <Star className={cn('size-4', teamOnly ? 'fill-current' : 'fill-none')} strokeWidth={2.2} />
           </button>
 
           {hasActiveFilters && (

@@ -6,17 +6,16 @@ import { Link } from '@/app/i18n/navigation'
 import { cn } from '@/lib/utils'
 import { ARTICLE_STATUS_TONE, pillClassName } from '@/lib/publications/status-display'
 import { ARTICLE_TYPE_BADGE } from '@/lib/publications/article-type'
-import { ARTICLE_SCOPE_BADGE } from '@/lib/publications/article-scope'
 import type { DashboardArticleItem } from '@/lib/publications/admin-dashboard'
 import { ARTICLE_SORT_KEYS, type ArticleSort, type ArticleSortKey } from '@/lib/publications/article-sort'
 import type { StudyOption } from '@/lib/services/publications/studies'
 import { SubmissionHistory } from '../submission-history'
 import { ArticleStudySelect } from './article-study-select'
-import { ArticleScopeSelect } from './article-scope-select'
+import { ArticleScopeStar } from './article-scope-star'
 import { ArticleDeleteButton } from './article-delete-button'
 
 export const ARTICLES_GRID =
-  'grid grid-cols-[minmax(240px,1fr)_150px_128px_128px_128px_176px_132px] items-center gap-3.5'
+  'grid grid-cols-[minmax(240px,1fr)_150px_128px_56px_128px_176px_132px] items-center gap-3.5'
 
 export type ArticleRowExpansion = {
   open: boolean
@@ -125,22 +124,12 @@ export function ArticleListRow({
         </div>
 
         <div className="min-w-0">
-          {admin ? (
-            <ArticleScopeSelect
-              articleId={article.id}
-              articleTitle={article.title || t('myPub.untitled')}
-              scope={article.scope}
-            />
-          ) : (
-            <span
-              className={cn(
-                'inline-flex rounded border px-1.5 py-0.5 text-[9.5px] font-bold uppercase tracking-wide',
-                ARTICLE_SCOPE_BADGE[article.scope],
-              )}
-            >
-              {t(`articles.scope.${article.scope}`)}
-            </span>
-          )}
+          <ArticleScopeStar
+            articleId={article.id}
+            articleTitle={article.title || t('myPub.untitled')}
+            scope={article.scope}
+            editable={Boolean(admin)}
+          />
         </div>
 
         <div>

@@ -1363,15 +1363,19 @@
       "assignStudy": "Associer une étude",
       "scopeLabel": "Scope",
       "scopeSaved": "Scope mis à jour",
-      "scope": {
-        "LARIB_TEAM": "Menée par Larib",
-        "OUTSIDE_TEAM": "Menée par d’autres"
-      },
       "deleteArticle": "Supprimer la publication",
       "deleteArticleConfirm": "Cela supprime définitivement « {title} », ses auteurs, ses soumissions et son PDF. Action irréversible.",
       "articleDeleted": "Publication supprimée",
       "cancel": "Annuler",
-      "downloadPdf": "Télécharger le PDF"
+      "downloadPdf": "Télécharger le PDF",
+      "scopeTooltip": {
+        "LARIB_TEAM": "Publication menée par l'équipe Larib",
+        "OUTSIDE_TEAM": "Publication menée par une autre équipe"
+      },
+      "scope": {
+        "LARIB_TEAM": "Menée par Larib",
+        "OUTSIDE_TEAM": "Menée par d’autres"
+      }
     },
     "journals": {
       "title": "Journaux",
@@ -1636,7 +1640,7 @@
         "clearAll": "Effacer les filtres",
         "noJournal": "Aucune revue",
         "clearJournal": "Annuler le filtre de revue",
-        "teamOnly": "Menée par Larib"
+        "teamOnly": "Publication menée par l'équipe Larib"
       },
       "overview": {
         "hide": "Masquer la synthèse",
