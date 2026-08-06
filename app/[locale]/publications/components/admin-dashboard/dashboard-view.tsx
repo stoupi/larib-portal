@@ -7,7 +7,7 @@ import { MultiSelect } from '@/components/ui/multiselect'
 import { Input } from '@/components/ui/input'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
-import { ScopePill } from '../articles/article-scope-switch'
+import { ScopeToggleFace } from '../articles/article-scope-switch'
 import { ARTICLE_STATUS_VALUES } from '@/lib/publications/status-display'
 import {
   ALL_FILTER,
@@ -146,7 +146,7 @@ export function PublicationsDashboardView({
                 onClick={() => updateFilter({ scopes: teamOnly ? [] : ['LARIB_TEAM'] })}
                 className="inline-flex shrink-0"
               >
-                <ScopePill checked={teamOnly} size="lg" />
+                <ScopeToggleFace checked={teamOnly} size="lg" />
               </button>
             </TooltipTrigger>
             <TooltipContent>{t('filters.teamOnly')}</TooltipContent>

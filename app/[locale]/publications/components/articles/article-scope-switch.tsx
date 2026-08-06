@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import { useAction } from 'next-safe-action/hooks'
@@ -46,6 +47,23 @@ export function ScopePill({ checked, size }: { checked: boolean; size: 'sm' | 'l
   )
 }
 
+export function ScopeToggleFace({ checked, size }: { checked: boolean; size: 'sm' | 'lg' }) {
+  const t = useTranslations('publications.articles')
+  return (
+    <span className="inline-flex flex-col items-center gap-1">
+      <span
+        className={cn(
+          'text-[9px] font-light uppercase tracking-[0.2em]',
+          checked ? 'text-coral-600' : 'text-text-muted',
+        )}
+      >
+        {t('scopeShortLabel')}
+      </span>
+      <ScopePill checked={checked} size={size} />
+    </span>
+  )
+}
+
 export function ArticleScopeSwitch({
   articleId,
   articleTitle,
@@ -61,25 +79,27 @@ export function ArticleScopeSwitch({
 }) {
   const t = useTranslations('publications.articles')
   const router = useRouter()
+  const [optimisticScope, setOptimisticScope] = useState(scope)
   const { execute, isExecuting } = useAction(updateArticleScopeAction, {
     onSuccess() {
       toast.success(t('scopeSaved'))
       router.refresh()
     },
     onError() {
+      setOptimisticScope(scope)
       toast.error(t('actionError'))
     },
   })
 
-  const checked = scope === 'LARIB_TEAM'
-  const tooltip = t(`scopeTooltip.${scope}`)
+  const checked = optimisticScope === 'LARIB_TEAM'
+  const tooltip = t(`scopeTooltip.${optimisticScope}`)
 
   if (!editable) {
     return (
       <Tooltip>
         <TooltipTrigger asChild>
           <span aria-label={`${tooltip}: ${articleTitle}`} className="inline-flex">
-            <ScopePill checked={checked} size={size} />
+            <ScopeToggleFace checked={checked} size={size} />
           </span>
         </TooltipTrigger>
         <TooltipContent>{tooltip}</TooltipContent>
@@ -95,7 +115,11 @@ export function ArticleScopeSwitch({
           aria-label={`${t('scopeLabel')}: ${articleTitle}`}
           aria-pressed={checked}
           disabled={isExecuting}
-          onClick={() => execute({ id: articleId, scope: checked ? 'OUTSIDE_TEAM' : 'LARIB_TEAM' })}
+          onClick={() => {
+            const nextScope = checked ? 'OUTSIDE_TEAM' : 'LARIB_TEAM'
+            setOptimisticScope(nextScope)
+            execute({ id: articleId, scope: nextScope })
+          }}
           className="inline-flex disabled:opacity-60"
         >
           <ScopePill checked={checked} size={size} />
