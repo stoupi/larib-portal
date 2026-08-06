@@ -47,18 +47,40 @@ export function ScopePill({ checked, size }: { checked: boolean; size: 'sm' | 'l
   )
 }
 
-export function ScopeToggleFace({ checked, size }: { checked: boolean; size: 'sm' | 'lg' }) {
+export function ScopeToggleFace({
+  checked,
+  size,
+  layout = 'stack',
+}: {
+  checked: boolean
+  size: 'sm' | 'lg'
+  layout?: 'stack' | 'inline'
+}) {
   const t = useTranslations('publications.articles')
+  const label = (
+    <span
+      className={cn(
+        'text-[9px] uppercase tracking-[0.2em]',
+        layout === 'inline' ? 'text-[10px] font-bold' : 'font-light',
+        checked ? 'text-coral-600' : 'text-text-muted',
+      )}
+    >
+      {t('scopeShortLabel')}
+    </span>
+  )
+
+  if (layout === 'inline') {
+    return (
+      <span className="inline-flex items-center gap-1.5">
+        {label}
+        <ScopePill checked={checked} size={size} />
+      </span>
+    )
+  }
+
   return (
     <span className="inline-flex flex-col items-center gap-1">
-      <span
-        className={cn(
-          'text-[9px] font-light uppercase tracking-[0.2em]',
-          checked ? 'text-coral-600' : 'text-text-muted',
-        )}
-      >
-        {t('scopeShortLabel')}
-      </span>
+      {label}
       <ScopePill checked={checked} size={size} />
     </span>
   )
