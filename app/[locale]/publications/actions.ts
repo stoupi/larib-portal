@@ -45,10 +45,15 @@ export const searchBacklogAction = appAdminAction('PUBLICATIONS')
   })
 
 export const importBacklogAction = appAdminAction('PUBLICATIONS')
-  .inputSchema(z.object({ pmids: z.array(z.string().min(1)).min(1) }))
+  .inputSchema(
+    z.object({
+      papers: z.array(z.object({ pmid: z.string().min(1), scope: z.enum(ARTICLE_SCOPES) })).min(1),
+    }),
+  )
   .action(async ({ parsedInput, ctx }) => {
-    const records = await fetchByPmids(parsedInput.pmids)
-    const report = await importRecords(records, ctx.userId)
+    const scopeByPmid = new Map(parsedInput.papers.map((paper) => [paper.pmid, paper.scope]))
+    const records = await fetchByPmids(parsedInput.papers.map((paper) => paper.pmid))
+    const report = await importRecords(records, ctx.userId, scopeByPmid)
     const duplicates = await findLibraryDuplicates()
     revalidateTag(PUBLICATIONS_JOURNALS_TAG)
     revalidateTag(PUBLICATIONS_AUTHORS_TAG)

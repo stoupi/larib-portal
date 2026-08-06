@@ -1,9 +1,11 @@
 import { prisma } from '@/lib/prisma'
 import type { PubmedRecord, ImportReport } from '@/types/publications'
-import { authorDedupeKey } from './import-dedupe'
+import { authorDedupeKey, pickAuthorMatch } from './import-dedupe'
 import { upsertAffiliationWithCentre } from './affiliations'
 import { reviewDelayDays } from './pubmed-parse'
 import { classifyArticleType } from '@/lib/publications/article-type'
+import type { ArticleScopeValue } from '@/lib/publications/article-scope'
+import { resolveImportScope } from './import-scope'
 
 export const PUBLICATIONS_JOURNALS_TAG = 'publications:journals'
 export const PUBLICATIONS_AUTHORS_TAG = 'publications:authors'
@@ -40,14 +42,27 @@ async function upsertAuthor(
   const cached = cache.get(key)
   if (cached) return cached
 
-  const firstChar = (author.initials ?? author.foreName ?? '').charAt(0)
-  const existing = author.orcid
-    ? await prisma.author.findFirst({ where: { orcid: author.orcid }, select: { id: true } })
-    : await prisma.author.findFirst({
-        where: { lastName: author.lastName, initials: firstChar ? { startsWith: firstChar } : undefined },
-        select: { id: true },
-      })
+  const plainLastName = author.lastName.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+  const candidates = await prisma.author.findMany({
+    where: {
+      OR: [
+        ...(author.orcid ? [{ orcid: author.orcid }] : []),
+        { lastName: { equals: author.lastName, mode: 'insensitive' } },
+        { lastName: { equals: plainLastName, mode: 'insensitive' } },
+      ],
+    },
+    select: { id: true, firstName: true, lastName: true, initials: true, orcid: true },
+  })
+  const existing = pickAuthorMatch(candidates, author)
   if (existing) {
+    // The record can carry details the stored author still lacks.
+    const enrichment = {
+      ...(author.orcid && !existing.orcid ? { orcid: author.orcid } : {}),
+      ...(author.initials && !existing.initials ? { initials: author.initials } : {}),
+    }
+    if (Object.keys(enrichment).length > 0) {
+      await prisma.author.update({ where: { id: existing.id }, data: enrichment })
+    }
     cache.set(key, existing.id)
     return existing.id
   }
@@ -65,7 +80,11 @@ async function upsertAuthor(
   return created.id
 }
 
-export async function importRecords(records: PubmedRecord[], createdById: string): Promise<ImportReport> {
+export async function importRecords(
+  records: PubmedRecord[],
+  createdById: string,
+  scopeByPmid: Map<string, ArticleScopeValue> = new Map(),
+): Promise<ImportReport> {
   const report: ImportReport = { articlesCreated: 0, articlesSkipped: 0, authorsCreated: 0, journalsCreated: 0, errors: [] }
   const authorCache = new Map<string, string>()
 
@@ -105,6 +124,7 @@ export async function importRecords(records: PubmedRecord[], createdById: string
           reviewDelayDays: reviewDelayDays(record.receivedAt, record.acceptedAt),
           publishedJournalId,
           createdById,
+          scope: resolveImportScope(scopeByPmid, record.pmid),
           authorships: {
             create: authorships,
           },

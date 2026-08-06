@@ -1056,6 +1056,7 @@
       "colSelect": "Importer",
       "colTitle": "Titre",
       "colJournal": "Journal",
+      "colScope": "Rattachement",
       "colYear": "Année",
       "colAuthors": "Auteurs",
       "selectAll": "Tout sélectionner",

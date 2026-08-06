@@ -1058,6 +1058,7 @@
       "colSelect": "Import",
       "colTitle": "Title",
       "colJournal": "Journal",
+      "colScope": "Scope",
       "colYear": "Year",
       "colAuthors": "Authors",
       "selectAll": "Select all",
