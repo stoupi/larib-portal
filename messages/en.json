@@ -1633,7 +1633,8 @@
         "allStatuses": "All statuses",
         "clearAll": "Clear filters",
         "noJournal": "No journal",
-        "clearJournal": "Clear the journal filter"
+        "clearJournal": "Clear the journal filter",
+        "clearScopeFilter": "Show every scope"
       },
       "overview": {
         "hide": "Hide overview",
@@ -1668,7 +1669,8 @@
         "clearAuthorSearch": "Clear the co-author search",
         "yearRange": "Year range",
         "byJournal": "By journal",
-        "clearScope": "Clear the co-author scope"
+        "clearScope": "Clear the co-author scope",
+        "byScope": "By scope"
       },
       "colStudy": "Study",
       "openLibrary": "Open library",
