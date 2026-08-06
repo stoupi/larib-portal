@@ -3,7 +3,7 @@ import type { ArticleTypeValue } from './article-type'
 import type { MyPublicationSubmission } from '@/lib/services/publications/my-publications'
 import { ARTICLE_STATUS_VALUES, POSITION_BUCKETS, authorPositionBucket, type PositionBucket } from './status-display'
 import { matchesArticleQuery } from './admin-article-stats'
-import { type ArticleScopeValue } from './article-scope'
+import { ARTICLE_SCOPES, type ArticleScopeValue } from './article-scope'
 
 export type DashboardArticleItem = {
   id: string
@@ -107,6 +107,7 @@ export type CoAuthorCount = { id: string; name: string; team: boolean; count: nu
 export type CoAuthorScope = 'all' | 'team' | 'external'
 export type YearCount = { year: number; count: number }
 export type StatusCount = { status: ArticleStatusValue; count: number }
+export type ScopeCount = { scope: ArticleScopeValue; count: number }
 export type StudyCount = { id: string; label: string | null; count: number }
 export type JournalCount = { id: string; label: string | null; count: number }
 
@@ -123,6 +124,7 @@ export type DashboardMetrics = {
   byStatus: StatusCount[]
   byStudy: StudyCount[]
   byJournal: JournalCount[]
+  byScope: ScopeCount[]
 }
 
 export function filterDashboardArticles(
@@ -209,6 +211,7 @@ export function computeDashboardMetrics(articles: DashboardArticleItem[], curren
   const journalCounts = new Map<string, { label: string | null; count: number }>()
   const yearCounts = new Map<number, number>()
   const statusCounts = new Map<ArticleStatusValue, number>()
+  const scopeCounts = new Map<ArticleScopeValue, number>()
   let publishedCount = 0
   let inProgressCount = 0
   let currentYearCount = 0
@@ -228,6 +231,7 @@ export function computeDashboardMetrics(articles: DashboardArticleItem[], curren
     else journalCounts.set(journalKey, { label: article.journal, count: 1 })
     if (article.year != null) yearCounts.set(article.year, (yearCounts.get(article.year) ?? 0) + 1)
     statusCounts.set(article.status, (statusCounts.get(article.status) ?? 0) + 1)
+    scopeCounts.set(article.scope, (scopeCounts.get(article.scope) ?? 0) + 1)
     for (const author of article.authors) {
       authorProfiles.set(author.id, { name: author.name, team: author.team })
       authorCounts.set(author.id, (authorCounts.get(author.id) ?? 0) + 1)
@@ -271,6 +275,11 @@ export function computeDashboardMetrics(articles: DashboardArticleItem[], curren
       return second.count - first.count || (first.label ?? '').localeCompare(second.label ?? '')
     })
 
+  const byScope: ScopeCount[] = ARTICLE_SCOPES.filter((scope) => (scopeCounts.get(scope) ?? 0) > 0).map((scope) => ({
+    scope,
+    count: scopeCounts.get(scope) ?? 0,
+  }))
+
   return {
     total: articles.length,
     publishedCount,
@@ -284,5 +293,6 @@ export function computeDashboardMetrics(articles: DashboardArticleItem[], curren
     byStatus,
     byStudy,
     byJournal,
+    byScope,
   }
 }

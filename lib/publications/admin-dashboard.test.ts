@@ -344,3 +344,20 @@ describe('computeDashboardMetrics', () => {
     expect(metrics).toMatchObject({ total: 0, publishedShare: 0, coAuthorCount: 0, perYear: [], byStatus: [], coAuthors: [] })
   })
 })
+
+describe('scope counts', () => {
+  it('counts both scopes, team first, ignoring the empty one', () => {
+    const mixed = [
+      article({ id: '1', scope: 'LARIB_TEAM' }),
+      article({ id: '2', scope: 'OUTSIDE_TEAM' }),
+      article({ id: '3', scope: 'OUTSIDE_TEAM' }),
+    ]
+    expect(computeDashboardMetrics(mixed, 2025).byScope).toEqual([
+      { scope: 'LARIB_TEAM', count: 1 },
+      { scope: 'OUTSIDE_TEAM', count: 2 },
+    ])
+    expect(computeDashboardMetrics([article({ id: '1' })], 2025).byScope).toEqual([
+      { scope: 'LARIB_TEAM', count: 1 },
+    ])
+  })
+})
