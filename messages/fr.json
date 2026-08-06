@@ -1081,7 +1081,10 @@
       "duplicateAuthors": "{count} groupe(s) d’auteurs semblent être la même personne ({names}…).",
       "duplicateJournals": "{count} groupe(s) de revues semblent être la même revue ({names}…).",
       "reviewAuthors": "Vérifier les auteurs",
-      "reviewJournals": "Vérifier les revues"
+      "reviewJournals": "Vérifier les revues",
+      "toggleDetail": "Afficher les auteurs",
+      "loadingDetail": "Chargement…",
+      "noAbstract": "Pas de résumé"
     },
     "authors": {
       "title": "Auteurs",

@@ -18,6 +18,7 @@ import {
 } from '@/lib/services/publications/import'
 import { updateAuthor, deleteAuthor, mergeAuthors, recomputeAuthorCentres, createAuthor, getAuthorDetail, getAuthorForEdit, isPrismaKnownError } from '@/lib/services/publications/authors'
 import { findAuthorDuplicates, matchAuthorsAgainstBank, normalizeName } from '@/lib/services/publications/author-dedup'
+import { normalizeName as normalizeAuthorName, authorFirstInitial } from '@/lib/services/publications/import-dedupe'
 import { fetchPublicationByIdentifier } from '@/lib/services/publications/publication-lookup'
 import { backfillAffiliations, PUBLICATIONS_CENTRES_TAG, PUBLICATIONS_AFFILIATIONS_TAG } from '@/lib/services/publications/affiliations'
 import { renameCentre, setCentreOwn, deleteCentre, mergeCentres, getCentreAuthors, createCentre, updateCentre } from '@/lib/services/publications/centres'
@@ -42,6 +43,26 @@ export const searchBacklogAction = appAdminAction('PUBLICATIONS')
       listPublicationTitles(),
     ])
     return matchCandidates(candidates, known, library)
+  })
+
+export const fetchCandidateDetailAction = appAdminAction('PUBLICATIONS')
+  .inputSchema(z.object({ pmid: z.string().min(1) }))
+  .action(async ({ parsedInput }) => {
+    const [record] = await fetchByPmids([parsedInput.pmid])
+    if (!record) return null
+    const teamAuthors = await prisma.author.findMany({
+      where: { type: 'OUR_TEAM' },
+      select: { firstName: true, lastName: true, initials: true },
+    })
+    const authors = record.authors.map((author) => ({
+      name: `${author.foreName ?? author.initials ?? ''} ${author.lastName}`.trim(),
+      team: teamAuthors.some(
+        (teamAuthor) =>
+          normalizeAuthorName(teamAuthor.lastName) === normalizeAuthorName(author.lastName) &&
+          authorFirstInitial(teamAuthor) === authorFirstInitial(author),
+      ),
+    }))
+    return { authors, abstract: record.abstract ? record.abstract.slice(0, 400) : null, doi: record.doi }
   })
 
 export const importBacklogAction = appAdminAction('PUBLICATIONS')

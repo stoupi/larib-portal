@@ -1083,7 +1083,10 @@
       "duplicateAuthors": "{count} author group(s) look like the same person ({names}…).",
       "duplicateJournals": "{count} journal group(s) look like the same journal ({names}…).",
       "reviewAuthors": "Review authors",
-      "reviewJournals": "Review journals"
+      "reviewJournals": "Review journals",
+      "toggleDetail": "Show the authors",
+      "loadingDetail": "Loading…",
+      "noAbstract": "No abstract"
     },
     "authors": {
       "title": "Authors",

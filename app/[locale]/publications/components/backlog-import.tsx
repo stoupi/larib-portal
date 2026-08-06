@@ -1,19 +1,25 @@
 'use client'
 
-import { useState } from 'react'
+import { Fragment, useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { useAction } from 'next-safe-action/hooks'
 import { toast } from 'sonner'
+import { ChevronRight } from 'lucide-react'
 import { Link } from '@/app/i18n/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table'
-import { searchBacklogAction, importBacklogAction, backfillAffiliationsAction } from '../actions'
+import { cn } from '@/lib/utils'
+import { searchBacklogAction, importBacklogAction, backfillAffiliationsAction, fetchCandidateDetailAction } from '../actions'
 import type { ImportReport } from '@/types/publications'
 import { newCandidatePmids, type CandidateMatch, type ImportCandidate } from '@/lib/publications/import-candidates'
 import type { LibraryDuplicates } from '@/lib/services/publications/duplicates'
-import { ARTICLE_SCOPES, type ArticleScopeValue } from '@/lib/publications/article-scope'
+import { ARTICLE_SCOPES, proposeArticleScope, type ArticleScopeValue } from '@/lib/publications/article-scope'
+
+const IMPORT_TABLE_COLUMN_COUNT = 6
+
+type CandidateDetail = { authors: { name: string; team: boolean }[]; abstract: string | null; doi: string | null }
 
 const MATCH_BADGE_CLASS: Record<CandidateMatch, string> = {
   new: 'inline-flex rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-[11px] font-bold text-emerald-700 dark:border-emerald-500/30 dark:bg-emerald-500/15 dark:text-emerald-300',
@@ -31,8 +37,12 @@ export function BacklogImport() {
   const [candidates, setCandidates] = useState<ImportCandidate[]>([])
   const [selected, setSelected] = useState<Set<string>>(new Set())
   const [scopes, setScopes] = useState<Record<string, ArticleScopeValue>>({})
+  const [manuallySetScopes, setManuallySetScopes] = useState<Set<string>>(new Set())
   const [report, setReport] = useState<ImportReport | null>(null)
   const [duplicates, setDuplicates] = useState<LibraryDuplicates | null>(null)
+  const [expanded, setExpanded] = useState<Set<string>>(new Set())
+  const [details, setDetails] = useState<Record<string, CandidateDetail>>({})
+  const [pendingDetailPmid, setPendingDetailPmid] = useState<string | null>(null)
 
   const { execute: runSearch, isExecuting: searching } = useAction(searchBacklogAction, {
     onSuccess({ data }) {
@@ -40,11 +50,28 @@ export function BacklogImport() {
       setCandidates(found)
       setSelected(new Set(newCandidatePmids(found)))
       setScopes({})
+      setManuallySetScopes(new Set())
       setReport(null)
       setDuplicates(null)
+      setExpanded(new Set())
+      setDetails({})
     },
     onError() {
       toast.error(t('import.searchError'))
+    },
+  })
+
+  const detail = useAction(fetchCandidateDetailAction, {
+    onSuccess({ data, input }) {
+      setPendingDetailPmid(null)
+      if (!data) return
+      setDetails((current) => ({ ...current, [input.pmid]: data }))
+      if (!manuallySetScopes.has(input.pmid)) {
+        setScopes((current) => ({ ...current, [input.pmid]: proposeArticleScope(data.authors) }))
+      }
+    },
+    onError() {
+      setPendingDetailPmid(null)
     },
   })
 
@@ -88,6 +115,19 @@ export function BacklogImport() {
 
   function toggleAll() {
     setSelected((prev) => (prev.size === candidates.length ? new Set() : new Set(candidates.map((paper) => paper.pmid))))
+  }
+
+  function toggleExpanded(pmid: string) {
+    setExpanded((prev) => {
+      const next = new Set(prev)
+      if (next.has(pmid)) next.delete(pmid)
+      else next.add(pmid)
+      return next
+    })
+    if (!details[pmid]) {
+      setPendingDetailPmid(pmid)
+      detail.execute({ pmid })
+    }
   }
 
   const knownCount = candidates.filter((paper) => paper.match === 'known').length
@@ -142,49 +182,99 @@ export function BacklogImport() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {candidates.map((paper) => (
-                <TableRow key={paper.pmid} className={paper.match === 'new' ? undefined : 'bg-gray-50/70 dark:bg-white/[0.03]'}>
-                  <TableCell>
-                    <Checkbox
-                      checked={selected.has(paper.pmid)}
-                      onCheckedChange={() => toggle(paper.pmid)}
-                      aria-label={paper.title}
-                    />
-                  </TableCell>
-                  <TableCell className="font-medium">
-                    {paper.title}
-                    <span className="mt-0.5 block text-xs font-normal text-text-muted">PMID {paper.pmid}</span>
-                  </TableCell>
-                  <TableCell>{paper.journal || '—'}</TableCell>
-                  <TableCell>
-                    <select
-                      value={scopes[paper.pmid] ?? 'OUTSIDE_TEAM'}
-                      aria-label={`${tArticles('scopeLabel')}: ${paper.title}`}
-                      onChange={(event) =>
-                        setScopes((current) => ({ ...current, [paper.pmid]: event.target.value as ArticleScopeValue }))
-                      }
-                      className="w-full truncate rounded-md border border-line bg-bg-surface px-2 py-1 text-[11.5px] font-bold text-text-secondary"
-                    >
-                      {ARTICLE_SCOPES.map((value) => (
-                        <option key={value} value={value}>
-                          {tArticles(`scope.${value}`)}
-                        </option>
-                      ))}
-                    </select>
-                  </TableCell>
-                  <TableCell>
-                    <span className={MATCH_BADGE_CLASS[paper.match]} title={paper.matchedTitle ?? undefined}>
-                      {t(`import.match.${paper.match}`)}
-                    </span>
-                    {paper.matchedTitle && (
-                      <span className="mt-0.5 block max-w-[220px] truncate text-xs text-text-muted" title={paper.matchedTitle}>
-                        {paper.matchedTitle}
-                      </span>
+              {candidates.map((paper) => {
+                const isExpanded = expanded.has(paper.pmid)
+                const paperDetail = details[paper.pmid]
+                const isLoadingDetail = isExpanded && !paperDetail && pendingDetailPmid === paper.pmid
+                return (
+                  <Fragment key={paper.pmid}>
+                    <TableRow className={paper.match === 'new' ? undefined : 'bg-gray-50/70 dark:bg-white/[0.03]'}>
+                      <TableCell>
+                        <Checkbox
+                          checked={selected.has(paper.pmid)}
+                          onCheckedChange={() => toggle(paper.pmid)}
+                          aria-label={paper.title}
+                        />
+                      </TableCell>
+                      <TableCell className="font-medium">
+                        <div className="flex items-start gap-2">
+                          <button
+                            type="button"
+                            aria-label={t('import.toggleDetail')}
+                            onClick={() => toggleExpanded(paper.pmid)}
+                            className={cn(
+                              'mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-md border transition',
+                              isExpanded
+                                ? 'border-coral-200 bg-coral-50 text-coral-600 dark:border-coral-500/40 dark:bg-coral-500/15'
+                                : 'border-line bg-bg-surface text-text-muted',
+                            )}
+                          >
+                            <ChevronRight className={cn('h-3 w-3 transition-transform', isExpanded && 'rotate-90')} strokeWidth={2.4} />
+                          </button>
+                          <div>
+                            {paper.title}
+                            <span className="mt-0.5 block text-xs font-normal text-text-muted">PMID {paper.pmid}</span>
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell>{paper.journal || '—'}</TableCell>
+                      <TableCell>
+                        <select
+                          value={scopes[paper.pmid] ?? 'OUTSIDE_TEAM'}
+                          aria-label={`${tArticles('scopeLabel')}: ${paper.title}`}
+                          onChange={(event) => {
+                            setManuallySetScopes((current) => new Set(current).add(paper.pmid))
+                            setScopes((current) => ({ ...current, [paper.pmid]: event.target.value as ArticleScopeValue }))
+                          }}
+                          className="w-full truncate rounded-md border border-line bg-bg-surface px-2 py-1 text-[11.5px] font-bold text-text-secondary"
+                        >
+                          {ARTICLE_SCOPES.map((value) => (
+                            <option key={value} value={value}>
+                              {tArticles(`scope.${value}`)}
+                            </option>
+                          ))}
+                        </select>
+                      </TableCell>
+                      <TableCell>
+                        <span className={MATCH_BADGE_CLASS[paper.match]} title={paper.matchedTitle ?? undefined}>
+                          {t(`import.match.${paper.match}`)}
+                        </span>
+                        {paper.matchedTitle && (
+                          <span className="mt-0.5 block max-w-[220px] truncate text-xs text-text-muted" title={paper.matchedTitle}>
+                            {paper.matchedTitle}
+                          </span>
+                        )}
+                      </TableCell>
+                      <TableCell>{paper.year ?? '—'}</TableCell>
+                    </TableRow>
+                    {isExpanded && (
+                      <TableRow>
+                        <TableCell colSpan={IMPORT_TABLE_COLUMN_COUNT} className="bg-gray-50/70 text-sm dark:bg-white/[0.03]">
+                          {isLoadingDetail ? (
+                            <span className="text-text-secondary">{t('import.loadingDetail')}</span>
+                          ) : paperDetail ? (
+                            <div className="space-y-2">
+                              <p>
+                                {paperDetail.authors.map((author, index) => (
+                                  <span key={`${author.name}-${index}`}>
+                                    <span className={author.team ? 'font-bold text-coral-600' : 'text-text-secondary'}>
+                                      {author.name}
+                                    </span>
+                                    {index < paperDetail.authors.length - 1 ? ', ' : ''}
+                                  </span>
+                                ))}
+                              </p>
+                              <p className="text-text-secondary">{paperDetail.abstract || t('import.noAbstract')}</p>
+                            </div>
+                          ) : (
+                            <span className="text-text-secondary">{t('import.loadingDetail')}</span>
+                          )}
+                        </TableCell>
+                      </TableRow>
                     )}
-                  </TableCell>
-                  <TableCell>{paper.year ?? '—'}</TableCell>
-                </TableRow>
-              ))}
+                  </Fragment>
+                )
+              })}
             </TableBody>
           </Table>
           <Button
