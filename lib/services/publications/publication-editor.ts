@@ -66,6 +66,7 @@ export async function getPublicationForEdit(articleId: string) {
       title: true,
       type: true,
       status: true,
+      scope: true,
       studyId: true,
       pubmedId: true,
       doi: true,
