@@ -1638,7 +1638,8 @@
         "clearAll": "Clear filters",
         "noJournal": "No journal",
         "clearJournal": "Clear the journal filter",
-        "clearScopeFilter": "Show every scope"
+        "teamOnly": "Lariboisière team only",
+        "everyScope": "Every scope"
       },
       "overview": {
         "hide": "Hide overview",
@@ -1673,8 +1674,7 @@
         "clearAuthorSearch": "Clear the co-author search",
         "yearRange": "Year range",
         "byJournal": "By journal",
-        "clearScope": "Clear the co-author scope",
-        "byScope": "By scope"
+        "clearScope": "Clear the co-author scope"
       },
       "colStudy": "Study",
       "openLibrary": "Open library",

@@ -83,7 +83,7 @@ export function DashboardCharts({
   const selectedYears = yearBounds ? yearRangeBounds(filters, yearBounds) : [0, 0]
 
   return (
-    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-6">
+    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
       <section className="flex h-[296px] flex-col rounded-2xl border border-line bg-bg-surface p-4 shadow-elevation-xs">
         <div className="flex items-center justify-between gap-3">
           <CardTitle>{t('byCoAuthor')}</CardTitle>
@@ -314,50 +314,6 @@ export function DashboardCharts({
                     />
                     <span className="flex-1 truncate text-[13px] text-text-primary" title={label}>
                       {label}
-                    </span>
-                    <span className="pl-2 text-[13px] font-bold text-text-primary tabular-nums">{entry.count}</span>
-                  </button>
-                </li>
-              )
-            })}
-          </ul>
-        )}
-      </section>
-
-      <section className="flex h-[296px] flex-col rounded-2xl border border-line bg-bg-surface p-4 shadow-elevation-xs">
-        <CardHeaderRow
-          title={t('byScope')}
-          clear={
-            filters.scopes.length > 0
-              ? { label: tFilters('clearScopeFilter'), onClear: () => onFilter({ scopes: [] }) }
-              : null
-          }
-        />
-        {metrics.byScope.length === 0 ? (
-          <EmptyHint>{t('noData')}</EmptyHint>
-        ) : (
-          <ul className="mt-3 min-h-0 flex-1 space-y-1 overflow-y-auto pr-2">
-            {metrics.byScope.map((entry) => {
-              const active = filters.scopes.includes(entry.scope)
-              return (
-                <li key={entry.scope}>
-                  <button
-                    type="button"
-                    aria-pressed={active}
-                    onClick={() => onFilter({ scopes: toggleFilterValue(filters.scopes, entry.scope) })}
-                    className={cn(
-                      'flex w-full items-center gap-2.5 rounded-lg px-1.5 py-1 text-left transition',
-                      active ? 'bg-coral-50 dark:bg-coral-500/10' : 'hover:bg-gray-50 dark:hover:bg-white/5',
-                    )}
-                  >
-                    <span
-                      className={cn(
-                        'size-2.5 shrink-0 rounded-full',
-                        entry.scope === 'LARIB_TEAM' ? 'bg-coral-500' : 'bg-gray-300 dark:bg-white/25',
-                      )}
-                    />
-                    <span className="flex-1 truncate text-[13px] text-text-primary">
-                      {tStatus(`scope.${entry.scope}`)}
                     </span>
                     <span className="pl-2 text-[13px] font-bold text-text-primary tabular-nums">{entry.count}</span>
                   </button>

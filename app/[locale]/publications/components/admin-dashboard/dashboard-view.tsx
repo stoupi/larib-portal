@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react'
 import { useTranslations } from 'next-intl'
-import { ChevronDown, Search, X } from 'lucide-react'
+import { ChevronDown, Search, Users, X } from 'lucide-react'
 import { MultiSelect } from '@/components/ui/multiselect'
 import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
@@ -53,6 +53,8 @@ export function PublicationsDashboardView({
     const focusedAuthorId = resolveFocusedAuthor(metrics.coAuthors, filters)
     return focusedAuthorId ? authorFocus(filtered, focusedAuthorId) : null
   }, [metrics.coAuthors, filters, filtered])
+
+  const teamOnly = filters.scopes.length === 1 && filters.scopes[0] === 'LARIB_TEAM'
 
   const hasActiveFilters =
     filters.query.trim() !== '' ||
@@ -128,6 +130,21 @@ export function PublicationsDashboardView({
               className="h-9 min-w-[168px] rounded-full border-line bg-gray-50 dark:bg-white/10"
             />
           </div>
+
+          <button
+            type="button"
+            aria-pressed={teamOnly}
+            onClick={() => updateFilter({ scopes: teamOnly ? [] : ['LARIB_TEAM'] })}
+            className={cn(
+              'inline-flex h-9 shrink-0 items-center gap-1.5 rounded-full border px-3.5 text-[13px] font-bold transition',
+              teamOnly
+                ? 'border-coral-200 bg-coral-50 text-coral-600 dark:border-coral-500/30 dark:bg-coral-500/15 dark:text-coral-300'
+                : 'border-line text-text-secondary hover:bg-gray-50 dark:hover:bg-white/5',
+            )}
+          >
+            <Users className="size-4" strokeWidth={2.2} />
+            {teamOnly ? t('filters.teamOnly') : t('filters.everyScope')}
+          </button>
 
           {hasActiveFilters && (
             <button

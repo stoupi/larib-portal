@@ -1636,7 +1636,8 @@
         "clearAll": "Effacer les filtres",
         "noJournal": "Aucune revue",
         "clearJournal": "Annuler le filtre de revue",
-        "clearScopeFilter": "Afficher tous les rattachements"
+        "teamOnly": "Équipe Lariboisière seule",
+        "everyScope": "Tous les rattachements"
       },
       "overview": {
         "hide": "Masquer la synthèse",
@@ -1671,8 +1672,7 @@
         "clearAuthorSearch": "Effacer la recherche de co-auteur",
         "yearRange": "Plage d'années",
         "byJournal": "Par revue",
-        "clearScope": "Annuler le périmètre de co-auteurs",
-        "byScope": "Par rattachement"
+        "clearScope": "Annuler le périmètre de co-auteurs"
       },
       "colStudy": "Étude",
       "openLibrary": "Ouvrir la bibliothèque",
