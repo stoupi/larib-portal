@@ -72,7 +72,6 @@ export function DashboardCharts({
 }) {
   const t = useTranslations('publications.adminHome.charts')
   const tStatus = useTranslations('publications.articles')
-  const tArticles = useTranslations('publications.articles')
   const tFilters = useTranslations('publications.adminHome.filters')
   const [coAuthorScope, setCoAuthorScope] = useState<CoAuthorScope>('all')
   const [coAuthorQuery, setCoAuthorQuery] = useState('')
@@ -358,7 +357,7 @@ export function DashboardCharts({
                       )}
                     />
                     <span className="flex-1 truncate text-[13px] text-text-primary">
-                      {tArticles(`scope.${entry.scope}`)}
+                      {tStatus(`scope.${entry.scope}`)}
                     </span>
                     <span className="pl-2 text-[13px] font-bold text-text-primary tabular-nums">{entry.count}</span>
                   </button>
