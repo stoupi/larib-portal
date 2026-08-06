@@ -6,6 +6,7 @@ import { Link } from '@/app/i18n/navigation'
 import { cn } from '@/lib/utils'
 import { ARTICLE_STATUS_TONE, pillClassName } from '@/lib/publications/status-display'
 import { ARTICLE_TYPE_BADGE } from '@/lib/publications/article-type'
+import { ARTICLE_SCOPE_BADGE } from '@/lib/publications/article-scope'
 import type { MyPublicationItem } from '@/lib/services/publications/my-publications'
 import { SubmissionHistory } from './submission-history'
 
@@ -108,13 +109,23 @@ function PublicationRow({
             <ChevronRight className={cn('h-3.5 w-3.5 transition-transform', expanded && 'rotate-90')} strokeWidth={2.4} />
           </button>
           <div className="min-w-0">
-            <span
-              className={cn(
-                'mb-1 inline-flex rounded border px-1.5 py-0.5 text-[9.5px] font-bold uppercase tracking-wide',
-                ARTICLE_TYPE_BADGE[item.type],
-              )}
-            >
-              {t(`myPub.type.${item.type}`)}
+            <span className="mb-1 flex flex-wrap items-center gap-1">
+              <span
+                className={cn(
+                  'inline-flex rounded border px-1.5 py-0.5 text-[9.5px] font-bold uppercase tracking-wide',
+                  ARTICLE_TYPE_BADGE[item.type],
+                )}
+              >
+                {t(`myPub.type.${item.type}`)}
+              </span>
+              <span
+                className={cn(
+                  'inline-flex rounded border px-1.5 py-0.5 text-[9.5px] font-bold uppercase tracking-wide',
+                  ARTICLE_SCOPE_BADGE[item.scope],
+                )}
+              >
+                {t(`articles.scope.${item.scope}`)}
+              </span>
             </span>
             <Link
               href={item.isFirst ? `/publications/articles/${item.id}/edit` : `/publications/articles/${item.id}`}

@@ -7,6 +7,7 @@ import {
   type SubmissionStatusValue,
 } from '@/lib/publications/status-display'
 import { normalizeArticleType, type ArticleTypeValue } from '@/lib/publications/article-type'
+import type { ArticleScopeValue } from '@/lib/publications/article-scope'
 
 export type MyPublicationSubmission = {
   id: string
@@ -21,6 +22,7 @@ export type MyPublicationItem = {
   title: string
   type: ArticleTypeValue
   status: ArticleStatusValue
+  scope: ArticleScopeValue
   year: number | null
   studyLabel: string | null
   currentJournal: string | null
@@ -59,6 +61,7 @@ export async function listMyPublications(userId: string, now: Date = new Date())
       title: true,
       type: true,
       status: true,
+      scope: true,
       doi: true,
       pdfUrl: true,
       publishedAt: true,
@@ -116,6 +119,7 @@ export async function listMyPublications(userId: string, now: Date = new Date())
       title: article.title,
       type: normalizeArticleType(article.type),
       status: article.status,
+      scope: article.scope,
       year: article.publishedAt ? article.publishedAt.getUTCFullYear() : null,
       studyLabel: article.study?.acronym ?? article.study?.title ?? null,
       currentJournal,
