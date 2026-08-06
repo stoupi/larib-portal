@@ -1370,7 +1370,8 @@
       "deleteArticle": "Supprimer la publication",
       "deleteArticleConfirm": "Cela supprime définitivement « {title} », ses auteurs, ses soumissions et son PDF. Action irréversible.",
       "articleDeleted": "Publication supprimée",
-      "cancel": "Annuler"
+      "cancel": "Annuler",
+      "downloadPdf": "Télécharger le PDF"
     },
     "journals": {
       "title": "Journaux",

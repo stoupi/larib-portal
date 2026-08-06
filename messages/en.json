@@ -1372,7 +1372,8 @@
       "deleteArticle": "Delete publication",
       "deleteArticleConfirm": "This permanently removes “{title}”, its authors, submissions and PDF. This cannot be undone.",
       "articleDeleted": "Publication deleted",
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "downloadPdf": "Download the PDF"
     },
     "journals": {
       "title": "Journals",

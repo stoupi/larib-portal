@@ -173,9 +173,11 @@ export function ArticleListRow({
           {article.pdfUrl && (
             <a
               href={article.pdfUrl}
+              download
               target="_blank"
               rel="noreferrer"
-              title={t('articles.openPdf')}
+              title={t('articles.downloadPdf')}
+              aria-label={`${t('articles.downloadPdf')}: ${article.title || t('myPub.untitled')}`}
               className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-line bg-bg-surface text-navy-600 transition hover:bg-gray-50 dark:text-navy-300 dark:hover:bg-white/5"
             >
               <FileText className="h-3.5 w-3.5" strokeWidth={2} />
