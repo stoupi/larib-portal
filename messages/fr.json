@@ -920,7 +920,8 @@
         "ORIGINAL": "Article de recherche",
         "LETTER": "Research letter",
         "REVIEW": "Revue",
-        "EDITORIAL": "Éditorial"
+        "EDITORIAL": "Éditorial",
+        "CASE_REPORT": "Cas clinique"
       },
       "typeSaved": "Type mis à jour",
       "toggleHistory": "Afficher l'historique des soumissions",
@@ -1019,7 +1020,18 @@
         "invalidType": "Seuls les fichiers PDF sont acceptés.",
         "tooLarge": "Ce fichier dépasse 30 Mo.",
         "uploadFailed": "Le téléversement a échoué. Réessayez."
-      }
+      },
+      "authorsAdminHint": "Vous maintenez la liste d'auteurs : ajoutez les co-auteurs, ordonnez-les et désignez l'auteur correspondant.",
+      "addAuthor": "Ajouter un auteur",
+      "selectAuthor": "Sélectionner un auteur",
+      "noAuthorYet": "Aucun auteur pour le moment — ajoutez le premier.",
+      "removeAuthor": "Retirer l'auteur",
+      "moveUp": "Monter",
+      "moveDown": "Descendre",
+      "markCorresponding": "Désigner comme correspondant",
+      "saveAuthors": "Enregistrer la liste d'auteurs",
+      "authorsSaved": "Liste d'auteurs mise à jour",
+      "backToLibrary": "Articles"
     },
     "adminRequests": {
       "title": "Demandes de liste d'auteurs",
@@ -1034,7 +1046,7 @@
     "actionError": "Une erreur est survenue. Veuillez réessayer.",
     "import": {
       "title": "Importer depuis PubMed",
-      "subtitle": "Récupérez le back-catalogue de l'équipe par auteur, curez, importez.",
+      "subtitle": "Cherchez sur PubMed par PMID, DOI, auteur ou titre, voyez ce qui est déjà dans la bibliothèque et importez ce que vous sélectionnez.",
       "anchor": "Auteur ancre",
       "anchorHint": "ex. Pezel T",
       "search": "Rechercher",
@@ -1053,7 +1065,22 @@
       "reportBody": "{created} importés, {skipped} déjà présents, {authors} auteurs ajoutés, {journals} journaux ajoutés.",
       "reportErrors": "{count} article(s) en échec.",
       "searchError": "La recherche PubMed a échoué. Réessayez.",
-      "importError": "L'import a échoué. Réessayez."
+      "importError": "L'import a échoué. Réessayez.",
+      "query": "Recherche PubMed",
+      "queryHint": "PMID, DOI, auteur ou titre…",
+      "alreadyKnown": "{count} déjà dans la bibliothèque",
+      "colStatus": "Bibliothèque",
+      "lookalikeCount": "{count} ressemblent à une publication existante",
+      "match": {
+        "new": "Nouveau",
+        "known": "Déjà importé",
+        "similar": "Doublon probable"
+      },
+      "duplicatesTitle": "Doublons probables à vérifier",
+      "duplicateAuthors": "{count} groupe(s) d’auteurs semblent être la même personne ({names}…).",
+      "duplicateJournals": "{count} groupe(s) de revues semblent être la même revue ({names}…).",
+      "reviewAuthors": "Vérifier les auteurs",
+      "reviewJournals": "Vérifier les revues"
     },
     "authors": {
       "title": "Auteurs",
@@ -1327,7 +1354,20 @@
         "byStudy": "Par étude",
         "noStudy": "Aucune étude liée pour l’instant."
       },
-      "openPdf": "PDF"
+      "openPdf": "PDF",
+      "studySaved": "Étude mise à jour",
+      "noStudy": "Aucune étude",
+      "assignStudy": "Associer une étude",
+      "scopeLabel": "Rattachement",
+      "scopeSaved": "Rattachement mis à jour",
+      "scope": {
+        "LARIB_TEAM": "Équipe Lariboisière",
+        "OUTSIDE_TEAM": "Hors équipe"
+      },
+      "deleteArticle": "Supprimer la publication",
+      "deleteArticleConfirm": "Cela supprime définitivement « {title} », ses auteurs, ses soumissions et son PDF. Action irréversible.",
+      "articleDeleted": "Publication supprimée",
+      "cancel": "Annuler"
     },
     "journals": {
       "title": "Journaux",
@@ -1572,7 +1612,7 @@
       }
     },
     "adminHome": {
-      "title": "Administration des publications",
+      "title": "Tableau de bord des publications",
       "subtitle": "Gérez la bibliothèque bibliographique de l’équipe : articles, auteurs, centres, revues et études.",
       "filters": {
         "study": "Étude",
@@ -1580,25 +1620,53 @@
         "status": "Statut",
         "all": "Toutes",
         "search": "Recherche",
-        "searchPlaceholder": "Auteur, revue, article, étude…"
+        "searchPlaceholder": "Auteur, revue, article, étude…",
+        "noStudy": "Aucune étude",
+        "clearSearch": "Effacer la recherche",
+        "clearStudy": "Annuler le filtre d'étude",
+        "clearYear": "Annuler le filtre d'année",
+        "clearStatus": "Annuler le filtre de statut",
+        "clearAuthor": "Annuler le filtre de co-auteur",
+        "allStudies": "Toutes les études",
+        "allStatuses": "Tous les statuts",
+        "clearAll": "Effacer les filtres",
+        "noJournal": "Aucune revue",
+        "clearJournal": "Annuler le filtre de revue"
+      },
+      "overview": {
+        "hide": "Masquer la synthèse",
+        "show": "Afficher la synthèse"
+      },
+      "authorFocus": {
+        "title": "{name} — positions d'auteur",
+        "total": "{count} articles",
+        "clear": "Réinitialiser"
       },
       "kpi": {
         "section": "Chiffres clés",
         "articles": "Articles (filtrés)",
         "published": "Publiés",
         "inProgress": "En cours",
-        "coAuthors": "Co-auteurs actifs",
         "thisYear": "+{count} cette année",
         "share": "{value} %",
-        "inProgressHint": "brouillons + revue",
-        "studies": "{count} études"
+        "inProgressHint": "brouillons + revue"
       },
       "charts": {
-        "byCoAuthor": "Articles par co-auteur",
-        "byYear": "Articles par année",
+        "byCoAuthor": "Par co-auteur",
+        "byYear": "Par année",
         "byStatus": "Par statut",
-        "all": "Tous",
-        "noData": "Aucun article ne correspond à ces filtres."
+        "scope": {
+          "team": "Notre équipe",
+          "external": "Externes"
+        },
+        "noData": "Aucun article ne correspond à ces filtres.",
+        "byStudy": "Par étude",
+        "authorSearch": "Rechercher un co-auteur",
+        "authorSearchPlaceholder": "Nom ou prénom…",
+        "clearAuthorSearch": "Effacer la recherche de co-auteur",
+        "yearRange": "Plage d'années",
+        "byJournal": "Par revue",
+        "clearScope": "Annuler le périmètre de co-auteurs"
       },
       "colStudy": "Étude",
       "openLibrary": "Ouvrir la bibliothèque",
@@ -1609,7 +1677,8 @@
       "authorsDescription": "ORCID, centres, doublons",
       "centresDescription": "Affiliations, centres « maison »",
       "journalsDescription": "Facteur d’impact et SJR",
-      "studiesDescription": "Investigateurs et centres"
+      "studiesDescription": "Investigateurs et centres",
+      "backToDashboard": "Tableau de bord"
     }
   }
 }

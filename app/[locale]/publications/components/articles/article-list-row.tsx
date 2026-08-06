@@ -1,16 +1,22 @@
 'use client'
 
 import { useTranslations } from 'next-intl'
-import { ChevronRight, Clock, ExternalLink, FileText, Pencil } from 'lucide-react'
+import { ArrowUp, ArrowUpDown, ChevronRight, Clock, ExternalLink, FileText, Pencil } from 'lucide-react'
 import { Link } from '@/app/i18n/navigation'
 import { cn } from '@/lib/utils'
 import { ARTICLE_STATUS_TONE, pillClassName } from '@/lib/publications/status-display'
 import { ARTICLE_TYPE_BADGE } from '@/lib/publications/article-type'
+import { ARTICLE_SCOPE_BADGE } from '@/lib/publications/article-scope'
 import type { DashboardArticleItem } from '@/lib/publications/admin-dashboard'
+import { ARTICLE_SORT_KEYS, type ArticleSort, type ArticleSortKey } from '@/lib/publications/article-sort'
+import type { StudyOption } from '@/lib/services/publications/studies'
 import { SubmissionHistory } from '../submission-history'
+import { ArticleStudySelect } from './article-study-select'
+import { ArticleScopeSelect } from './article-scope-select'
+import { ArticleDeleteButton } from './article-delete-button'
 
 export const ARTICLES_GRID =
-  'grid grid-cols-[minmax(240px,1fr)_150px_128px_128px_176px_88px] items-center gap-3.5'
+  'grid grid-cols-[minmax(240px,1fr)_150px_128px_128px_128px_176px_132px] items-center gap-3.5'
 
 export type ArticleRowExpansion = {
   open: boolean
@@ -44,10 +50,12 @@ export function ArticleListRow({
   article,
   locale,
   expansion,
+  admin,
 }: {
   article: DashboardArticleItem
   locale: string
   expansion: ArticleRowExpansion | null
+  admin?: { studyOptions: StudyOption[] }
 }) {
   const t = useTranslations('publications')
   const dateFormatter = new Intl.DateTimeFormat(locale, { dateStyle: 'medium' })
@@ -99,13 +107,39 @@ export function ArticleListRow({
           {article.journal ?? '—'}
         </span>
 
-        <div>
-          {article.studyLabel ? (
+        <div className="min-w-0">
+          {admin ? (
+            <ArticleStudySelect
+              articleId={article.id}
+              articleTitle={article.title || t('myPub.untitled')}
+              studyId={article.studyId}
+              studyOptions={admin.studyOptions}
+            />
+          ) : article.studyLabel ? (
             <span className="inline-flex max-w-full items-center truncate rounded-md border border-[#DDD6FE] bg-[#F5F3FF] px-2.5 py-0.5 text-[11.5px] font-bold text-[#6D28D9] dark:border-[rgba(139,92,246,0.32)] dark:bg-[rgba(139,92,246,0.16)] dark:text-[#C4B5FD]">
               {article.studyLabel}
             </span>
           ) : (
             <span className="text-[13px] text-text-muted">—</span>
+          )}
+        </div>
+
+        <div className="min-w-0">
+          {admin ? (
+            <ArticleScopeSelect
+              articleId={article.id}
+              articleTitle={article.title || t('myPub.untitled')}
+              scope={article.scope}
+            />
+          ) : (
+            <span
+              className={cn(
+                'inline-flex rounded border px-1.5 py-0.5 text-[9.5px] font-bold uppercase tracking-wide',
+                ARTICLE_SCOPE_BADGE[article.scope],
+              )}
+            >
+              {t(`articles.scope.${article.scope}`)}
+            </span>
           )}
         </div>
 
@@ -165,6 +199,9 @@ export function ArticleListRow({
           >
             <Pencil className="h-3.5 w-3.5" strokeWidth={2} />
           </Link>
+          {admin && (
+            <ArticleDeleteButton articleId={article.id} articleTitle={article.title || t('myPub.untitled')} />
+          )}
         </div>
       </div>
 
@@ -182,16 +219,51 @@ export function ArticleListRow({
   )
 }
 
-export function ArticlesHeaderRow() {
+export type ArticlesSorting = { value: ArticleSort; onSort: (key: ArticleSortKey) => void }
+
+const HEADER_LABEL_CLASS = 'text-[11px] font-bold uppercase tracking-[0.06em] text-text-muted'
+
+export function ArticlesHeaderRow({ sorting }: { sorting?: ArticlesSorting }) {
   const t = useTranslations('publications.myPub.col')
+  const tArticles = useTranslations('publications.articles')
   return (
     <div className={cn(ARTICLES_GRID, 'sticky top-0 z-10 border-y border-line bg-gray-50/90 px-5 py-3 backdrop-blur dark:bg-white/[0.03]')}>
-      {[t('title'), t('journal'), t('study'), t('status'), t('submission')].map((label) => (
-        <span key={label} className="text-[11px] font-bold uppercase tracking-[0.06em] text-text-muted">
-          {label}
-        </span>
-      ))}
-      <span className="text-right text-[11px] font-bold uppercase tracking-[0.06em] text-text-muted">{t('action')}</span>
+      {ARTICLE_SORT_KEYS.map((key) => {
+        const label = t(key)
+        if (!sorting) {
+          return (
+            <span key={key} className="contents">
+              <span className={HEADER_LABEL_CLASS}>{label}</span>
+              {key === 'study' && <span className={HEADER_LABEL_CLASS}>{tArticles('scopeLabel')}</span>}
+            </span>
+          )
+        }
+        const active = sorting.value?.key === key
+        const ascending = active && sorting.value?.direction === 'asc'
+        return (
+          <span key={key} className="contents">
+            <button
+              type="button"
+              onClick={() => sorting.onSort(key)}
+              aria-sort={active ? (ascending ? 'ascending' : 'descending') : 'none'}
+              className={cn(
+                HEADER_LABEL_CLASS,
+                'inline-flex items-center gap-1 text-left transition-colors hover:text-coral-600 dark:hover:text-coral-300',
+                active && 'text-coral-600 dark:text-coral-300',
+              )}
+            >
+              {label}
+              {active ? (
+                <ArrowUp className={cn('h-3 w-3 transition-transform', !ascending && 'rotate-180')} strokeWidth={2.6} />
+              ) : (
+                <ArrowUpDown className="h-3 w-3 opacity-40" strokeWidth={2.2} />
+              )}
+            </button>
+            {key === 'study' && <span className={HEADER_LABEL_CLASS}>{tArticles('scopeLabel')}</span>}
+          </span>
+        )
+      })}
+      <span className={cn(HEADER_LABEL_CLASS, 'text-right')}>{t('action')}</span>
     </div>
   )
 }

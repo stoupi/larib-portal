@@ -922,7 +922,8 @@
         "ORIGINAL": "Research article",
         "LETTER": "Research letter",
         "REVIEW": "Review",
-        "EDITORIAL": "Editorial"
+        "EDITORIAL": "Editorial",
+        "CASE_REPORT": "Case report"
       },
       "typeSaved": "Type updated",
       "toggleHistory": "Toggle submission history",
@@ -1021,7 +1022,18 @@
         "invalidType": "Only PDF files are accepted.",
         "tooLarge": "This file exceeds 30 MB.",
         "uploadFailed": "The upload failed. Please try again."
-      }
+      },
+      "authorsAdminHint": "You maintain the author list: add co-authors, order them and mark the corresponding author.",
+      "addAuthor": "Add an author",
+      "selectAuthor": "Select an author",
+      "noAuthorYet": "No author yet — add the first one.",
+      "removeAuthor": "Remove author",
+      "moveUp": "Move up",
+      "moveDown": "Move down",
+      "markCorresponding": "Mark as corresponding",
+      "saveAuthors": "Save the author list",
+      "authorsSaved": "Author list updated",
+      "backToLibrary": "Articles"
     },
     "adminRequests": {
       "title": "Author list requests",
@@ -1036,7 +1048,7 @@
     "actionError": "Something went wrong. Please try again.",
     "import": {
       "title": "Import from PubMed",
-      "subtitle": "Fetch the team's back-catalogue by author, curate, and import.",
+      "subtitle": "Search PubMed by PMID, DOI, author or title, see what is already in the library, and import what you pick.",
       "anchor": "Anchor author",
       "anchorHint": "e.g. Pezel T",
       "search": "Search",
@@ -1055,7 +1067,22 @@
       "reportBody": "{created} imported, {skipped} already present, {authors} authors added, {journals} journals added.",
       "reportErrors": "{count} paper(s) failed.",
       "searchError": "PubMed search failed. Please retry.",
-      "importError": "Import failed. Please retry."
+      "importError": "Import failed. Please retry.",
+      "query": "PubMed search",
+      "queryHint": "PMID, DOI, author or title…",
+      "alreadyKnown": "{count} already in the library",
+      "colStatus": "In library",
+      "lookalikeCount": "{count} look like an existing entry",
+      "match": {
+        "new": "New",
+        "known": "Already imported",
+        "similar": "Possible duplicate"
+      },
+      "duplicatesTitle": "Possible duplicates to review",
+      "duplicateAuthors": "{count} author group(s) look like the same person ({names}…).",
+      "duplicateJournals": "{count} journal group(s) look like the same journal ({names}…).",
+      "reviewAuthors": "Review authors",
+      "reviewJournals": "Review journals"
     },
     "authors": {
       "title": "Authors",
@@ -1329,7 +1356,20 @@
         "byStudy": "By study",
         "noStudy": "No study linked yet."
       },
-      "openPdf": "PDF"
+      "openPdf": "PDF",
+      "studySaved": "Study updated",
+      "noStudy": "No study",
+      "assignStudy": "Assign a study",
+      "scopeLabel": "Affiliation scope",
+      "scopeSaved": "Affiliation scope updated",
+      "scope": {
+        "LARIB_TEAM": "Lariboisière team",
+        "OUTSIDE_TEAM": "Outside the team"
+      },
+      "deleteArticle": "Delete publication",
+      "deleteArticleConfirm": "This permanently removes “{title}”, its authors, submissions and PDF. This cannot be undone.",
+      "articleDeleted": "Publication deleted",
+      "cancel": "Cancel"
     },
     "journals": {
       "title": "Journals",
@@ -1574,7 +1614,7 @@
       }
     },
     "adminHome": {
-      "title": "Publications administration",
+      "title": "Publications dashboard",
       "subtitle": "Manage the team's bibliographic library: articles, authors, centres, journals and studies.",
       "filters": {
         "study": "Study",
@@ -1582,25 +1622,53 @@
         "status": "Status",
         "all": "All",
         "search": "Search",
-        "searchPlaceholder": "Author, journal, article, study…"
+        "searchPlaceholder": "Author, journal, article, study…",
+        "noStudy": "No study",
+        "clearSearch": "Clear search",
+        "clearStudy": "Clear the study filter",
+        "clearYear": "Clear the year filter",
+        "clearStatus": "Clear the status filter",
+        "clearAuthor": "Clear the co-author filter",
+        "allStudies": "All studies",
+        "allStatuses": "All statuses",
+        "clearAll": "Clear filters",
+        "noJournal": "No journal",
+        "clearJournal": "Clear the journal filter"
+      },
+      "overview": {
+        "hide": "Hide overview",
+        "show": "Show overview"
+      },
+      "authorFocus": {
+        "title": "{name} — author positions",
+        "total": "{count} articles",
+        "clear": "Clear"
       },
       "kpi": {
         "section": "Key figures",
         "articles": "Articles (filtered)",
         "published": "Published",
         "inProgress": "In progress",
-        "coAuthors": "Active co-authors",
         "thisYear": "+{count} this year",
         "share": "{value} %",
-        "inProgressHint": "drafts + review",
-        "studies": "{count} studies"
+        "inProgressHint": "drafts + review"
       },
       "charts": {
-        "byCoAuthor": "Articles by co-author",
-        "byYear": "Articles by year",
+        "byCoAuthor": "By co-author",
+        "byYear": "By year",
         "byStatus": "By status",
-        "all": "All",
-        "noData": "No article matches these filters."
+        "scope": {
+          "team": "Our team",
+          "external": "External"
+        },
+        "noData": "No article matches these filters.",
+        "byStudy": "By study",
+        "authorSearch": "Search a co-author",
+        "authorSearchPlaceholder": "First or last name…",
+        "clearAuthorSearch": "Clear the co-author search",
+        "yearRange": "Year range",
+        "byJournal": "By journal",
+        "clearScope": "Clear the co-author scope"
       },
       "colStudy": "Study",
       "openLibrary": "Open library",
@@ -1611,7 +1679,8 @@
       "authorsDescription": "ORCID, centres, duplicates",
       "centresDescription": "Affiliations, “ours” flagged",
       "journalsDescription": "Impact factor and SJR",
-      "studiesDescription": "Investigators and centres"
+      "studiesDescription": "Investigators and centres",
+      "backToDashboard": "Publications dashboard"
     }
   }
 }
