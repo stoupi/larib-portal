@@ -1635,8 +1635,7 @@
         "clearAll": "Effacer les filtres",
         "noJournal": "Aucune revue",
         "clearJournal": "Annuler le filtre de revue",
-        "teamOnly": "Menée par Larib",
-        "everyScope": "Tous les scopes"
+        "teamOnly": "Menée par Larib"
       },
       "overview": {
         "hide": "Masquer la synthèse",

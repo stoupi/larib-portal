@@ -37,8 +37,9 @@ test('admin dashboard shows metrics, filters the library and opens its modules',
   const scopeToggle = page.getByRole('button', { name: 'Led by Larib' })
   await expect(scopeToggle).toHaveAttribute('aria-pressed', 'true')
   await scopeToggle.click()
+  await expect(scopeToggle).toHaveAttribute('aria-pressed', 'false')
   await expect(outsideArticle).toBeVisible()
-  await page.getByRole('button', { name: 'All scopes' }).click()
+  await scopeToggle.click()
   await expect(outsideArticle).toHaveCount(0)
 
   // The search bar matches on co-author, journal, study or title
@@ -141,10 +142,11 @@ test('admin dashboard shows metrics, filters the library and opens its modules',
   await scopeSelect.selectOption('OUTSIDE_TEAM')
   // The default view only keeps what Larib led, so the row leaves the table right away
   await expect(articleLink).toHaveCount(0, { timeout: 20000 })
-  await page.getByRole('button', { name: 'Led by Larib' }).click()
+  const libraryScopeToggle = page.getByRole('button', { name: 'Led by Larib' })
+  await libraryScopeToggle.click()
   await expect(articleLink).toBeVisible()
   await page.getByLabel(`Scope: ${SEEDED_ARTICLE}`).selectOption('LARIB_TEAM')
-  await page.getByRole('button', { name: 'All scopes' }).click()
+  await libraryScopeToggle.click()
   await expect(articleLink).toBeVisible()
 
   // An admin can change the study of an article straight from the table

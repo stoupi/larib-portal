@@ -1637,8 +1637,7 @@
         "clearAll": "Clear filters",
         "noJournal": "No journal",
         "clearJournal": "Clear the journal filter",
-        "teamOnly": "Led by Larib",
-        "everyScope": "All scopes"
+        "teamOnly": "Led by Larib"
       },
       "overview": {
         "hide": "Hide overview",

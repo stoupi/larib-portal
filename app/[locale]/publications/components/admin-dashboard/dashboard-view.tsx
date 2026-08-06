@@ -134,16 +134,17 @@ export function PublicationsDashboardView({
           <button
             type="button"
             aria-pressed={teamOnly}
+            aria-label={t('filters.teamOnly')}
+            title={t('filters.teamOnly')}
             onClick={() => updateFilter({ scopes: teamOnly ? [] : ['LARIB_TEAM'] })}
             className={cn(
-              'inline-flex h-9 shrink-0 items-center gap-1.5 rounded-full border px-3.5 text-[13px] font-bold transition',
+              'inline-flex size-9 shrink-0 items-center justify-center rounded-full border transition',
               teamOnly
-                ? 'border-coral-200 bg-coral-50 text-coral-600 dark:border-coral-500/30 dark:bg-coral-500/15 dark:text-coral-300'
-                : 'border-line text-text-secondary hover:bg-gray-50 dark:hover:bg-white/5',
+                ? 'border-coral-500 bg-gradient-to-b from-coral-500 to-coral-600 text-white shadow-[0_6px_14px_-6px_rgba(214,31,85,0.55)]'
+                : 'border-line text-text-muted hover:bg-gray-50 hover:text-text-secondary dark:hover:bg-white/5',
             )}
           >
             <Users className="size-4" strokeWidth={2.2} />
-            {teamOnly ? t('filters.teamOnly') : t('filters.everyScope')}
           </button>
 
           {hasActiveFilters && (
