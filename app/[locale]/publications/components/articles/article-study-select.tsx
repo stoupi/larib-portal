@@ -36,7 +36,7 @@ export function ArticleStudySelect({
       disabled={isExecuting}
       aria-label={`${t('assignStudy')}: ${articleTitle}`}
       onChange={(event) => execute({ id: articleId, studyId: event.target.value || null })}
-      className="w-full truncate rounded-md border border-[#DDD6FE] bg-[#F5F3FF] px-2 py-1 text-[11.5px] font-bold text-[#6D28D9] transition disabled:opacity-60 dark:border-[rgba(139,92,246,0.32)] dark:bg-[rgba(139,92,246,0.16)] dark:text-[#C4B5FD]"
+      className="w-full truncate rounded-md border border-coral-100 bg-coral-50 px-2 py-1 text-[11.5px] font-bold text-coral-600 transition disabled:opacity-60 dark:border-coral-500/30 dark:bg-coral-500/15 dark:text-coral-300"
     >
       <option value="">{t('noStudy')}</option>
       {studyOptions.map((study) => (

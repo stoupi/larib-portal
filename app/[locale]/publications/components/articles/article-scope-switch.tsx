@@ -51,10 +51,12 @@ export function ScopeToggleFace({
   checked,
   size,
   layout = 'stack',
+  label: labelOverride,
 }: {
   checked: boolean
   size: 'sm' | 'lg'
   layout?: 'stack' | 'inline'
+  label?: string
 }) {
   const t = useTranslations('publications.articles')
   const label = (
@@ -65,7 +67,7 @@ export function ScopeToggleFace({
         checked ? 'text-coral-600' : 'text-text-muted',
       )}
     >
-      {t('scopeShortLabel')}
+      {labelOverride ?? t('scopeShortLabel')}
     </span>
   )
 

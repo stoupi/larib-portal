@@ -140,7 +140,7 @@ function PublicationRow({
 
         <div>
           {item.studyLabel ? (
-            <span className="inline-flex max-w-full items-center truncate rounded-md border border-[#DDD6FE] bg-[#F5F3FF] px-2.5 py-0.5 text-[11.5px] font-bold text-[#6D28D9] dark:border-[rgba(139,92,246,0.32)] dark:bg-[rgba(139,92,246,0.16)] dark:text-[#C4B5FD]">
+            <span className="inline-flex max-w-full items-center truncate rounded-md border border-coral-100 bg-coral-50 px-2.5 py-0.5 text-[11.5px] font-bold text-coral-600 dark:border-coral-500/30 dark:bg-coral-500/15 dark:text-coral-300">
               {item.studyLabel}
             </span>
           ) : (

@@ -61,7 +61,7 @@ export function EditorHeader({
             </span>
             {year && <span className="text-sm font-bold text-text-secondary tabular-nums">{year}</span>}
             {studyLabel && (
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-[#DDD6FE] bg-[#F5F3FF] px-3 py-1 text-[11.5px] font-bold text-[#6D28D9] dark:border-[rgba(139,92,246,0.32)] dark:bg-[rgba(139,92,246,0.16)] dark:text-[#C4B5FD]">
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-coral-100 bg-coral-50 px-3 py-1 text-[11.5px] font-bold text-coral-600 dark:border-coral-500/30 dark:bg-coral-500/15 dark:text-coral-300">
                 <GraduationCap className="h-3.5 w-3.5" strokeWidth={2} />
                 {t('editor.studyChip', { study: studyLabel })}
               </span>

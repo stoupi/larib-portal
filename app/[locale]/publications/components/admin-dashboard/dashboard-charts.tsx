@@ -264,7 +264,7 @@ export function DashboardCharts({
                     <span
                       className={cn(
                         'size-2.5 shrink-0 rounded-full',
-                        entry.label ? 'bg-[#8B5CF6]' : 'bg-gray-300 dark:bg-white/25',
+                        entry.label ? 'bg-coral-500' : 'bg-gray-300 dark:bg-white/25',
                       )}
                     />
                     <span className="flex-1 truncate text-[13px] text-text-primary" title={label}>

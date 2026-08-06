@@ -146,7 +146,12 @@ export function PublicationsDashboardView({
                 onClick={() => updateFilter({ scopes: teamOnly ? [] : ['LARIB_TEAM'] })}
                 className="inline-flex shrink-0"
               >
-                <ScopeToggleFace checked={teamOnly} size="sm" layout="inline" />
+                <ScopeToggleFace
+                  checked={teamOnly}
+                  size="sm"
+                  layout="inline"
+                  label={teamOnly ? tArticles('scopeShortLabel') : t('filters.all')}
+                />
               </button>
             </TooltipTrigger>
             <TooltipContent>{t('filters.teamOnly')}</TooltipContent>
