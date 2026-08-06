@@ -225,7 +225,7 @@ export function ArticlesHeaderRow({ sorting }: { sorting?: ArticlesSorting }) {
           return (
             <span key={key} className="contents">
               <span className={HEADER_LABEL_CLASS}>{label}</span>
-              {key === 'study' && <span className={HEADER_LABEL_CLASS}>{tArticles('scopeLabel')}</span>}
+              {key === 'study' && <span className={HEADER_LABEL_CLASS}>{tArticles('scopeShortLabel')}</span>}
             </span>
           )
         }
@@ -250,7 +250,7 @@ export function ArticlesHeaderRow({ sorting }: { sorting?: ArticlesSorting }) {
                 <ArrowUpDown className="h-3 w-3 opacity-40" strokeWidth={2.2} />
               )}
             </button>
-            {key === 'study' && <span className={HEADER_LABEL_CLASS}>{tArticles('scopeLabel')}</span>}
+            {key === 'study' && <span className={HEADER_LABEL_CLASS}>{tArticles('scopeShortLabel')}</span>}
           </span>
         )
       })}
