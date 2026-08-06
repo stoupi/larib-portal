@@ -142,13 +142,16 @@ export function PublicationsDashboardView({
             title={t('filters.teamOnly')}
             onClick={() => updateFilter({ scopes: teamOnly ? [] : ['LARIB_TEAM'] })}
             className={cn(
-              'inline-flex size-9 shrink-0 items-center justify-center rounded-full border transition',
+              'inline-flex h-9 shrink-0 flex-col items-center justify-center gap-0.5 rounded-full border px-3 transition',
               teamOnly
                 ? 'border-coral-500 bg-gradient-to-b from-coral-500 to-coral-600 text-white shadow-[0_6px_14px_-6px_rgba(214,31,85,0.55)]'
                 : 'border-line text-text-muted hover:bg-gray-50 hover:text-text-secondary dark:hover:bg-white/5',
             )}
           >
-            <Star className={cn('size-4', teamOnly ? 'fill-current' : 'fill-none')} strokeWidth={2.2} />
+            <Star className={cn('size-3.5', teamOnly ? 'fill-current' : 'fill-none')} strokeWidth={2.2} />
+            <span className="text-[8px] font-extrabold uppercase leading-none tracking-wide">
+              {tArticles('scopeShortLabel')}
+            </span>
           </button>
 
           {hasActiveFilters && (
