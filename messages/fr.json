@@ -1030,8 +1030,7 @@
       "moveDown": "Descendre",
       "markCorresponding": "Désigner comme correspondant",
       "saveAuthors": "Enregistrer la liste d'auteurs",
-      "authorsSaved": "Liste d'auteurs mise à jour",
-      "backToLibrary": "Articles"
+      "authorsSaved": "Liste d'auteurs mise à jour"
     },
     "adminRequests": {
       "title": "Demandes de liste d'auteurs",
@@ -1675,11 +1674,9 @@
         "clearScope": "Annuler le périmètre de co-auteurs"
       },
       "colStudy": "Étude",
-      "openLibrary": "Ouvrir la bibliothèque",
       "noArticles": "Aucun article ne correspond à ces filtres.",
       "modules": "Modules",
       "importDescription": "Importer des publications depuis PubMed",
-      "articlesDescription": "Bibliothèque, statuts et auteurs",
       "authorsDescription": "ORCID, centres, doublons",
       "centresDescription": "Affiliations, centres « maison »",
       "journalsDescription": "Facteur d’impact et SJR",

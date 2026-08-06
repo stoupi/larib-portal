@@ -1032,8 +1032,7 @@
       "moveDown": "Move down",
       "markCorresponding": "Mark as corresponding",
       "saveAuthors": "Save the author list",
-      "authorsSaved": "Author list updated",
-      "backToLibrary": "Articles"
+      "authorsSaved": "Author list updated"
     },
     "adminRequests": {
       "title": "Author list requests",
@@ -1677,11 +1676,9 @@
         "clearScope": "Clear the co-author scope"
       },
       "colStudy": "Study",
-      "openLibrary": "Open library",
       "noArticles": "No article matches these filters.",
       "modules": "Modules",
       "importDescription": "Import publications from PubMed",
-      "articlesDescription": "Library, statuses and authors",
       "authorsDescription": "ORCID, centres, duplicates",
       "centresDescription": "Affiliations, “ours” flagged",
       "journalsDescription": "Impact factor and SJR",

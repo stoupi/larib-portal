@@ -75,6 +75,7 @@ describe('computePublicationStats', () => {
       { type: 'ORIGINAL', count: 1 },
       { type: 'LETTER', count: 0 },
       { type: 'REVIEW', count: 2 },
+      { type: 'CASE_REPORT', count: 0 },
       { type: 'EDITORIAL', count: 0 },
     ])
   })

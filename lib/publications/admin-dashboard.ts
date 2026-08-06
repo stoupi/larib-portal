@@ -2,7 +2,7 @@ import type { ArticleStatusValue } from '@/lib/services/publications/articles'
 import type { ArticleTypeValue } from './article-type'
 import type { MyPublicationSubmission } from '@/lib/services/publications/my-publications'
 import { ARTICLE_STATUS_VALUES, POSITION_BUCKETS, authorPositionBucket, type PositionBucket } from './status-display'
-import { matchesArticleQuery } from './admin-article-stats'
+import { matchesArticleQuery } from './article-search'
 import { ARTICLE_SCOPES, type ArticleScopeValue } from './article-scope'
 
 export type DashboardArticleItem = {

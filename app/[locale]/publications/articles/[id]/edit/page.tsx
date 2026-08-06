@@ -6,6 +6,7 @@ import { getPublicationForEdit, userIsFirstAuthor } from '@/lib/services/publica
 import { listJournalTargets } from '@/lib/services/publications/journal-targets'
 import { listStudyOptions } from '@/lib/services/publications/studies'
 import { listJournalNames } from '@/lib/services/publications/journals'
+import { listAuthorOptions } from '@/lib/services/publications/authors'
 import { PublicationEditor } from '@/app/[locale]/publications/components/editor/publication-editor'
 
 type PageParams = { params: Promise<{ locale: 'en' | 'fr'; id: string }> }
@@ -22,19 +23,18 @@ export default async function EditPublicationPage({ params }: PageParams) {
   const isFirstAuthor = await userIsFirstAuthor(session.user.id, id)
   if (!isAdmin && !isFirstAuthor) redirect(applicationLink(locale, `/publications/articles/${id}`))
 
-  const [journalTargets, studyOptions, journalNames] = await Promise.all([
+  const [journalTargets, studyOptions, journalNames, authorOptions] = await Promise.all([
     listJournalTargets(id),
     listStudyOptions(),
     listJournalNames(),
+    isAdmin ? listAuthorOptions() : Promise.resolve([]),
   ])
 
   return (
     <PublicationEditor
       locale={locale}
       article={article}
-      journalTargets={journalTargets}
-      studyOptions={studyOptions}
-      journalNames={journalNames}
+      options={{ journalTargets, studyOptions, journalNames, authorOptions }}
       viewer={{ userId: session.user.id, isFirstAuthor, isAdmin }}
     />
   )

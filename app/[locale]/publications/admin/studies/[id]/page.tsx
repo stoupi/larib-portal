@@ -7,6 +7,7 @@ import { listAuthorOptions } from '@/lib/services/publications/authors'
 import { listCentres } from '@/lib/services/publications/centres'
 import { listArticles } from '@/lib/services/publications/articles'
 import { StudyDetailView } from '@/app/[locale]/publications/components/study-detail-view'
+import { BackToDashboard } from '@/app/[locale]/publications/components/back-to-dashboard'
 
 type PageParams = { params: Promise<{ locale: 'en' | 'fr'; id: string }> }
 
@@ -34,7 +35,8 @@ export default async function StudyDetailPage({ params }: PageParams) {
   }))
 
   return (
-    <div className="p-4 md:p-6">
+    <div className="space-y-4 p-4 md:p-6">
+      <BackToDashboard locale={locale} />
       <StudyDetailView
         study={detail}
         editable={editable}

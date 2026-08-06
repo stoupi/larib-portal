@@ -13,17 +13,19 @@ describe('classifyArticleType', () => {
     expect(classifyArticleType(['Systematic Review'])).toBe('REVIEW')
     expect(classifyArticleType(['Meta-Analysis'])).toBe('REVIEW')
   })
+  it('classifies case reports', () => {
+    expect(classifyArticleType(['Case Reports'])).toBe('CASE_REPORT')
+  })
   it('defaults everything else to a research article', () => {
     expect(classifyArticleType(['Journal Article'])).toBe('ORIGINAL')
-    expect(classifyArticleType(['Case Reports'])).toBe('ORIGINAL')
     expect(classifyArticleType([])).toBe('ORIGINAL')
   })
 })
 
 describe('normalizeArticleType', () => {
-  it('collapses the 7-value enum onto the 4 displayed categories', () => {
+  it('collapses the 7-value enum onto the 5 displayed categories', () => {
     expect(normalizeArticleType('META_ANALYSIS')).toBe('REVIEW')
-    expect(normalizeArticleType('CASE_REPORT')).toBe('ORIGINAL')
+    expect(normalizeArticleType('CASE_REPORT')).toBe('CASE_REPORT')
     expect(normalizeArticleType('OTHER')).toBe('ORIGINAL')
     expect(normalizeArticleType('EDITORIAL')).toBe('EDITORIAL')
     expect(normalizeArticleType('LETTER')).toBe('LETTER')

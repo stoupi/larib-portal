@@ -133,16 +133,19 @@ test('admin dashboard shows metrics, filters the library and opens its modules',
   // Modules
   await expect(page.getByRole('link', { name: /Import from PubMed/ })).toBeVisible()
   await expect(page.getByRole('link', { name: /Studies/ })).toBeVisible()
-  await page.getByRole('link', { name: 'Open library' }).click()
-  await page.waitForURL('**/publications/admin/articles', { timeout: 60000 })
   await expect(page.getByText(SEEDED_ARTICLE)).toBeVisible()
 
   // An admin can flip a publication's scope straight from the table
   const scopeSelect = page.getByLabel(`Scope: ${SEEDED_ARTICLE}`)
   await expect(scopeSelect).toHaveValue('LARIB_TEAM')
   await scopeSelect.selectOption('OUTSIDE_TEAM')
-  await expect(page.getByText('Scope updated')).toBeVisible()
-  await scopeSelect.selectOption('LARIB_TEAM')
+  // The default view only keeps what Larib led, so the row leaves the table right away
+  await expect(articleLink).toHaveCount(0, { timeout: 20000 })
+  await page.getByRole('button', { name: 'Led by Larib' }).click()
+  await expect(articleLink).toBeVisible()
+  await page.getByLabel(`Scope: ${SEEDED_ARTICLE}`).selectOption('LARIB_TEAM')
+  await page.getByRole('button', { name: 'All scopes' }).click()
+  await expect(articleLink).toBeVisible()
 
   // An admin can change the study of an article straight from the table
   const librarySelect = page.getByLabel(`Assign a study: ${SEEDED_ARTICLE}`)
@@ -156,7 +159,7 @@ test('admin dashboard shows metrics, filters the library and opens its modules',
   // An admin creates a publication: no author is imposed and they curate the list themselves
   await page.getByRole('button', { name: 'New publication' }).click()
   await page.waitForURL(/\/publications\/articles\/[^/]+\/edit/, { timeout: 60000 })
-  await expect(page.getByRole('link', { name: 'Articles', exact: true })).toBeVisible()
+  await expect(page.getByRole('link', { name: 'Publications dashboard', exact: true })).toBeVisible()
   await expect(page.getByText('No author yet — add the first one.')).toBeVisible()
 
   const authorPicker = page.getByLabel('Select an author')
@@ -169,7 +172,7 @@ test('admin dashboard shows metrics, filters the library and opens its modules',
   await expect(page.getByText(firstAuthorLabel)).toBeVisible()
 
   // …and deletes that draft from the library, after confirming
-  await page.goto('/en/publications/admin/articles', { timeout: 60000 })
+  await page.goto('/en/publications/admin', { timeout: 60000 })
   const untitledDeletes = page.getByRole('button', { name: 'Delete publication: (Untitled)' })
   const untitledCount = await untitledDeletes.count()
   expect(untitledCount).toBeGreaterThan(0)
@@ -179,7 +182,6 @@ test('admin dashboard shows metrics, filters the library and opens its modules',
 
   // Every module page offers a way back to the dashboard
   for (const modulePath of [
-    '/en/publications/admin/articles',
     '/en/publications/admin/authors',
     '/en/publications/admin/journals',
     '/en/publications/admin/studies',

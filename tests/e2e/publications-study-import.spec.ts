@@ -27,6 +27,20 @@ test('admin imports a study from ClinicalTrials.gov', async ({ page }) => {
   await expect(dialog.getByText(/Assistance Publique Hôpitaux de Paris/i)).toBeVisible()
   await expect(dialog.getByText(/PEZEL/i)).toBeVisible()
 
+  // A trial with many centres keeps the dialog inside the viewport: lists scroll, actions stay reachable
+  await dialog.getByPlaceholder('NCT06235385').fill('NCT04344327')
+  await dialog.getByRole('button', { name: /^fetch$/i }).click()
+  await expect(dialog.getByText(/Early Risk Stratification/i)).toBeVisible({ timeout: 20000 })
+  const viewport = page.viewportSize()
+  const dialogBox = await dialog.boundingBox()
+  expect(dialogBox).not.toBeNull()
+  expect(dialogBox!.y).toBeGreaterThanOrEqual(0)
+  expect(dialogBox!.y + dialogBox!.height).toBeLessThanOrEqual(viewport!.height + 1)
+  await expect(dialog.getByRole('button', { name: /import study/i })).toBeInViewport()
+
+  await dialog.getByPlaceholder('NCT06235385').fill('NCT06235385')
+  await dialog.getByRole('button', { name: /^fetch$/i }).click()
+  await expect(dialog.getByText(/Multiple and Mixed Valvular/i)).toBeVisible({ timeout: 20000 })
   await dialog.getByRole('button', { name: /import study/i }).click()
 
   // Study persisted and listed with imported enrollment

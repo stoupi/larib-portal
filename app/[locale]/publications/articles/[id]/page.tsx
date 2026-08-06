@@ -25,7 +25,7 @@ export default async function ArticleDetailPage({ params }: PageParams) {
 
   return (
     <div className="space-y-6 p-4 md:p-6">
-      <Link href="/publications/admin/articles" className="text-sm text-text-secondary hover:underline">{t('articles.backToList')}</Link>
+      <Link href="/publications/admin" className="text-sm text-text-secondary hover:underline">{t('articles.backToList')}</Link>
       <PageHeader
         title={article.title}
         subtitle={[article.publishedJournal?.name, article.publishedAt ? new Date(article.publishedAt).getFullYear() : null].filter(Boolean).join(' · ')}

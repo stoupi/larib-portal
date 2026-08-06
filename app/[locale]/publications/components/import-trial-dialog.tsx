@@ -64,11 +64,11 @@ export function ImportTrialDialog({ open, onClose }: Props) {
 
   return (
     <Dialog open={open} onOpenChange={(next) => { if (!next) handleClose() }}>
-      <DialogContent className="max-w-2xl">
+      <DialogContent className="flex max-h-[90vh] max-w-2xl flex-col overflow-hidden">
         <DialogHeader>
           <DialogTitle>{t('title')}</DialogTitle>
         </DialogHeader>
-        <div className="space-y-4">
+        <div className="min-h-0 flex-1 space-y-4 overflow-y-auto pr-1">
           <p className="text-sm text-text-secondary">{t('description')}</p>
           <div className="flex items-end gap-2">
             <div className="flex-1 space-y-1.5">
@@ -148,7 +148,7 @@ function ListBlock({ icon, label, children }: { icon: React.ReactNode; label: st
   return (
     <div className="rounded-xl border border-line p-3">
       <div className="mb-1.5 flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-text-secondary">{icon}{label}</div>
-      <ul className="space-y-1 text-sm text-text-primary">{children}</ul>
+      <ul className="max-h-52 space-y-1 overflow-y-auto text-sm text-text-primary">{children}</ul>
     </div>
   )
 }

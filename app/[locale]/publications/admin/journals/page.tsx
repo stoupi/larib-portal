@@ -4,6 +4,7 @@ import { applicationLink } from '@/lib/application-link'
 import { canAdminApp } from '@/lib/permissions'
 import { listJournalsWithMetrics } from '@/lib/services/publications/journals'
 import { JournalsView } from '@/app/[locale]/publications/components/journals/journals-view'
+import { BackToDashboard } from '@/app/[locale]/publications/components/back-to-dashboard'
 
 type PageParams = { params: Promise<{ locale: 'en' | 'fr' }> }
 
@@ -15,7 +16,8 @@ export default async function PublicationsJournalsPage({ params }: PageParams) {
 
   return (
     <div className="app-gradient min-h-full px-4 py-8 md:px-8">
-      <div className="mx-auto max-w-[1800px]">
+      <div className="mx-auto max-w-[1800px] space-y-4">
+        <BackToDashboard locale={locale} />
         <JournalsView journals={journals} />
       </div>
     </div>

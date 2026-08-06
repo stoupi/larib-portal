@@ -1,24 +1,30 @@
 'use client'
 
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useTranslations } from 'next-intl'
-import { ArrowRight, FileText } from 'lucide-react'
-import { Link } from '@/app/i18n/navigation'
+import { FileText } from 'lucide-react'
 import type { DashboardArticleItem } from '@/lib/publications/admin-dashboard'
+import type { StudyOption } from '@/lib/services/publications/studies'
+import { nextArticleSort, sortArticles, type ArticleSort } from '@/lib/publications/article-sort'
 import { ArticleListRow, ArticlesHeaderRow } from '../articles/article-list-row'
+import { NewPublicationButton } from '../new-publication-button'
 
 export function DashboardArticlesCard({
   articles,
   locale,
   journalNames,
+  studyOptions,
 }: {
   articles: DashboardArticleItem[]
   locale: string
   journalNames: string[]
+  studyOptions: StudyOption[]
 }) {
   const t = useTranslations('publications.adminHome')
   const tArticles = useTranslations('publications.articles')
   const [expanded, setExpanded] = useState<Set<string>>(new Set())
+  const [sort, setSort] = useState<ArticleSort>(null)
+  const rows = useMemo(() => sortArticles(articles, sort), [articles, sort])
 
   function toggleExpanded(id: string) {
     setExpanded((current) => {
@@ -38,13 +44,9 @@ export function DashboardArticlesCard({
             {articles.length}
           </span>
         </div>
-        <Link
-          href="/publications/admin/articles"
-          className="inline-flex items-center gap-2 text-sm font-bold text-coral-600 hover:underline"
-        >
-          {t('openLibrary')}
-          <ArrowRight className="size-4" />
-        </Link>
+        <div className="flex items-center gap-3">
+          <NewPublicationButton compact asAdmin />
+        </div>
       </div>
 
       {articles.length === 0 ? (
@@ -55,15 +57,18 @@ export function DashboardArticlesCard({
           <p className="text-[17px] font-bold text-text-primary">{t('noArticles')}</p>
         </div>
       ) : (
-        <div className="max-h-[640px] overflow-auto">
+        <div className="max-h-[70vh] overflow-auto">
           <div className="min-w-[980px]">
-            <ArticlesHeaderRow />
-            {articles.map((article) => (
+            <ArticlesHeaderRow
+              sorting={{ value: sort, onSort: (key) => setSort((current) => nextArticleSort(current, key)) }}
+            />
+            {rows.map((article) => (
               <ArticleListRow
                 key={article.id}
                 article={article}
                 locale={locale}
                 expansion={{ open: expanded.has(article.id), onToggle: () => toggleExpanded(article.id), journalNames }}
+                admin={{ studyOptions }}
               />
             ))}
           </div>

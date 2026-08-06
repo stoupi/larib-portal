@@ -15,9 +15,11 @@ import { isDraftDeletable } from '@/lib/publications/editor-logic'
 import type { PublicationEditData } from '@/lib/services/publications/publication-editor'
 import type { JournalTargetItem } from '@/lib/services/publications/journal-targets'
 import type { StudyOption } from '@/lib/services/publications/studies'
+import type { AuthorOption } from '@/lib/services/publications/authors'
 import { updateArticleCoreAction, deleteDraftArticleAction } from '../../actions'
 import { EditorHeader } from './editor-header'
 import { EditorAuthors } from './editor-authors'
+import { EditorAuthorsAdmin } from './editor-authors-admin'
 import { EditorReferences } from './editor-references'
 import { EditorSubmissions } from './editor-submissions'
 import { EditorJournalQueue } from './editor-journal-queue'
@@ -37,23 +39,28 @@ export type EditorFormValues = z.infer<typeof FormSchema>
 export type EditorForm = UseFormReturn<EditorFormValues>
 export type EditorViewer = { userId: string; isFirstAuthor: boolean; isAdmin: boolean }
 
+export type EditorOptions = {
+  journalTargets: JournalTargetItem[]
+  studyOptions: StudyOption[]
+  journalNames: string[]
+  authorOptions: AuthorOption[]
+}
+
 export function PublicationEditor({
   locale,
   article,
-  journalTargets,
-  studyOptions,
-  journalNames,
+  options,
   viewer,
 }: {
   locale: string
   article: PublicationEditData
-  journalTargets: JournalTargetItem[]
-  studyOptions: StudyOption[]
-  journalNames: string[]
+  options: EditorOptions
   viewer: EditorViewer
 }) {
+  const { journalTargets, studyOptions, journalNames, authorOptions } = options
   const t = useTranslations('publications')
   const router = useRouter()
+  const backHref = viewer.isAdmin ? '/publications/admin' : '/publications'
 
   const defaults: EditorFormValues = {
     title: article.title,
@@ -81,7 +88,7 @@ export function PublicationEditor({
   const removeDraft = useAction(deleteDraftArticleAction, {
     onSuccess() {
       toast.success(t('editor.deleted'))
-      router.push('/publications')
+      router.push(backHref)
     },
     onError() {
       toast.error(t('editor.actionError'))
@@ -110,7 +117,7 @@ export function PublicationEditor({
       removeDraft.execute({ id: article.id })
       return
     }
-    router.push('/publications')
+    router.push(backHref)
   }
 
   return (
@@ -118,8 +125,8 @@ export function PublicationEditor({
       <div className="mx-auto max-w-[1800px] space-y-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <nav className="flex flex-wrap items-center gap-1.5 text-sm">
-            <Link href="/publications" className="font-semibold text-text-secondary hover:underline">
-              {t('title')}
+            <Link href={backHref} className="font-semibold text-text-secondary hover:underline">
+              {viewer.isAdmin ? t('adminHome.title') : t('title')}
             </Link>
             <ChevronRight className="h-4 w-4 text-text-muted" />
             <span className="font-semibold text-text-primary">{t('editor.editPublication')}</span>
@@ -155,7 +162,18 @@ export function PublicationEditor({
 
         <div className={cn('grid grid-cols-1 gap-5 lg:grid-cols-2')}>
           <div className="space-y-5">
-            <EditorAuthors article={article} viewer={viewer} form={form} />
+            {viewer.isAdmin ? (
+              <EditorAuthorsAdmin
+                articleId={article.id}
+                initialAuthors={article.authorships.map((authorship) => ({
+                  authorId: authorship.author.id,
+                  isCorresponding: authorship.isCorresponding,
+                }))}
+                authorOptions={authorOptions}
+              />
+            ) : (
+              <EditorAuthors article={article} viewer={viewer} form={form} />
+            )}
             <EditorReferences form={form} studyOptions={studyOptions} />
           </div>
           <div className="space-y-5">

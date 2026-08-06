@@ -12,7 +12,7 @@ async function login(page: Page, email: string): Promise<void> {
 
 test('admin browses articles, records a submission and opens a detail with authors', async ({ page }) => {
   await login(page, 'publications-admin@larib-portal.test')
-  await page.goto('/en/publications/admin/articles', { timeout: 60000 })
+  await page.goto('/en/publications/admin', { timeout: 60000 })
   await expect(page.getByRole('heading', { name: /^articles$/i })).toBeVisible()
 
   // The admin curates the submission history of an article they do not author
