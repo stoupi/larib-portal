@@ -15,7 +15,8 @@
 		"test:seed": "tsx prisma/seed.test.ts",
 		"test:setup": "npm run test:seed && playwright test",
 		"test:push": "npm run test:seed && PLAYWRIGHT_PORT=3100 playwright test --workers=1 --retries=2 --forbid-only",
-		"verify:push": "npm run test:unit && npm run build && npm run test:push",
+		"check:untracked-sources": "tsx scripts/check-untracked-sources.ts",
+		"verify:push": "npm run check:untracked-sources && npm run test:unit && npm run build && npm run test:push",
 		"test:setup ui": "npm run test:seed && playwright test --ui",
 		"test:check-passwords": "tsx scripts/check-test-passwords.ts",
 		"audit:submissions": "tsx scripts/audit-in-submission.ts"
