@@ -8,11 +8,14 @@ import { ARTICLE_STATUS_TONE, pillClassName } from '@/lib/publications/status-di
 import { ARTICLE_TYPE_BADGE } from '@/lib/publications/article-type'
 import type { DashboardArticleItem } from '@/lib/publications/admin-dashboard'
 import { ARTICLE_SORT_KEYS, type ArticleSort, type ArticleSortKey } from '@/lib/publications/article-sort'
+import { publicationsPaths, PUBLICATIONS_ADMIN_BASE } from '@/lib/publications/base-path'
 import type { StudyOption } from '@/lib/services/publications/studies'
 import { SubmissionHistory } from '../submission-history'
 import { ArticleStudySelect } from './article-study-select'
 import { ArticleScopeSwitch } from './article-scope-switch'
 import { ArticleDeleteButton } from './article-delete-button'
+
+const ADMIN_PATHS = publicationsPaths(PUBLICATIONS_ADMIN_BASE)
 
 export const ARTICLES_GRID =
   'grid grid-cols-[minmax(240px,1fr)_150px_128px_72px_128px_176px_132px] items-center gap-3.5'
@@ -90,7 +93,7 @@ export function ArticleListRow({
               {t(`myPub.type.${article.type}`)}
             </span>
             <Link
-              href={`/publications/articles/${article.id}`}
+              href={ADMIN_PATHS.article(article.id)}
               className="block text-sm font-bold leading-snug text-text-primary underline-offset-2 transition-colors hover:text-coral-600 hover:underline dark:hover:text-coral-300"
             >
               {article.title || t('myPub.untitled')}
@@ -184,7 +187,7 @@ export function ArticleListRow({
             </a>
           )}
           <Link
-            href={`/publications/articles/${article.id}?mode=edit`}
+            href={ADMIN_PATHS.articleEdit(article.id)}
             title={t('myPub.edit')}
             className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-b from-navy-600 to-navy-700 text-white shadow-[0_6px_14px_-6px_rgba(19,44,74,0.5)] transition hover:brightness-110"
           >

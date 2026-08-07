@@ -8,12 +8,15 @@ import { ArticleScopeSwitch } from './articles/article-scope-switch'
 import { ARTICLE_STATUS_TONE, pillClassName } from '@/lib/publications/status-display'
 import { ARTICLE_TYPE_BADGE } from '@/lib/publications/article-type'
 import type { MyPublicationItem } from '@/lib/services/publications/my-publications'
+import { publicationsPaths, PUBLICATIONS_BASE } from '@/lib/publications/base-path'
 import { SubmissionHistory } from './submission-history'
 
 export type SortKey = 'title' | 'journal' | 'study' | 'role' | 'status' | 'sub'
 
 type Sort = { key: SortKey | null; dir: 'asc' | 'desc'; onSort: (key: SortKey) => void }
 type Expansion = { isOpen: (id: string) => boolean; toggle: (id: string) => void }
+
+const USER_PATHS = publicationsPaths(PUBLICATIONS_BASE)
 
 const GRID = 'grid grid-cols-[minmax(220px,1fr)_150px_112px_124px_120px_156px_88px] items-center gap-3.5'
 
@@ -121,7 +124,7 @@ function PublicationRow({
                 <ArticleScopeSwitch articleId={item.id} articleTitle={item.title} scope={item.scope} />
             </span>
             <Link
-              href={`/publications/articles/${item.id}`}
+              href={USER_PATHS.article(item.id)}
               title={item.isFirst ? t('myPub.edit') : t('myPub.view')}
               className="block text-sm font-bold leading-snug text-text-primary underline-offset-2 transition-colors hover:text-coral-600 hover:underline dark:hover:text-coral-300"
             >
@@ -207,7 +210,7 @@ function PublicationRow({
             </a>
           )}
           <Link
-            href={`/publications/articles/${item.id}`}
+            href={USER_PATHS.article(item.id)}
             title={item.isFirst ? t('myPub.edit') : t('myPub.view')}
             className={cn(
               'inline-flex h-8 w-8 items-center justify-center rounded-lg transition',

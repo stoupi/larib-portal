@@ -6,6 +6,7 @@ import { toast } from 'sonner'
 import { Plus } from 'lucide-react'
 import { useRouter } from '@/app/i18n/navigation'
 import { cn } from '@/lib/utils'
+import { publicationsPaths, PUBLICATIONS_BASE, PUBLICATIONS_ADMIN_BASE } from '@/lib/publications/base-path'
 import { createDraftArticleAction } from '../actions'
 
 export function NewPublicationButton({ compact = false, asAdmin = false }: { compact?: boolean; asAdmin?: boolean }) {
@@ -13,7 +14,10 @@ export function NewPublicationButton({ compact = false, asAdmin = false }: { com
   const router = useRouter()
   const { execute, isExecuting } = useAction(createDraftArticleAction, {
     onSuccess({ data }) {
-      if (data?.id) router.push(`/publications/articles/${data.id}?mode=edit`)
+      if (data?.id) {
+        const paths = publicationsPaths(asAdmin ? PUBLICATIONS_ADMIN_BASE : PUBLICATIONS_BASE)
+        router.push(paths.articleEdit(data.id))
+      }
     },
     onError() {
       toast.error(t('editor.actionError'))

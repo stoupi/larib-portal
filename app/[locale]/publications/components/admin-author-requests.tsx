@@ -7,7 +7,10 @@ import { toast } from 'sonner'
 import { Check, X, Inbox } from 'lucide-react'
 import { Link } from '@/app/i18n/navigation'
 import type { PendingAuthorRequest } from '@/lib/services/publications/author-requests'
+import { publicationsPaths, PUBLICATIONS_ADMIN_BASE } from '@/lib/publications/base-path'
 import { resolveAuthorRequestAction } from '../actions'
+
+const ADMIN_PATHS = publicationsPaths(PUBLICATIONS_ADMIN_BASE)
 
 export function AdminAuthorRequests({ requests }: { requests: PendingAuthorRequest[] }) {
   const t = useTranslations('publications')
@@ -43,7 +46,7 @@ export function AdminAuthorRequests({ requests }: { requests: PendingAuthorReque
             <li key={request.id} className="flex flex-wrap items-start justify-between gap-3 rounded-xl border border-line p-3.5">
               <div className="min-w-0">
                 <Link
-                  href={`/publications/articles/${request.articleId}`}
+                  href={ADMIN_PATHS.article(request.articleId)}
                   className="text-sm font-semibold text-navy-600 underline-offset-4 hover:underline"
                 >
                   {request.articleTitle || t('myPub.untitled')}
