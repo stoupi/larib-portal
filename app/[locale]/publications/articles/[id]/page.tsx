@@ -7,6 +7,7 @@ import { listJournalTargets } from '@/lib/services/publications/journal-targets'
 import { listStudyOptions } from '@/lib/services/publications/studies'
 import { listJournalNames } from '@/lib/services/publications/journals'
 import { listAuthorOptions } from '@/lib/services/publications/authors'
+import { PUBLICATIONS_BASE } from '@/lib/publications/base-path'
 import { ArticlePage } from '@/app/[locale]/publications/components/article/article-page'
 
 type PageParams = { params: Promise<{ locale: 'en' | 'fr'; id: string }> }
@@ -35,6 +36,7 @@ export default async function ArticleRoute({ params }: PageParams) {
       article={article}
       options={{ journalTargets, studyOptions, journalNames, authorOptions }}
       viewer={{ userId: session.user.id, isFirstAuthor, isAdmin }}
+      basePath={PUBLICATIONS_BASE}
     />
   )
 }

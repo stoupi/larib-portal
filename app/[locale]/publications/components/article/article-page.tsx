@@ -15,6 +15,7 @@ import { ARTICLE_STATUSES } from '@/lib/services/publications/articles'
 import { ARTICLE_TYPE_VALUES, normalizeArticleType } from '@/lib/publications/article-type'
 import { isDraftDeletable } from '@/lib/publications/editor-logic'
 import { computeEditorVisibility, type EditorMode } from '@/lib/publications/editor-mode'
+import { PUBLICATIONS_ADMIN_BASE, type PublicationsBasePath } from '@/lib/publications/base-path'
 import type { PublicationEditData } from '@/lib/services/publications/publication-editor'
 import type { JournalTargetItem } from '@/lib/services/publications/journal-targets'
 import type { StudyOption } from '@/lib/services/publications/studies'
@@ -56,17 +57,19 @@ export function ArticlePage({
   article,
   options,
   viewer,
+  basePath,
 }: {
   locale: string
   article: PublicationEditData
   options: EditorOptions
   viewer: EditorViewer
+  basePath: PublicationsBasePath
 }) {
   const { journalTargets, studyOptions, journalNames, authorOptions } = options
   const t = useTranslations('publications')
   const router = useRouter()
   const searchParams = useSearchParams()
-  const backHref = viewer.isAdmin ? '/publications/admin' : '/publications'
+  const backHref = basePath
   const canEdit = viewer.isAdmin || viewer.isFirstAuthor
 
   const [mode, setMode] = useState<EditorMode>(searchParams.get('mode') === 'edit' ? 'edit' : 'read')
@@ -137,7 +140,7 @@ export function ArticlePage({
         <div className="flex flex-wrap items-center justify-between gap-3">
           <nav className="flex flex-wrap items-center gap-1.5 text-sm">
             <Link href={backHref} className="font-semibold text-text-secondary hover:underline">
-              {viewer.isAdmin ? t('adminHome.title') : t('title')}
+              {basePath === PUBLICATIONS_ADMIN_BASE ? t('adminHome.title') : t('title')}
             </Link>
             <ChevronRight className="h-4 w-4 text-text-muted" />
             <span className="font-semibold text-text-primary">{article.title || t('myPub.untitled')}</span>
