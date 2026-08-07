@@ -30,6 +30,7 @@ import { TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/compon
 import { deleteAuthorAction, mergeAuthorsAction, getAuthorDetailAction, getAuthorForEditAction } from '../actions'
 import type { AuthorListItem, LinkableUser, AuthorDetail, AuthorEditData } from '@/lib/services/publications/authors'
 import { EditAuthorDialog } from './edit-author-dialog'
+import { publicationsPaths, type PublicationsBasePath } from '@/lib/publications/base-path'
 
 function authorLabel(author: AuthorListItem): string {
   return `${author.firstName} ${author.lastName.toUpperCase()}`.trim()
@@ -93,9 +94,10 @@ function sortValue(author: AuthorListItem, key: SortKey): string | number {
   }
 }
 
-export function AuthorsManager({ authors, users, centres }: { authors: AuthorListItem[]; users: LinkableUser[]; centres: { id: string; name: string; isOwn?: boolean }[] }) {
+export function AuthorsManager({ authors, users, centres, basePath }: { authors: AuthorListItem[]; users: LinkableUser[]; centres: { id: string; name: string; isOwn?: boolean }[]; basePath: PublicationsBasePath }) {
   const t = useTranslations('publications')
   const router = useRouter()
+  const paths = publicationsPaths(basePath)
   const [query, setQuery] = useState('')
   const [typeFilter, setTypeFilter] = useState<'ALL' | 'OUR_TEAM' | 'EXTERNAL'>('ALL')
   const [centreFilter, setCentreFilter] = useState('')
@@ -274,7 +276,7 @@ export function AuthorsManager({ authors, users, centres }: { authors: AuthorLis
             {t('authors.merge')}
           </Button>
           <Button asChild className="gap-2 bg-gradient-to-b from-coral-500 to-coral-600 text-white shadow-[0_10px_22px_-8px_rgba(214,31,85,0.6)] hover:brightness-105">
-            <Link href="/publications/authors/new">
+            <Link href={paths.newAuthor}>
               <UserPlus className="size-4" />
               {t('authors.add.list.addButton')}
             </Link>
