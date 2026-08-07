@@ -354,6 +354,46 @@ export async function listAuthorOptions(): Promise<AuthorOption[]> {
   })
 }
 
+export type AuthorPickerOption = {
+  id: string
+  firstName: string
+  lastName: string
+  initials: string | null
+  degrees: string | null
+  isOurTeam: boolean
+  centreName: string | null
+  publicationCount: number
+  createdAt: string
+}
+
+export async function listAuthorPickerOptions(): Promise<AuthorPickerOption[]> {
+  const authors = await prisma.author.findMany({
+    orderBy: [{ lastName: 'asc' }],
+    select: {
+      id: true,
+      firstName: true,
+      lastName: true,
+      initials: true,
+      degrees: true,
+      type: true,
+      createdAt: true,
+      centre: { select: { name: true } },
+      _count: { select: { authorships: true } },
+    },
+  })
+  return authors.map((author) => ({
+    id: author.id,
+    firstName: author.firstName,
+    lastName: author.lastName,
+    initials: author.initials,
+    degrees: author.degrees,
+    isOurTeam: author.type === 'OUR_TEAM',
+    centreName: author.centre?.name ?? null,
+    publicationCount: author._count.authorships,
+    createdAt: author.createdAt.toISOString(),
+  }))
+}
+
 export async function deleteAuthor(id: string) {
   return prisma.author.delete({ where: { id }, select: { id: true } })
 }
