@@ -164,14 +164,19 @@ test('admin dashboard shows metrics, filters the library and opens its modules',
   await expect(page.getByRole('link', { name: 'Publications dashboard', exact: true })).toBeVisible()
   await expect(page.getByText('No author yet — add the first one.')).toBeVisible()
 
-  const authorPicker = page.getByLabel('Select an author')
-  const firstAuthorLabel = (await authorPicker.locator('option').nth(1).textContent()) ?? ''
-  await authorPicker.selectOption({ index: 1 })
-  await page.getByRole('button', { name: 'Add an author' }).click()
-  await page.getByRole('button', { name: `Mark as corresponding: ${firstAuthorLabel}` }).click()
+  await page.getByRole('button', { name: 'Add authors' }).click()
+  const authorPicker = page.getByRole('dialog')
+  await expect(authorPicker).toBeVisible()
+  const firstAuthorCheckbox = authorPicker.getByRole('listitem').first().getByRole('checkbox')
+  const firstAuthorLabel = (await firstAuthorCheckbox.getAttribute('aria-label')) ?? ''
+  expect(firstAuthorLabel).not.toBe('')
+  await firstAuthorCheckbox.click()
+  await authorPicker.getByRole('button', { name: 'Add authors', exact: true }).click()
+  await expect(authorPicker).toBeHidden({ timeout: 15000 })
+  await page.getByRole('button', { name: 'Mark as corresponding' }).click()
   await page.getByRole('button', { name: 'Save the author list' }).click()
   await expect(page.getByText('Author list updated')).toBeVisible()
-  await expect(page.getByText(firstAuthorLabel)).toBeVisible()
+  await expect(page.getByText(firstAuthorLabel).first()).toBeVisible()
 
   // …and deletes that draft from the library, after confirming
   await page.goto('/en/publications/admin', { timeout: 60000 })
