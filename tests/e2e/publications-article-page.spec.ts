@@ -16,7 +16,7 @@ async function openMultivalveArticleAsAdmin(page: Page): Promise<string> {
   const titleLink = page.getByRole('link', { name: /Outcomes of multi-valve intervention/i })
   await expect(titleLink).toBeVisible({ timeout: 30000 })
   await Promise.all([
-    page.waitForURL(/\/en\/publications\/articles\/[^/]+$/, { timeout: 30000 }),
+    page.waitForURL(/\/en\/publications\/admin\/articles\/[^/]+$/, { timeout: 30000 }),
     titleLink.click(),
   ])
   return page.url()
@@ -27,7 +27,10 @@ test('a member without edit rights reads the article but gets no editing afforda
 
   await page.context().clearCookies()
   await login(page, 'publications-reader@larib-portal.test')
+
+  // The admin-branch link a colleague would have shared lands them on their own branch
   await page.goto(articleUrl, { timeout: 60000 })
+  await page.waitForURL(/\/en\/publications\/articles\/[^/]+$/, { timeout: 30000 })
 
   await expect(page.getByRole('heading', { name: /Outcomes of multi-valve intervention/i })).toBeVisible({ timeout: 30000 })
   await expect(page.getByText(/Publications USER/i).first()).toBeVisible()

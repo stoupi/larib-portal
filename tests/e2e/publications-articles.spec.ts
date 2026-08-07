@@ -29,7 +29,7 @@ test('admin browses articles, records a submission and opens a detail with autho
   const titleLink = page.getByRole('link', { name: /Outcomes of multi-valve intervention/i })
   await expect(titleLink).toBeVisible()
   await Promise.all([
-    page.waitForURL(/\/en\/publications\/articles\/[^/]+$/, { timeout: 30000 }),
+    page.waitForURL(/\/en\/publications\/admin\/articles\/[^/]+$/, { timeout: 30000 }),
     titleLink.click(),
   ])
   await expect(page.getByRole('heading', { name: /Outcomes of multi-valve intervention/i })).toBeVisible({ timeout: 30000 })

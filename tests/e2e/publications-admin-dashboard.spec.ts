@@ -52,7 +52,7 @@ test('admin dashboard shows metrics, filters the library and opens its modules',
   await expect(articleLink).toBeVisible()
 
   // Clicking a column header sorts the list, then a third click clears the sort
-  const titleHeader = page.getByRole('button', { name: 'Title' })
+  const titleHeader = page.getByRole('button', { name: 'Title', exact: true })
   const titles = page.locator('a[href*="/publications/articles/"]:not([href*="mode=edit"])')
   const unsortedTitles = await titles.allInnerTexts()
   await titleHeader.click()
@@ -160,7 +160,7 @@ test('admin dashboard shows metrics, filters the library and opens its modules',
 
   // An admin creates a publication: no author is imposed and they curate the list themselves
   await page.getByRole('button', { name: 'New publication' }).click()
-  await page.waitForURL(/\/publications\/articles\/[^/]+\?mode=edit/, { timeout: 60000 })
+  await page.waitForURL(/\/publications\/admin\/articles\/[^/]+\?mode=edit/, { timeout: 60000 })
   await expect(page.getByRole('link', { name: 'Publications dashboard', exact: true })).toBeVisible()
   await expect(page.getByText('No author yet — add the first one.')).toBeVisible()
 
