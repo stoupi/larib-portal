@@ -1,26 +1,28 @@
 import { getTranslations } from 'next-intl/server'
 import { redirect } from 'next/navigation'
 import { requireAuth } from '@/lib/auth-guard'
-import { canAccessApp } from '@/lib/permissions'
+import { canAdminApp } from '@/lib/permissions'
 import { applicationLink } from '@/lib/application-link'
 import { Link } from '@/app/i18n/navigation'
 import { listCentres } from '@/lib/services/publications/centres'
 import { listLinkableUsers } from '@/lib/services/publications/authors'
 import { AddAuthorForm } from '@/app/[locale]/publications/components/add-author-form'
-import { publicationsPaths, PUBLICATIONS_BASE } from '@/lib/publications/base-path'
+import { BackToDashboard } from '@/app/[locale]/publications/components/back-to-dashboard'
+import { publicationsPaths, PUBLICATIONS_ADMIN_BASE } from '@/lib/publications/base-path'
 
 type PageParams = { params: Promise<{ locale: 'en' | 'fr' }> }
 
-export default async function NewAuthorPage({ params }: PageParams) {
+export default async function AdminNewAuthorPage({ params }: PageParams) {
   const { locale } = await params
   const session = await requireAuth()
-  if (!canAccessApp(session.user, 'PUBLICATIONS')) redirect(applicationLink(locale, '/dashboard'))
+  if (!canAdminApp(session.user, 'PUBLICATIONS')) redirect(applicationLink(locale, '/publications'))
   const t = await getTranslations({ locale, namespace: 'publications.authors.add' })
   const [centres, users] = await Promise.all([listCentres(), listLinkableUsers()])
-  const paths = publicationsPaths(PUBLICATIONS_BASE)
+  const paths = publicationsPaths(PUBLICATIONS_ADMIN_BASE)
 
   return (
     <div className="mx-auto max-w-4xl space-y-6 p-4 md:p-6">
+      <BackToDashboard locale={locale} />
       <div className="flex gap-4">
         <span aria-hidden className="mt-1 w-[5px] shrink-0 rounded bg-gradient-to-b from-coral-500 to-coral-600" />
         <div className="space-y-1">
@@ -34,7 +36,7 @@ export default async function NewAuthorPage({ params }: PageParams) {
         </div>
       </div>
       <AddAuthorForm
-        basePath={PUBLICATIONS_BASE}
+        basePath={PUBLICATIONS_ADMIN_BASE}
         centres={centres.map((centre) => ({ value: centre.id, label: centre.name }))}
         users={users.map((user) => ({
           value: user.id,

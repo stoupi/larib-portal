@@ -6,6 +6,7 @@ import { applicationLink } from '@/lib/application-link'
 import { Link } from '@/app/i18n/navigation'
 import { Button } from '@/components/ui/button'
 import { listAuthors } from '@/lib/services/publications/authors'
+import { publicationsPaths, PUBLICATIONS_BASE } from '@/lib/publications/base-path'
 
 type PageParams = { params: Promise<{ locale: 'en' | 'fr' }> }
 
@@ -15,13 +16,14 @@ export default async function AuthorsPage({ params }: PageParams) {
   if (!canAccessApp(session.user, 'PUBLICATIONS')) redirect(applicationLink(locale, '/dashboard'))
   const t = await getTranslations({ locale, namespace: 'publications.authors.add.list' })
   const authors = await listAuthors()
+  const paths = publicationsPaths(PUBLICATIONS_BASE)
 
   return (
     <div className="mx-auto max-w-4xl p-6 space-y-4">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">{t('title')}</h1>
         <Button asChild>
-          <Link href="/publications/authors/new">{t('addButton')}</Link>
+          <Link href={paths.newAuthor}>{t('addButton')}</Link>
         </Button>
       </div>
       {authors.length === 0 ? (
