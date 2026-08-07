@@ -20,6 +20,7 @@ import type { PublicationEditData } from '@/lib/services/publications/publicatio
 import type { JournalTargetItem } from '@/lib/services/publications/journal-targets'
 import type { StudyOption } from '@/lib/services/publications/studies'
 import type { AuthorOption } from '@/lib/services/publications/authors'
+import type { PickerAuthor } from '@/lib/publications/author-picker'
 import { updateArticleCoreAction, deleteDraftArticleAction } from '../../actions'
 import { EditorHeader } from '../editor/editor-header'
 import { EditorAuthors } from '../editor/editor-authors'
@@ -50,6 +51,8 @@ export type EditorOptions = {
   studyOptions: StudyOption[]
   journalNames: string[]
   authorOptions: AuthorOption[]
+  pickerAuthors: PickerAuthor[]
+  centres: { id: string; name: string; city: string | null; isOwn: boolean }[]
 }
 
 export function ArticlePage({
@@ -65,7 +68,7 @@ export function ArticlePage({
   viewer: EditorViewer
   basePath: PublicationsBasePath
 }) {
-  const { journalTargets, studyOptions, journalNames, authorOptions } = options
+  const { journalTargets, studyOptions, journalNames, pickerAuthors, centres } = options
   const t = useTranslations('publications')
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -194,7 +197,8 @@ export function ArticlePage({
                   authorId: authorship.author.id,
                   isCorresponding: authorship.isCorresponding,
                 }))}
-                authorOptions={authorOptions}
+                pickerAuthors={pickerAuthors}
+                centres={centres}
                 editable={visibility.cardsEditable}
               />
             ) : (

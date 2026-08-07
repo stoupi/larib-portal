@@ -6,7 +6,8 @@ import { getPublicationForEdit, userIsFirstAuthor } from '@/lib/services/publica
 import { listJournalTargets } from '@/lib/services/publications/journal-targets'
 import { listStudyOptions } from '@/lib/services/publications/studies'
 import { listJournalNames } from '@/lib/services/publications/journals'
-import { listAuthorOptions } from '@/lib/services/publications/authors'
+import { listAuthorOptions, listAuthorPickerOptions } from '@/lib/services/publications/authors'
+import { listCentres } from '@/lib/services/publications/centres'
 import { PUBLICATIONS_BASE } from '@/lib/publications/base-path'
 import { ArticlePage } from '@/app/[locale]/publications/components/article/article-page'
 
@@ -23,18 +24,28 @@ export default async function ArticleRoute({ params }: PageParams) {
   const isAdmin = canAdminApp(session.user, 'PUBLICATIONS')
   const isFirstAuthor = await userIsFirstAuthor(session.user.id, id)
 
-  const [journalTargets, studyOptions, journalNames, authorOptions] = await Promise.all([
-    listJournalTargets(id),
-    listStudyOptions(),
-    listJournalNames(),
-    isAdmin ? listAuthorOptions() : Promise.resolve([]),
-  ])
+  const [journalTargets, studyOptions, journalNames, authorOptions, pickerAuthors, centreRows] =
+    await Promise.all([
+      listJournalTargets(id),
+      listStudyOptions(),
+      listJournalNames(),
+      isAdmin ? listAuthorOptions() : Promise.resolve([]),
+      isAdmin ? listAuthorPickerOptions() : Promise.resolve([]),
+      isAdmin ? listCentres() : Promise.resolve([]),
+    ])
+
+  const centres = centreRows.map((centre) => ({
+    id: centre.id,
+    name: centre.name,
+    city: centre.city,
+    isOwn: centre.isOwn,
+  }))
 
   return (
     <ArticlePage
       locale={locale}
       article={article}
-      options={{ journalTargets, studyOptions, journalNames, authorOptions }}
+      options={{ journalTargets, studyOptions, journalNames, authorOptions, pickerAuthors, centres }}
       viewer={{ userId: session.user.id, isFirstAuthor, isAdmin }}
       basePath={PUBLICATIONS_BASE}
     />
