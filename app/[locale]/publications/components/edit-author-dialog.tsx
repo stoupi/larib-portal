@@ -48,7 +48,9 @@ function EditAuthorForm({ data, centres, users, onClose, onSaved }: { data: Auth
   const [affiliations, setAffiliations] = useState<string[]>(data.affiliations)
   const [newAffiliation, setNewAffiliation] = useState('')
 
-  const isOurTeam = centreIds.some((id) => centreById.get(id)?.isOwn)
+  // The server types an author from their primary centre only, so the badge must read
+  // the same one — .some() would promise "our team" for a secondary own centre.
+  const isOurTeam = Boolean(centreIds[0] && centreById.get(centreIds[0])?.isOwn)
   const availableCentres = centres.filter((centre) => !centreIds.includes(centre.id))
 
   const action = useAction(updateAuthorAction, {

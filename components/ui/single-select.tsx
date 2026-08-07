@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { optionSearchScore } from '@/lib/option-search';
 import { Button } from '@/components/ui/button';
 import {
 	Popover,
@@ -82,7 +83,7 @@ export function SingleSelect({
 				</Button>
 			</PopoverTrigger>
 			<PopoverContent className='w-[var(--radix-popover-trigger-width)] p-0' align='start'>
-				<Command>
+				<Command filter={optionSearchScore}>
 					{searchable && <CommandInput placeholder={searchPlaceholder} />}
 					<CommandList className='max-h-[300px]'>
 						<CommandEmpty>{emptyLabel}</CommandEmpty>

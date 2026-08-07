@@ -100,15 +100,53 @@ export async function deleteCentre(id: string) {
   return prisma.centre.delete({ where: { id }, select: { id: true } })
 }
 
-export async function mergeCentres(keepId: string, mergeIds: string[]): Promise<{ reassigned: number; deleted: number }> {
+export async function mergeCentres(
+  keepId: string,
+  mergeIds: string[],
+): Promise<{ reassigned: number; deleted: number; studiesMoved: number; authorsRetyped: number }> {
   const sources = mergeIds.filter((id) => id !== keepId)
-  if (sources.length === 0) return { reassigned: 0, deleted: 0 }
+  if (sources.length === 0) return { reassigned: 0, deleted: 0, studiesMoved: 0, authorsRetyped: 0 }
   return prisma.$transaction(async (tx) => {
     const reassigned = (await tx.affiliation.updateMany({ where: { centreId: { in: sources } }, data: { centreId: keepId } })).count
     await tx.author.updateMany({ where: { centreId: { in: sources } }, data: { centreId: keepId } })
+
+    // Studies link to centres through an implicit many-to-many, so deleting a source
+    // would drop the row silently and leave the study short of a centre.
+    const studies = await tx.study.findMany({
+      where: { centres: { some: { id: { in: sources } } } },
+      select: { id: true, centres: { select: { id: true } } },
+    })
+    for (const study of studies) {
+      if (study.centres.some((centre) => centre.id === keepId)) continue
+      await tx.study.update({ where: { id: study.id }, data: { centres: { connect: { id: keepId } } } })
+    }
+
+    // An author already linked to the survivor would collide on @@unique([authorId, centreId]).
+    const keepLinks = await tx.authorCentre.findMany({ where: { centreId: keepId }, select: { authorId: true } })
+    const alreadyLinked = keepLinks.map((link) => link.authorId)
+    if (alreadyLinked.length > 0) {
+      await tx.authorCentre.deleteMany({ where: { centreId: { in: sources }, authorId: { in: alreadyLinked } } })
+    }
+    const movedLinks = await tx.authorCentre.findMany({ where: { centreId: { in: sources } }, select: { authorId: true } })
     await tx.authorCentre.updateMany({ where: { centreId: { in: sources } }, data: { centreId: keepId } })
+
     await tx.centre.deleteMany({ where: { id: { in: sources } } })
-    return { reassigned, deleted: sources.length }
+
+    // Author.type is derived from the primary centre, so authors pulled onto the
+    // survivor must be re-typed or they keep the type of a centre that no longer exists.
+    const survivor = await tx.centre.findUnique({ where: { id: keepId }, select: { isOwn: true } })
+    const movedAuthorIds = [...new Set(movedLinks.map((link) => link.authorId))]
+    let authorsRetyped = 0
+    if (movedAuthorIds.length > 0) {
+      authorsRetyped = (
+        await tx.author.updateMany({
+          where: { id: { in: movedAuthorIds }, centreId: keepId },
+          data: { type: survivor?.isOwn ? 'OUR_TEAM' : 'EXTERNAL' },
+        })
+      ).count
+    }
+
+    return { reassigned, deleted: sources.length, studiesMoved: studies.length, authorsRetyped }
   })
 }
 

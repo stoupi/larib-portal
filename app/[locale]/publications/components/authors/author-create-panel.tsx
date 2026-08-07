@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Command, CommandEmpty, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
+import { optionSearchScore } from '@/lib/option-search'
 import type { PickerAuthor } from '@/lib/publications/author-picker'
 import { createAuthorAction } from '../../actions'
 
@@ -29,7 +30,7 @@ function CentrePicker({
 }) {
   const t = useTranslations('publications.editor')
   return (
-    <Command className="rounded-xl border border-line bg-bg-surface">
+    <Command filter={optionSearchScore} className="rounded-xl border border-line bg-bg-surface">
       <CommandInput placeholder={t('picker.centrePlaceholder')} />
       <CommandList className="max-h-40">
         <CommandEmpty>{t('picker.empty')}</CommandEmpty>
