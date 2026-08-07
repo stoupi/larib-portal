@@ -46,6 +46,8 @@ Un seul endroit à modifier quand une route s'ajoute, et une fonction pure donc 
 
 Les deux routes partagent donc toute leur logique — seuls le garde d'accès et le `basePath` diffèrent. Aucune duplication de rendu.
 
+Un même article possède ainsi deux URL. C'est le prix assumé de la séparation, et il reste sans conséquence pour le partage de liens : la route admin redirige un membre non administrateur vers `/publications/articles/<id>`, la même fiche côté utilisateur. Un lien copié depuis l'admin et envoyé à un membre fonctionne donc.
+
 ## Ce que `ArticlePage` cesse de deviner
 
 `ArticlePage` reçoit `basePath` et l'utilise pour son lien de retour et son libellé de fil d'Ariane, à la place du test sur `viewer.isAdmin`. Le rôle du lecteur continue de gouverner ce qu'il a le droit de modifier ; il ne gouverne plus où il se trouve.
@@ -64,7 +66,7 @@ Restent vers `/publications/articles/<id>` : « Mes publications » (`publicatio
 
 **Unitaires** — `lib/publications/base-path.ts` : les deux bases produisent des destinations correctement préfixées pour la liste d'auteurs, la création d'auteur et la fiche d'un article.
 
-**E2E** — un administrateur ouvre le module Auteurs, clique « Add author », et l'URL reste sous `/publications/admin/` ; il ouvre un article depuis le tableau de bord et l'URL reste sous `/publications/admin/`, le fil d'Ariane ramenant au tableau de bord. Un membre non administrateur ouvre sa publication depuis « Mes publications » : l'URL reste sous `/publications/` et le fil d'Ariane ramène à « Mes publications ». Un membre non administrateur qui force `/publications/admin/articles/<id>` est redirigé.
+**E2E** — un administrateur ouvre le module Auteurs, clique « Add author », et l'URL reste sous `/publications/admin/` ; il ouvre un article depuis le tableau de bord et l'URL reste sous `/publications/admin/`, le fil d'Ariane ramenant au tableau de bord. Un membre non administrateur ouvre sa publication depuis « Mes publications » : l'URL reste sous `/publications/` et le fil d'Ariane ramène à « Mes publications ». Un membre non administrateur qui ouvre `/publications/admin/articles/<id>` — typiquement un lien partagé par un administrateur — est redirigé vers `/publications/articles/<id>` et voit la fiche en lecture.
 
 ## Hors périmètre
 
