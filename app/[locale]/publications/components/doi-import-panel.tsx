@@ -11,6 +11,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { fetchPublicationAuthorsAction, addAuthorsFromPublicationAction } from '@/app/[locale]/publications/actions'
 import { AuthorDedupList, type FetchedRow } from './author-dedup-list'
+import { publicationsPaths, type PublicationsBasePath } from '@/lib/publications/base-path'
 
 type PublicationMeta = { title: string; journal: string | null; year: number | null; doi: string | null }
 
@@ -18,9 +19,10 @@ const CARD_CLASS = 'rounded-2xl border border-line bg-bg-surface p-6 shadow-sm'
 const CORAL_BUTTON_CLASS =
   'gap-2 bg-gradient-to-b from-coral-500 to-coral-600 text-white shadow-[0_10px_22px_-8px_rgba(214,31,85,0.6)] hover:brightness-105'
 
-export function DoiImportPanel() {
+export function DoiImportPanel({ basePath }: { basePath: PublicationsBasePath }) {
   const t = useTranslations('publications.authors.add')
   const router = useRouter()
+  const paths = publicationsPaths(basePath)
   const [identifier, setIdentifier] = useState('')
   const [meta, setMeta] = useState<PublicationMeta | null>(null)
   const [rows, setRows] = useState<FetchedRow[]>([])
@@ -38,7 +40,7 @@ export function DoiImportPanel() {
     onSuccess: ({ data }) => {
       if (!data) return
       toast.success(t('importedToast', { count: data.created }))
-      router.push('/publications/authors')
+      router.push(paths.authorsList)
     },
     onError: () => toast.error(t('fetchError')),
   })

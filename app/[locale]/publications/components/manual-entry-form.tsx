@@ -26,6 +26,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
 import { createAuthorAction } from '@/app/[locale]/publications/actions'
+import { publicationsPaths, type PublicationsBasePath } from '@/lib/publications/base-path'
 
 const DEGREE_OPTIONS = ['MD', 'PhD', 'MSc', 'PharmD'] as const
 
@@ -53,11 +54,12 @@ const manualEntrySchema = z.object({
 })
 type ManualEntryValues = z.infer<typeof manualEntrySchema>
 type Option = { value: string; label: string }
-type Props = { centres: Option[]; users: Option[] }
+type Props = { centres: Option[]; users: Option[]; basePath: PublicationsBasePath }
 
-export function ManualEntryForm({ centres, users }: Props) {
+export function ManualEntryForm({ centres, users, basePath }: Props) {
   const t = useTranslations('publications.authors.add')
   const router = useRouter()
+  const paths = publicationsPaths(basePath)
   const {
     register,
     handleSubmit,
@@ -83,7 +85,7 @@ export function ManualEntryForm({ centres, users }: Props) {
         return
       }
       toast.success(t('created'))
-      router.push('/publications/authors')
+      router.push(paths.authorsList)
     },
     onError: () => toast.error(t('fetchError')),
   })
@@ -203,7 +205,7 @@ export function ManualEntryForm({ centres, users }: Props) {
       </section>
 
       <div className="flex justify-end gap-3">
-        <Button type="button" variant="outline" onClick={() => router.push('/publications/authors')}>
+        <Button type="button" variant="outline" onClick={() => router.push(paths.authorsList)}>
           {t('cancel')}
         </Button>
         <Button type="submit" disabled={action.isPending} className={SUBMIT_CLASS}>
