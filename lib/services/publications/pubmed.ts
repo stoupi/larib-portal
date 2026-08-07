@@ -1,6 +1,7 @@
 import 'server-only'
 import type { PubmedCandidate, PubmedRecord } from '@/types/publications'
 import { parseEfetchXml, parseEsummary } from './pubmed-parse'
+import { pubmedQueryPlan } from '@/lib/publications/pubmed-query'
 
 const EUTILS = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils'
 const FIXTURE_DIR = process.env.PUBMED_FIXTURE_DIR
@@ -43,6 +44,43 @@ export async function searchByAuthor(anchor: string, retmax = 200): Promise<Pubm
   const summaryRes = await fetch(esummary, { cache: 'no-store' })
   if (!summaryRes.ok) throw new Error('PUBMED_SUMMARY_FAILED')
   return parseEsummary(await summaryRes.json())
+}
+
+async function summarize(ids: string[]): Promise<PubmedCandidate[]> {
+  if (ids.length === 0) return []
+  const esummary = withKey(new URL(`${EUTILS}/esummary.fcgi`))
+  esummary.searchParams.set('db', 'pubmed')
+  esummary.searchParams.set('id', ids.join(','))
+  esummary.searchParams.set('retmode', 'json')
+  const summaryRes = await fetch(esummary, { cache: 'no-store' })
+  if (!summaryRes.ok) throw new Error('PUBMED_SUMMARY_FAILED')
+  return parseEsummary(await summaryRes.json())
+}
+
+// Accepts a PMID (or a list of them), a DOI, an author, a title — anything PubMed indexes.
+export async function searchPubmed(query: string, retmax = 200): Promise<PubmedCandidate[]> {
+  const plan = pubmedQueryPlan(query)
+  if (!plan) return []
+  if (FIXTURE_DIR) {
+    const all = await readFixture<PubmedCandidate[]>('candidates.json')
+    if (plan.kind === 'pmids') {
+      const wanted = new Set(plan.pmids)
+      return all.filter((candidate) => wanted.has(candidate.pmid))
+    }
+    return all
+  }
+
+  if (plan.kind === 'pmids') return summarize(plan.pmids)
+
+  const esearch = withKey(new URL(`${EUTILS}/esearch.fcgi`))
+  esearch.searchParams.set('db', 'pubmed')
+  esearch.searchParams.set('term', plan.term)
+  esearch.searchParams.set('retmax', String(retmax))
+  esearch.searchParams.set('retmode', 'json')
+  const searchRes = await fetch(esearch, { cache: 'no-store' })
+  if (!searchRes.ok) throw new Error('PUBMED_SEARCH_FAILED')
+  const searchJson = (await searchRes.json()) as { esearchresult?: { idlist?: string[] } }
+  return summarize(searchJson.esearchresult?.idlist ?? [])
 }
 
 export async function fetchByPmids(pmids: string[]): Promise<PubmedRecord[]> {
