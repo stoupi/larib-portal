@@ -147,6 +147,20 @@ npm run test:e2e:ui                                    # UI mode with seed
 
 The complete push validation runs locally through the versioned pre-push hook and automatically on push/PR via `.github/workflows/tests.yml`.
 
+## Deployment (Vercel)
+
+Full reference: **`docs/DEPLOYMENT.md`**. When a production build fails, use the
+`probleme-deploiement` skill.
+
+-  **Production**: Vercel project `larib-portal` under the `stoupis-projects` account, served at `www.cardiolarib-portal.com`. Every push to `main` deploys to production.
+-  **Read build failures yourself** with the Vercel CLI — never ask the user to paste logs:
+   -  `vercel ls` — deployment statuses
+   -  `vercel inspect <url> --logs` — build logs of a failed deployment
+   -  `vercel logs <url>` — runtime errors of a deployed app
+-  **Never use the claude.ai Vercel MCP tools**: that connector is authenticated as the previous developer and cannot see this project. Always the CLI.
+-  **A green local build does not guarantee a green production build**: `next build` compiles the working tree, Vercel clones from GitHub. A source file that was never committed passes locally and fails there. `npm run check:untracked-sources` (first step of `verify:push`) guards against exactly this — never bypass it.
+-  **Migrations run against production during the build** (`postinstall` → `prisma migrate deploy`). Never improvise a migration right before a push, and never run `prisma migrate reset`.
+
 ## Quality Assurance
 
 ### Code Review Process

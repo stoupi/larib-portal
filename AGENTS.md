@@ -93,6 +93,17 @@ Next.js 15 application with modern stack and strict development standards:
 -  **Next-intl** for internationalization (French & English)
 -  **Zustand** for global state management
 
+## Deployment (Vercel)
+
+Full reference: **`docs/DEPLOYMENT.md`**. When a production build fails, use the
+`probleme-deploiement` skill.
+
+-  **Production**: Vercel project `larib-portal` under the `stoupis-projects` account, served at `www.cardiolarib-portal.com`. Every push to `main` deploys to production.
+-  **Read build failures yourself** with the Vercel CLI — never ask the user to paste logs: `vercel ls`, `vercel inspect <url> --logs`, `vercel logs <url>` for runtime errors.
+-  **Never use the claude.ai Vercel MCP tools**: that connector is authenticated as the previous developer and cannot see this project. Always the CLI.
+-  **A green local build does not guarantee a green production build**: `next build` compiles the working tree, Vercel clones from GitHub. A source file that was never committed passes locally and fails there. `npm run check:untracked-sources` (first step of `verify:push`) guards against exactly this — never bypass it.
+-  **Migrations run against production during the build** (`postinstall` → `prisma migrate deploy`). Never improvise a migration right before a push, and never run `prisma migrate reset`.
+
 ---
 
 **Development Principle**: Write clean, type-safe, maintainable code that follows modern React/Next.js patterns while adhering to strict architectural guidelines.
