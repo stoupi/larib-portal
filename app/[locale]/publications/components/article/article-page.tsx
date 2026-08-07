@@ -19,7 +19,6 @@ import { PUBLICATIONS_ADMIN_BASE, type PublicationsBasePath } from '@/lib/public
 import type { PublicationEditData } from '@/lib/services/publications/publication-editor'
 import type { JournalTargetItem } from '@/lib/services/publications/journal-targets'
 import type { StudyOption } from '@/lib/services/publications/studies'
-import type { AuthorOption } from '@/lib/services/publications/authors'
 import type { PickerAuthor } from '@/lib/publications/author-picker'
 import { updateArticleCoreAction, deleteDraftArticleAction } from '../../actions'
 import { EditorHeader } from '../editor/editor-header'
@@ -50,7 +49,6 @@ export type EditorOptions = {
   journalTargets: JournalTargetItem[]
   studyOptions: StudyOption[]
   journalNames: string[]
-  authorOptions: AuthorOption[]
   pickerAuthors: PickerAuthor[]
   centres: { id: string; name: string; city: string | null; isOwn: boolean }[]
 }
