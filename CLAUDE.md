@@ -11,6 +11,14 @@
 - Use postgres mcp to debug database issues and test new features
 - NEVER use prisma migrate reset / do not reset db even if user asks for it
 
+## Git workflow: commit and push often, ship to `main`
+
+- **Commit as soon as a coherent unit of work is done**, not only at the end of the task. Push often rather than piling up local commits — an unpushed commit is not deployed.
+- **Work directly on `main` by default.** Only branch when concurrent sessions would collide on the same files, and say why.
+- **Never open a PR or MR.** Push straight to `main`; every push to `main` deploys to production.
+- **When a task finishes on a branch, always offer to merge it into `main` and push.** A finished branch left behind never reaches production — check with `git log --oneline main..<branch>` before concluding.
+- **Verify the current branch before any commit or push** and name it if it is not `main`: parallel sessions share this checkout and may have switched it.
+
 ### Prohibited Practices
 
 -  **No useEffect**: Use fetch in server components via services, or handle side effects via event handlers
