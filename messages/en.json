@@ -987,6 +987,7 @@
         "ourTeam": "Our team",
         "create": "Create & select",
         "created": "Author created",
+        "createAnyway": "Create anyway",
         "duplicateWarning": "An author with a close name already exists. Create anyway?",
         "duplicateBlocked": "An author with this ORCID already exists."
       },

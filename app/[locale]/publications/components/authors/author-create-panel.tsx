@@ -157,7 +157,7 @@ export function CreateAuthorPanel({
                 {t('picker.duplicateWarning')}
               </p>
               <Button type="button" size="sm" className={CORAL_BUTTON} disabled={create.isPending} onClick={() => submit(true)}>
-                {t('picker.create')}
+                {t('picker.createAnyway')}
               </Button>
             </div>
           )}

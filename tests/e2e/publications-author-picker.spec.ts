@@ -148,4 +148,8 @@ test('an admin creates an author from the dialog and is warned about a close nam
   await expect(
     dialog.getByText('An author with a close name already exists. Create anyway?'),
   ).toBeVisible({ timeout: 15000 })
+
+  // The confirm control is named apart from the main submit, so neither is ambiguous
+  await expect(dialog.getByRole('button', { name: 'Create anyway' })).toBeVisible()
+  await expect(create).toHaveCount(1)
 })

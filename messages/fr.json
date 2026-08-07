@@ -985,6 +985,7 @@
         "ourTeam": "Notre équipe",
         "create": "Créer et sélectionner",
         "created": "Auteur créé",
+        "createAnyway": "Créer quand même",
         "duplicateWarning": "Un auteur au nom proche existe déjà. Créer quand même ?",
         "duplicateBlocked": "Un auteur avec cet ORCID existe déjà."
       },
