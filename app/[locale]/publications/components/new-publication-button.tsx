@@ -13,7 +13,7 @@ export function NewPublicationButton({ compact = false, asAdmin = false }: { com
   const router = useRouter()
   const { execute, isExecuting } = useAction(createDraftArticleAction, {
     onSuccess({ data }) {
-      if (data?.id) router.push(`/publications/articles/${data.id}/edit`)
+      if (data?.id) router.push(`/publications/articles/${data.id}?mode=edit`)
     },
     onError() {
       toast.error(t('editor.actionError'))

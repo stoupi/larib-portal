@@ -184,7 +184,7 @@ export function ArticleListRow({
             </a>
           )}
           <Link
-            href={`/publications/articles/${article.id}/edit`}
+            href={`/publications/articles/${article.id}?mode=edit`}
             title={t('myPub.edit')}
             className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-b from-navy-600 to-navy-700 text-white shadow-[0_6px_14px_-6px_rgba(19,44,74,0.5)] transition hover:brightness-110"
           >
