@@ -11,7 +11,7 @@ import { saveArticlePdfAction, removeArticlePdfAction } from '../../actions'
 
 const MAX_PDF_BYTES = 30 * 1024 * 1024
 
-export function EditorPdf({ articleId, pdfUrl }: { articleId: string; pdfUrl: string | null }) {
+export function EditorPdf({ articleId, pdfUrl, editable }: { articleId: string; pdfUrl: string | null; editable: boolean }) {
   const t = useTranslations('publications.editor.pdf')
   const tActions = useTranslations('publications.editor')
   const router = useRouter()
@@ -91,28 +91,30 @@ export function EditorPdf({ articleId, pdfUrl }: { articleId: string; pdfUrl: st
               <span className="truncate">{t('open')}</span>
               <ExternalLink className="h-3.5 w-3.5 shrink-0" strokeWidth={2} />
             </a>
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                disabled={busy}
-                onClick={() => inputRef.current?.click()}
-                className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-line bg-bg-surface px-3 text-[13px] font-bold text-text-secondary transition hover:bg-gray-50 disabled:opacity-50 dark:hover:bg-white/5"
-              >
-                <Upload className="h-3.5 w-3.5" strokeWidth={2.2} />
-                {t('replace')}
-              </button>
-              <button
-                type="button"
-                disabled={busy}
-                onClick={() => remove.execute({ id: articleId })}
-                className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-line bg-bg-surface px-3 text-[13px] font-bold text-red-600 transition hover:bg-red-50 disabled:opacity-50 dark:hover:bg-white/5"
-              >
-                <Trash2 className="h-3.5 w-3.5" strokeWidth={2.2} />
-                {t('remove')}
-              </button>
-            </div>
+            {editable && (
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  disabled={busy}
+                  onClick={() => inputRef.current?.click()}
+                  className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-line bg-bg-surface px-3 text-[13px] font-bold text-text-secondary transition hover:bg-gray-50 disabled:opacity-50 dark:hover:bg-white/5"
+                >
+                  <Upload className="h-3.5 w-3.5" strokeWidth={2.2} />
+                  {t('replace')}
+                </button>
+                <button
+                  type="button"
+                  disabled={busy}
+                  onClick={() => remove.execute({ id: articleId })}
+                  className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-line bg-bg-surface px-3 text-[13px] font-bold text-red-600 transition hover:bg-red-50 disabled:opacity-50 dark:hover:bg-white/5"
+                >
+                  <Trash2 className="h-3.5 w-3.5" strokeWidth={2.2} />
+                  {t('remove')}
+                </button>
+              </div>
+            )}
           </div>
-        ) : (
+        ) : editable ? (
           <button
             type="button"
             disabled={busy}
@@ -123,6 +125,8 @@ export function EditorPdf({ articleId, pdfUrl }: { articleId: string; pdfUrl: st
             <span className="text-sm font-bold text-text-primary">{uploading ? t('uploading') : t('select')}</span>
             <span className="text-xs text-text-secondary">{t('hint')}</span>
           </button>
+        ) : (
+          <p className="rounded-xl border border-dashed border-line px-4 py-6 text-center text-sm text-text-muted">{t('none')}</p>
         )}
         <input ref={inputRef} type="file" accept="application/pdf" className="hidden" onChange={onFileChange} />
       </div>

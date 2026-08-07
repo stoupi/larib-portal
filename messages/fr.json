@@ -1019,7 +1019,8 @@
         "removed": "PDF supprimé",
         "invalidType": "Seuls les fichiers PDF sont acceptés.",
         "tooLarge": "Ce fichier dépasse 30 Mo.",
-        "uploadFailed": "Le téléversement a échoué. Réessayez."
+        "uploadFailed": "Le téléversement a échoué. Réessayez.",
+        "none": "Aucun PDF pour le moment."
       },
       "authorsAdminHint": "Vous maintenez la liste d'auteurs : ajoutez les co-auteurs, ordonnez-les et désignez l'auteur correspondant.",
       "addAuthor": "Ajouter un auteur",

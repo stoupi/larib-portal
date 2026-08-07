@@ -1021,7 +1021,8 @@
         "removed": "PDF removed",
         "invalidType": "Only PDF files are accepted.",
         "tooLarge": "This file exceeds 30 MB.",
-        "uploadFailed": "The upload failed. Please try again."
+        "uploadFailed": "The upload failed. Please try again.",
+        "none": "No PDF uploaded yet."
       },
       "authorsAdminHint": "You maintain the author list: add co-authors, order them and mark the corresponding author.",
       "addAuthor": "Add an author",
