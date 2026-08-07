@@ -72,6 +72,9 @@ async function upsertAuthor(
       lastName: author.lastName,
       initials: author.initials ?? null,
       orcid: author.orcid ?? null,
+      // A name off a PubMed record says nothing about team membership; that is
+      // decided later by attaching one of our centres.
+      type: 'EXTERNAL',
     },
     select: { id: true },
   })

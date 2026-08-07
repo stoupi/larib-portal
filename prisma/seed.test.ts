@@ -263,7 +263,7 @@ async function main() {
 		data: { name: 'European Heart Journal', publisher: 'Oxford University Press', impactFactor: 39.3 },
 	});
 	const publicationsCentre = await prisma.centre.create({
-		data: { name: 'Lariboisière Hospital', city: 'Paris', country: 'France' },
+		data: { name: 'Lariboisière Hospital', city: 'Paris', country: 'France', isOwn: true },
 	});
 	await prisma.centre.upsert({
 		where: { name: 'Hôpital Européen Georges-Pompidou, AP-HP' },
@@ -289,6 +289,8 @@ async function main() {
 			firstName: 'Publications',
 			lastName: 'User',
 			degrees: 'MD',
+			type: 'OUR_TEAM',
+			centre: { connect: { id: publicationsCentre.id } },
 			emails: [publicationsUser.email],
 			user: { connect: { id: publicationsUser.id } },
 			defaultAffiliation: { connect: { id: publicationsAffiliation.id } },
@@ -299,6 +301,8 @@ async function main() {
 			firstName: 'Jane',
 			lastName: 'Coauthor',
 			degrees: 'MD, PhD',
+			type: 'OUR_TEAM',
+			centre: { connect: { id: publicationsCentre.id } },
 			emails: ['jane.coauthor@larib-portal.test'],
 			defaultAffiliation: { connect: { id: publicationsAffiliation.id } },
 		},
