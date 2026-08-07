@@ -37,7 +37,7 @@ test('admin browses articles, records a submission and opens a detail with autho
   await expect(page.getByText(/Jane COAUTHOR/i)).toBeVisible()
 
   // The admin edits the very article the co-authors see, PDF attachment included
-  await page.goto(`${page.url()}/edit`, { timeout: 60000 })
+  await page.getByRole('button', { name: 'Edit' }).click()
   await expect(page.getByRole('heading', { name: 'Full text (PDF)' })).toBeVisible({ timeout: 30000 })
   await expect(page.getByText('Upload the article PDF')).toBeVisible()
 })

@@ -16,7 +16,7 @@ test('user creates + edits a publication and requests the author list; admin res
   // Create a draft from My Publications
   await page.goto('/en/publications', { timeout: 60000 })
   await page.getByRole('button', { name: /new publication/i }).click()
-  await page.waitForURL('**/edit', { timeout: 60000 })
+  await page.waitForURL(/\/en\/publications\/articles\/[^/]+\?mode=edit/, { timeout: 60000 })
 
   // Edit the header (title + status) and save
   const title = `TAVR low-risk 5-year outcomes ${Date.now()}`
