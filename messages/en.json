@@ -961,6 +961,7 @@
     },
     "editor": {
       "editPublication": "Edit publication",
+      "editButton": "Edit",
       "unsavedChanges": "You have unsaved changes",
       "save": "Save changes",
       "discard": "Discard",

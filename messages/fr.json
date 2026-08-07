@@ -959,6 +959,7 @@
     },
     "editor": {
       "editPublication": "Modifier la publication",
+      "editButton": "Éditer",
       "unsavedChanges": "Modifications non enregistrées",
       "save": "Enregistrer",
       "discard": "Annuler",
