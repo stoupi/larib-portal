@@ -46,11 +46,13 @@ export function EditorSubmissions({
   submissions,
   locale,
   journalNames,
+  editable,
 }: {
   articleId: string
   submissions: SubmissionRow[]
   locale: string
   journalNames: string[]
+  editable: boolean
 }) {
   const t = useTranslations('publications')
   const router = useRouter()
@@ -117,19 +119,21 @@ export function EditorSubmissions({
           </>
         }
         actions={
-          <button
-            type="button"
-            onClick={() => setAddOpen((value) => !value)}
-            className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-gradient-to-b from-coral-500 to-coral-600 px-3 text-xs font-bold text-white shadow-[0_6px_14px_-6px_rgba(214,31,85,0.55)] transition hover:brightness-105"
-          >
-            <Plus className="h-3.5 w-3.5" strokeWidth={2.4} />
-            {t('editor.addSubmission')}
-          </button>
+          editable ? (
+            <button
+              type="button"
+              onClick={() => setAddOpen((value) => !value)}
+              className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-gradient-to-b from-coral-500 to-coral-600 px-3 text-xs font-bold text-white shadow-[0_6px_14px_-6px_rgba(214,31,85,0.55)] transition hover:brightness-105"
+            >
+              <Plus className="h-3.5 w-3.5" strokeWidth={2.4} />
+              {t('editor.addSubmission')}
+            </button>
+          ) : undefined
         }
       >
         <p className="text-sm text-text-secondary">{t('editor.submissionsHint')}</p>
 
-        {addOpen && (
+        {editable && addOpen && (
           <div className="mt-3">
             <SubmissionAddForm
               articleId={articleId}
@@ -159,7 +163,7 @@ export function EditorSubmissions({
                     {index < submissions.length - 1 && <span className="mt-1 w-0.5 flex-1 bg-line" />}
                   </div>
                   <div className="flex flex-1 flex-col gap-2 pb-4">
-                    {editId === row.id ? (
+                    {editable && editId === row.id ? (
                       <div className="flex flex-wrap items-end gap-2">
                         <div className="min-w-[150px] flex-[2]">
                           <JournalField value={editJournal} onChange={setEditJournal} journalNames={journalNames} />
@@ -178,43 +182,51 @@ export function EditorSubmissions({
                           </span>
                         </div>
                         <div className="flex items-center gap-1.5">
-                          <div className="relative">
-                            <button type="button" onClick={() => { setMenuId(menuId === row.id ? null : row.id); setPickStatus(null) }} className={cn(pillClassName(tone), 'cursor-pointer')}>
-                              {t(`myPub.subStatus.${status}`)}
-                              <ChevronDown className="h-3 w-3" strokeWidth={2.4} />
-                            </button>
-                            {menuId === row.id && (
-                              <>
-                                <div className="fixed inset-0 z-30" onClick={() => setMenuId(null)} />
-                                <div className="absolute right-0 top-[calc(100%+6px)] z-40 flex min-w-[210px] flex-col gap-0.5 rounded-xl border border-line bg-bg-surface p-2 shadow-elevation-lg">
-                                  {pickStatus === null ? (
-                                    SUBMISSION_STATUSES.map((option) => (
-                                      <button key={option} type="button" disabled={setStatus.isExecuting} onClick={() => chooseStatus(row, option)} className={cn('flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-[13px] font-semibold text-text-primary transition hover:bg-gray-50 dark:hover:bg-white/5', option === status && 'bg-coral-50 dark:bg-coral-500/10')}>
-                                        <span className="h-2 w-2 rounded-full" style={{ backgroundColor: TONE_DOT_HEX[SUBMISSION_STATUS_TONE[option]] }} />
-                                        <span className="flex-1 text-left">{t(`myPub.subStatus.${option}`)}</span>
-                                        {option === status && <Check className="h-3.5 w-3.5 text-coral-600" strokeWidth={2.6} />}
-                                      </button>
-                                    ))
-                                  ) : (
-                                    <>
-                                      <span className="px-1.5 pb-2 pt-0.5 text-[10px] font-extrabold uppercase tracking-[0.06em] text-text-muted">{t('myPub.dateFor', { status: t(`myPub.subStatus.${pickStatus}`) })}</span>
-                                      <Input type="date" value={pickDate} onChange={(event) => setPickDate(event.target.value)} className="h-9" />
-                                      <div className="mt-2.5 flex gap-2">
-                                        <button type="button" onClick={() => setPickStatus(null)} className="h-9 flex-1 rounded-lg border border-line text-[12.5px] font-bold text-text-secondary">{t('myPub.back')}</button>
-                                        <button type="button" disabled={!pickDate || setStatus.isExecuting} onClick={() => setStatus.execute({ submissionId: row.id, status: pickStatus, decidedAt: pickDate })} className="h-9 flex-1 rounded-lg bg-gradient-to-b from-navy-600 to-navy-700 text-[12.5px] font-bold text-white disabled:opacity-50">{t('myPub.confirm')}</button>
-                                      </div>
-                                    </>
-                                  )}
-                                </div>
-                              </>
-                            )}
-                          </div>
-                          <button type="button" onClick={() => openEdit(row)} title={t('editor.editSubmission')} className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-line bg-bg-surface text-text-secondary transition hover:bg-gray-50 dark:hover:bg-white/5">
-                            <Pencil className="h-3.5 w-3.5" strokeWidth={2} />
-                          </button>
-                          <button type="button" onClick={() => setDeleteId(row.id)} title={t('editor.deleteSubmission')} className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-line bg-bg-surface text-danger-600 transition hover:bg-danger-50 dark:hover:bg-white/5">
-                            <Trash2 className="h-3.5 w-3.5" strokeWidth={2} />
-                          </button>
+                          {editable ? (
+                            <div className="relative">
+                              <button type="button" onClick={() => { setMenuId(menuId === row.id ? null : row.id); setPickStatus(null) }} className={cn(pillClassName(tone), 'cursor-pointer')}>
+                                {t(`myPub.subStatus.${status}`)}
+                                <ChevronDown className="h-3 w-3" strokeWidth={2.4} />
+                              </button>
+                              {menuId === row.id && (
+                                <>
+                                  <div className="fixed inset-0 z-30" onClick={() => setMenuId(null)} />
+                                  <div className="absolute right-0 top-[calc(100%+6px)] z-40 flex min-w-[210px] flex-col gap-0.5 rounded-xl border border-line bg-bg-surface p-2 shadow-elevation-lg">
+                                    {pickStatus === null ? (
+                                      SUBMISSION_STATUSES.map((option) => (
+                                        <button key={option} type="button" disabled={setStatus.isExecuting} onClick={() => chooseStatus(row, option)} className={cn('flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-[13px] font-semibold text-text-primary transition hover:bg-gray-50 dark:hover:bg-white/5', option === status && 'bg-coral-50 dark:bg-coral-500/10')}>
+                                          <span className="h-2 w-2 rounded-full" style={{ backgroundColor: TONE_DOT_HEX[SUBMISSION_STATUS_TONE[option]] }} />
+                                          <span className="flex-1 text-left">{t(`myPub.subStatus.${option}`)}</span>
+                                          {option === status && <Check className="h-3.5 w-3.5 text-coral-600" strokeWidth={2.6} />}
+                                        </button>
+                                      ))
+                                    ) : (
+                                      <>
+                                        <span className="px-1.5 pb-2 pt-0.5 text-[10px] font-extrabold uppercase tracking-[0.06em] text-text-muted">{t('myPub.dateFor', { status: t(`myPub.subStatus.${pickStatus}`) })}</span>
+                                        <Input type="date" value={pickDate} onChange={(event) => setPickDate(event.target.value)} className="h-9" />
+                                        <div className="mt-2.5 flex gap-2">
+                                          <button type="button" onClick={() => setPickStatus(null)} className="h-9 flex-1 rounded-lg border border-line text-[12.5px] font-bold text-text-secondary">{t('myPub.back')}</button>
+                                          <button type="button" disabled={!pickDate || setStatus.isExecuting} onClick={() => setStatus.execute({ submissionId: row.id, status: pickStatus, decidedAt: pickDate })} className="h-9 flex-1 rounded-lg bg-gradient-to-b from-navy-600 to-navy-700 text-[12.5px] font-bold text-white disabled:opacity-50">{t('myPub.confirm')}</button>
+                                        </div>
+                                      </>
+                                    )}
+                                  </div>
+                                </>
+                              )}
+                            </div>
+                          ) : (
+                            <span className={pillClassName(tone)}>{t(`myPub.subStatus.${status}`)}</span>
+                          )}
+                          {editable && (
+                            <>
+                              <button type="button" onClick={() => openEdit(row)} title={t('editor.editSubmission')} className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-line bg-bg-surface text-text-secondary transition hover:bg-gray-50 dark:hover:bg-white/5">
+                                <Pencil className="h-3.5 w-3.5" strokeWidth={2} />
+                              </button>
+                              <button type="button" onClick={() => setDeleteId(row.id)} title={t('editor.deleteSubmission')} className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-line bg-bg-surface text-danger-600 transition hover:bg-danger-50 dark:hover:bg-white/5">
+                                <Trash2 className="h-3.5 w-3.5" strokeWidth={2} />
+                              </button>
+                            </>
+                          )}
                         </div>
                       </div>
                     )}
