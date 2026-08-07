@@ -42,69 +42,6 @@ export async function listArticles(): Promise<ArticleListItem[]> {
   })
 }
 
-export type ArticleDetail = Prisma.ArticleGetPayload<{
-  select: {
-    id: true
-    title: true
-    abstract: true
-    type: true
-    status: true
-    publishedAt: true
-    receivedAt: true
-    acceptedAt: true
-    reviewDelayDays: true
-    doi: true
-    pubmedId: true
-    pdfUrl: true
-    publishedJournal: { select: { name: true; issn: true } }
-    study: { select: { id: true; title: true } }
-    authorships: {
-      select: {
-        order: true
-        isCorresponding: true
-        author: { select: { id: true; firstName: true; lastName: true; orcid: true } }
-        affiliations: {
-          select: { order: true; affiliation: { select: { name: true; centre: { select: { name: true; isOwn: true } } } } }
-        }
-      }
-    }
-  }
-}>
-
-export async function getArticle(id: string): Promise<ArticleDetail | null> {
-  return prisma.article.findUnique({
-    where: { id },
-    select: {
-      id: true,
-      title: true,
-      abstract: true,
-      type: true,
-      status: true,
-      publishedAt: true,
-      receivedAt: true,
-      acceptedAt: true,
-      reviewDelayDays: true,
-      doi: true,
-      pubmedId: true,
-      pdfUrl: true,
-      publishedJournal: { select: { name: true, issn: true } },
-      study: { select: { id: true, title: true } },
-      authorships: {
-        orderBy: { order: 'asc' },
-        select: {
-          order: true,
-          isCorresponding: true,
-          author: { select: { id: true, firstName: true, lastName: true, orcid: true } },
-          affiliations: {
-            orderBy: { order: 'asc' },
-            select: { order: true, affiliation: { select: { name: true, centre: { select: { name: true, isOwn: true } } } } },
-          },
-        },
-      },
-    },
-  })
-}
-
 export async function updateArticleStatus(id: string, status: ArticleStatusValue) {
   return prisma.article.update({ where: { id }, data: { status }, select: { id: true } })
 }
