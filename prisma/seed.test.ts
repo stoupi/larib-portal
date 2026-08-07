@@ -244,6 +244,20 @@ async function main() {
 	});
 	console.log('✅ Created Publications user:', publicationsUser.email);
 
+	const publicationsReaderPassword = await ctx.password.hash('ristifou');
+	const publicationsReader = await prisma.user.create({
+		data: {
+			id: randomUUID(),
+			name: 'Publications Reader',
+			email: 'publications-reader@larib-portal.test',
+			emailVerified: true,
+			role: 'USER',
+			applications: ['PUBLICATIONS'],
+			accounts: { create: { id: randomUUID(), providerId: 'credential', accountId: 'publications-reader@larib-portal.test', password: publicationsReaderPassword } },
+		},
+	});
+	console.log('✅ Created Publications reader:', publicationsReader.email);
+
 	// Minimal publications sample dataset (article where publicationsUser is first author)
 	const publicationsJournal = await prisma.journal.create({
 		data: { name: 'European Heart Journal', publisher: 'Oxford University Press', impactFactor: 39.3 },
