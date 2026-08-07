@@ -8,7 +8,7 @@ import { ARTICLE_STATUS_TONE, SUBMISSION_STATUS_TONE, TONE_DOT_HEX, type Submiss
 import { ARTICLE_TYPE_VALUES } from '@/lib/publications/article-type'
 import type { PublicationEditData } from '@/lib/services/publications/publication-editor'
 import type { StudyOption } from '@/lib/services/publications/studies'
-import type { EditorForm, EditorViewer } from './publication-editor'
+import type { EditorForm, EditorViewer } from '../article/article-page'
 import { ArticleScopeSwitch } from '../articles/article-scope-switch'
 
 function relativeMonths(from: Date, locale: string): string {
