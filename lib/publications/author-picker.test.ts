@@ -19,7 +19,6 @@ function author(overrides: Partial<PickerAuthor> = {}): PickerAuthor {
     isOurTeam: true,
     centreName: 'Hôpital Lariboisière',
     publicationCount: 12,
-    createdAt: '2026-01-01T00:00:00.000Z',
     ...overrides,
   }
 }
@@ -49,9 +48,9 @@ describe('matchesAuthorQuery', () => {
 })
 
 describe('authorsForTab', () => {
-  const team = author({ id: 'team', isOurTeam: true, publicationCount: 1, createdAt: '2020-01-01T00:00:00.000Z' })
-  const prolific = author({ id: 'prolific', isOurTeam: false, publicationCount: 99, createdAt: '2021-01-01T00:00:00.000Z' })
-  const fresh = author({ id: 'fresh', isOurTeam: false, publicationCount: 0, createdAt: '2026-08-01T00:00:00.000Z' })
+  const team = author({ id: 'team', isOurTeam: true, publicationCount: 1 })
+  const prolific = author({ id: 'prolific', isOurTeam: false, publicationCount: 99 })
+  const fresh = author({ id: 'fresh', isOurTeam: false, publicationCount: 0 })
   const bank = [team, prolific, fresh]
 
   it('keeps only our team on the team tab', () => {
@@ -62,16 +61,12 @@ describe('authorsForTab', () => {
     expect(authorsForTab(bank, 'frequent')[0].id).toBe('prolific')
   })
 
-  it('ranks the recent tab by creation date, newest first', () => {
-    expect(authorsForTab(bank, 'recent')[0].id).toBe('fresh')
-  })
-
   it('returns everyone on the all tab', () => {
     expect(authorsForTab(bank, 'all')).toHaveLength(3)
   })
 
   it('exposes the four tabs in display order', () => {
-    expect(AUTHOR_PICKER_TABS).toEqual(['team', 'frequent', 'recent', 'all'])
+    expect(AUTHOR_PICKER_TABS).toEqual(['team', 'frequent', 'all'])
   })
 })
 

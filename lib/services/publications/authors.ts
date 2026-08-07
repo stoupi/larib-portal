@@ -363,7 +363,6 @@ export type AuthorPickerOption = {
   isOurTeam: boolean
   centreName: string | null
   publicationCount: number
-  createdAt: string
 }
 
 export async function listAuthorPickerOptions(): Promise<AuthorPickerOption[]> {
@@ -376,7 +375,6 @@ export async function listAuthorPickerOptions(): Promise<AuthorPickerOption[]> {
       initials: true,
       degrees: true,
       type: true,
-      createdAt: true,
       centre: { select: { name: true } },
       _count: { select: { authorships: true } },
     },
@@ -390,7 +388,6 @@ export async function listAuthorPickerOptions(): Promise<AuthorPickerOption[]> {
     isOurTeam: author.type === 'OUR_TEAM',
     centreName: author.centre?.name ?? null,
     publicationCount: author._count.authorships,
-    createdAt: author.createdAt.toISOString(),
   }))
 }
 

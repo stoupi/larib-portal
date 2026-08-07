@@ -28,10 +28,9 @@ import {
 } from '@/lib/publications/author-picker'
 import { CORAL_BUTTON, CreateAuthorPanel, type PickerCentre } from './author-create-panel'
 
-const TAB_LABELS: Record<AuthorPickerTab, 'tabTeam' | 'tabFrequent' | 'tabRecent' | 'tabAll'> = {
+const TAB_LABELS: Record<AuthorPickerTab, 'tabTeam' | 'tabFrequent' | 'tabAll'> = {
   team: 'tabTeam',
   frequent: 'tabFrequent',
-  recent: 'tabRecent',
   all: 'tabAll',
 }
 

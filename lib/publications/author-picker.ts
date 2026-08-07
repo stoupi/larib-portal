@@ -7,10 +7,9 @@ export type PickerAuthor = {
   isOurTeam: boolean
   centreName: string | null
   publicationCount: number
-  createdAt: string
 }
 
-export const AUTHOR_PICKER_TABS = ['team', 'frequent', 'recent', 'all'] as const
+export const AUTHOR_PICKER_TABS = ['team', 'frequent', 'all'] as const
 export type AuthorPickerTab = (typeof AUTHOR_PICKER_TABS)[number]
 
 export type AuthorSort = 'frequent' | 'alphabetical'
@@ -47,11 +46,6 @@ export function sortAuthors(authors: PickerAuthor[], sort: AuthorSort): PickerAu
 export function authorsForTab(authors: PickerAuthor[], tab: AuthorPickerTab): PickerAuthor[] {
   if (tab === 'team') return authors.filter((author) => author.isOurTeam)
   if (tab === 'frequent') return sortAuthors(authors, 'frequent').slice(0, SHORTLIST_SIZE)
-  if (tab === 'recent') {
-    return [...authors]
-      .sort((first, second) => second.createdAt.localeCompare(first.createdAt))
-      .slice(0, SHORTLIST_SIZE)
-  }
   return authors
 }
 

@@ -98,7 +98,6 @@ export function CreateAuthorPanel({
         isOurTeam: selectedCentre?.isOwn ?? false,
         centreName: selectedCentre?.name ?? null,
         publicationCount: 0,
-        createdAt: new Date().toISOString(),
       })
       setFirstName('')
       setLastName('')
