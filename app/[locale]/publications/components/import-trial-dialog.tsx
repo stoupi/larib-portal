@@ -13,6 +13,7 @@ import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { previewClinicalTrialAction, importClinicalTrialAction } from '../actions'
 import type { ClinicalTrialImport } from '@/lib/services/publications/clinicaltrials'
+import type { CentrePreview } from '@/lib/services/publications/centre-resolve'
 
 const CORAL = 'gap-2 bg-gradient-to-b from-coral-500 to-coral-600 text-white shadow-[0_10px_22px_-8px_rgba(214,31,85,0.6)] hover:brightness-105'
 
@@ -24,6 +25,7 @@ export function ImportTrialDialog({ open, onClose }: Props) {
   const router = useRouter()
   const [nctId, setNctId] = useState('')
   const [preview, setPreview] = useState<ClinicalTrialImport | null>(null)
+  const [centres, setCentres] = useState<CentrePreview[]>([])
 
   function errorMessage(reason: string): string {
     const known = new Set(['INVALID_NCT_ID', 'DUPLICATE', 'NOT_FOUND', 'FETCH_FAILED', 'IMPORT_FAILED'])
@@ -33,8 +35,8 @@ export function ImportTrialDialog({ open, onClose }: Props) {
   const previewAction = useAction(previewClinicalTrialAction, {
     onSuccess: ({ data }) => {
       if (!data) return
-      if (data.ok) setPreview(data.preview)
-      else { setPreview(null); toast.error(errorMessage(data.error)) }
+      if (data.ok) { setPreview(data.preview); setCentres(data.centres) }
+      else { setPreview(null); setCentres([]); toast.error(errorMessage(data.error)) }
     },
     onError: () => toast.error(errorMessage('FETCH_FAILED')),
   })
@@ -56,6 +58,7 @@ export function ImportTrialDialog({ open, onClose }: Props) {
   function handleClose() {
     setNctId('')
     setPreview(null)
+    setCentres([])
     onClose()
   }
 
@@ -107,8 +110,11 @@ export function ImportTrialDialog({ open, onClose }: Props) {
 
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <ListBlock icon={<Building2 className="h-4 w-4" />} label={t('centres', { count: preview.centres.length })}>
-                  {preview.centres.map((centre) => (
-                    <li key={centre.name} className="truncate">{centre.name}{centre.city ? ` · ${centre.city}` : ''}</li>
+                  {centres.map((centre) => (
+                    <li key={centre.rawName} className="space-y-0.5">
+                      <p className="truncate">{centre.rawName}</p>
+                      <CentreStatus centre={centre} label={t(`centreStatus.${centre.status}`)} />
+                    </li>
                   ))}
                 </ListBlock>
                 <ListBlock icon={<UserRound className="h-4 w-4" />} label={t('investigators', { count: preview.investigators.length })}>
@@ -132,6 +138,20 @@ export function ImportTrialDialog({ open, onClose }: Props) {
         </DialogFooter>
       </DialogContent>
     </Dialog>
+  )
+}
+
+const CENTRE_STATUS_STYLE: Record<CentrePreview['status'], string> = {
+  existing: 'border-transparent bg-emerald-100 text-emerald-800',
+  new: 'border-transparent bg-amber-100 text-amber-800',
+}
+
+function CentreStatus({ centre, label }: { centre: CentrePreview; label: string }) {
+  return (
+    <span className="flex items-center gap-1.5 text-xs">
+      <Badge className={CENTRE_STATUS_STYLE[centre.status]}>{label}</Badge>
+      {centre.resolvedName !== centre.rawName && <span className="truncate text-text-secondary">{centre.resolvedName}</span>}
+    </span>
   )
 }
 

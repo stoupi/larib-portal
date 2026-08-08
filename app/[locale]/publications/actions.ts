@@ -32,6 +32,7 @@ import { searchCrossref, lookupJournalByIssn } from '@/lib/services/publications
 import { JOURNAL_SPECIALTIES, JOURNAL_SUB_SPECIALTIES } from '@/lib/publications/journal-taxonomy'
 import { refreshJournalSjr } from '@/lib/services/publications/sjr'
 import { createStudy, updateStudy, deleteStudy, importClinicalTrialStudy, setStudyStatus, linkCentreToStudy, unlinkCentreFromStudy, setStudyInvestigator, removeStudyInvestigator, linkArticleToStudy, unlinkArticleFromStudy, STUDY_STATUSES, PUBLICATIONS_STUDIES_TAG } from '@/lib/services/publications/studies'
+import { previewCentreResolutions } from '@/lib/services/publications/centre-resolve'
 import { fetchClinicalTrial, normaliseNctId } from '@/lib/services/publications/clinicaltrials'
 
 export const searchBacklogAction = appAdminAction('PUBLICATIONS')
@@ -507,7 +508,8 @@ export const previewClinicalTrialAction = appAdminAction('PUBLICATIONS')
     if (existing) return { ok: false as const, error: 'DUPLICATE' }
     try {
       const preview = await fetchClinicalTrial(normalised)
-      return { ok: true as const, preview }
+      const centres = await previewCentreResolutions(prisma, preview.centres.map((centre) => centre.name))
+      return { ok: true as const, preview, centres }
     } catch (error) {
       const reason = error instanceof Error ? error.message : 'FETCH_FAILED'
       return { ok: false as const, error: reason }

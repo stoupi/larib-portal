@@ -1590,6 +1590,10 @@
         "cancel": "Annuler",
         "imported": "Étude importée · {centres} nouveau(x) centre(s), {people} nouvel(le)(s) auteur(s)",
         "reviewHint": "Les centres et investigateurs sont rattachés à votre banque s’ils existent déjà, et créés sinon. Vous pourrez ajuster l’étude ensuite.",
+        "centreStatus": {
+          "existing": "Existant",
+          "new": "Nouveau centre"
+        },
         "fieldDates": "Dates",
         "fieldFunding": "Financement",
         "fieldDomain": "Pathologies",

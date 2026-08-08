@@ -65,12 +65,6 @@ function isGenericCentre(segment: string): boolean {
   return GENERIC_CENTRES.has(stripDiacritics(segment).toLowerCase().replace(/[^a-z]/g, ''))
 }
 
-// An umbrella group ("AP-HP") or a bare label ("University Hospital") names no site,
-// so it must never become a centre even when nothing more precise could be extracted.
-export function isUmbrellaCentreName(name: string): boolean {
-  return isGenericCentre(stripNoise(name))
-}
-
 // A department prefix is never the centre, even when the segment also names the hospital.
 const DEPARTMENT_PREFIX = /^(?:the\s+)?(?:department|dept\.?|division|service|unit[eé]?)\b[^,]*?\b(?:of|de|des|du|d')\s+/i
 

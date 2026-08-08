@@ -1592,6 +1592,10 @@
         "cancel": "Cancel",
         "imported": "Study imported · {centres} new centre(s), {people} new author(s)",
         "reviewHint": "Centres and investigators are matched to your bank when they already exist, and created otherwise. You can fine-tune the study afterwards.",
+        "centreStatus": {
+          "existing": "Existing",
+          "new": "New centre"
+        },
         "fieldDates": "Dates",
         "fieldFunding": "Funding",
         "fieldDomain": "Conditions",

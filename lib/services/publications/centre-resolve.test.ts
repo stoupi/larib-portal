@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import type { Prisma } from '@/app/generated/prisma'
-import { loadCentreIndex, proposeCentreName, resolveCentre } from './centre-resolve'
+import { loadCentreIndex, previewCentreResolutions, proposeCentreName, resolveCentre } from './centre-resolve'
 
 type FakeCentre = { id: string; name: string; city: string | null; country: string | null; isOwn: boolean }
 type FakeAlias = { centreId: string; normalized: string }
@@ -43,8 +43,10 @@ describe('proposeCentreName', () => {
     expect(proposeCentreName({ rawName: 'Elbeuf Louviers Val de Reuil', keepUnrecognisedName: true })).toBe('Elbeuf Louviers Val de Reuil')
   })
 
-  it('never lets the AP-HP umbrella become a trial site', () => {
-    expect(proposeCentreName({ rawName: 'Assistance Publique Hôpitaux de Paris', keepUnrecognisedName: true })).toBeNull()
+  // A trial whose only declared site is the group would otherwise end up with no centre.
+  it('keeps an umbrella name for a trial site but never invents one from an affiliation', () => {
+    expect(proposeCentreName({ rawName: 'Assistance Publique Hôpitaux de Paris', keepUnrecognisedName: true })).toBe('Assistance Publique Hôpitaux de Paris')
+    expect(proposeCentreName({ rawName: 'Cardiology, AP-HP, Paris', keepUnrecognisedName: false })).toBeNull()
   })
 
   it('strips the trailing punctuation ClinicalTrials.gov leaves on site names', () => {
@@ -108,6 +110,19 @@ describe('resolveCentre', () => {
 
     expect(resolved?.centreId).toBe('bichat')
     expect(resolved?.created).toBe(false)
+    expect(centres).toHaveLength(BANK.length)
+  })
+
+  it('previews each site without touching the bank', async () => {
+    const { tx, centres } = fakeTx([...BANK])
+
+    const preview = await previewCentreResolutions(tx, ['CHU Dijon', 'Bichat (APHP)', 'Ospedale Villa dei Colli'])
+
+    expect(preview).toEqual([
+      { rawName: 'CHU Dijon', resolvedName: 'CHU de Dijon', status: 'existing' },
+      { rawName: 'Bichat (APHP)', resolvedName: 'AP-HP - Bichat', status: 'existing' },
+      { rawName: 'Ospedale Villa dei Colli', resolvedName: 'Ospedale Villa dei Colli', status: 'new' },
+    ])
     expect(centres).toHaveLength(BANK.length)
   })
 

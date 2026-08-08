@@ -1,5 +1,5 @@
 import { Prisma } from '@/app/generated/prisma'
-import { cleanCentreName, guessCentre, isUmbrellaCentreName, normalizeCentreKey } from './centre-extract'
+import { cleanCentreName, guessCentre, normalizeCentreKey } from './centre-extract'
 
 type Tx = Prisma.TransactionClient
 
@@ -31,7 +31,8 @@ export type CentreLookup = {
   city?: string | null
   country?: string | null
   // A trial site is a centre by definition, so an unrecognised facility keeps its own
-  // name. An affiliation only yields a centre when a hospital could be identified.
+  // name — even an umbrella like AP-HP, which is the only site the trial declares.
+  // An affiliation only yields a centre when a hospital could be identified in it.
   keepUnrecognisedName: boolean
 }
 
@@ -42,7 +43,7 @@ export function proposeCentreName(lookup: Pick<CentreLookup, 'rawName' | 'keepUn
   if (!raw) return null
   const guessed = guessCentre(raw)
   if (guessed) return guessed
-  if (!lookup.keepUnrecognisedName || isUmbrellaCentreName(raw)) return null
+  if (!lookup.keepUnrecognisedName) return null
   const cleaned = cleanCentreName(raw)
   return cleaned.length > 0 ? cleaned : null
 }
@@ -95,6 +96,20 @@ export async function resolveCentre(tx: Tx, index: CentreIndex, lookup: CentreLo
     rememberInIndex(index, concurrent.id, concurrent.name)
     return { centreId: concurrent.id, name: concurrent.name, created: false }
   }
+}
+
+export type CentrePreview = { rawName: string; resolvedName: string; status: 'existing' | 'new' }
+
+// Read-only counterpart of resolveCentre, so an admin sees which sites will be attached
+// to a centre that already exists and which ones are about to create one.
+export async function previewCentreResolutions(tx: Tx, rawNames: string[]): Promise<CentrePreview[]> {
+  const index = await loadCentreIndex(tx)
+  return rawNames.map((rawName) => {
+    const proposed = proposeCentreName({ rawName, keepUnrecognisedName: true }) ?? rawName
+    const existingId = findCentreInIndex(index, proposed) ?? findCentreInIndex(index, rawName)
+    if (existingId) return { rawName, resolvedName: index.nameById.get(existingId) ?? proposed, status: 'existing' as const }
+    return { rawName, resolvedName: proposed, status: 'new' as const }
+  })
 }
 
 export async function rememberCentreAlias(tx: Tx, centreId: string, alias: string): Promise<boolean> {

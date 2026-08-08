@@ -27,6 +27,10 @@ test('admin imports a study from ClinicalTrials.gov', async ({ page }) => {
   await expect(dialog.getByText(/Assistance Publique Hôpitaux de Paris/i)).toBeVisible()
   await expect(dialog.getByText(/PEZEL/i)).toBeVisible()
 
+  // Each site says whether it lands on a centre that already exists or creates one,
+  // so a duplicate can be spotted before the import runs
+  await expect(dialog.getByText(/^(Existing|New centre)$/)).toHaveCount(1)
+
   // A trial with many centres keeps the dialog inside the viewport: lists scroll, actions stay reachable
   await dialog.getByPlaceholder('NCT06235385').fill('NCT04344327')
   await dialog.getByRole('button', { name: /^fetch$/i }).click()
