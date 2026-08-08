@@ -12,6 +12,8 @@ export function buildTrustedOrigins(): string[] {
 		'https://www.cardiolarib-portal.com',
 		'https://cardiolarib-portal.com',
 		'http://localhost:3000',
+		process.env.PLAYWRIGHT_PORT && `http://localhost:${process.env.PLAYWRIGHT_PORT}`,
+		process.env.PORT && `http://localhost:${process.env.PORT}`,
 	];
 	return Array.from(new Set(configuredOrigins.filter((origin): origin is string => Boolean(origin))));
 }
