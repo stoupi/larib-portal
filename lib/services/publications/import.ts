@@ -2,6 +2,7 @@ import { prisma } from '@/lib/prisma'
 import type { PubmedRecord, ImportReport } from '@/types/publications'
 import { authorDedupeKey, pickAuthorMatch } from './import-dedupe'
 import { upsertAffiliationWithCentre } from './affiliations'
+import { loadCentreIndex } from './centre-resolve'
 import { reviewDelayDays } from './pubmed-parse'
 import { classifyArticleType } from '@/lib/publications/article-type'
 import type { ArticleScopeValue } from '@/lib/publications/article-scope'
@@ -90,6 +91,7 @@ export async function importRecords(
 ): Promise<ImportReport> {
   const report: ImportReport = { articlesCreated: 0, articlesSkipped: 0, authorsCreated: 0, journalsCreated: 0, errors: [] }
   const authorCache = new Map<string, string>()
+  const centreIndex = await loadCentreIndex(prisma)
 
   for (const record of records) {
     try {
@@ -108,7 +110,7 @@ export async function importRecords(
         seenAuthorIds.add(authorId)
         const affiliationCreate: Array<{ affiliationId: string; order: number }> = []
         if (author.affiliation) {
-          const affiliationId = await prisma.$transaction((tx) => upsertAffiliationWithCentre(tx, author.affiliation as string, affReport))
+          const affiliationId = await prisma.$transaction((tx) => upsertAffiliationWithCentre(tx, author.affiliation as string, affReport, centreIndex))
           if (affiliationId) affiliationCreate.push({ affiliationId, order: 1 })
         }
         authorships.push({ authorId, order: authorships.length + 1, affiliations: { create: affiliationCreate } })

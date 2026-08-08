@@ -1,6 +1,7 @@
 import { prisma } from '@/lib/prisma'
 import { Prisma } from '@/app/generated/prisma'
 import type { ClinicalTrialImport } from './clinicaltrials'
+import { loadCentreIndex, resolveCentre } from './centre-resolve'
 
 export const PUBLICATIONS_STUDIES_TAG = 'publications:studies'
 export const STUDY_STATUSES = ['PLANNED', 'ONGOING', 'COMPLETED', 'STOPPED'] as const
@@ -168,22 +169,17 @@ export async function importClinicalTrialStudy(data: ClinicalTrialImport, create
     const centreIds: string[] = []
     const centreIdByFacility = new Map<string, string>()
     let primaryCentreIsOwn = false
+    const centreIndex = await loadCentreIndex(tx)
     for (const centre of data.centres) {
-      const existing = await tx.centre.findFirst({ where: { name: { equals: centre.name, mode: 'insensitive' } }, select: { id: true, isOwn: true, city: true, country: true } })
-      let centreId: string
-      if (existing) {
-        centreId = existing.id
-        if (centreIds.length === 0) primaryCentreIsOwn = existing.isOwn
-        if ((!existing.city && centre.city) || (!existing.country && centre.country)) {
-          await tx.centre.update({ where: { id: existing.id }, data: { city: existing.city ?? centre.city, country: existing.country ?? centre.country } })
-        }
-      } else {
-        const created = await tx.centre.create({ data: { name: centre.name, city: centre.city, country: centre.country }, select: { id: true } })
-        centreId = created.id
-        centresCreated += 1
+      const resolved = await resolveCentre(tx, centreIndex, { rawName: centre.name, city: centre.city, country: centre.country, keepUnrecognisedName: true })
+      if (!resolved) continue
+      if (resolved.created) centresCreated += 1
+      if (centreIds.length === 0) {
+        const primary = await tx.centre.findUnique({ where: { id: resolved.centreId }, select: { isOwn: true } })
+        primaryCentreIsOwn = primary?.isOwn ?? false
       }
-      centreIds.push(centreId)
-      centreIdByFacility.set(centre.name.toLowerCase(), centreId)
+      if (!centreIds.includes(resolved.centreId)) centreIds.push(resolved.centreId)
+      centreIdByFacility.set(centre.name.toLowerCase(), resolved.centreId)
     }
     const primaryCentreId = centreIds[0] ?? null
 

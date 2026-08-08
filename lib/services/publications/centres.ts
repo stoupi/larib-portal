@@ -1,5 +1,6 @@
 import { prisma } from '@/lib/prisma'
 import { Prisma, type AuthorType } from '@/app/generated/prisma'
+import { rememberCentreAlias } from './centre-resolve'
 
 export type CentreRow = {
   id: string
@@ -73,22 +74,34 @@ export async function createCentre(data: { name: string; shortCode?: string | nu
   })
 }
 
+// A rename is how the bank drifted away from the names the importers produce, so the
+// previous spelling is kept as an alias and keeps resolving onto this centre.
 export async function renameCentre(id: string, name: string) {
-  return prisma.centre.update({ where: { id }, data: { name }, select: { id: true } })
+  return prisma.$transaction(async (tx) => {
+    const current = await tx.centre.findUnique({ where: { id }, select: { name: true } })
+    const updated = await tx.centre.update({ where: { id }, data: { name }, select: { id: true } })
+    if (current && current.name !== name) await rememberCentreAlias(tx, id, current.name)
+    return updated
+  })
 }
 
 export async function updateCentre(data: { id: string; name: string; shortCode?: string | null; parentOrganisation?: string | null; city?: string | null; country?: string | null; isOwn?: boolean }) {
-  return prisma.centre.update({
-    where: { id: data.id },
-    data: {
-      name: data.name,
-      shortCode: data.shortCode ?? null,
-      parentOrganisation: data.parentOrganisation ?? null,
-      city: data.city ?? null,
-      country: data.country ?? null,
-      isOwn: data.isOwn ?? false,
-    },
-    select: { id: true },
+  return prisma.$transaction(async (tx) => {
+    const current = await tx.centre.findUnique({ where: { id: data.id }, select: { name: true } })
+    const updated = await tx.centre.update({
+      where: { id: data.id },
+      data: {
+        name: data.name,
+        shortCode: data.shortCode ?? null,
+        parentOrganisation: data.parentOrganisation ?? null,
+        city: data.city ?? null,
+        country: data.country ?? null,
+        isOwn: data.isOwn ?? false,
+      },
+      select: { id: true },
+    })
+    if (current && current.name !== data.name) await rememberCentreAlias(tx, data.id, current.name)
+    return updated
   })
 }
 
@@ -103,10 +116,18 @@ export async function deleteCentre(id: string) {
 export async function mergeCentres(
   keepId: string,
   mergeIds: string[],
-): Promise<{ reassigned: number; deleted: number; studiesMoved: number; authorsRetyped: number }> {
+): Promise<{ reassigned: number; deleted: number; studiesMoved: number; authorsRetyped: number; aliasesKept: number }> {
   const sources = mergeIds.filter((id) => id !== keepId)
-  if (sources.length === 0) return { reassigned: 0, deleted: 0, studiesMoved: 0, authorsRetyped: 0 }
+  if (sources.length === 0) return { reassigned: 0, deleted: 0, studiesMoved: 0, authorsRetyped: 0, aliasesKept: 0 }
   return prisma.$transaction(async (tx) => {
+    // Without this the next import recreates the duplicate we are about to delete.
+    const merged = await tx.centre.findMany({ where: { id: { in: sources } }, select: { name: true } })
+    let aliasesKept = 0
+    for (const source of merged) {
+      if (await rememberCentreAlias(tx, keepId, source.name)) aliasesKept += 1
+    }
+    await tx.centreAlias.updateMany({ where: { centreId: { in: sources } }, data: { centreId: keepId } })
+
     const reassigned = (await tx.affiliation.updateMany({ where: { centreId: { in: sources } }, data: { centreId: keepId } })).count
     await tx.author.updateMany({ where: { centreId: { in: sources } }, data: { centreId: keepId } })
 
@@ -146,7 +167,7 @@ export async function mergeCentres(
       ).count
     }
 
-    return { reassigned, deleted: sources.length, studiesMoved: studies.length, authorsRetyped }
+    return { reassigned, deleted: sources.length, studiesMoved: studies.length, authorsRetyped, aliasesKept }
   })
 }
 

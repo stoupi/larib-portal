@@ -1,32 +1,26 @@
 import { prisma } from '@/lib/prisma'
 import type { Prisma } from '@/app/generated/prisma'
-import { guessCentre } from './centre-extract'
+import { loadCentreIndex, resolveCentre, type CentreIndex } from './centre-resolve'
 
 export const PUBLICATIONS_CENTRES_TAG = 'publications:centres'
 export const PUBLICATIONS_AFFILIATIONS_TAG = 'publications:affiliations'
 
 type Tx = Prisma.TransactionClient
 
-async function upsertCentre(tx: Tx, name: string, report: { centresCreated: number }): Promise<string> {
-  const existing = await tx.centre.findFirst({ where: { name }, select: { id: true } })
-  if (existing) return existing.id
-  const created = await tx.centre.create({ data: { name }, select: { id: true } })
-  report.centresCreated += 1
-  return created.id
-}
-
 export async function upsertAffiliationWithCentre(
   tx: Tx,
   raw: string,
   report: { affiliationsCreated: number; centresCreated: number },
+  sharedIndex?: CentreIndex,
 ): Promise<string | null> {
   const name = raw.trim()
   if (!name) return null
   const existing = await tx.affiliation.findFirst({ where: { name }, select: { id: true } })
   if (existing) return existing.id
-  const centreName = guessCentre(name)
-  const centreId = centreName ? await upsertCentre(tx, centreName, report) : null
-  const created = await tx.affiliation.create({ data: { name, raw: name, centreId }, select: { id: true } })
+  const index = sharedIndex ?? (await loadCentreIndex(tx))
+  const centre = await resolveCentre(tx, index, { rawName: name, keepUnrecognisedName: false })
+  if (centre?.created) report.centresCreated += 1
+  const created = await tx.affiliation.create({ data: { name, raw: name, centreId: centre?.centreId ?? null }, select: { id: true } })
   report.affiliationsCreated += 1
   return created.id
 }
@@ -38,6 +32,7 @@ export async function backfillAffiliations(
   records: Array<{ pmid: string; authors: Array<{ affiliation: string | null }> }>,
 ): Promise<BackfillReport> {
   const report: BackfillReport = { articlesTouched: 0, affiliationsCreated: 0, centresCreated: 0, links: 0 }
+  const centreIndex = await loadCentreIndex(prisma)
   for (const record of records) {
     const article = await prisma.article.findFirst({
       where: { pubmedId: record.pmid },
@@ -52,7 +47,7 @@ export async function backfillAffiliations(
         if (!raw) continue
         const existingLink = await tx.authorshipAffiliation.findFirst({ where: { authorshipId: authorship.id }, select: { authorshipId: true } })
         if (existingLink) continue
-        const affiliationId = await upsertAffiliationWithCentre(tx, raw, report)
+        const affiliationId = await upsertAffiliationWithCentre(tx, raw, report, centreIndex)
         if (!affiliationId) continue
         await tx.authorshipAffiliation.create({ data: { authorshipId: authorship.id, affiliationId, order: 1 } })
         report.links += 1

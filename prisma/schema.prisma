@@ -504,8 +504,24 @@ model Centre {
   studies            Study[]             @relation("StudyCentres")
   authorLinks        AuthorCentre[]      @relation("CentreAuthorLinks")
   studyInvestigators StudyInvestigator[] @relation("StudyInvestigatorCentre")
+  aliases            CentreAlias[]
 
   @@map("Centre")
+}
+
+// Spellings an import may hand over for a centre that already exists. Merging two
+// centres records the loser's name here, so the next import maps it back onto the
+// survivor instead of recreating the duplicate that was just cleaned up.
+model CentreAlias {
+  id         String   @id @default(cuid())
+  centreId   String
+  centre     Centre   @relation(fields: [centreId], references: [id], onDelete: Cascade)
+  alias      String
+  normalized String   @unique
+  createdAt  DateTime @default(now())
+
+  @@index([centreId])
+  @@map("CentreAlias")
 }
 
 model Author {
