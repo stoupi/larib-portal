@@ -28,7 +28,7 @@ const CENTRE_RULES: CentreRule[] = [
   { match: /fr[eé]jus/i, centre: 'CH de Fréjus/Saint-Raphaël' },
   { match: /saint[- ]gatien/i, centre: 'Clinique Saint-Gatien' },
   { match: /institut catholique de lille|lille catholic institute/i, centre: 'GCS-Groupement des Hôpitaux de l\'Institut Catholique de Lille' },
-  { match: /\bCHUV\b|lausanne university hospital/i, centre: 'University Hospital Lausanne' },
+  { match: /\bCHUV\b|lausanne university hospitals?|university hospitals? (?:of )?lausanne/i, centre: 'University Hospital Lausanne' },
   { match: /villa dei fiori/i, centre: 'Villa dei Fiori Hospital' },
   { match: /policlinico consorziale|policlinic.{0,20}bari/i, centre: 'CHU de Policlinic' },
   { match: /mayo clinic/i, centre: 'Mayo Clinic College of Medicine' },
