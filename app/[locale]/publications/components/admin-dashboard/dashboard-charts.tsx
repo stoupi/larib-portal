@@ -121,7 +121,7 @@ export function DashboardCharts({
             onChange={(event) => setCoAuthorQuery(event.target.value)}
             placeholder={t('authorSearchPlaceholder')}
             aria-label={t('authorSearch')}
-            className="h-8 w-full rounded-lg border border-line bg-bg-surface pl-8 pr-8 text-[12.5px] text-text-primary outline-none placeholder:text-text-muted focus:border-coral-400"
+            className="h-8 w-full rounded-lg border border-line bg-bg-surface pl-8 pr-8 text-[12.5px] text-text-primary outline-none placeholder:text-text-placeholder focus:border-coral-400"
           />
           {coAuthorQuery && (
             <button

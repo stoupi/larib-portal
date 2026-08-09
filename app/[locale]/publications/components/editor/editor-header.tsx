@@ -73,7 +73,7 @@ export function EditorHeader({
               {...form.register('title')}
               rows={2}
               placeholder={t('editor.titlePlaceholder')}
-              className="w-full resize-none border-0 bg-transparent p-0 pr-8 text-2xl font-extrabold leading-tight tracking-tight text-text-primary outline-none placeholder:text-text-muted md:text-3xl"
+              className="w-full resize-none border-0 bg-transparent p-0 pr-8 text-2xl font-extrabold leading-tight tracking-tight text-text-primary outline-none placeholder:text-text-placeholder md:text-3xl"
             />
             <Pencil className="pointer-events-none absolute right-0 top-1.5 h-4 w-4 text-coral-400 opacity-0 transition group-focus-within:opacity-100" />
           </div>

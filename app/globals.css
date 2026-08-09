@@ -42,6 +42,7 @@
   --color-text-primary: var(--text-primary);
   --color-text-secondary: var(--text-secondary);
   --color-text-muted: var(--text-muted);
+  --color-text-placeholder: var(--text-placeholder);
   --color-line: var(--line);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -122,6 +123,8 @@
   --text-primary: #141a22;
   --text-secondary: #6b7685;
   --text-muted: #9aa5b3;
+  /* Lighter than --text-muted: a hint must never read as a value already filled in. */
+  --text-placeholder: #aeb7c2;
   --line: #dde2e9;
 
   /* Ambient app background: soft coral/pink washes blended over the base ground */
@@ -186,6 +189,8 @@
   --text-primary: #f5f7fa;
   --text-secondary: #aac0dc;
   --text-muted: #7197c2;
+  /* Dimmer than --text-muted on a dark ground, mirroring the light theme. */
+  --text-placeholder: #587fae;
   --line: #173d6e;
 
   /* Ambient app background (dark): warmer coral glow over deep navy */
@@ -272,12 +277,7 @@
   }
 
   ::placeholder {
-    color: oklch(0.70 0.01 250);
-    opacity: 1;
-  }
-
-  .dark ::placeholder {
-    color: oklch(0.55 0.01 250);
+    color: var(--text-placeholder);
     opacity: 1;
   }
 }
