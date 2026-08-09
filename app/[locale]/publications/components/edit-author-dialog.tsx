@@ -52,6 +52,20 @@ function EditAuthorForm({ data, centres, users, onClose, onSaved }: { data: Auth
   // the same one — .some() would promise "our team" for a secondary own centre.
   const isOurTeam = Boolean(centreIds[0] && centreById.get(centreIds[0])?.isOwn)
   const availableCentres = centres.filter((centre) => !centreIds.includes(centre.id))
+  const ownCentre = centres.find((centre) => centre.isOwn) ?? null
+
+  // The type follows the primary centre, so switching it is really a matter of putting
+  // our own centre first, or taking it out.
+  function markAsOurTeam() {
+    const alreadyAttached = centreIds.find((id) => centreById.get(id)?.isOwn)
+    const promoted = alreadyAttached ?? ownCentre?.id
+    if (!promoted) return
+    setCentreIds([promoted, ...centreIds.filter((id) => id !== promoted)])
+  }
+
+  function markAsExternal() {
+    setCentreIds(centreIds.filter((id) => !centreById.get(id)?.isOwn))
+  }
 
   const action = useAction(updateAuthorAction, {
     onSuccess: ({ data: result }) => {
@@ -114,12 +128,22 @@ function EditAuthorForm({ data, centres, users, onClose, onSaved }: { data: Auth
         <div className="space-y-1.5">
           <Label>{t('add.authorType')}</Label>
           <div className="inline-flex w-fit gap-1 rounded-xl bg-gray-100 p-1 dark:bg-white/5">
-            <span className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold ${isOurTeam ? 'bg-bg-surface text-coral-600 shadow-sm' : 'text-text-muted'}`}>
+            <button
+              type="button"
+              onClick={markAsOurTeam}
+              disabled={!ownCentre}
+              title={ownCentre?.name}
+              className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-50 ${isOurTeam ? 'bg-bg-surface text-coral-600 shadow-sm' : 'text-text-muted hover:text-coral-600'}`}
+            >
               <UserRoundCheck className="h-4 w-4" />{t('add.ourTeam')}
-            </span>
-            <span className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold ${!isOurTeam ? 'bg-bg-surface text-coral-600 shadow-sm' : 'text-text-muted'}`}>
+            </button>
+            <button
+              type="button"
+              onClick={markAsExternal}
+              className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold ${!isOurTeam ? 'bg-bg-surface text-coral-600 shadow-sm' : 'text-text-muted hover:text-coral-600'}`}
+            >
               <Globe className="h-4 w-4" />{t('add.external')}
-            </span>
+            </button>
           </div>
         </div>
         <div className="space-y-2">

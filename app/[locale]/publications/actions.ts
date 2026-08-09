@@ -16,7 +16,7 @@ import {
   PUBLICATIONS_AUTHORS_TAG,
   PUBLICATIONS_ARTICLES_TAG,
 } from '@/lib/services/publications/import'
-import { updateAuthor, deleteAuthor, mergeAuthors, recomputeAuthorCentres, createAuthor, getAuthorDetail, getAuthorForEdit, isPrismaKnownError } from '@/lib/services/publications/authors'
+import { updateAuthor, deleteAuthor, deleteAuthorWithAuthorships, mergeAuthors, recomputeAuthorCentres, createAuthor, getAuthorDetail, getAuthorForEdit, isPrismaKnownError } from '@/lib/services/publications/authors'
 import { findAuthorDuplicates, matchAuthorsAgainstBank, normalizeName } from '@/lib/services/publications/author-dedup'
 import { normalizeName as normalizeAuthorName, authorFirstInitial } from '@/lib/services/publications/import-dedupe'
 import { fetchPublicationByIdentifier } from '@/lib/services/publications/publication-lookup'
@@ -126,8 +126,14 @@ export const recomputeAuthorCentresAction = appAdminAction('PUBLICATIONS')
   })
 
 export const deleteAuthorAction = appAdminAction('PUBLICATIONS')
-  .inputSchema(z.object({ id: z.string().min(1) }))
+  .inputSchema(z.object({ id: z.string().min(1), detachFromPublications: z.boolean().default(false) }))
   .action(async ({ parsedInput }) => {
+    if (parsedInput.detachFromPublications) {
+      const deleted = await deleteAuthorWithAuthorships(parsedInput.id)
+      revalidateTag(PUBLICATIONS_AUTHORS_TAG)
+      revalidateTag(PUBLICATIONS_ARTICLES_TAG)
+      return deleted
+    }
     try {
       const deleted = await deleteAuthor(parsedInput.id)
       revalidateTag(PUBLICATIONS_AUTHORS_TAG)

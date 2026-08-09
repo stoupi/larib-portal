@@ -212,7 +212,7 @@ export function AuthorsManager({ authors, users, centres, basePath }: { authors:
 
   async function confirmDelete() {
     if (!deleteTarget) return
-    const res = await execDelete({ id: deleteTarget.id })
+    const res = await execDelete({ id: deleteTarget.id, detachFromPublications: deleteTarget._count.authorships > 0 })
     setDeleteTarget(null)
     if (!res?.data) return
     toast.success(t('authors.deleted'))
@@ -455,7 +455,11 @@ export function AuthorsManager({ authors, users, centres, basePath }: { authors:
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>{t('authors.deleteConfirm')}</AlertDialogTitle>
-            <AlertDialogDescription>{t('authors.deleteConfirmDesc')}</AlertDialogDescription>
+            <AlertDialogDescription>
+              {deleteTarget && deleteTarget._count.authorships > 0
+                ? t('authors.deleteDetachDesc', { count: deleteTarget._count.authorships })
+                : t('authors.deleteConfirmDesc')}
+            </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>{t('authors.cancel')}</AlertDialogCancel>

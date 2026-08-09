@@ -395,6 +395,28 @@ export async function deleteAuthor(id: string) {
   return prisma.author.delete({ where: { id }, select: { id: true } })
 }
 
+// Collective bylines ("THE CRITICAL COVID-FRANCE INVESTIGATORS") get imported as
+// authors and cannot be deleted while they hold authorships. Detaching them first
+// keeps the articles intact and closes the gap their position leaves behind.
+export async function deleteAuthorWithAuthorships(id: string): Promise<{ id: string; articlesTouched: number }> {
+  return prisma.$transaction(async (tx) => {
+    const authorships = await tx.authorship.findMany({ where: { authorId: id }, select: { id: true, articleId: true } })
+    await tx.authorship.deleteMany({ where: { authorId: id } })
+
+    const articleIds = [...new Set(authorships.map((authorship) => authorship.articleId))]
+    for (const articleId of articleIds) {
+      const remaining = await tx.authorship.findMany({ where: { articleId }, orderBy: { order: 'asc' }, select: { id: true, order: true } })
+      for (const [index, authorship] of remaining.entries()) {
+        const nextOrder = index + 1
+        if (authorship.order !== nextOrder) await tx.authorship.update({ where: { id: authorship.id }, data: { order: nextOrder } })
+      }
+    }
+
+    const deleted = await tx.author.delete({ where: { id }, select: { id: true } })
+    return { id: deleted.id, articlesTouched: articleIds.length }
+  })
+}
+
 export async function mergeAuthors(
   keepId: string,
   mergeIds: string[],

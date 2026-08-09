@@ -32,8 +32,23 @@ test('admin browses, edits and merges authors', async ({ page }) => {
   await page.getByRole('option', { name: /Lariboisière/i }).click()
   await expect(dialog.getByText(/Lariboisière/i)).toBeVisible()
 
+  // "Our team" is a control, not a read-out: it attaches our own centre as the primary one
+  await dialog.getByRole('button', { name: /external/i }).click()
+  await expect(dialog.getByText('Ours', { exact: true })).toBeHidden()
+  await dialog.getByRole('button', { name: /our team/i }).click()
+  await expect(dialog.getByText('Ours', { exact: true })).toBeVisible()
+
   await page.getByRole('button', { name: /save changes/i }).click()
   await expect(page.getByText(/author updated/i)).toBeVisible()
+
+  // A linked publication opens its article page
+  const authorRow = page.getByRole('row', { name: /Publications USER/i })
+  await authorRow.getByRole('button', { name: /toggle details/i }).click()
+  const publicationLink = page.getByRole('link', { name: /Outcomes of multi-valve intervention/i }).first()
+  await expect(publicationLink).toBeVisible({ timeout: 20000 })
+  await publicationLink.click()
+  await page.waitForURL('**/publications/admin/articles/**', { timeout: 30000 })
+  await page.goBack()
 
   // Merge the two seeded authors (same single article -> keeper keeps 1 authorship)
   const rows = page.locator('tbody tr')
