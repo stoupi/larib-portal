@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/prisma'
-import { Prisma, type AuthorType } from '@/app/generated/prisma'
+import { Prisma, type AuthorType, type StudyStatus } from '@/app/generated/prisma'
 import { rememberCentreAlias } from './centre-resolve'
 
 export type CentreRow = {
@@ -12,11 +12,12 @@ export type CentreRow = {
   isOwn: boolean
   authorsCount: number
   publicationsCount: number
+  studiesCount: number
 }
 
 export async function listCentres(): Promise<CentreRow[]> {
   const [centres, authorCounts, pubRows] = await Promise.all([
-    prisma.centre.findMany({ orderBy: [{ name: 'asc' }], select: { id: true, name: true, shortCode: true, parentOrganisation: true, city: true, country: true, isOwn: true } }),
+    prisma.centre.findMany({ orderBy: [{ name: 'asc' }], select: { id: true, name: true, shortCode: true, parentOrganisation: true, city: true, country: true, isOwn: true, _count: { select: { studies: true } } } }),
     prisma.author.groupBy({ by: ['centreId'], _count: { _all: true }, where: { centreId: { not: null } } }),
     prisma.$queryRaw<{ centreId: string; cnt: bigint }[]>`
       SELECT a."centreId" AS "centreId", COUNT(DISTINCT ash."articleId") AS cnt
@@ -28,11 +29,39 @@ export async function listCentres(): Promise<CentreRow[]> {
   ])
   const authorMap = new Map(authorCounts.map((row) => [row.centreId, row._count._all]))
   const pubMap = new Map(pubRows.map((row) => [row.centreId, Number(row.cnt)]))
-  return centres.map((centre) => ({
+  return centres.map(({ _count, ...centre }) => ({
     ...centre,
     authorsCount: authorMap.get(centre.id) ?? 0,
     publicationsCount: pubMap.get(centre.id) ?? 0,
+    studiesCount: _count.studies,
   }))
+}
+
+export type CentreStudy = {
+  id: string
+  title: string
+  acronym: string | null
+  nctId: string | null
+  status: StudyStatus
+  startDate: Date | null
+  investigatorsCount: number
+}
+
+export async function getCentreStudies(centreId: string): Promise<CentreStudy[]> {
+  const studies = await prisma.study.findMany({
+    where: { centres: { some: { id: centreId } } },
+    orderBy: [{ startDate: 'desc' }, { title: 'asc' }],
+    select: {
+      id: true,
+      title: true,
+      acronym: true,
+      nctId: true,
+      status: true,
+      startDate: true,
+      _count: { select: { investigators: true } },
+    },
+  })
+  return studies.map(({ _count, ...study }) => ({ ...study, investigatorsCount: _count.investigators }))
 }
 
 export type CentreAuthor = {

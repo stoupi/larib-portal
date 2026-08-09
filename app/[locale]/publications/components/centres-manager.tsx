@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import { useAction } from 'next-safe-action/hooks'
 import { toast } from 'sonner'
-import { Pencil, Trash2, GitMerge, FileText, Users, MapPin, Activity, Search, Plus, ChevronDown, ChevronRight, ChevronUp, ChevronsUpDown } from 'lucide-react'
+import { Pencil, Trash2, GitMerge, FileText, FlaskConical, Users, MapPin, Activity, Search, Plus, ChevronDown, ChevronRight, ChevronUp, ChevronsUpDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -17,9 +17,10 @@ import {
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
 import { TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table'
-import { mergeCentresAction, deleteCentreAction, getCentreAuthorsAction } from '../actions'
-import type { CentreRow, CentreAuthor } from '@/lib/services/publications/centres'
+import { mergeCentresAction, deleteCentreAction, getCentreAuthorsAction, getCentreStudiesAction } from '../actions'
+import type { CentreRow, CentreAuthor, CentreStudy } from '@/lib/services/publications/centres'
 import { CentreAuthorsPanel } from './centre-authors-panel'
+import { CentreStudiesPanel } from './centre-studies-panel'
 import { EditCentreDialog } from './edit-centre-dialog'
 
 const TYPE_TABS = [
@@ -28,7 +29,7 @@ const TYPE_TABS = [
   { value: 'EXTERNAL' as const, key: 'tabExternal' },
 ]
 type OwnFilter = 'ALL' | 'OURS' | 'EXTERNAL'
-type SortKey = 'name' | 'city' | 'country' | 'authors' | 'publications'
+type SortKey = 'name' | 'city' | 'country' | 'authors' | 'publications' | 'studies'
 
 function centreInitials(name: string): string {
   const cleaned = name.replace(/^(hôpital|hopital|centre|institut|university|université|department|dept|the)\s+/i, '')
@@ -47,6 +48,8 @@ function sortValue(centre: CentreRow, key: SortKey): string | number {
       return centre.authorsCount
     case 'publications':
       return centre.publicationsCount
+    case 'studies':
+      return centre.studiesCount
   }
 }
 
@@ -66,6 +69,7 @@ export function CentresManager({ centres }: { centres: CentreRow[] }) {
   const [createOpen, setCreateOpen] = useState(false)
   const [expanded, setExpanded] = useState<Set<string>>(new Set())
   const [authorsByCentre, setAuthorsByCentre] = useState<Record<string, CentreAuthor[]>>({})
+  const [studiesByCentre, setStudiesByCentre] = useState<Record<string, CentreStudy[]>>({})
 
   const counts = useMemo(
     () => ({ ALL: centres.length, OURS: centres.filter((centre) => centre.isOwn).length, EXTERNAL: centres.filter((centre) => !centre.isOwn).length }),
@@ -101,13 +105,19 @@ export function CentresManager({ centres }: { centres: CentreRow[] }) {
   const { executeAsync: execMerge, isExecuting: merging } = useAction(mergeCentresAction, { onError() { toast.error(tActions('actionError')) } })
   const { executeAsync: execDelete, isExecuting: deleting } = useAction(deleteCentreAction, { onError() { toast.error(tActions('actionError')) } })
   const { executeAsync: execAuthors } = useAction(getCentreAuthorsAction, { onError() { toast.error(tActions('actionError')) } })
+  const { executeAsync: execStudies } = useAction(getCentreStudiesAction, { onError() { toast.error(tActions('actionError')) } })
 
   async function toggleExpand(id: string) {
     const isOpen = expanded.has(id)
     setExpanded((previous) => { const next = new Set(previous); if (isOpen) next.delete(id); else next.add(id); return next })
-    if (!isOpen && !authorsByCentre[id]) {
+    if (isOpen) return
+    if (!authorsByCentre[id]) {
       const res = await execAuthors({ id })
       if (res?.data) setAuthorsByCentre((previous) => ({ ...previous, [id]: res.data as CentreAuthor[] }))
+    }
+    if (!studiesByCentre[id]) {
+      const res = await execStudies({ id })
+      if (res?.data) setStudiesByCentre((previous) => ({ ...previous, [id]: res.data as CentreStudy[] }))
     }
   }
 
@@ -196,6 +206,7 @@ export function CentresManager({ centres }: { centres: CentreRow[] }) {
               <SortHead sortKey="country" label={t('colCountry')} />
               <SortHead sortKey="authors" label={t('colAuthors')} />
               <SortHead sortKey="publications" label={t('colPublications')} />
+              <SortHead sortKey="studies" label={t('colStudies')} />
               <TableHead className="text-right">{t('colActions')}</TableHead>
             </TableRow>
           </TableHeader>
@@ -233,6 +244,9 @@ export function CentresManager({ centres }: { centres: CentreRow[] }) {
                   <TableCell>
                     <span className="inline-flex items-center gap-1.5 text-text-primary"><FileText className="size-4 text-text-muted" />{centre.publicationsCount}</span>
                   </TableCell>
+                  <TableCell>
+                    <span className="inline-flex items-center gap-1.5 text-text-primary"><FlaskConical className="size-4 text-text-muted" />{centre.studiesCount}</span>
+                  </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-1">
                       <Button variant="ghost" size="icon" onClick={() => setEditCentre(centre)} aria-label={t('edit')}><Pencil className="size-4" /></Button>
@@ -242,9 +256,14 @@ export function CentresManager({ centres }: { centres: CentreRow[] }) {
                 </TableRow>
                 {expanded.has(centre.id) && (
                   <TableRow>
-                    <TableCell colSpan={7} className="bg-gray-25/60 p-4 dark:bg-white/5">
+                    <TableCell colSpan={8} className="space-y-5 bg-gray-25/60 p-4 dark:bg-white/5">
                       {authorsByCentre[centre.id] ? (
                         <CentreAuthorsPanel authors={authorsByCentre[centre.id]} />
+                      ) : (
+                        <div className="py-6 text-center text-sm text-text-muted">{t('loading')}</div>
+                      )}
+                      {studiesByCentre[centre.id] ? (
+                        <CentreStudiesPanel studies={studiesByCentre[centre.id]} />
                       ) : (
                         <div className="py-6 text-center text-sm text-text-muted">{t('loading')}</div>
                       )}

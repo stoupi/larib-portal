@@ -31,6 +31,13 @@ test('admin creates and curates a centre', async ({ page }) => {
   await expect(createdRow.getByText('INSERM')).toBeVisible()
   await expect(createdRow.getByText('Lyon')).toBeVisible()
 
+  // The table reports study attachment, and expanding a centre details both its people and its studies
+  await expect(page.getByRole('row', { name: /Centre City Country Authors Publications Studies Actions/ })).toBeVisible()
+  await createdRow.getByRole('button', { name: /toggle details/i }).click()
+  await expect(page.getByText(/linked authors/i)).toBeVisible({ timeout: 20000 })
+  await expect(page.getByText(/linked studies/i)).toBeVisible({ timeout: 20000 })
+  await expect(page.getByText(/no linked study on record/i)).toBeVisible()
+
   // Edit an existing centre
   const row = page.getByRole('row', { name: /Lariboisière/i }).first()
   await expect(row).toBeVisible()

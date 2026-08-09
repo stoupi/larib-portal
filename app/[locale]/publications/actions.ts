@@ -21,7 +21,7 @@ import { findAuthorDuplicates, matchAuthorsAgainstBank, normalizeName } from '@/
 import { normalizeName as normalizeAuthorName, authorFirstInitial } from '@/lib/services/publications/import-dedupe'
 import { fetchPublicationByIdentifier } from '@/lib/services/publications/publication-lookup'
 import { backfillAffiliations, PUBLICATIONS_CENTRES_TAG, PUBLICATIONS_AFFILIATIONS_TAG } from '@/lib/services/publications/affiliations'
-import { renameCentre, setCentreOwn, deleteCentre, mergeCentres, getCentreAuthors, createCentre, updateCentre } from '@/lib/services/publications/centres'
+import { renameCentre, setCentreOwn, deleteCentre, mergeCentres, getCentreAuthors, getCentreStudies, createCentre, updateCentre } from '@/lib/services/publications/centres'
 import { updateArticleStatus, updateArticleType, updateArticleStudy, updateArticleScope, deleteArticle, findKnownPublications, listPublicationTitles, ARTICLE_STATUSES } from '@/lib/services/publications/articles'
 import { ARTICLE_TYPE_VALUES } from '@/lib/publications/article-type'
 import { ARTICLE_SCOPES } from '@/lib/publications/article-scope'
@@ -214,6 +214,10 @@ export const updateCentreAction = appAdminAction('PUBLICATIONS')
 export const getCentreAuthorsAction = appAdminAction('PUBLICATIONS')
   .inputSchema(z.object({ id: z.string().min(1) }))
   .action(async ({ parsedInput }) => getCentreAuthors(parsedInput.id))
+
+export const getCentreStudiesAction = appAdminAction('PUBLICATIONS')
+  .inputSchema(z.object({ id: z.string().min(1) }))
+  .action(async ({ parsedInput }) => getCentreStudies(parsedInput.id))
 
 export const updateArticleStatusAction = appAdminAction('PUBLICATIONS')
   .inputSchema(z.object({ id: z.string().min(1), status: z.enum(ARTICLE_STATUSES) }))
