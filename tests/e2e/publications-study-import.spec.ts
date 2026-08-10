@@ -48,11 +48,23 @@ test('admin imports a study from ClinicalTrials.gov', async ({ page }) => {
 
   // The automatic match is only a proposal: a badly recognised site can be pointed at a
   // centre from the bank by hand, and the import must honour that choice
-  await dialog.getByRole('button', { name: /^change$/i }).click()
-  await dialog.getByRole('combobox').click()
+  const centreRow = dialog.getByRole('listitem').filter({ hasText: 'Assistance Publique' })
+  await centreRow.getByRole('button', { name: /^change$/i }).click()
+  await centreRow.getByRole('combobox').click()
   await page.getByPlaceholder(/search a centre/i).fill('lariboisi')
   await page.getByRole('option', { name: /Lariboisière/i }).first().click()
-  await expect(dialog.getByText('Chosen')).toBeVisible()
+  await expect(centreRow.getByText('Chosen')).toBeVisible()
+
+  // The same correction is possible on a person: the trial investigator is pointed at the
+  // author who already exists in the bank instead of creating a second record for them
+  const personRow = dialog.getByRole('listitem').filter({ hasText: 'PEZEL' })
+  await personRow.getByRole('button', { name: /^change$/i }).click()
+  await personRow.getByRole('combobox').click()
+  const bankAuthor = page.getByRole('option').first()
+  const bankAuthorName = ((await bankAuthor.textContent()) ?? '').trim()
+  await bankAuthor.click()
+  await expect(personRow.getByText('Chosen')).toBeVisible()
+  expect(bankAuthorName).not.toBe('')
 
   await dialog.getByRole('button', { name: /import study/i }).click()
 
@@ -68,5 +80,6 @@ test('admin imports a study from ClinicalTrials.gov', async ({ page }) => {
   await expect(page.getByText(/Investigating centres/i)).toBeVisible()
   await expect(page.getByText(/Lariboisière/i).first()).toBeVisible()
   await expect(page.getByText(/Assistance Publique Hôpitaux de Paris/i)).toHaveCount(0)
-  await expect(page.getByText(/PEZEL/i).first()).toBeVisible()
+  await expect(page.getByText(bankAuthorName).first()).toBeVisible()
+  await expect(page.getByText(/PEZEL/i)).toHaveCount(0)
 })

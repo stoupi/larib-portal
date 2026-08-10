@@ -16,6 +16,7 @@ import type { ClinicalTrialImport } from '@/lib/services/publications/clinicaltr
 import { SingleSelect } from '@/components/ui/single-select'
 import type { CentrePreview } from '@/lib/services/publications/centre-resolve'
 import type { CentreOption } from './centre-picker'
+import type { AuthorOption, InvestigatorPreview } from '@/lib/services/publications/investigator-resolve'
 
 const CORAL = 'gap-2 bg-gradient-to-b from-coral-500 to-coral-600 text-white shadow-[0_10px_22px_-8px_rgba(214,31,85,0.6)] hover:brightness-105'
 
@@ -30,6 +31,9 @@ export function ImportTrialDialog({ open, onClose }: Props) {
   const [centres, setCentres] = useState<CentrePreview[]>([])
   const [bank, setBank] = useState<CentreOption[]>([])
   const [overrides, setOverrides] = useState<Record<string, string>>({})
+  const [investigators, setInvestigators] = useState<InvestigatorPreview[]>([])
+  const [authorBank, setAuthorBank] = useState<AuthorOption[]>([])
+  const [personOverrides, setPersonOverrides] = useState<Record<string, string>>({})
 
   function errorMessage(reason: string): string {
     const known = new Set(['INVALID_NCT_ID', 'DUPLICATE', 'NOT_FOUND', 'FETCH_FAILED', 'IMPORT_FAILED'])
@@ -39,8 +43,14 @@ export function ImportTrialDialog({ open, onClose }: Props) {
   const previewAction = useAction(previewClinicalTrialAction, {
     onSuccess: ({ data }) => {
       if (!data) return
-      if (data.ok) { setPreview(data.preview); setCentres(data.centres); setBank(data.bank); setOverrides({}) }
-      else { setPreview(null); setCentres([]); setBank([]); setOverrides({}); toast.error(errorMessage(data.error)) }
+      if (data.ok) {
+        setPreview(data.preview); setCentres(data.centres); setBank(data.bank); setOverrides({})
+        setInvestigators(data.investigators); setAuthorBank(data.authorBank); setPersonOverrides({})
+      } else {
+        setPreview(null); setCentres([]); setBank([]); setOverrides({})
+        setInvestigators([]); setAuthorBank([]); setPersonOverrides({})
+        toast.error(errorMessage(data.error))
+      }
     },
     onError: () => toast.error(errorMessage('FETCH_FAILED')),
   })
@@ -65,6 +75,9 @@ export function ImportTrialDialog({ open, onClose }: Props) {
     setCentres([])
     setBank([])
     setOverrides({})
+    setInvestigators([])
+    setAuthorBank([])
+    setPersonOverrides({})
     onClose()
   }
 
@@ -117,8 +130,8 @@ export function ImportTrialDialog({ open, onClose }: Props) {
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <ListBlock icon={<Building2 className="h-4 w-4" />} label={t('centres', { count: preview.centres.length })}>
                   {centres.map((centre) => (
-                    <li key={centre.rawName} className="space-y-1">
-                      <p className="truncate">{centre.rawName}</p>
+                    <li key={centre.rawName} className="space-y-1 rounded-lg border border-line p-2">
+                      <p className="truncate font-medium">{centre.rawName}</p>
                       <CentreResolution
                         centre={centre}
                         bank={bank}
@@ -130,9 +143,16 @@ export function ImportTrialDialog({ open, onClose }: Props) {
                   ))}
                 </ListBlock>
                 <ListBlock icon={<UserRound className="h-4 w-4" />} label={t('investigators', { count: preview.investigators.length })}>
-                  {preview.investigators.map((person) => (
-                    <li key={`${person.firstName}-${person.lastName}`} className="truncate">
-                      {person.firstName} {person.lastName}{person.degrees ? `, ${person.degrees}` : ''}
+                  {investigators.map((person) => (
+                    <li key={person.key} className="space-y-1 rounded-lg border border-line p-2">
+                      <p className="truncate font-medium">{person.fullName}{person.degrees ? `, ${person.degrees}` : ''}</p>
+                      <InvestigatorResolution
+                        person={person}
+                        bank={authorBank}
+                        chosenId={personOverrides[person.key] ?? null}
+                        onChoose={(authorId) => setPersonOverrides({ ...personOverrides, [person.key]: authorId })}
+                        onReset={() => setPersonOverrides(Object.fromEntries(Object.entries(personOverrides).filter(([key]) => key !== person.key)))}
+                      />
                     </li>
                   ))}
                 </ListBlock>
@@ -143,7 +163,7 @@ export function ImportTrialDialog({ open, onClose }: Props) {
         </div>
         <DialogFooter>
           <Button type="button" variant="outline" onClick={handleClose}>{t('cancel')}</Button>
-          <Button type="button" className={CORAL} disabled={!preview || importing} onClick={() => preview && importAction.execute({ nctId: preview.nctId, centreOverrides: Object.entries(overrides).map(([rawName, centreId]) => ({ rawName, centreId })) })}>
+          <Button type="button" className={CORAL} disabled={!preview || importing} onClick={() => preview && importAction.execute({ nctId: preview.nctId, centreOverrides: Object.entries(overrides).map(([rawName, centreId]) => ({ rawName, centreId })), investigatorOverrides: Object.entries(personOverrides).map(([key, authorId]) => ({ key, authorId })) })}>
             <Download className="h-4 w-4" />
             {importing ? t('importing') : t('import')}
           </Button>
@@ -185,15 +205,58 @@ function CentreResolution({ centre, bank, chosenId, onChoose, onReset }: { centr
   }
 
   return (
-    <span className="flex flex-wrap items-center gap-1.5 text-xs">
-      <Badge className={chosen ? CENTRE_STATUS_STYLE.chosen : CENTRE_STATUS_STYLE[centre.status]}>
-        {chosen ? t('centreStatus.chosen') : t(`centreStatus.${centre.status}`)}
-      </Badge>
-      {chosen
-        ? <span className="truncate text-text-secondary">{chosen.name}</span>
-        : centre.resolvedName !== centre.rawName && <span className="truncate text-text-secondary">{centre.resolvedName}</span>}
-      <button type="button" onClick={() => setPicking(true)} className="font-semibold text-coral-600 hover:underline">{t('changeCentre')}</button>
-      {chosen && <button type="button" onClick={onReset} className="text-text-muted hover:text-coral-600">{t('resetCentre')}</button>}
+    <span className="flex items-center gap-2 text-xs">
+      <span className="flex min-w-0 flex-1 flex-wrap items-center gap-1.5">
+        <Badge className={chosen ? CENTRE_STATUS_STYLE.chosen : CENTRE_STATUS_STYLE[centre.status]}>
+          {chosen ? t('centreStatus.chosen') : t(`centreStatus.${centre.status}`)}
+        </Badge>
+        {chosen
+          ? <span className="truncate text-text-secondary">{chosen.name}</span>
+          : centre.resolvedName !== centre.rawName && <span className="truncate text-text-secondary">{centre.resolvedName}</span>}
+      </span>
+      {chosen && <button type="button" onClick={onReset} className="shrink-0 text-text-muted hover:text-coral-600">{t('resetCentre')}</button>}
+      <Button type="button" variant="outline" size="sm" className="h-7 shrink-0 px-2 text-xs" onClick={() => setPicking(true)}>{t('changeCentre')}</Button>
+    </span>
+  )
+}
+
+// Same contract as the centres: the automatic match against the author bank is a proposal
+// an admin can redirect onto the right person before the study is created.
+function InvestigatorResolution({ person, bank, chosenId, onChoose, onReset }: { person: InvestigatorPreview; bank: AuthorOption[]; chosenId: string | null; onChoose: (authorId: string) => void; onReset: () => void }) {
+  const t = useTranslations('publications.studies.importTrial')
+  const [picking, setPicking] = useState(false)
+  const chosen = chosenId ? bank.find((option) => option.id === chosenId) ?? null : null
+
+  if (picking) {
+    return (
+      <span className="flex items-center gap-1.5">
+        <SingleSelect
+          options={bank.map((option) => ({ value: option.id, label: `${option.firstName} ${option.lastName}` }))}
+          value={chosenId ?? ''}
+          onChange={(value) => { if (value) { onChoose(value); setPicking(false) } }}
+          placeholder={t('pickAuthor')}
+          searchable
+          searchPlaceholder={t('searchAuthor')}
+          emptyLabel={t('noAuthorFound')}
+          className="min-w-0 flex-1"
+        />
+        <Button type="button" variant="ghost" size="sm" onClick={() => setPicking(false)}>{t('cancel')}</Button>
+      </span>
+    )
+  }
+
+  return (
+    <span className="flex items-center gap-2 text-xs">
+      <span className="flex min-w-0 flex-1 flex-wrap items-center gap-1.5">
+        <Badge className={chosen ? CENTRE_STATUS_STYLE.chosen : CENTRE_STATUS_STYLE[person.status]}>
+          {chosen ? t('centreStatus.chosen') : t(`investigatorStatus.${person.status}`)}
+        </Badge>
+        {chosen
+          ? <span className="truncate text-text-secondary">{chosen.firstName} {chosen.lastName}</span>
+          : person.matchedName && person.matchedName !== person.fullName && <span className="truncate text-text-secondary">{person.matchedName}</span>}
+      </span>
+      {chosen && <button type="button" onClick={onReset} className="shrink-0 text-text-muted hover:text-coral-600">{t('resetCentre')}</button>}
+      <Button type="button" variant="outline" size="sm" className="h-7 shrink-0 px-2 text-xs" onClick={() => setPicking(true)}>{t('changeCentre')}</Button>
     </span>
   )
 }

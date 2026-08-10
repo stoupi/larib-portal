@@ -1630,7 +1630,14 @@
         "searchCentre": "Search a centre by name, code or city…",
         "noCentreFound": "No centre found.",
         "changeCentre": "Change",
-        "resetCentre": "Auto"
+        "resetCentre": "Auto",
+        "pickAuthor": "Choose an author",
+        "searchAuthor": "Search an author by name…",
+        "noAuthorFound": "No author found.",
+        "investigatorStatus": {
+          "existing": "In your bank",
+          "new": "New author"
+        }
       },
       "hubDescription": "Trials and registries, their centres and investigators.",
       "viewStudies": "View studies",

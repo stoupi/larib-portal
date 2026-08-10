@@ -33,6 +33,7 @@ import { JOURNAL_SPECIALTIES, JOURNAL_SUB_SPECIALTIES } from '@/lib/publications
 import { refreshJournalSjr } from '@/lib/services/publications/sjr'
 import { createStudy, updateStudy, deleteStudy, importClinicalTrialStudy, setStudyStatus, linkCentreToStudy, unlinkCentreFromStudy, setStudyInvestigator, removeStudyInvestigator, linkArticleToStudy, unlinkArticleFromStudy, STUDY_STATUSES, PUBLICATIONS_STUDIES_TAG } from '@/lib/services/publications/studies'
 import { previewCentreResolutions } from '@/lib/services/publications/centre-resolve'
+import { previewInvestigatorResolutions, listAuthorOptions } from '@/lib/services/publications/investigator-resolve'
 import { fetchClinicalTrial, normaliseNctId } from '@/lib/services/publications/clinicaltrials'
 
 export const searchBacklogAction = appAdminAction('PUBLICATIONS')
@@ -518,11 +519,13 @@ export const previewClinicalTrialAction = appAdminAction('PUBLICATIONS')
     if (existing) return { ok: false as const, error: 'DUPLICATE' }
     try {
       const preview = await fetchClinicalTrial(normalised)
-      const [centres, bank] = await Promise.all([
+      const [centres, bank, investigators, authorBank] = await Promise.all([
         previewCentreResolutions(prisma, preview.centres.map((centre) => centre.name)),
         listCentreOptions(),
+        previewInvestigatorResolutions(prisma, preview.investigators),
+        listAuthorOptions(prisma),
       ])
-      return { ok: true as const, preview, centres, bank }
+      return { ok: true as const, preview, centres, bank, investigators, authorBank }
     } catch (error) {
       const reason = error instanceof Error ? error.message : 'FETCH_FAILED'
       return { ok: false as const, error: reason }
@@ -533,13 +536,14 @@ export const importClinicalTrialAction = appAdminAction('PUBLICATIONS')
   .inputSchema(z.object({
     nctId: z.string().min(1),
     centreOverrides: z.array(z.object({ rawName: z.string().min(1), centreId: z.string().min(1) })).default([]),
+    investigatorOverrides: z.array(z.object({ key: z.string().min(1), authorId: z.string().min(1) })).default([]),
   }))
   .action(async ({ parsedInput, ctx }) => {
     const normalised = normaliseNctId(parsedInput.nctId)
     if (!normalised) return { ok: false as const, error: 'INVALID_NCT_ID' }
     try {
       const preview = await fetchClinicalTrial(normalised)
-      const result = await importClinicalTrialStudy(preview, ctx.userId, parsedInput.centreOverrides)
+      const result = await importClinicalTrialStudy(preview, ctx.userId, parsedInput.centreOverrides, parsedInput.investigatorOverrides)
       revalidateTag(PUBLICATIONS_STUDIES_TAG)
       revalidateTag(PUBLICATIONS_CENTRES_TAG)
       return { ok: true as const, result }

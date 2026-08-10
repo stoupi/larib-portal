@@ -2,6 +2,7 @@ import { prisma } from '@/lib/prisma'
 import { Prisma } from '@/app/generated/prisma'
 import type { ClinicalTrialImport } from './clinicaltrials'
 import { loadCentreIndex, resolveCentre } from './centre-resolve'
+import { investigatorKey, matchInvestigator } from './investigator-resolve'
 
 export const PUBLICATIONS_STUDIES_TAG = 'publications:studies'
 export const STUDY_STATUSES = ['PLANNED', 'ONGOING', 'COMPLETED', 'STOPPED'] as const
@@ -161,9 +162,16 @@ export async function deleteStudy(id: string) {
 export type ClinicalTrialImportResult = { id: string; centresCreated: number; investigatorsCreated: number }
 
 export type CentreOverride = { rawName: string; centreId: string }
+export type InvestigatorOverride = { key: string; authorId: string }
 
-export async function importClinicalTrialStudy(data: ClinicalTrialImport, createdById: string, centreOverrides: CentreOverride[] = []): Promise<ClinicalTrialImportResult> {
+export async function importClinicalTrialStudy(
+  data: ClinicalTrialImport,
+  createdById: string,
+  centreOverrides: CentreOverride[] = [],
+  investigatorOverrides: InvestigatorOverride[] = [],
+): Promise<ClinicalTrialImportResult> {
   const overrideByRawName = new Map(centreOverrides.map((override) => [override.rawName.trim().toLowerCase(), override.centreId]))
+  const overrideByPerson = new Map(investigatorOverrides.map((override) => [override.key.toLowerCase(), override.authorId]))
   return prisma.$transaction(async (tx) => {
     const duplicate = await tx.study.findUnique({ where: { nctId: data.nctId }, select: { id: true } })
     if (duplicate) throw new Error('DUPLICATE')
@@ -196,14 +204,10 @@ export async function importClinicalTrialStudy(data: ClinicalTrialImport, create
     const investigatorRows: Array<{ authorId: string; role: 'PI' | 'CO_INVESTIGATOR'; centreId: string | null }> = []
     const seenAuthorIds = new Set<string>()
     for (const person of data.investigators) {
-      let author = person.email
-        ? await tx.author.findFirst({ where: { OR: [{ emails: { has: person.email } }, { email: { equals: person.email, mode: 'insensitive' } }] }, select: { id: true } })
-        : null
-      if (!author) {
-        author = await tx.author.findFirst({ where: { firstName: { equals: person.firstName, mode: 'insensitive' }, lastName: { equals: person.lastName, mode: 'insensitive' } }, select: { id: true } })
-      }
+      const chosenAuthorId = overrideByPerson.get(investigatorKey(person)) ?? null
+      const matched = chosenAuthorId ? { authorId: chosenAuthorId } : await matchInvestigator(tx, person)
       const centreId = (person.centreName && centreIdByFacility.get(person.centreName.toLowerCase())) || primaryCentreId
-      let authorId = author?.id
+      let authorId = matched?.authorId
       if (!authorId) {
         const emails = person.email ? [person.email] : []
         const created = await tx.author.create({

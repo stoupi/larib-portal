@@ -1628,7 +1628,14 @@
         "searchCentre": "Rechercher un centre par nom, code ou ville…",
         "noCentreFound": "Aucun centre trouvé.",
         "changeCentre": "Modifier",
-        "resetCentre": "Auto"
+        "resetCentre": "Auto",
+        "pickAuthor": "Choisir un auteur",
+        "searchAuthor": "Rechercher un auteur par nom…",
+        "noAuthorFound": "Aucun auteur trouvé.",
+        "investigatorStatus": {
+          "existing": "Dans votre banque",
+          "new": "Nouvel auteur"
+        }
       },
       "hubDescription": "Essais et registres, leurs centres et investigateurs.",
       "viewStudies": "Voir les études",
