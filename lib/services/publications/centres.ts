@@ -102,6 +102,10 @@ export type CentreIdentity = {
 
 const CENTRE_IDENTITY_SELECT = { id: true, name: true, shortCode: true, parentOrganisation: true, city: true, country: true, isOwn: true } as const
 
+export async function listCentreOptions(): Promise<CentreIdentity[]> {
+  return prisma.centre.findMany({ orderBy: [{ name: 'asc' }], select: CENTRE_IDENTITY_SELECT })
+}
+
 // Creating a centre from inside another form must never fail on a name that is already
 // in the bank: the caller only wants a centre to attach, so an existing one is returned.
 export async function createCentre(data: {

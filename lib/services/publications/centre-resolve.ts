@@ -34,6 +34,9 @@ export type CentreLookup = {
   // name — even an umbrella like AP-HP, which is the only site the trial declares.
   // An affiliation only yields a centre when a hospital could be identified in it.
   keepUnrecognisedName: boolean
+  // An admin who corrected the automatic match by hand wins over the guess, and the raw
+  // spelling becomes an alias so the same site resolves on its own next time.
+  overrideCentreId?: string | null
 }
 
 export type CentreResolution = { centreId: string; name: string; created: boolean }
@@ -73,6 +76,18 @@ async function fillMissingLocation(tx: Tx, centreId: string, lookup: CentreLooku
 // The single place allowed to create a Centre from imported text. Everything else
 // resolves through here, so one spelling of a site can only ever produce one centre.
 export async function resolveCentre(tx: Tx, index: CentreIndex, lookup: CentreLookup): Promise<CentreResolution | null> {
+  if (lookup.overrideCentreId) {
+    const chosen = await tx.centre.findUnique({ where: { id: lookup.overrideCentreId }, select: { id: true, name: true } })
+    if (chosen) {
+      await fillMissingLocation(tx, chosen.id, lookup)
+      await rememberCentreAlias(tx, chosen.id, lookup.rawName)
+      rememberInIndex(index, chosen.id, chosen.name)
+      const rawKey = normalizeCentreKey(lookup.rawName)
+      if (rawKey) index.idByKey.set(rawKey, chosen.id)
+      return { centreId: chosen.id, name: chosen.name, created: false }
+    }
+  }
+
   const proposed = proposeCentreName(lookup)
   if (!proposed) return null
 
@@ -98,7 +113,7 @@ export async function resolveCentre(tx: Tx, index: CentreIndex, lookup: CentreLo
   }
 }
 
-export type CentrePreview = { rawName: string; resolvedName: string; status: 'existing' | 'new' }
+export type CentrePreview = { rawName: string; resolvedName: string; status: 'existing' | 'new'; centreId: string | null }
 
 // Read-only counterpart of resolveCentre, so an admin sees which sites will be attached
 // to a centre that already exists and which ones are about to create one.
@@ -107,8 +122,8 @@ export async function previewCentreResolutions(tx: Tx, rawNames: string[]): Prom
   return rawNames.map((rawName) => {
     const proposed = proposeCentreName({ rawName, keepUnrecognisedName: true }) ?? rawName
     const existingId = findCentreInIndex(index, proposed) ?? findCentreInIndex(index, rawName)
-    if (existingId) return { rawName, resolvedName: index.nameById.get(existingId) ?? proposed, status: 'existing' as const }
-    return { rawName, resolvedName: proposed, status: 'new' as const }
+    if (existingId) return { rawName, resolvedName: index.nameById.get(existingId) ?? proposed, status: 'existing' as const, centreId: existingId }
+    return { rawName, resolvedName: proposed, status: 'new' as const, centreId: null }
   })
 }
 

@@ -160,7 +160,10 @@ export async function deleteStudy(id: string) {
 
 export type ClinicalTrialImportResult = { id: string; centresCreated: number; investigatorsCreated: number }
 
-export async function importClinicalTrialStudy(data: ClinicalTrialImport, createdById: string): Promise<ClinicalTrialImportResult> {
+export type CentreOverride = { rawName: string; centreId: string }
+
+export async function importClinicalTrialStudy(data: ClinicalTrialImport, createdById: string, centreOverrides: CentreOverride[] = []): Promise<ClinicalTrialImportResult> {
+  const overrideByRawName = new Map(centreOverrides.map((override) => [override.rawName.trim().toLowerCase(), override.centreId]))
   return prisma.$transaction(async (tx) => {
     const duplicate = await tx.study.findUnique({ where: { nctId: data.nctId }, select: { id: true } })
     if (duplicate) throw new Error('DUPLICATE')
@@ -171,7 +174,13 @@ export async function importClinicalTrialStudy(data: ClinicalTrialImport, create
     let primaryCentreIsOwn = false
     const centreIndex = await loadCentreIndex(tx)
     for (const centre of data.centres) {
-      const resolved = await resolveCentre(tx, centreIndex, { rawName: centre.name, city: centre.city, country: centre.country, keepUnrecognisedName: true })
+      const resolved = await resolveCentre(tx, centreIndex, {
+        rawName: centre.name,
+        city: centre.city,
+        country: centre.country,
+        keepUnrecognisedName: true,
+        overrideCentreId: overrideByRawName.get(centre.name.trim().toLowerCase()) ?? null,
+      })
       if (!resolved) continue
       if (resolved.created) centresCreated += 1
       if (centreIds.length === 0) {

@@ -13,7 +13,9 @@ import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { previewClinicalTrialAction, importClinicalTrialAction } from '../actions'
 import type { ClinicalTrialImport } from '@/lib/services/publications/clinicaltrials'
+import { SingleSelect } from '@/components/ui/single-select'
 import type { CentrePreview } from '@/lib/services/publications/centre-resolve'
+import type { CentreOption } from './centre-picker'
 
 const CORAL = 'gap-2 bg-gradient-to-b from-coral-500 to-coral-600 text-white shadow-[0_10px_22px_-8px_rgba(214,31,85,0.6)] hover:brightness-105'
 
@@ -26,6 +28,8 @@ export function ImportTrialDialog({ open, onClose }: Props) {
   const [nctId, setNctId] = useState('')
   const [preview, setPreview] = useState<ClinicalTrialImport | null>(null)
   const [centres, setCentres] = useState<CentrePreview[]>([])
+  const [bank, setBank] = useState<CentreOption[]>([])
+  const [overrides, setOverrides] = useState<Record<string, string>>({})
 
   function errorMessage(reason: string): string {
     const known = new Set(['INVALID_NCT_ID', 'DUPLICATE', 'NOT_FOUND', 'FETCH_FAILED', 'IMPORT_FAILED'])
@@ -35,8 +39,8 @@ export function ImportTrialDialog({ open, onClose }: Props) {
   const previewAction = useAction(previewClinicalTrialAction, {
     onSuccess: ({ data }) => {
       if (!data) return
-      if (data.ok) { setPreview(data.preview); setCentres(data.centres) }
-      else { setPreview(null); setCentres([]); toast.error(errorMessage(data.error)) }
+      if (data.ok) { setPreview(data.preview); setCentres(data.centres); setBank(data.bank); setOverrides({}) }
+      else { setPreview(null); setCentres([]); setBank([]); setOverrides({}); toast.error(errorMessage(data.error)) }
     },
     onError: () => toast.error(errorMessage('FETCH_FAILED')),
   })
@@ -59,6 +63,8 @@ export function ImportTrialDialog({ open, onClose }: Props) {
     setNctId('')
     setPreview(null)
     setCentres([])
+    setBank([])
+    setOverrides({})
     onClose()
   }
 
@@ -111,9 +117,15 @@ export function ImportTrialDialog({ open, onClose }: Props) {
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <ListBlock icon={<Building2 className="h-4 w-4" />} label={t('centres', { count: preview.centres.length })}>
                   {centres.map((centre) => (
-                    <li key={centre.rawName} className="space-y-0.5">
+                    <li key={centre.rawName} className="space-y-1">
                       <p className="truncate">{centre.rawName}</p>
-                      <CentreStatus centre={centre} label={t(`centreStatus.${centre.status}`)} />
+                      <CentreResolution
+                        centre={centre}
+                        bank={bank}
+                        chosenId={overrides[centre.rawName] ?? null}
+                        onChoose={(centreId) => setOverrides({ ...overrides, [centre.rawName]: centreId })}
+                        onReset={() => setOverrides(Object.fromEntries(Object.entries(overrides).filter(([rawName]) => rawName !== centre.rawName)))}
+                      />
                     </li>
                   ))}
                 </ListBlock>
@@ -131,7 +143,7 @@ export function ImportTrialDialog({ open, onClose }: Props) {
         </div>
         <DialogFooter>
           <Button type="button" variant="outline" onClick={handleClose}>{t('cancel')}</Button>
-          <Button type="button" className={CORAL} disabled={!preview || importing} onClick={() => preview && importAction.execute({ nctId: preview.nctId })}>
+          <Button type="button" className={CORAL} disabled={!preview || importing} onClick={() => preview && importAction.execute({ nctId: preview.nctId, centreOverrides: Object.entries(overrides).map(([rawName, centreId]) => ({ rawName, centreId })) })}>
             <Download className="h-4 w-4" />
             {importing ? t('importing') : t('import')}
           </Button>
@@ -141,16 +153,47 @@ export function ImportTrialDialog({ open, onClose }: Props) {
   )
 }
 
-const CENTRE_STATUS_STYLE: Record<CentrePreview['status'], string> = {
+const CENTRE_STATUS_STYLE: Record<CentrePreview['status'] | 'chosen', string> = {
   existing: 'border-transparent bg-emerald-100 text-emerald-800',
   new: 'border-transparent bg-amber-100 text-amber-800',
+  chosen: 'border-transparent bg-coral-100 text-coral-700',
 }
 
-function CentreStatus({ centre, label }: { centre: CentrePreview; label: string }) {
+// The automatic match is a proposal: an admin who knows the site can point it at the right
+// centre in the bank, and the import then records the raw spelling as an alias.
+function CentreResolution({ centre, bank, chosenId, onChoose, onReset }: { centre: CentrePreview; bank: CentreOption[]; chosenId: string | null; onChoose: (centreId: string) => void; onReset: () => void }) {
+  const t = useTranslations('publications.studies.importTrial')
+  const [picking, setPicking] = useState(false)
+  const chosen = chosenId ? bank.find((option) => option.id === chosenId) ?? null : null
+
+  if (picking) {
+    return (
+      <span className="flex items-center gap-1.5">
+        <SingleSelect
+          options={bank.map((option) => ({ value: option.id, label: option.name }))}
+          value={chosenId ?? ''}
+          onChange={(value) => { if (value) { onChoose(value); setPicking(false) } }}
+          placeholder={t('pickCentre')}
+          searchable
+          searchPlaceholder={t('searchCentre')}
+          emptyLabel={t('noCentreFound')}
+          className="min-w-0 flex-1"
+        />
+        <Button type="button" variant="ghost" size="sm" onClick={() => setPicking(false)}>{t('cancel')}</Button>
+      </span>
+    )
+  }
+
   return (
-    <span className="flex items-center gap-1.5 text-xs">
-      <Badge className={CENTRE_STATUS_STYLE[centre.status]}>{label}</Badge>
-      {centre.resolvedName !== centre.rawName && <span className="truncate text-text-secondary">{centre.resolvedName}</span>}
+    <span className="flex flex-wrap items-center gap-1.5 text-xs">
+      <Badge className={chosen ? CENTRE_STATUS_STYLE.chosen : CENTRE_STATUS_STYLE[centre.status]}>
+        {chosen ? t('centreStatus.chosen') : t(`centreStatus.${centre.status}`)}
+      </Badge>
+      {chosen
+        ? <span className="truncate text-text-secondary">{chosen.name}</span>
+        : centre.resolvedName !== centre.rawName && <span className="truncate text-text-secondary">{centre.resolvedName}</span>}
+      <button type="button" onClick={() => setPicking(true)} className="font-semibold text-coral-600 hover:underline">{t('changeCentre')}</button>
+      {chosen && <button type="button" onClick={onReset} className="text-text-muted hover:text-coral-600">{t('resetCentre')}</button>}
     </span>
   )
 }

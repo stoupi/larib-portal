@@ -24,9 +24,17 @@ function fakeTx(centres: FakeCentre[], aliases: FakeAlias[] = []) {
         return centre
       },
     },
-    centreAlias: { findMany: async () => aliases },
+    centreAlias: {
+      findMany: async () => aliases,
+      findUnique: async ({ where }: { where: { normalized: string } }) => aliases.find((alias) => alias.normalized === where.normalized) ?? null,
+      create: async ({ data }: { data: { centreId: string; normalized: string } }) => {
+        const created = { centreId: data.centreId, normalized: data.normalized }
+        aliases.push(created)
+        return created
+      },
+    },
   }
-  return { tx: tx as unknown as Prisma.TransactionClient, centres }
+  return { tx: tx as unknown as Prisma.TransactionClient, centres, aliases }
 }
 
 const BANK: FakeCentre[] = [
@@ -119,10 +127,28 @@ describe('resolveCentre', () => {
     const preview = await previewCentreResolutions(tx, ['CHU Dijon', 'Bichat (APHP)', 'Ospedale Villa dei Colli'])
 
     expect(preview).toEqual([
-      { rawName: 'CHU Dijon', resolvedName: 'CHU de Dijon', status: 'existing' },
-      { rawName: 'Bichat (APHP)', resolvedName: 'AP-HP - Bichat', status: 'existing' },
-      { rawName: 'Ospedale Villa dei Colli', resolvedName: 'Ospedale Villa dei Colli', status: 'new' },
+      { rawName: 'CHU Dijon', resolvedName: 'CHU de Dijon', status: 'existing', centreId: 'dijon' },
+      { rawName: 'Bichat (APHP)', resolvedName: 'AP-HP - Bichat', status: 'existing', centreId: 'bichat' },
+      { rawName: 'Ospedale Villa dei Colli', resolvedName: 'Ospedale Villa dei Colli', status: 'new', centreId: null },
     ])
+    expect(centres).toHaveLength(BANK.length)
+  })
+
+  // The admin correction must not be a one-off: the raw spelling becomes an alias, so the
+  // next import of the same site lands on the right centre without asking again.
+  it('honours a hand-picked centre and remembers the site spelling as an alias', async () => {
+    const { tx, centres, aliases } = fakeTx([...BANK])
+    const index = await loadCentreIndex(tx)
+
+    const resolved = await resolveCentre(tx, index, { rawName: 'Chu Lille- Hopital Cardiologique', keepUnrecognisedName: true, overrideCentreId: 'dijon' })
+
+    expect(resolved?.centreId).toBe('dijon')
+    expect(resolved?.created).toBe(false)
+    expect(centres).toHaveLength(BANK.length)
+    expect(aliases.some((alias) => alias.centreId === 'dijon')).toBe(true)
+
+    const again = await resolveCentre(tx, index, { rawName: 'Chu Lille- Hopital Cardiologique', keepUnrecognisedName: true })
+    expect(again?.centreId).toBe('dijon')
     expect(centres).toHaveLength(BANK.length)
   })
 

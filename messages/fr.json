@@ -1609,7 +1609,8 @@
         "reviewHint": "Les centres et investigateurs sont rattachés à votre banque s’ils existent déjà, et créés sinon. Vous pourrez ajuster l’étude ensuite.",
         "centreStatus": {
           "existing": "Existant",
-          "new": "Nouveau centre"
+          "new": "Nouveau centre",
+          "chosen": "Choisi"
         },
         "fieldDates": "Dates",
         "fieldFunding": "Financement",
@@ -1622,7 +1623,12 @@
           "NOT_FOUND": "Aucune étude trouvée pour cet identifiant NCT.",
           "FETCH_FAILED": "Impossible de joindre ClinicalTrials.gov. Veuillez réessayer.",
           "IMPORT_FAILED": "Impossible d’importer cette étude. Veuillez réessayer."
-        }
+        },
+        "pickCentre": "Choisir un centre",
+        "searchCentre": "Rechercher un centre par nom, code ou ville…",
+        "noCentreFound": "Aucun centre trouvé.",
+        "changeCentre": "Modifier",
+        "resetCentre": "Auto"
       },
       "hubDescription": "Essais et registres, leurs centres et investigateurs.",
       "viewStudies": "Voir les études",

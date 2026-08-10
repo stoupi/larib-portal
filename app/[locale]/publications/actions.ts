@@ -21,7 +21,7 @@ import { findAuthorDuplicates, matchAuthorsAgainstBank, normalizeName } from '@/
 import { normalizeName as normalizeAuthorName, authorFirstInitial } from '@/lib/services/publications/import-dedupe'
 import { fetchPublicationByIdentifier } from '@/lib/services/publications/publication-lookup'
 import { backfillAffiliations, PUBLICATIONS_CENTRES_TAG, PUBLICATIONS_AFFILIATIONS_TAG } from '@/lib/services/publications/affiliations'
-import { renameCentre, setCentreOwn, deleteCentre, mergeCentres, getCentreAuthors, getCentreStudies, createCentre, updateCentre } from '@/lib/services/publications/centres'
+import { renameCentre, setCentreOwn, deleteCentre, mergeCentres, getCentreAuthors, getCentreStudies, createCentre, updateCentre, listCentreOptions } from '@/lib/services/publications/centres'
 import { updateArticleStatus, updateArticleType, updateArticleStudy, updateArticleScope, deleteArticle, findKnownPublications, listPublicationTitles, ARTICLE_STATUSES } from '@/lib/services/publications/articles'
 import { ARTICLE_TYPE_VALUES } from '@/lib/publications/article-type'
 import { ARTICLE_SCOPES } from '@/lib/publications/article-scope'
@@ -518,8 +518,11 @@ export const previewClinicalTrialAction = appAdminAction('PUBLICATIONS')
     if (existing) return { ok: false as const, error: 'DUPLICATE' }
     try {
       const preview = await fetchClinicalTrial(normalised)
-      const centres = await previewCentreResolutions(prisma, preview.centres.map((centre) => centre.name))
-      return { ok: true as const, preview, centres }
+      const [centres, bank] = await Promise.all([
+        previewCentreResolutions(prisma, preview.centres.map((centre) => centre.name)),
+        listCentreOptions(),
+      ])
+      return { ok: true as const, preview, centres, bank }
     } catch (error) {
       const reason = error instanceof Error ? error.message : 'FETCH_FAILED'
       return { ok: false as const, error: reason }
@@ -527,13 +530,16 @@ export const previewClinicalTrialAction = appAdminAction('PUBLICATIONS')
   })
 
 export const importClinicalTrialAction = appAdminAction('PUBLICATIONS')
-  .inputSchema(z.object({ nctId: z.string().min(1) }))
+  .inputSchema(z.object({
+    nctId: z.string().min(1),
+    centreOverrides: z.array(z.object({ rawName: z.string().min(1), centreId: z.string().min(1) })).default([]),
+  }))
   .action(async ({ parsedInput, ctx }) => {
     const normalised = normaliseNctId(parsedInput.nctId)
     if (!normalised) return { ok: false as const, error: 'INVALID_NCT_ID' }
     try {
       const preview = await fetchClinicalTrial(normalised)
-      const result = await importClinicalTrialStudy(preview, ctx.userId)
+      const result = await importClinicalTrialStudy(preview, ctx.userId, parsedInput.centreOverrides)
       revalidateTag(PUBLICATIONS_STUDIES_TAG)
       revalidateTag(PUBLICATIONS_CENTRES_TAG)
       return { ok: true as const, result }

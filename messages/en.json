@@ -1611,7 +1611,8 @@
         "reviewHint": "Centres and investigators are matched to your bank when they already exist, and created otherwise. You can fine-tune the study afterwards.",
         "centreStatus": {
           "existing": "Existing",
-          "new": "New centre"
+          "new": "New centre",
+          "chosen": "Chosen"
         },
         "fieldDates": "Dates",
         "fieldFunding": "Funding",
@@ -1624,7 +1625,12 @@
           "NOT_FOUND": "No study found for this NCT identifier.",
           "FETCH_FAILED": "Could not reach ClinicalTrials.gov. Please try again.",
           "IMPORT_FAILED": "Could not import this study. Please try again."
-        }
+        },
+        "pickCentre": "Choose a centre",
+        "searchCentre": "Search a centre by name, code or city…",
+        "noCentreFound": "No centre found.",
+        "changeCentre": "Change",
+        "resetCentre": "Auto"
       },
       "hubDescription": "Trials and registries, their centres and investigators.",
       "viewStudies": "View studies",

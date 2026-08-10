@@ -45,6 +45,15 @@ test('admin imports a study from ClinicalTrials.gov', async ({ page }) => {
   await dialog.getByPlaceholder('NCT06235385').fill('NCT06235385')
   await dialog.getByRole('button', { name: /^fetch$/i }).click()
   await expect(dialog.getByText(/Multiple and Mixed Valvular/i)).toBeVisible({ timeout: 20000 })
+
+  // The automatic match is only a proposal: a badly recognised site can be pointed at a
+  // centre from the bank by hand, and the import must honour that choice
+  await dialog.getByRole('button', { name: /^change$/i }).click()
+  await dialog.getByRole('combobox').click()
+  await page.getByPlaceholder(/search a centre/i).fill('lariboisi')
+  await page.getByRole('option', { name: /Lariboisière/i }).first().click()
+  await expect(dialog.getByText('Chosen')).toBeVisible()
+
   await dialog.getByRole('button', { name: /import study/i }).click()
 
   // Study persisted and listed with imported enrollment
@@ -57,6 +66,7 @@ test('admin imports a study from ClinicalTrials.gov', async ({ page }) => {
   await expect(page.getByRole('heading', { level: 1, name: /Multiple and Mixed Valvular/i })).toBeVisible({ timeout: 20000 })
   await expect(page.getByText('NCT06235385').first()).toBeVisible()
   await expect(page.getByText(/Investigating centres/i)).toBeVisible()
-  await expect(page.getByText(/Assistance Publique Hôpitaux de Paris/i)).toBeVisible()
+  await expect(page.getByText(/Lariboisière/i).first()).toBeVisible()
+  await expect(page.getByText(/Assistance Publique Hôpitaux de Paris/i)).toHaveCount(0)
   await expect(page.getByText(/PEZEL/i).first()).toBeVisible()
 })
