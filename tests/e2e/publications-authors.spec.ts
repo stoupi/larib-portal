@@ -24,19 +24,26 @@ test('admin browses, edits and merges authors', async ({ page }) => {
   await expect(dialog).toBeVisible()
 
   // The centre picker is searchable by name
-  await dialog.getByRole('combobox').filter({ hasText: /add centre/i }).click()
-  const centreSearch = page.getByPlaceholder(/search centre/i)
+  const centreSearch = dialog.getByPlaceholder(/search a centre/i)
   await expect(centreSearch).toBeVisible()
   await centreSearch.fill('lariboisi')
-  await expect(page.getByRole('option', { name: /Lariboisière/i })).toBeVisible()
-  await page.getByRole('option', { name: /Lariboisière/i }).click()
-  await expect(dialog.getByText(/Lariboisière/i)).toBeVisible()
+  await dialog.getByRole('button', { name: /Lariboisière/i }).first().click()
+  await expect(dialog.getByText(/Lariboisière/i).first()).toBeVisible()
+
+  // A centre that is missing from the bank can be created without leaving the author form
+  const brandNewCentre = `E2E Centre ${Date.now()}`
+  await centreSearch.fill(brandNewCentre)
+  await dialog.getByRole('button', { name: new RegExp(`Create "${brandNewCentre}"`) }).click()
+  await dialog.getByPlaceholder('LRB').fill('E2E')
+  await dialog.getByRole('button', { name: /create & select/i }).click()
+  await expect(dialog.getByText(brandNewCentre, { exact: true })).toBeVisible({ timeout: 20000 })
 
   // "Our team" is a control, not a read-out: it attaches our own centre as the primary one
+  const ownCentre = dialog.getByText('Hôpital Européen Georges-Pompidou, AP-HP', { exact: true })
   await dialog.getByRole('button', { name: /external/i }).click()
-  await expect(dialog.getByText('Ours', { exact: true })).toBeHidden()
+  await expect(ownCentre).toBeHidden()
   await dialog.getByRole('button', { name: /our team/i }).click()
-  await expect(dialog.getByText('Ours', { exact: true })).toBeVisible()
+  await expect(ownCentre).toBeVisible()
 
   await page.getByRole('button', { name: /save changes/i }).click()
   await expect(page.getByText(/author updated/i)).toBeVisible()

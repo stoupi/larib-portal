@@ -7,16 +7,17 @@ import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { type PublicationsBasePath } from '@/lib/publications/base-path'
 import { ManualEntryForm } from './manual-entry-form'
 import { DoiImportPanel } from './doi-import-panel'
+import type { CentreOption } from './centre-picker'
 
 type Option = { value: string; label: string }
-type Props = { centres: Option[]; users: Option[]; basePath: PublicationsBasePath }
+type Props = { centres: CentreOption[]; users: Option[]; basePath: PublicationsBasePath; canCreateCentre: boolean }
 
 const TAB_ITEM_CLASS =
   'flex-1 gap-2 rounded-xl px-4 py-3 text-sm font-semibold text-text-secondary transition ' +
   'data-[state=on]:bg-gradient-to-b data-[state=on]:from-coral-500 data-[state=on]:to-coral-600 ' +
   'data-[state=on]:text-white data-[state=on]:shadow-[0_10px_22px_-8px_rgba(214,31,85,0.6)]'
 
-export function AddAuthorForm({ centres, users, basePath }: Props) {
+export function AddAuthorForm({ centres, users, basePath, canCreateCentre }: Props) {
   const t = useTranslations('publications.authors.add')
   const [tab, setTab] = useState<'manual' | 'doi'>('manual')
 
@@ -38,7 +39,7 @@ export function AddAuthorForm({ centres, users, basePath }: Props) {
         </ToggleGroupItem>
       </ToggleGroup>
       {tab === 'manual' ? (
-        <ManualEntryForm centres={centres} users={users} basePath={basePath} />
+        <ManualEntryForm centres={centres} users={users} basePath={basePath} canCreateCentre={canCreateCentre} />
       ) : (
         <DoiImportPanel basePath={basePath} />
       )}

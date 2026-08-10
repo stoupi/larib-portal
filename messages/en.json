@@ -1187,7 +1187,7 @@
         "centreHint": "pick from your centre bank · first one is primary",
         "primary": "primary",
         "addCentre": "Add centre",
-        "searchCentre": "Search centre by name...",
+        "searchCentre": "Search a centre by name, code or city…",
         "noCentreFound": "No centre found.",
         "linkedUser": "Linked portal user",
         "linkedUserHint": "optional",
@@ -1219,7 +1219,18 @@
           "addButton": "Add author",
           "empty": "No authors yet."
         },
-        "selectAll": "Select all"
+        "selectAll": "Select all",
+        "ourTeamHint": "Attach one of your own centres",
+        "centreHintOurs": "an \"Ours\" centre makes this author part of your team · first one is primary",
+        "browse": "Browse",
+        "ours": "Ours",
+        "removeCentre": "Remove centre",
+        "newCentre": "New centre",
+        "backToSearch": "Back to search",
+        "createCentre": "Create a new centre",
+        "createNamedCentre": "Create \"{name}\"",
+        "createAndSelect": "Create & select",
+        "centreReused": "This centre was already in the bank — selected."
       },
       "hubDescription": "Internal and external authors, ORCID, centres and duplicate merging.",
       "viewAuthors": "View authors",

@@ -202,7 +202,7 @@ export const deleteCentreAction = appAdminAction('PUBLICATIONS')
   })
 
 export const createCentreAction = appAdminAction('PUBLICATIONS')
-  .inputSchema(z.object({ name: z.string().min(1), shortCode: z.string().optional().nullable(), parentOrganisation: z.string().optional().nullable(), city: z.string().optional().nullable(), country: z.string().optional().nullable() }))
+  .inputSchema(z.object({ name: z.string().min(1), shortCode: z.string().optional().nullable(), parentOrganisation: z.string().optional().nullable(), city: z.string().optional().nullable(), country: z.string().optional().nullable(), isOwn: z.boolean().default(false) }))
   .action(async ({ parsedInput }) => {
     const result = await createCentre(parsedInput)
     revalidateTag(PUBLICATIONS_CENTRES_TAG)

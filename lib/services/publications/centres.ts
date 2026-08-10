@@ -90,17 +90,48 @@ export async function getCentreAuthors(centreId: string): Promise<CentreAuthor[]
   }))
 }
 
-export async function createCentre(data: { name: string; shortCode?: string | null; parentOrganisation?: string | null; city?: string | null; country?: string | null }) {
-  return prisma.centre.create({
-    data: {
-      name: data.name,
-      shortCode: data.shortCode ?? null,
-      parentOrganisation: data.parentOrganisation ?? null,
-      city: data.city ?? null,
-      country: data.country ?? null,
-    },
-    select: { id: true },
-  })
+export type CentreIdentity = {
+  id: string
+  name: string
+  shortCode: string | null
+  parentOrganisation: string | null
+  city: string | null
+  country: string | null
+  isOwn: boolean
+}
+
+const CENTRE_IDENTITY_SELECT = { id: true, name: true, shortCode: true, parentOrganisation: true, city: true, country: true, isOwn: true } as const
+
+// Creating a centre from inside another form must never fail on a name that is already
+// in the bank: the caller only wants a centre to attach, so an existing one is returned.
+export async function createCentre(data: {
+  name: string
+  shortCode?: string | null
+  parentOrganisation?: string | null
+  city?: string | null
+  country?: string | null
+  isOwn?: boolean
+}): Promise<{ centre: CentreIdentity; reused: boolean }> {
+  const existing = await prisma.centre.findUnique({ where: { name: data.name }, select: CENTRE_IDENTITY_SELECT })
+  if (existing) return { centre: existing, reused: true }
+  try {
+    const centre = await prisma.centre.create({
+      data: {
+        name: data.name,
+        shortCode: data.shortCode ?? null,
+        parentOrganisation: data.parentOrganisation ?? null,
+        city: data.city ?? null,
+        country: data.country ?? null,
+        isOwn: data.isOwn ?? false,
+      },
+      select: CENTRE_IDENTITY_SELECT,
+    })
+    return { centre, reused: false }
+  } catch (error) {
+    if (!(error instanceof Prisma.PrismaClientKnownRequestError) || error.code !== 'P2002') throw error
+    const raced = await prisma.centre.findUniqueOrThrow({ where: { name: data.name }, select: CENTRE_IDENTITY_SELECT })
+    return { centre: raced, reused: true }
+  }
 }
 
 // A rename is how the bank drifted away from the names the importers produce, so the

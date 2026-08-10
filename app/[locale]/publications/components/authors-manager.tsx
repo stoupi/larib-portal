@@ -30,6 +30,7 @@ import { TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/compon
 import { deleteAuthorAction, mergeAuthorsAction, getAuthorDetailAction, getAuthorForEditAction } from '../actions'
 import type { AuthorListItem, LinkableUser, AuthorDetail, AuthorEditData } from '@/lib/services/publications/authors'
 import { EditAuthorDialog } from './edit-author-dialog'
+import type { CentreOption } from './centre-picker'
 import { publicationsPaths, type PublicationsBasePath } from '@/lib/publications/base-path'
 
 function authorLabel(author: AuthorListItem): string {
@@ -94,7 +95,7 @@ function sortValue(author: AuthorListItem, key: SortKey): string | number {
   }
 }
 
-export function AuthorsManager({ authors, users, centres, basePath }: { authors: AuthorListItem[]; users: LinkableUser[]; centres: { id: string; name: string; isOwn?: boolean }[]; basePath: PublicationsBasePath }) {
+export function AuthorsManager({ authors, users, centres, basePath }: { authors: AuthorListItem[]; users: LinkableUser[]; centres: CentreOption[]; basePath: PublicationsBasePath }) {
   const t = useTranslations('publications')
   const router = useRouter()
   const paths = publicationsPaths(basePath)

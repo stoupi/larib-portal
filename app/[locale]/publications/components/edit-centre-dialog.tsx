@@ -59,7 +59,7 @@ function CentreForm({ centre, onClose, onSaved }: { centre: CentreRow | null; on
       country: country.trim() || null,
     }
     if (centre) update.execute({ id: centre.id, ...payload, isOwn })
-    else create.execute(payload)
+    else create.execute({ ...payload, isOwn })
   }
 
   const previewSubtitle = [city.trim(), country.trim()].filter(Boolean).join(', ') || t('previewHint')

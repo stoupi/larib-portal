@@ -1,11 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, type ReactNode } from 'react'
 import { useAction } from 'next-safe-action/hooks'
 import { useTranslations } from 'next-intl'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
-import { UserRoundCheck, Globe, Plus, X, Save } from 'lucide-react'
+import { Plus, X, Save } from 'lucide-react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -14,6 +14,7 @@ import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { SingleSelect } from '@/components/ui/single-select'
 import { TagInput } from '@/components/ui/tag-input'
 import { updateAuthorAction } from '@/app/[locale]/publications/actions'
+import { CentrePicker, OurTeamToggle, type CentreOption } from './centre-picker'
 import type { AuthorEditData } from '@/lib/services/publications/authors'
 
 const DEGREE_OPTIONS = ['MD', 'PhD', 'MSc', 'PharmD'] as const
@@ -21,23 +22,25 @@ const CARD = 'space-y-4 rounded-2xl border border-line bg-bg-surface p-5'
 const CHIP = 'flex-none rounded-lg border border-line px-4 py-2 text-sm font-semibold text-text-secondary transition data-[state=on]:border-coral-500 data-[state=on]:bg-coral-50 data-[state=on]:text-coral-600'
 const CORAL = 'gap-2 bg-gradient-to-b from-coral-500 to-coral-600 text-white shadow-[0_10px_22px_-8px_rgba(214,31,85,0.6)] hover:brightness-105'
 
-type Centre = { id: string; name: string; isOwn?: boolean }
+type Centre = CentreOption
 type Option = { value: string; label: string }
 
-function SectionHeader({ title, hint }: { title: string; hint?: string }) {
+function SectionHeader({ title, hint, action }: { title: string; hint?: string; action?: ReactNode }) {
   return (
     <div className="flex items-center gap-3">
       <span className="h-2 w-2 shrink-0 rounded-full bg-coral-500" />
       <h3 className="text-xs font-bold uppercase tracking-[0.14em] text-coral-600">{title}</h3>
       {hint && <span className="text-xs font-normal normal-case text-text-muted">{hint}</span>}
       <span className="h-px flex-1 bg-line" />
+      {action}
     </div>
   )
 }
 
 function EditAuthorForm({ data, centres, users, onClose, onSaved }: { data: AuthorEditData; centres: Centre[]; users: Option[]; onClose: () => void; onSaved: () => void }) {
   const t = useTranslations('publications.authors')
-  const centreById = new Map(centres.map((centre) => [centre.id, centre]))
+  const [knownCentres, setKnownCentres] = useState<Centre[]>(centres)
+  const centreById = new Map(knownCentres.map((centre) => [centre.id, centre]))
   const [firstName, setFirstName] = useState(data.firstName)
   const [lastName, setLastName] = useState(data.lastName)
   const [degrees, setDegrees] = useState<string[]>(data.degrees)
@@ -51,8 +54,7 @@ function EditAuthorForm({ data, centres, users, onClose, onSaved }: { data: Auth
   // The server types an author from their primary centre only, so the badge must read
   // the same one — .some() would promise "our team" for a secondary own centre.
   const isOurTeam = Boolean(centreIds[0] && centreById.get(centreIds[0])?.isOwn)
-  const availableCentres = centres.filter((centre) => !centreIds.includes(centre.id))
-  const ownCentre = centres.find((centre) => centre.isOwn) ?? null
+  const ownCentre = knownCentres.find((centre) => centre.isOwn) ?? null
 
   // The type follows the primary centre, so switching it is really a matter of putting
   // our own centre first, or taking it out.
@@ -124,55 +126,19 @@ function EditAuthorForm({ data, centres, users, onClose, onSaved }: { data: Auth
       </section>
 
       <section className={CARD}>
-        <SectionHeader title={t('editModal.typeCentre')} />
-        <div className="space-y-1.5">
-          <Label>{t('add.authorType')}</Label>
-          <div className="inline-flex w-fit gap-1 rounded-xl bg-gray-100 p-1 dark:bg-white/5">
-            <button
-              type="button"
-              onClick={markAsOurTeam}
-              disabled={!ownCentre}
-              title={ownCentre?.name}
-              className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-50 ${isOurTeam ? 'bg-bg-surface text-coral-600 shadow-sm' : 'text-text-muted hover:text-coral-600'}`}
-            >
-              <UserRoundCheck className="h-4 w-4" />{t('add.ourTeam')}
-            </button>
-            <button
-              type="button"
-              onClick={markAsExternal}
-              className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold ${!isOurTeam ? 'bg-bg-surface text-coral-600 shadow-sm' : 'text-text-muted hover:text-coral-600'}`}
-            >
-              <Globe className="h-4 w-4" />{t('add.external')}
-            </button>
-          </div>
-        </div>
+        <SectionHeader
+          title={t('editModal.typeCentre')}
+          action={<OurTeamToggle isOurTeam={isOurTeam} onOurTeam={markAsOurTeam} onExternal={markAsExternal} ownCentreName={ownCentre?.name} />}
+        />
         <div className="space-y-2">
-          <Label>{t('add.centre')} <span className="font-normal text-text-muted">— {t('add.centreHint')}</span></Label>
-          <div className="flex flex-wrap items-center gap-2">
-            {centreIds.map((centreId, index) => {
-              const centre = centreById.get(centreId)
-              return (
-                <span key={centreId} className="flex items-center gap-2 rounded-lg border border-coral-200 bg-coral-50 px-3 py-1.5 text-sm text-coral-700">
-                  <span className="font-bold text-coral-400">{index + 1}</span>
-                  {centre?.name ?? '—'}
-                  {centre?.isOwn && <span className="rounded-full bg-coral-100 px-1.5 py-0.5 text-[10px] font-bold text-coral-600">{t('detail.ours')}</span>}
-                  <button type="button" aria-label="remove" onClick={() => setCentreIds(centreIds.filter((id) => id !== centreId))} className="text-coral-400 hover:text-coral-600"><X className="h-3.5 w-3.5" /></button>
-                </span>
-              )
-            })}
-            {availableCentres.length > 0 && (
-              <SingleSelect
-                options={availableCentres.map((centre) => ({ value: centre.id, label: centre.name }))}
-                value=""
-                onChange={(value) => value && setCentreIds([...centreIds, value])}
-                placeholder={t('add.addCentre')}
-                searchable
-                searchPlaceholder={t('add.searchCentre')}
-                emptyLabel={t('add.noCentreFound')}
-                className="w-auto min-w-[16rem] border-dashed"
-              />
-            )}
-          </div>
+          <Label>{t('add.centre')} <span className="font-normal text-text-muted">— {isOurTeam ? t('add.centreHintOurs') : t('add.centreHint')}</span></Label>
+          <CentrePicker
+            centres={knownCentres}
+            selectedIds={centreIds}
+            onChange={setCentreIds}
+            onCentreCreated={(centre) => setKnownCentres([...knownCentres, centre])}
+            canCreate
+          />
         </div>
         <div className="space-y-1.5">
           <Label>{t('add.linkedUser')} <span className="font-normal text-text-muted">({t('add.linkedUserHint')})</span></Label>

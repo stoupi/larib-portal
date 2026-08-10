@@ -1,7 +1,7 @@
 import { getTranslations } from 'next-intl/server'
 import { redirect } from 'next/navigation'
 import { requireAuth } from '@/lib/auth-guard'
-import { canAccessApp } from '@/lib/permissions'
+import { canAccessApp, canAdminApp } from '@/lib/permissions'
 import { applicationLink } from '@/lib/application-link'
 import { Link } from '@/app/i18n/navigation'
 import { listCentres } from '@/lib/services/publications/centres'
@@ -35,7 +35,8 @@ export default async function NewAuthorPage({ params }: PageParams) {
       </div>
       <AddAuthorForm
         basePath={PUBLICATIONS_BASE}
-        centres={centres.map((centre) => ({ value: centre.id, label: centre.name }))}
+        centres={centres}
+        canCreateCentre={canAdminApp(session.user, 'PUBLICATIONS')}
         users={users.map((user) => ({
           value: user.id,
           label: `${user.firstName ?? ''} ${user.lastName ?? ''} (${user.email})`.trim(),

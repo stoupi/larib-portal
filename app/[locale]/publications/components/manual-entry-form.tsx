@@ -7,7 +7,7 @@ import { z } from 'zod'
 import { useAction } from 'next-safe-action/hooks'
 import { useTranslations } from 'next-intl'
 import { toast } from 'sonner'
-import { UserPlus, Plus, X } from 'lucide-react'
+import { UserPlus } from 'lucide-react'
 import { useRouter } from '@/app/i18n/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -26,6 +26,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
 import { createAuthorAction } from '@/app/[locale]/publications/actions'
+import { CentrePicker, OurTeamToggle, type CentreOption } from './centre-picker'
 import { publicationsPaths, type PublicationsBasePath } from '@/lib/publications/base-path'
 
 const DEGREE_OPTIONS = ['MD', 'PhD', 'MSc', 'PharmD'] as const
@@ -37,12 +38,13 @@ const DEGREE_CHIP_CLASS =
 const SUBMIT_CLASS =
   'gap-2 bg-gradient-to-b from-coral-500 to-coral-600 text-white shadow-[0_10px_22px_-8px_rgba(214,31,85,0.6)] hover:brightness-105'
 
-function SectionHeader({ children }: { children: ReactNode }) {
+function SectionHeader({ children, action }: { children: ReactNode; action?: ReactNode }) {
   return (
     <div className="flex items-center gap-3">
       <span className="h-2 w-2 shrink-0 rounded-full bg-coral-500" />
       <h2 className="text-xs font-bold uppercase tracking-[0.14em] text-coral-600">{children}</h2>
       <span className="h-px flex-1 bg-line" />
+      {action}
     </div>
   )
 }
@@ -54,9 +56,9 @@ const manualEntrySchema = z.object({
 })
 type ManualEntryValues = z.infer<typeof manualEntrySchema>
 type Option = { value: string; label: string }
-type Props = { centres: Option[]; users: Option[]; basePath: PublicationsBasePath }
+type Props = { centres: CentreOption[]; users: Option[]; basePath: PublicationsBasePath; canCreateCentre: boolean }
 
-export function ManualEntryForm({ centres, users, basePath }: Props) {
+export function ManualEntryForm({ centres, users, basePath, canCreateCentre }: Props) {
   const t = useTranslations('publications.authors.add')
   const router = useRouter()
   const paths = publicationsPaths(basePath)
@@ -69,6 +71,7 @@ export function ManualEntryForm({ centres, users, basePath }: Props) {
   const [emails, setEmails] = useState<string[]>([])
   const [affiliations, setAffiliations] = useState<string[]>([])
   const [centreIds, setCentreIds] = useState<string[]>([])
+  const [knownCentres, setKnownCentres] = useState<CentreOption[]>(centres)
   const [userId, setUserId] = useState<string>('')
   const [pendingValues, setPendingValues] = useState<ManualEntryValues | null>(null)
   const [duplicateNames, setDuplicateNames] = useState<string[]>([])
@@ -105,7 +108,22 @@ export function ManualEntryForm({ centres, users, basePath }: Props) {
     })
   }
 
-  const availableCentres = centres.filter((centre) => !centreIds.includes(centre.value))
+  const centreById = new Map(knownCentres.map((centre) => [centre.id, centre]))
+  const ownCentre = knownCentres.find((centre) => centre.isOwn) ?? null
+  // An author is typed from their primary centre, so the toggle simply promotes our own
+  // centre to the first slot, or takes every "Ours" centre out.
+  const isOurTeam = Boolean(centreIds[0] && centreById.get(centreIds[0])?.isOwn)
+
+  function markAsOurTeam() {
+    const alreadyAttached = centreIds.find((id) => centreById.get(id)?.isOwn)
+    const promoted = alreadyAttached ?? ownCentre?.id
+    if (!promoted) return
+    setCentreIds([promoted, ...centreIds.filter((id) => id !== promoted)])
+  }
+
+  function markAsExternal() {
+    setCentreIds(centreIds.filter((id) => !centreById.get(id)?.isOwn))
+  }
 
   return (
     <form onSubmit={handleSubmit((values) => submit(values))} className="space-y-6">
@@ -151,44 +169,20 @@ export function ManualEntryForm({ centres, users, basePath }: Props) {
       </section>
 
       <section className={CARD_CLASS}>
-        <SectionHeader>{t('typeCentreAffiliations')}</SectionHeader>
+        <SectionHeader action={<OurTeamToggle isOurTeam={isOurTeam} onOurTeam={markAsOurTeam} onExternal={markAsExternal} ownCentreName={ownCentre?.name} />}>
+          {t('typeCentreAffiliations')}
+        </SectionHeader>
         <div className="space-y-2">
           <Label className="text-text-primary">
-            {t('centre')} <span className="font-normal text-text-muted">— {t('centreHint')}</span>
+            {t('centre')} <span className="font-normal text-text-muted">— {isOurTeam ? t('centreHintOurs') : t('centreHint')}</span>
           </Label>
-          <ul className="space-y-1.5">
-            {centreIds.map((centreId, index) => {
-              const centre = centres.find((option) => option.value === centreId)
-              return (
-                <li key={centreId} className="flex items-center justify-between rounded-lg border border-line bg-gray-25 px-3 py-2 text-sm dark:bg-white/5">
-                  <span className="flex items-center gap-2 text-text-primary">
-                    {centre?.label}
-                    {index === 0 && (
-                      <span className="rounded-full bg-coral-50 px-2 py-0.5 text-[11px] font-semibold text-coral-600">{t('primary')}</span>
-                    )}
-                  </span>
-                  <button type="button" aria-label="remove" className="text-text-muted hover:text-coral-600" onClick={() => setCentreIds(centreIds.filter((id) => id !== centreId))}>
-                    <X className="h-4 w-4" />
-                  </button>
-                </li>
-              )
-            })}
-          </ul>
-          {availableCentres.length > 0 && (
-            <div className="flex items-center gap-2 text-text-muted">
-              <Plus className="h-4 w-4 shrink-0 text-coral-500" />
-              <SingleSelect
-                options={availableCentres}
-                value=""
-                onChange={(value) => value && setCentreIds([...centreIds, value])}
-                placeholder={t('addCentre')}
-                searchable
-                searchPlaceholder={t('searchCentre')}
-                emptyLabel={t('noCentreFound')}
-                className="min-w-[16rem] border-dashed"
-              />
-            </div>
-          )}
+          <CentrePicker
+            centres={knownCentres}
+            selectedIds={centreIds}
+            onChange={setCentreIds}
+            onCentreCreated={(centre) => setKnownCentres([...knownCentres, centre])}
+            canCreate={canCreateCentre}
+          />
         </div>
         <div className="space-y-1.5">
           <Label className="text-text-primary">

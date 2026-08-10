@@ -20,6 +20,22 @@ test('publications member adds authors manually and by DOI', async ({ page }) =>
   await page.getByPlaceholder('Pierre').fill('Yuki')
   await page.getByPlaceholder('Lefèvre').fill('Tanaka')
   await page.getByRole('button', { name: 'MD', exact: true }).click()
+
+  // A member can attach a centre from the bank, but creating one stays an admin power
+  const centreSearch = page.getByPlaceholder(/search a centre/i)
+  await centreSearch.fill('zzz-no-such-centre')
+  await expect(page.getByText('No centre found.')).toBeVisible()
+  await expect(page.getByRole('button', { name: /create/i })).toHaveCount(0)
+  await centreSearch.fill('lariboisi')
+  await page.getByRole('button', { name: /Lariboisière/i }).first().click()
+
+  // "Our team" attaches our own centre and makes it the primary one; "External" takes it
+  // back out, which is how this author must be saved to stay out of the team shortlist.
+  await page.getByRole('button', { name: /our team/i }).click()
+  await expect(page.getByText('primary', { exact: true })).toBeVisible()
+  await page.getByRole('button', { name: /external/i }).click()
+  await expect(page.getByText('primary', { exact: true })).toBeHidden()
+
   await page.getByRole('button', { name: 'Add to bank' }).click()
   await page.getByRole('button', { name: 'Add anyway' }).click({ timeout: 3000 }).catch(() => {})
   await expect(page).toHaveURL(/\/publications\/authors$/, { timeout: 30000 })

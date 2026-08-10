@@ -37,7 +37,8 @@ export default async function AdminNewAuthorPage({ params }: PageParams) {
       </div>
       <AddAuthorForm
         basePath={PUBLICATIONS_ADMIN_BASE}
-        centres={centres.map((centre) => ({ value: centre.id, label: centre.name }))}
+        centres={centres}
+        canCreateCentre
         users={users.map((user) => ({
           value: user.id,
           label: `${user.firstName ?? ''} ${user.lastName ?? ''} (${user.email})`.trim(),

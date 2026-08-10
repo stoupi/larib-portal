@@ -1185,7 +1185,7 @@
         "centreHint": "choisissez dans votre banque de centres · le premier est le centre principal",
         "primary": "principal",
         "addCentre": "Ajouter un centre",
-        "searchCentre": "Rechercher un centre par nom...",
+        "searchCentre": "Rechercher un centre par nom, code ou ville…",
         "noCentreFound": "Aucun centre trouvé.",
         "linkedUser": "Utilisateur du portail lié",
         "linkedUserHint": "facultatif",
@@ -1217,7 +1217,18 @@
           "addButton": "Ajouter un auteur",
           "empty": "Aucun auteur pour l'instant."
         },
-        "selectAll": "Tout sélectionner"
+        "selectAll": "Tout sélectionner",
+        "ourTeamHint": "Rattacher un de vos propres centres",
+        "centreHintOurs": "un centre « À nous » rend cet auteur membre de votre équipe · le premier est le principal",
+        "browse": "Parcourir",
+        "ours": "À nous",
+        "removeCentre": "Retirer le centre",
+        "newCentre": "Nouveau centre",
+        "backToSearch": "Retour à la recherche",
+        "createCentre": "Créer un nouveau centre",
+        "createNamedCentre": "Créer « {name} »",
+        "createAndSelect": "Créer et sélectionner",
+        "centreReused": "Ce centre existait déjà dans la banque — il a été sélectionné."
       },
       "hubDescription": "Auteurs internes et externes, ORCID, centres et fusion des doublons.",
       "viewAuthors": "Voir les auteurs",
