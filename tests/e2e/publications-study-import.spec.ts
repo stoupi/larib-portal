@@ -25,7 +25,9 @@ test('admin imports a study from ClinicalTrials.gov', async ({ page }) => {
   await expect(dialog.getByText(/Multiple and Mixed Valvular/i)).toBeVisible({ timeout: 20000 })
   await expect(dialog.getByText('EACVI-MMVD')).toBeVisible()
   await expect(dialog.getByText(/Assistance Publique Hôpitaux de Paris/i)).toBeVisible()
-  await expect(dialog.getByText(/PEZEL/i)).toBeVisible()
+  await expect(dialog.getByText('Théo PEZEL, MD PhD')).toBeVisible()
+  // Each investigator says whether they were found in the author bank or will be created
+  await expect(dialog.getByText(/^(In your bank|New author)$/)).toHaveCount(2)
 
   // Each site says whether it lands on a centre that already exists or creates one,
   // so a duplicate can be spotted before the import runs

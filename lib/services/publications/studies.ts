@@ -2,7 +2,7 @@ import { prisma } from '@/lib/prisma'
 import { Prisma } from '@/app/generated/prisma'
 import type { ClinicalTrialImport } from './clinicaltrials'
 import { loadCentreIndex, resolveCentre } from './centre-resolve'
-import { investigatorKey, matchInvestigator } from './investigator-resolve'
+import { investigatorKey, loadInvestigatorIndex, matchInvestigator } from './investigator-resolve'
 
 export const PUBLICATIONS_STUDIES_TAG = 'publications:studies'
 export const STUDY_STATUSES = ['PLANNED', 'ONGOING', 'COMPLETED', 'STOPPED'] as const
@@ -201,11 +201,12 @@ export async function importClinicalTrialStudy(
     const primaryCentreId = centreIds[0] ?? null
 
     let investigatorsCreated = 0
+    const investigatorIndex = await loadInvestigatorIndex(tx)
     const investigatorRows: Array<{ authorId: string; role: 'PI' | 'CO_INVESTIGATOR'; centreId: string | null }> = []
     const seenAuthorIds = new Set<string>()
     for (const person of data.investigators) {
       const chosenAuthorId = overrideByPerson.get(investigatorKey(person)) ?? null
-      const matched = chosenAuthorId ? { authorId: chosenAuthorId } : await matchInvestigator(tx, person)
+      const matched = chosenAuthorId ? { authorId: chosenAuthorId } : await matchInvestigator(tx, investigatorIndex, person)
       const centreId = (person.centreName && centreIdByFacility.get(person.centreName.toLowerCase())) || primaryCentreId
       let authorId = matched?.authorId
       if (!authorId) {
