@@ -38,6 +38,6 @@ test('admin browses articles, records a submission and opens a detail with autho
 
   // The admin edits the very article the co-authors see, PDF attachment included
   await page.getByRole('button', { name: 'Edit' }).click()
-  await expect(page.getByRole('heading', { name: 'Full text (PDF)' })).toBeVisible({ timeout: 30000 })
+  await expect(page.getByText('PDF', { exact: true })).toBeVisible({ timeout: 30000 })
   await expect(page.getByText('Upload the article PDF')).toBeVisible()
 })

@@ -72,10 +72,10 @@ export function EditorPdf({ articleId, pdfUrl, editable }: { articleId: string; 
   return (
     <CollapsibleCard
       title={
-        <>
-          <FileText className="h-4 w-4 text-coral-500" strokeWidth={2} />
-          <h2 className="text-sm font-bold uppercase tracking-wider text-coral-600">{t('title')}</h2>
-        </>
+        <span className="inline-flex items-center gap-2 text-xs font-extrabold uppercase tracking-[0.18em] text-coral-600">
+          <span className="h-2 w-2 rounded-full bg-coral-500" />
+          {t('title')}
+        </span>
       }
     >
       <div className="space-y-3">

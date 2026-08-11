@@ -1049,7 +1049,7 @@
       "journalQueueSubtitle": "Submission queue proposed by the admin · read-only.",
       "journalQueueEmpty": "No target journals proposed yet.",
       "pdf": {
-        "title": "Full text (PDF)",
+        "title": "PDF",
         "select": "Upload the article PDF",
         "hint": "PDF only, up to 30 MB. Visible to every co-author on the article page.",
         "uploading": "Uploading…",

@@ -4,6 +4,7 @@ import { useTranslations } from 'next-intl'
 import { ArrowUp, ArrowUpDown, ChevronRight, Clock, ExternalLink, FileText, Pencil } from 'lucide-react'
 import { Link } from '@/app/i18n/navigation'
 import { cn } from '@/lib/utils'
+import { doiUrl } from '@/lib/publications/doi'
 import { ARTICLE_STATUS_TONE, pillClassName } from '@/lib/publications/status-display'
 import { ARTICLE_TYPE_BADGE } from '@/lib/publications/article-type'
 import type { DashboardArticleItem } from '@/lib/publications/admin-dashboard'
@@ -177,7 +178,7 @@ export function ArticleListRow({
           )}
           {article.doi && (
             <a
-              href={`https://doi.org/${article.doi}`}
+              href={doiUrl(article.doi) ?? '#'}
               target="_blank"
               rel="noreferrer"
               title={t('myPub.openSite')}

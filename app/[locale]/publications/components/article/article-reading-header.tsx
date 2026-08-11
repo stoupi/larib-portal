@@ -7,6 +7,7 @@ import { ARTICLE_TYPE_BADGE, normalizeArticleType } from '@/lib/publications/art
 import type { PublicationEditData } from '@/lib/services/publications/publication-editor'
 import type { StudyOption } from '@/lib/services/publications/studies'
 import { ArticleScopeSwitch } from '../articles/article-scope-switch'
+import { doiUrl } from '@/lib/publications/doi'
 
 export function ArticleReadingHeader({
   article,
@@ -69,7 +70,7 @@ export function ArticleReadingHeader({
             )}
             {article.doi && (
               <a
-                href={`https://doi.org/${article.doi}`}
+                href={doiUrl(article.doi) ?? '#'}
                 target="_blank"
                 rel="noreferrer"
                 className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-line bg-bg-surface px-3 text-[13px] font-bold text-navy-600 transition hover:bg-gray-50 dark:text-navy-300 dark:hover:bg-white/5"

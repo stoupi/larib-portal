@@ -1047,7 +1047,7 @@
       "journalQueueSubtitle": "File de soumission proposée par l'admin · lecture seule.",
       "journalQueueEmpty": "Aucun journal cible proposé pour l'instant.",
       "pdf": {
-        "title": "Texte intégral (PDF)",
+        "title": "PDF",
         "select": "Téléverser le PDF de l’article",
         "hint": "PDF uniquement, 30 Mo maximum. Visible par tous les co-auteurs sur la page de l’article.",
         "uploading": "Téléversement…",

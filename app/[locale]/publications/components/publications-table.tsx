@@ -4,6 +4,7 @@ import { useTranslations } from 'next-intl'
 import { ChevronRight, ChevronsUpDown, ArrowUp, ArrowDown, Star, Pencil, Eye, Clock, FileText, ExternalLink } from 'lucide-react'
 import { Link } from '@/app/i18n/navigation'
 import { cn } from '@/lib/utils'
+import { doiUrl } from '@/lib/publications/doi'
 import { ArticleScopeSwitch } from './articles/article-scope-switch'
 import { ARTICLE_STATUS_TONE, pillClassName } from '@/lib/publications/status-display'
 import { ARTICLE_TYPE_BADGE } from '@/lib/publications/article-type'
@@ -203,7 +204,7 @@ function PublicationRow({
           )}
           {item.doi && (
             <a
-              href={`https://doi.org/${item.doi}`}
+              href={doiUrl(item.doi) ?? '#'}
               target="_blank"
               rel="noreferrer"
               title={t('myPub.openSite')}

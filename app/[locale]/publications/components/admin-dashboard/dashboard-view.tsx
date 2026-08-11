@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react'
 import { useTranslations } from 'next-intl'
-import { ChevronDown, Clock, Search, X } from 'lucide-react'
+import { ChevronDown, Search, X } from 'lucide-react'
 import { MultiSelect } from '@/components/ui/multiselect'
 import { Input } from '@/components/ui/input'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
@@ -18,8 +18,6 @@ import {
   computeDashboardMetrics,
   dashboardYearOptions,
   filterDashboardArticles,
-  isOngoingOnly,
-  ongoingStatusesPatch,
   resolveFocusedAuthor,
   type DashboardArticleItem,
   type DashboardFilters,
@@ -66,7 +64,6 @@ export function PublicationsDashboardView({
   }, [metrics.coAuthors, filters, filteredWithoutPosition])
 
   const teamOnly = filters.scopes.length === 1 && filters.scopes[0] === 'LARIB_TEAM'
-  const ongoingOnly = isOngoingOnly(filters)
 
   const hasActiveFilters =
     filters.query.trim() !== '' ||
@@ -147,21 +144,6 @@ export function PublicationsDashboardView({
               className="h-9 min-w-[168px] rounded-full border-line bg-gray-50 dark:bg-white/10"
             />
           </div>
-
-          <button
-            type="button"
-            aria-pressed={ongoingOnly}
-            onClick={() => updateFilter(ongoingStatusesPatch(filters))}
-            className={cn(
-              'inline-flex h-9 shrink-0 items-center gap-1.5 rounded-full border px-3.5 text-[13px] font-bold transition',
-              ongoingOnly
-                ? 'border-coral-500 bg-coral-50 text-coral-600 dark:border-coral-500/60 dark:bg-coral-500/15 dark:text-coral-300'
-                : 'border-line bg-gray-50 text-text-secondary hover:text-coral-600 dark:bg-white/10',
-            )}
-          >
-            <Clock className="size-3.5" strokeWidth={2.4} />
-            {t('filters.ongoing')}
-          </button>
 
           <Tooltip>
             <TooltipTrigger asChild>

@@ -2,14 +2,16 @@
 
 import { useState } from 'react'
 import { useTranslations } from 'next-intl'
-import { Search, X } from 'lucide-react'
+import { Clock, Search, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { ARTICLE_STATUS_TONE, TONE_DOT_HEX } from '@/lib/publications/status-display'
 import {
   ALL_FILTER,
   CO_AUTHOR_SCOPE_OPTIONS,
   filterCoAuthors,
+  isOngoingOnly,
   isYearActive,
+  ongoingStatusesPatch,
   toggleFilterValue,
   yearRangePatch,
   yearRangeBounds,
@@ -78,6 +80,7 @@ export function DashboardCharts({
   const coAuthors = filterCoAuthors(metrics.coAuthors, coAuthorScope, coAuthorQuery)
   const maxYear = Math.max(1, ...metrics.perYear.map((entry) => entry.count))
   const statusTotal = metrics.byStatus.reduce((sum, entry) => sum + entry.count, 0)
+  const ongoingOnly = isOngoingOnly(filters)
   const yearBounds =
     years.length > 1 ? { min: Math.min(...years), max: Math.max(...years) } : null
   const selectedYears = yearBounds ? yearRangeBounds(filters, yearBounds) : [0, 0]
@@ -333,11 +336,25 @@ export function DashboardCharts({
               : null
           }
         />
+        <button
+          type="button"
+          aria-pressed={ongoingOnly}
+          onClick={() => onFilter(ongoingStatusesPatch(filters))}
+          className={cn(
+            'mt-3 inline-flex h-7 w-fit items-center gap-1.5 rounded-full border px-2.5 text-[11px] font-bold transition',
+            ongoingOnly
+              ? 'border-coral-500 bg-coral-50 text-coral-600 dark:border-coral-500/60 dark:bg-coral-500/15 dark:text-coral-300'
+              : 'border-line text-text-secondary hover:bg-gray-50 dark:hover:bg-white/5',
+          )}
+        >
+          <Clock className="size-3" strokeWidth={2.4} />
+          {tFilters('ongoing')}
+        </button>
         {metrics.byStatus.length === 0 ? (
           <EmptyHint>{t('noData')}</EmptyHint>
         ) : (
           <>
-            <div className="mt-4 flex h-2.5 overflow-hidden rounded-full bg-gray-100 dark:bg-white/10">
+            <div className="mt-3 flex h-2.5 overflow-hidden rounded-full bg-gray-100 dark:bg-white/10">
               {metrics.byStatus.map((entry) => (
                 <span
                   key={entry.status}
