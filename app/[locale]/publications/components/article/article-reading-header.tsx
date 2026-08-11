@@ -37,7 +37,12 @@ export function ArticleReadingHeader({
               {t(`myPub.type.${displayType}`)}
             </span>
             <span className={pillClassName(ARTICLE_STATUS_TONE[article.status])}>{t(`articles.status.${article.status}`)}</span>
-            <ArticleScopeSwitch articleId={article.id} articleTitle={article.title || t('myPub.untitled')} scope={article.scope} size="sm" />
+            <span className="inline-flex items-center gap-1.5">
+              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-text-muted">
+                {tArticles('scopeShortLabel')}
+              </span>
+              <ArticleScopeSwitch articleId={article.id} articleTitle={article.title || t('myPub.untitled')} scope={article.scope} size="sm" />
+            </span>
             {year && <span className="text-sm font-bold text-text-secondary tabular-nums">{year}</span>}
             {studyLabel && (
               <span className="inline-flex items-center gap-1.5 rounded-full border border-coral-100 bg-coral-50 px-3 py-1 text-[11.5px] font-bold text-coral-600 dark:border-coral-500/30 dark:bg-coral-500/15 dark:text-coral-300">

@@ -123,7 +123,7 @@ export function ArticleScopeSwitch({
       <Tooltip>
         <TooltipTrigger asChild>
           <span aria-label={`${tooltip}: ${articleTitle}`} className="inline-flex">
-            <ScopeToggleFace checked={checked} size={size} />
+            <ScopePill checked={checked} size={size} />
           </span>
         </TooltipTrigger>
         <TooltipContent>{tooltip}</TooltipContent>

@@ -105,14 +105,15 @@ export function EditorHeader({
                 ))}
               </select>
             </label>
-            <span className="flex items-center gap-2 text-[13px] font-semibold text-text-secondary">
-              {tArticles('scopeLabel')}
+            <span className="flex items-center gap-1.5">
+              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-text-muted">
+                {tArticles('scopeShortLabel')}
+              </span>
               <ArticleScopeSwitch
                 articleId={article.id}
                 articleTitle={article.title || t('myPub.untitled')}
                 scope={article.scope}
                 editable={viewer.isAdmin || viewer.isFirstAuthor}
-                size="lg"
               />
             </span>
           </div>

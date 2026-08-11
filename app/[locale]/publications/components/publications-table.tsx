@@ -18,7 +18,7 @@ type Expansion = { isOpen: (id: string) => boolean; toggle: (id: string) => void
 
 const USER_PATHS = publicationsPaths(PUBLICATIONS_BASE)
 
-const GRID = 'grid grid-cols-[minmax(220px,1fr)_150px_112px_124px_120px_156px_88px] items-center gap-3.5'
+const GRID = 'grid grid-cols-[minmax(220px,1fr)_150px_112px_72px_124px_120px_156px_88px] items-center gap-3.5'
 
 function formatter(locale: string) {
   const fmt = new Intl.DateTimeFormat(locale, { dateStyle: 'medium' })
@@ -121,7 +121,6 @@ function PublicationRow({
               >
                 {t(`myPub.type.${item.type}`)}
               </span>
-                <ArticleScopeSwitch articleId={item.id} articleTitle={item.title} scope={item.scope} />
             </span>
             <Link
               href={USER_PATHS.article(item.id)}
@@ -149,6 +148,10 @@ function PublicationRow({
           ) : (
             <span className="text-[13px] text-text-muted">—</span>
           )}
+        </div>
+
+        <div className="min-w-0">
+          <ArticleScopeSwitch articleId={item.id} articleTitle={item.title} scope={item.scope} />
         </div>
 
         <div>
@@ -247,6 +250,7 @@ export function PublicationsTable({
   sort: Sort
 }) {
   const t = useTranslations('publications')
+  const tArticles = useTranslations('publications.articles')
 
   if (rows.length === 0) {
     return (
@@ -269,6 +273,7 @@ export function PublicationsTable({
           <SortHeader label={t('myPub.col.title')} active={sort.key === 'title'} dir={sort.dir} onClick={() => sort.onSort('title')} />
           <SortHeader label={t('myPub.col.journal')} active={sort.key === 'journal'} dir={sort.dir} onClick={() => sort.onSort('journal')} />
           <SortHeader label={t('myPub.col.study')} active={sort.key === 'study'} dir={sort.dir} onClick={() => sort.onSort('study')} />
+          <ColLabel>{tArticles('scopeShortLabel')}</ColLabel>
           <SortHeader label={t('myPub.col.role')} active={sort.key === 'role'} dir={sort.dir} onClick={() => sort.onSort('role')} />
           <SortHeader label={t('myPub.col.status')} active={sort.key === 'status'} dir={sort.dir} onClick={() => sort.onSort('status')} />
           <SortHeader label={t('myPub.col.submission')} active={sort.key === 'sub'} dir={sort.dir} onClick={() => sort.onSort('sub')} />
