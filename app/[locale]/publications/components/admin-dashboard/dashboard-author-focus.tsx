@@ -4,8 +4,19 @@ import { useTranslations } from 'next-intl'
 import { X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { AuthorFocus } from '@/lib/publications/admin-dashboard'
+import type { PositionBucket } from '@/lib/publications/status-display'
 
-export function DashboardAuthorFocus({ focus, onClear }: { focus: AuthorFocus; onClear: (() => void) | null }) {
+export function DashboardAuthorFocus({
+  focus,
+  activePosition,
+  onSelectPosition,
+  onClear,
+}: {
+  focus: AuthorFocus
+  activePosition: string
+  onSelectPosition: (bucket: PositionBucket) => void
+  onClear: (() => void) | null
+}) {
   const t = useTranslations('publications.adminHome.authorFocus')
   const tPosition = useTranslations('publications.myPub.position')
 
@@ -31,18 +42,27 @@ export function DashboardAuthorFocus({ focus, onClear }: { focus: AuthorFocus; o
       </div>
 
       <ul className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
-        {focus.positions.map((position) => (
-          <li
-            key={position.bucket}
-            className={cn(
-              'rounded-xl border border-line px-3 py-2.5',
-              position.bucket === 'first' && 'border-coral-200 bg-coral-50/60 dark:border-coral-500/30 dark:bg-coral-500/10',
-            )}
-          >
-            <p className="text-2xl font-extrabold leading-none text-text-primary tabular-nums">{position.count}</p>
-            <p className="mt-1 truncate text-xs text-text-secondary">{tPosition(position.bucket)}</p>
-          </li>
-        ))}
+        {focus.positions.map((position) => {
+          const active = activePosition === position.bucket
+          return (
+            <li key={position.bucket}>
+              <button
+                type="button"
+                aria-pressed={active}
+                onClick={() => onSelectPosition(position.bucket)}
+                className={cn(
+                  'w-full rounded-xl border px-3 py-2.5 text-left transition hover:border-coral-200 hover:bg-coral-50/60 dark:hover:border-coral-500/30 dark:hover:bg-coral-500/10',
+                  active
+                    ? 'border-coral-500 bg-coral-50 dark:border-coral-500/60 dark:bg-coral-500/15'
+                    : 'border-line',
+                )}
+              >
+                <p className="text-2xl font-extrabold leading-none text-text-primary tabular-nums">{position.count}</p>
+                <p className="mt-1 truncate text-xs text-text-secondary">{tPosition(position.bucket)}</p>
+              </button>
+            </li>
+          )
+        })}
       </ul>
     </section>
   )

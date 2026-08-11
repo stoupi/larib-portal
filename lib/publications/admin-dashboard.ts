@@ -33,6 +33,7 @@ export type DashboardFilters = {
   yearFrom: string
   yearTo: string
   author: string
+  authorPosition: string
   query: string
 }
 
@@ -48,6 +49,7 @@ export const DEFAULT_DASHBOARD_FILTERS: DashboardFilters = {
   yearFrom: ALL_FILTER,
   yearTo: ALL_FILTER,
   author: ALL_FILTER,
+  authorPosition: ALL_FILTER,
   query: '',
 }
 
@@ -103,6 +105,20 @@ export function yearRangePatch(filters: DashboardFilters, year: number): Partial
 
 const IN_PROGRESS_STATUSES: ArticleStatusValue[] = ['IN_PREPARATION', 'UNDER_REVIEW', 'TO_RESUBMIT', 'ACCEPTED']
 
+// Everything still travelling: neither accepted nor published, and not given up on.
+export const ONGOING_STATUSES: ArticleStatusValue[] = ['IN_PREPARATION', 'UNDER_REVIEW', 'TO_RESUBMIT']
+
+export function isOngoingOnly(filters: DashboardFilters): boolean {
+  return (
+    filters.statuses.length === ONGOING_STATUSES.length &&
+    ONGOING_STATUSES.every((status) => filters.statuses.includes(status))
+  )
+}
+
+export function ongoingStatusesPatch(filters: DashboardFilters): Partial<DashboardFilters> {
+  return { statuses: isOngoingOnly(filters) ? [] : [...ONGOING_STATUSES] }
+}
+
 export type CoAuthorCount = { id: string; name: string; team: boolean; count: number }
 export type CoAuthorScope = 'all' | 'team' | 'external'
 export type YearCount = { year: number; count: number }
@@ -140,6 +156,11 @@ export function filterDashboardArticles(
       return false
     if (filters.yearTo !== ALL_FILTER && (article.year == null || article.year > Number(filters.yearTo))) return false
     if (filters.author !== ALL_FILTER && !article.authors.some((author) => author.id === filters.author)) return false
+    if (filters.authorPosition !== ALL_FILTER && filters.author !== ALL_FILTER) {
+      const index = article.authors.findIndex((author) => author.id === filters.author)
+      if (index < 0) return false
+      if (authorPositionBucket(index + 1, article.authors.length) !== filters.authorPosition) return false
+    }
     return matchesArticleQuery(article, filters.query)
   })
 }
@@ -167,6 +188,17 @@ export function resolveFocusedAuthor(coAuthors: CoAuthorCount[], filters: Dashbo
   if (needle.length < 2) return null
   const matches = coAuthors.filter((coAuthor) => coAuthor.name.toLowerCase().includes(needle))
   return matches.length === 1 ? matches[0].id : null
+}
+
+// Clicking a position tile pins the focused author and keeps only the papers where
+// they hold that rank; clicking the active tile again lifts the rank restriction.
+export function authorPositionPatch(
+  filters: DashboardFilters,
+  authorId: string,
+  bucket: PositionBucket,
+): Partial<DashboardFilters> {
+  const alreadyActive = filters.author === authorId && filters.authorPosition === bucket
+  return { author: authorId, authorPosition: alreadyActive ? ALL_FILTER : bucket }
 }
 
 export function authorFocus(articles: DashboardArticleItem[], authorId: string): AuthorFocus | null {

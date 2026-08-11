@@ -7,6 +7,9 @@ import {
   computeDashboardMetrics,
   dashboardYearOptions,
   authorFocus,
+  authorPositionPatch,
+  isOngoingOnly,
+  ongoingStatusesPatch,
   filterCoAuthors,
   resolveFocusedAuthor,
   filterDashboardArticles,
@@ -359,5 +362,52 @@ describe('scope counts', () => {
     expect(computeDashboardMetrics([article({ id: '1' })], 2025).byScope).toEqual([
       { scope: 'LARIB_TEAM', count: 1 },
     ])
+  })
+})
+
+describe('author position filter', () => {
+  const ranked: DashboardArticleItem[] = [
+    article({ id: 'first', authors: [{ id: 'a', name: 'Pierre Lefèvre', team: true }, { id: 'b', name: 'Camille Dubois', team: false }] }),
+    article({ id: 'last', authors: [{ id: 'b', name: 'Camille Dubois', team: false }, { id: 'a', name: 'Pierre Lefèvre', team: true }] }),
+  ]
+
+  it('keeps only the papers where the pinned author holds the chosen rank', () => {
+    const filters = { ...DEFAULT_DASHBOARD_FILTERS, author: 'a', authorPosition: 'first' }
+    expect(filterDashboardArticles(ranked, filters).map((item) => item.id)).toEqual(['first'])
+    expect(
+      filterDashboardArticles(ranked, { ...filters, authorPosition: 'last' }).map((item) => item.id),
+    ).toEqual(['last'])
+  })
+
+  it('ignores the rank when no author is pinned', () => {
+    expect(
+      filterDashboardArticles(ranked, { ...DEFAULT_DASHBOARD_FILTERS, authorPosition: 'first' }),
+    ).toHaveLength(2)
+  })
+
+  it('pins the author on the first click and lifts the rank on the second', () => {
+    const patch = authorPositionPatch(DEFAULT_DASHBOARD_FILTERS, 'a', 'first')
+    expect(patch).toEqual({ author: 'a', authorPosition: 'first' })
+    expect(authorPositionPatch({ ...DEFAULT_DASHBOARD_FILTERS, ...patch }, 'a', 'first')).toEqual({
+      author: 'a',
+      authorPosition: ALL_FILTER,
+    })
+  })
+})
+
+describe('ongoing shortcut', () => {
+  it('keeps everything that is neither accepted, published nor abandoned', () => {
+    const patch = ongoingStatusesPatch(DEFAULT_DASHBOARD_FILTERS)
+    expect(filterDashboardArticles(articles, { ...DEFAULT_DASHBOARD_FILTERS, ...patch }).map((item) => item.id)).toEqual([
+      '2',
+      '3',
+    ])
+  })
+
+  it('toggles back to every status on a second click', () => {
+    const on = { ...DEFAULT_DASHBOARD_FILTERS, ...ongoingStatusesPatch(DEFAULT_DASHBOARD_FILTERS) }
+    expect(isOngoingOnly(on)).toBe(true)
+    expect(ongoingStatusesPatch(on)).toEqual({ statuses: [] })
+    expect(isOngoingOnly(DEFAULT_DASHBOARD_FILTERS)).toBe(false)
   })
 })

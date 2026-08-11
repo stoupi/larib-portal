@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react'
 import { useTranslations } from 'next-intl'
-import { ChevronDown, Search, X } from 'lucide-react'
+import { ChevronDown, Clock, Search, X } from 'lucide-react'
 import { MultiSelect } from '@/components/ui/multiselect'
 import { Input } from '@/components/ui/input'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
@@ -14,9 +14,12 @@ import {
   NO_STUDY_FILTER,
   DEFAULT_DASHBOARD_FILTERS,
   authorFocus,
+  authorPositionPatch,
   computeDashboardMetrics,
   dashboardYearOptions,
   filterDashboardArticles,
+  isOngoingOnly,
+  ongoingStatusesPatch,
   resolveFocusedAuthor,
   type DashboardArticleItem,
   type DashboardFilters,
@@ -52,12 +55,18 @@ export function PublicationsDashboardView({
   const years = useMemo(() => dashboardYearOptions(articles), [articles])
   const filtered = useMemo(() => filterDashboardArticles(articles, filters), [articles, filters])
   const metrics = useMemo(() => computeDashboardMetrics(filtered, journals.currentYear), [filtered, journals.currentYear])
+  // The tiles keep showing every rank of the focused author, even while one rank filters the list.
+  const filteredWithoutPosition = useMemo(
+    () => filterDashboardArticles(articles, { ...filters, authorPosition: ALL_FILTER }),
+    [articles, filters],
+  )
   const focus = useMemo(() => {
     const focusedAuthorId = resolveFocusedAuthor(metrics.coAuthors, filters)
-    return focusedAuthorId ? authorFocus(filtered, focusedAuthorId) : null
-  }, [metrics.coAuthors, filters, filtered])
+    return focusedAuthorId ? authorFocus(filteredWithoutPosition, focusedAuthorId) : null
+  }, [metrics.coAuthors, filters, filteredWithoutPosition])
 
   const teamOnly = filters.scopes.length === 1 && filters.scopes[0] === 'LARIB_TEAM'
+  const ongoingOnly = isOngoingOnly(filters)
 
   const hasActiveFilters =
     filters.query.trim() !== '' ||
@@ -66,6 +75,7 @@ export function PublicationsDashboardView({
     filters.yearFrom !== ALL_FILTER ||
     filters.yearTo !== ALL_FILTER ||
     filters.author !== ALL_FILTER ||
+    filters.authorPosition !== ALL_FILTER ||
     filters.scopes.join() !== DEFAULT_DASHBOARD_FILTERS.scopes.join()
 
   function updateFilter(patch: Partial<DashboardFilters>) {
@@ -124,6 +134,7 @@ export function PublicationsDashboardView({
 
           <div className="flex items-center gap-2">
             <MultiSelect
+              key={filters.statuses.join()}
               options={ARTICLE_STATUS_VALUES.map((status) => ({
                 label: tArticles(`status.${status}`),
                 value: status,
@@ -136,6 +147,21 @@ export function PublicationsDashboardView({
               className="h-9 min-w-[168px] rounded-full border-line bg-gray-50 dark:bg-white/10"
             />
           </div>
+
+          <button
+            type="button"
+            aria-pressed={ongoingOnly}
+            onClick={() => updateFilter(ongoingStatusesPatch(filters))}
+            className={cn(
+              'inline-flex h-9 shrink-0 items-center gap-1.5 rounded-full border px-3.5 text-[13px] font-bold transition',
+              ongoingOnly
+                ? 'border-coral-500 bg-coral-50 text-coral-600 dark:border-coral-500/60 dark:bg-coral-500/15 dark:text-coral-300'
+                : 'border-line bg-gray-50 text-text-secondary hover:text-coral-600 dark:bg-white/10',
+            )}
+          >
+            <Clock className="size-3.5" strokeWidth={2.4} />
+            {t('filters.ongoing')}
+          </button>
 
           <Tooltip>
             <TooltipTrigger asChild>
@@ -189,7 +215,13 @@ export function PublicationsDashboardView({
             {focus && (
               <DashboardAuthorFocus
                 focus={focus}
-                onClear={filters.author === ALL_FILTER ? null : () => updateFilter({ author: ALL_FILTER })}
+                activePosition={filters.authorPosition}
+                onSelectPosition={(bucket) => updateFilter(authorPositionPatch(filters, focus.id, bucket))}
+                onClear={
+                  filters.author === ALL_FILTER
+                    ? null
+                    : () => updateFilter({ author: ALL_FILTER, authorPosition: ALL_FILTER })
+                }
               />
             )}
           </div>
