@@ -27,6 +27,7 @@ import {
   type PickerAuthor,
 } from '@/lib/publications/author-picker'
 import { CORAL_BUTTON, CreateAuthorPanel, type PickerCentre } from './author-create-panel'
+import { OurTeamDot } from './our-team-dot'
 
 const TAB_LABELS: Record<AuthorPickerTab, 'tabTeam' | 'tabFrequent' | 'tabAll'> = {
   team: 'tabTeam',
@@ -75,11 +76,7 @@ function AuthorRow({
         </p>
         {author.centreName && <p className="truncate text-xs text-text-secondary">{author.centreName}</p>}
       </div>
-      {author.isOurTeam && (
-        <span className="shrink-0 rounded-full bg-coral-50 px-2 py-0.5 text-[10.5px] font-extrabold uppercase tracking-[0.12em] text-coral-600 dark:bg-coral-500/15 dark:text-coral-300">
-          {t('picker.ourTeam')}
-        </span>
-      )}
+      {author.isOurTeam && <OurTeamDot />}
       <span className="shrink-0 text-[11px] font-bold text-text-muted tabular-nums">
         {t('picker.publicationCount', { count: author.publicationCount })}
       </span>

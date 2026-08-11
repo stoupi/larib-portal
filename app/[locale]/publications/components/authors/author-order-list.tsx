@@ -23,6 +23,7 @@ import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import type { AuthorshipEntry } from '@/lib/publications/author-list'
 import type { PickerAuthor } from '@/lib/publications/author-picker'
+import { OurTeamDot } from './our-team-dot'
 
 type AuthorRowContent = {
   name: string
@@ -58,11 +59,7 @@ function AuthorIdentity({ rank, content, isCorresponding }: { rank: number; cont
         <p className="truncate text-sm font-semibold text-text-primary">
           {content.name}
           {content.degrees && <span className="ml-1.5 font-normal text-text-muted">{content.degrees}</span>}
-          {content.isOurTeam && (
-            <span className="ml-2 rounded-full bg-coral-50 px-2 py-0.5 text-[10.5px] font-extrabold uppercase tracking-[0.12em] text-coral-600 dark:bg-coral-500/15 dark:text-coral-300">
-              {t('picker.ourTeam')}
-            </span>
-          )}
+          {content.isOurTeam && <OurTeamDot className="ml-2 align-middle" />}
           {isCorresponding && (
             <span className="ml-2 rounded-full border border-line bg-gray-50 px-2 py-0.5 text-[10.5px] font-extrabold uppercase tracking-[0.12em] text-text-secondary dark:bg-white/5">
               {t('order.corresponding')}

@@ -13,6 +13,7 @@ import { Command, CommandEmpty, CommandInput, CommandItem, CommandList } from '@
 import { optionSearchScore } from '@/lib/option-search'
 import type { PickerAuthor } from '@/lib/publications/author-picker'
 import { createAuthorAction } from '../../actions'
+import { OurTeamDot } from './our-team-dot'
 
 export const CORAL_BUTTON =
   'gap-2 bg-gradient-to-b from-coral-500 to-coral-600 text-white shadow-[0_10px_22px_-8px_rgba(214,31,85,0.6)] hover:brightness-105'
@@ -48,11 +49,7 @@ function CentrePicker({
               {centre.name}
               {centre.city && <span className="text-text-muted"> · {centre.city}</span>}
             </span>
-            {centre.isOwn && (
-              <span className="ml-auto shrink-0 rounded-full bg-coral-50 px-2 py-0.5 text-[10.5px] font-extrabold uppercase tracking-[0.12em] text-coral-600 dark:bg-coral-500/15 dark:text-coral-300">
-                {t('picker.ourTeam')}
-              </span>
-            )}
+            {centre.isOwn && <OurTeamDot className="ml-auto" />}
           </CommandItem>
         ))}
       </CommandList>

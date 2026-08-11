@@ -32,6 +32,7 @@ import type { AuthorListItem, LinkableUser, AuthorDetail, AuthorEditData } from 
 import { EditAuthorDialog } from './edit-author-dialog'
 import type { CentreOption } from './centre-picker'
 import { publicationsPaths, type PublicationsBasePath } from '@/lib/publications/base-path'
+import { OurTeamDot } from './authors/our-team-dot'
 
 function authorLabel(author: AuthorListItem): string {
   return `${author.firstName} ${author.lastName.toUpperCase()}`.trim()
@@ -380,7 +381,7 @@ export function AuthorsManager({ authors, users, centres, basePath }: { authors:
                   </TableCell>
                   <TableCell>
                     {author.type === 'OUR_TEAM' ? (
-                      <span className="inline-block whitespace-nowrap rounded-full border border-coral-200 bg-coral-50 px-2.5 py-0.5 text-xs font-semibold text-coral-600">{t('authors.typeOurTeam')}</span>
+                      <OurTeamDot />
                     ) : (
                       <span className="inline-block whitespace-nowrap rounded-full border border-line bg-gray-100 px-2.5 py-0.5 text-xs font-semibold text-gray-600">{t('authors.typeExternal')}</span>
                     )}

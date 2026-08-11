@@ -4,6 +4,7 @@ import { useTranslations } from 'next-intl'
 import { ArrowRight } from 'lucide-react'
 import { Link } from '@/app/i18n/navigation'
 import type { CentreAuthor } from '@/lib/services/publications/centres'
+import { OurTeamDot } from './authors/our-team-dot'
 
 const AVATAR_PALETTE = [
   'bg-[#FFE4EC] text-[#D61F55]',
@@ -53,15 +54,13 @@ export function CentreAuthorsPanel({ authors }: { authors: CentreAuthor[] }) {
                   </p>
                 </div>
               </div>
-              <span
-                className={
-                  author.type === 'OUR_TEAM'
-                    ? 'shrink-0 whitespace-nowrap rounded-full border border-coral-200 bg-coral-50 px-2.5 py-0.5 text-xs font-semibold text-coral-600'
-                    : 'shrink-0 whitespace-nowrap rounded-full border border-line bg-gray-100 px-2.5 py-0.5 text-xs font-semibold text-gray-600'
-                }
-              >
-                {author.type === 'OUR_TEAM' ? t('ourTeam') : t('external')}
-              </span>
+              {author.type === 'OUR_TEAM' ? (
+                <OurTeamDot />
+              ) : (
+                <span className="shrink-0 whitespace-nowrap rounded-full border border-line bg-gray-100 px-2.5 py-0.5 text-xs font-semibold text-gray-600">
+                  {t('external')}
+                </span>
+              )}
             </div>
           ))}
         </div>
