@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
-import { computeEditorVisibility } from './editor-mode'
+import { computeEditorVisibility, canComposeAuthorList } from './editor-mode'
+import { PUBLICATIONS_BASE, PUBLICATIONS_ADMIN_BASE } from './base-path'
 
 describe('computeEditorVisibility', () => {
   it('shows the Edit button only when the viewer can edit and is currently reading', () => {
@@ -24,5 +25,17 @@ describe('computeEditorVisibility', () => {
     expect(visibility.showSaveBar).toBe(false)
     expect(visibility.cardsEditable).toBe(false)
     expect(visibility.showEditButton).toBe(false)
+  })
+})
+
+describe('canComposeAuthorList', () => {
+  it('lets an admin compose the author list only inside the admin area', () => {
+    expect(canComposeAuthorList({ isAdmin: true, basePath: PUBLICATIONS_ADMIN_BASE })).toBe(true)
+    expect(canComposeAuthorList({ isAdmin: true, basePath: PUBLICATIONS_BASE })).toBe(false)
+  })
+
+  it('never lets a non-admin compose the author list', () => {
+    expect(canComposeAuthorList({ isAdmin: false, basePath: PUBLICATIONS_ADMIN_BASE })).toBe(false)
+    expect(canComposeAuthorList({ isAdmin: false, basePath: PUBLICATIONS_BASE })).toBe(false)
   })
 })

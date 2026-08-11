@@ -14,7 +14,7 @@ import { cn } from '@/lib/utils'
 import { ARTICLE_STATUSES } from '@/lib/services/publications/articles'
 import { ARTICLE_TYPE_VALUES, normalizeArticleType } from '@/lib/publications/article-type'
 import { isDraftDeletable } from '@/lib/publications/editor-logic'
-import { computeEditorVisibility, type EditorMode } from '@/lib/publications/editor-mode'
+import { computeEditorVisibility, canComposeAuthorList, type EditorMode } from '@/lib/publications/editor-mode'
 import { PUBLICATIONS_ADMIN_BASE, type PublicationsBasePath } from '@/lib/publications/base-path'
 import type { PublicationEditData } from '@/lib/services/publications/publication-editor'
 import type { JournalTargetItem } from '@/lib/services/publications/journal-targets'
@@ -188,7 +188,7 @@ export function ArticlePage({
 
         <div className={cn('grid grid-cols-1 gap-5 lg:grid-cols-2')}>
           <div className="space-y-5">
-            {viewer.isAdmin ? (
+            {canComposeAuthorList({ isAdmin: viewer.isAdmin, basePath }) ? (
               <EditorAuthorsAdmin
                 articleId={article.id}
                 initialAuthors={article.authorships.map((authorship) => ({
