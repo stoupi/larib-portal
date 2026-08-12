@@ -446,6 +446,8 @@ git commit -m "feat(publications): resolve open access pdf urls from PMC then Un
 
 Pas de test unitaire ici : la route n'est que de l'assemblage sous authentification, et l'E2E de la Task 6 la traverse de bout en bout.
 
+⚠️ `maxDuration = 60` est explicite parce que le budget de temps s'additionne : 10 s par source (deux sources au pire) plus 30 s de téléchargement, soit ~50 s dans le pire cas. Sans cette ligne la route hérite du plafond par défaut de la plateforme, qu'on découvrirait en production.
+
 **Step 1: Write the route**
 
 ```ts
@@ -454,11 +456,12 @@ import { getTypedSession } from '@/lib/auth-helpers'
 import { canAccessApp, canAdminApp } from '@/lib/permissions'
 import { userIsFirstAuthor } from '@/lib/services/publications/publication-editor'
 import { findOpenAccessPdf } from '@/lib/services/publications/open-access-pdf'
-import { looksLikePdf } from '@/lib/publications/open-access-pdf'
+import { looksLikePdf, isPublicHttpUrl } from '@/lib/publications/open-access-pdf'
 import { r2PutObject } from '@/lib/services/r2-s3'
 import { prisma } from '@/lib/prisma'
 
 export const runtime = 'nodejs'
+export const maxDuration = 60
 
 const MAX_PDF_BYTES = 30 * 1024 * 1024
 const DOWNLOAD_TIMEOUT_MS = 30_000
@@ -495,6 +498,9 @@ export async function POST(request: NextRequest) {
       signal: AbortSignal.timeout(DOWNLOAD_TIMEOUT_MS),
     })
     if (!response.ok) return NextResponse.json({ error: 'not_found' }, { status: 404 })
+    if (!process.env.OPEN_ACCESS_FIXTURE_DIR && !isPublicHttpUrl(response.url)) {
+      return NextResponse.json({ error: 'not_found' }, { status: 404 })
+    }
 
     const bytes = new Uint8Array(await response.arrayBuffer())
     if (bytes.byteLength > MAX_PDF_BYTES) return NextResponse.json({ error: 'file_too_large' }, { status: 400 })
@@ -514,6 +520,10 @@ export async function POST(request: NextRequest) {
   }
 }
 ```
+
+⚠️ `isPublicHttpUrl` est revérifié sur `response.url` **après** le téléchargement : l'URL de départ a déjà été filtrée dans le module pur, mais une redirection 302 vers une adresse interne contournerait ce premier filtre. `response.url` porte l'URL finale réellement atteinte.
+
+⚠️ Cette revérification est désactivée en mode fixtures (`OPEN_ACCESS_FIXTURE_DIR`) : le PDF de test est servi par le serveur Playwright sur `localhost`, que le garde-fou rejetterait à juste titre. Même mécanique de court-circuit que `PUBMED_FIXTURE_DIR` ailleurs dans le projet.
 
 **Step 2: Vérifier l'import de Prisma**
 
