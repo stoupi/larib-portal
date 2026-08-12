@@ -7,6 +7,7 @@ import {
   readUnpaywallPdfUrl,
   isPublicHttpUrl,
   looksLikePdf,
+  readCappedBody,
 } from './open-access-pdf'
 
 describe('idConverterUrl', () => {
@@ -238,5 +239,75 @@ describe('looksLikePdf', () => {
 
   it('rejects an empty body', () => {
     expect(looksLikePdf('application/pdf', new Uint8Array())).toBe(false)
+  })
+})
+
+describe('readCappedBody', () => {
+  type InstrumentedStream = {
+    stream: ReadableStream<Uint8Array>
+    pulledChunks: () => number
+    wasCancelled: () => boolean
+  }
+
+  function streamOf(chunks: Uint8Array[]): InstrumentedStream {
+    let pulled = 0
+    let cancelled = false
+    const stream = new ReadableStream<Uint8Array>({
+      pull(controller) {
+        if (pulled >= chunks.length) {
+          controller.close()
+          return
+        }
+        controller.enqueue(chunks[pulled])
+        pulled += 1
+      },
+      cancel() {
+        cancelled = true
+      },
+    })
+    return { stream, pulledChunks: () => pulled, wasCancelled: () => cancelled }
+  }
+
+  function filled(length: number, value: number): Uint8Array {
+    return new Uint8Array(length).fill(value)
+  }
+
+  it('reads a body that sits exactly on the cap', async () => {
+    const { stream } = streamOf([filled(10, 7)])
+    const bytes = await readCappedBody(stream, 10)
+    expect(bytes).not.toBeNull()
+    expect(bytes?.byteLength).toBe(10)
+    expect(Array.from(bytes ?? [])).toEqual(Array.from(filled(10, 7)))
+  })
+
+  it('rejects a body one byte over the cap', async () => {
+    const { stream } = streamOf([filled(11, 7)])
+    expect(await readCappedBody(stream, 10)).toBeNull()
+  })
+
+  it('joins a body split across many chunks in order', async () => {
+    const chunks = [new Uint8Array([1, 2]), new Uint8Array([3]), new Uint8Array([4, 5, 6])]
+    const { stream } = streamOf(chunks)
+    const bytes = await readCappedBody(stream, 100)
+    expect(Array.from(bytes ?? [])).toEqual([1, 2, 3, 4, 5, 6])
+  })
+
+  it('rejects when the cap is crossed only by the sum of the chunks', async () => {
+    const { stream } = streamOf([filled(4, 1), filled(4, 2), filled(4, 3)])
+    expect(await readCappedBody(stream, 10)).toBeNull()
+  })
+
+  it('returns an empty body untouched rather than rejecting it', async () => {
+    const { stream } = streamOf([])
+    const bytes = await readCappedBody(stream, 10)
+    expect(bytes).not.toBeNull()
+    expect(bytes?.byteLength).toBe(0)
+  })
+
+  it('cancels the reader on overflow instead of draining the rest of the body', async () => {
+    const oversized = streamOf([filled(8, 1), filled(8, 2), filled(8, 3), filled(8, 4)])
+    expect(await readCappedBody(oversized.stream, 10)).toBeNull()
+    expect(oversized.wasCancelled()).toBe(true)
+    expect(oversized.pulledChunks()).toBeLessThan(4)
   })
 })

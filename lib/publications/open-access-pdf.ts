@@ -93,6 +93,32 @@ export function readUnpaywallPdfUrl(payload: unknown): string | null {
 
 const DOCUMENT_CONTENT_TYPES = ['text/', 'application/json', 'application/xml']
 
+export async function readCappedBody(
+  body: ReadableStream<Uint8Array>,
+  maxBytes: number,
+): Promise<Uint8Array | null> {
+  const reader = body.getReader()
+  const chunks: Uint8Array[] = []
+  let total = 0
+  while (true) {
+    const { done, value } = await reader.read()
+    if (done) break
+    total += value.byteLength
+    if (total > maxBytes) {
+      await reader.cancel()
+      return null
+    }
+    chunks.push(value)
+  }
+  const bytes = new Uint8Array(total)
+  let offset = 0
+  for (const chunk of chunks) {
+    bytes.set(chunk, offset)
+    offset += chunk.byteLength
+  }
+  return bytes
+}
+
 export function looksLikePdf(contentType: string | null, head: Uint8Array): boolean {
   if (head.length < PDF_MAGIC.length) return false
   const magic = new TextDecoder().decode(head.subarray(0, PDF_MAGIC.length))
