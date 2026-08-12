@@ -46,10 +46,17 @@ export function readPmcId(payload: unknown): string | null {
   return null
 }
 
-const LOOPBACK_HOSTS = ['localhost', '0.0.0.0', '[::1]', '::1']
+const LOOPBACK_HOSTS = ['localhost', '0.0.0.0']
 const PRIVATE_HOST_PREFIXES = ['127.', '10.', '192.168.', '169.254.']
 const PRIVATE_CLASS_B_PATTERN = /^172\.(1[6-9]|2\d|3[01])\./
-const INTERNAL_HOST_SUFFIXES = ['.internal', '.local']
+const INTERNAL_HOST_SUFFIXES = ['.internal', '.local', '.localhost']
+// The whole "::" space is reserved — unspecified, loopback, and the IPv4-mapped
+// and IPv4-compatible forms a private address hides behind once URL normalizes it.
+const PRIVATE_IPV6_PREFIXES = ['::', 'fc', 'fd', 'fe8', 'fe9', 'fea', 'feb']
+
+function isPrivateIpv6(literal: string): boolean {
+  return PRIVATE_IPV6_PREFIXES.some((prefix) => literal.startsWith(prefix))
+}
 
 export function isPublicHttpUrl(candidate: string | null | undefined): candidate is string {
   if (typeof candidate !== 'string') return false
@@ -62,6 +69,7 @@ export function isPublicHttpUrl(candidate: string | null | undefined): candidate
   if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') return false
   const host = parsed.hostname.toLowerCase()
   if (host.length === 0) return false
+  if (host.startsWith('[') && host.endsWith(']')) return !isPrivateIpv6(host.slice(1, -1))
   if (LOOPBACK_HOSTS.includes(host)) return false
   if (PRIVATE_HOST_PREFIXES.some((prefix) => host.startsWith(prefix))) return false
   if (PRIVATE_CLASS_B_PATTERN.test(host)) return false

@@ -163,9 +163,36 @@ describe('isPublicHttpUrl', () => {
     }
   })
 
+  it('refuses the same private addresses written as ipv6 literals', () => {
+    const privateUrls = [
+      'http://[::ffff:169.254.169.254]/latest/meta-data/',
+      'http://[::ffff:127.0.0.1]/x.pdf',
+      'http://[::ffff:10.0.0.1]/x.pdf',
+      'http://[::ffff:192.168.0.1]/x.pdf',
+      'http://[::ffff:7f00:1]/x.pdf',
+      'http://[0:0:0:0:0:ffff:127.0.0.1]/x.pdf',
+      'http://[::127.0.0.1]/x.pdf',
+      'http://[fd00::1]/x.pdf',
+      'http://[fe80::1]/x.pdf',
+      'http://[::]/x.pdf',
+    ]
+    for (const privateUrl of privateUrls) {
+      expect(isPublicHttpUrl(privateUrl)).toBe(false)
+    }
+  })
+
+  it('refuses a subdomain of localhost, which always resolves to loopback', () => {
+    expect(isPublicHttpUrl('http://foo.localhost/x.pdf')).toBe(false)
+  })
+
   it('keeps a public host that merely reads like a private range', () => {
     expect(isPublicHttpUrl('https://172.15.0.1/x.pdf')).toBe(true)
     expect(isPublicHttpUrl('https://172.32.0.1/x.pdf')).toBe(true)
+    expect(isPublicHttpUrl('https://10x.genomics.test/x.pdf')).toBe(true)
+    expect(isPublicHttpUrl('https://172.example.com/x.pdf')).toBe(true)
+    expect(isPublicHttpUrl('https://localhost.example.com/x.pdf')).toBe(true)
+    expect(isPublicHttpUrl('https://www.internal-medicine.org/x.pdf')).toBe(true)
+    expect(isPublicHttpUrl('https://[2001:4860:4860::8888]/x.pdf')).toBe(true)
   })
 
   it('refuses a non-http scheme', () => {
