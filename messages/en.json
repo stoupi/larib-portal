@@ -1061,7 +1061,12 @@
         "invalidType": "Only PDF files are accepted.",
         "tooLarge": "This file exceeds 30 MB.",
         "uploadFailed": "The upload failed. Please try again.",
-        "none": "No PDF uploaded yet."
+        "none": "No PDF uploaded yet.",
+        "fetchOnline": "Search for the PDF online",
+        "fetching": "Searching…",
+        "fetched": "PDF found and attached",
+        "fetchNotFound": "No open access version found for this article.",
+        "fetchFailed": "The search failed. Please try again."
       },
       "authorsAdminHint": "You maintain the author list: add co-authors, order them and mark the corresponding author.",
       "addAuthor": "Add an author",

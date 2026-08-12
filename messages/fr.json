@@ -1059,7 +1059,12 @@
         "invalidType": "Seuls les fichiers PDF sont acceptés.",
         "tooLarge": "Ce fichier dépasse 30 Mo.",
         "uploadFailed": "Le téléversement a échoué. Réessayez.",
-        "none": "Aucun PDF pour le moment."
+        "none": "Aucun PDF pour le moment.",
+        "fetchOnline": "Chercher le PDF en ligne",
+        "fetching": "Recherche en cours…",
+        "fetched": "PDF trouvé et attaché",
+        "fetchNotFound": "Aucune version en accès libre n'a été trouvée pour cet article.",
+        "fetchFailed": "La recherche a échoué. Réessayez."
       },
       "authorsAdminHint": "Vous maintenez la liste d'auteurs : ajoutez les co-auteurs, ordonnez-les et désignez l'auteur correspondant.",
       "addAuthor": "Ajouter un auteur",
