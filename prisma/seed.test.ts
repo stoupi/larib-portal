@@ -330,6 +330,7 @@ async function main() {
 			title: 'Personal cohort study from a previous laboratory',
 			type: 'ORIGINAL',
 			status: 'PUBLISHED',
+			pubmedId: '34512303',
 			scope: 'OUTSIDE_TEAM',
 			createdBy: { connect: { id: publicationsUser.id } },
 			authorships: { create: [{ order: 1, author: { connect: { id: publicationsFirstAuthor.id } } }] },

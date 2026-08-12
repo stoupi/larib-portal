@@ -91,6 +91,8 @@ export default defineConfig({
       PUBMED_FIXTURE_DIR: path.resolve(__dirname, 'tests/e2e/fixtures/pubmed'),
       CROSSREF_FIXTURE_DIR: path.resolve(__dirname, 'tests/e2e/fixtures/crossref'),
       CTGOV_FIXTURE_DIR: path.resolve(__dirname, 'tests/e2e/fixtures/ctgov'),
+      OPEN_ACCESS_FIXTURE_DIR: path.resolve(__dirname, 'tests/e2e/fixtures/open-access'),
+      OPEN_ACCESS_FIXTURE_ORIGIN: `http://localhost:${playwrightPort}`,
     },
   },
 });
