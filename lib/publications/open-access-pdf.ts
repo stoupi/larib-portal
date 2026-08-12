@@ -69,7 +69,7 @@ export function isPublicHttpUrl(candidate: string | null | undefined): candidate
 }
 
 type UnpaywallLocation = { url_for_pdf?: string | null }
-type UnpaywallPayload = { best_oa_location?: UnpaywallLocation | null; oa_locations?: UnpaywallLocation[] | null }
+type UnpaywallPayload = { best_oa_location?: UnpaywallLocation | null; oa_locations?: unknown[] }
 
 export function readUnpaywallPdfUrl(payload: unknown): string | null {
   const body = payload as UnpaywallPayload | null
@@ -77,7 +77,7 @@ export function readUnpaywallPdfUrl(payload: unknown): string | null {
   if (isPublicHttpUrl(best)) return best
   const locations = Array.isArray(body?.oa_locations) ? body.oa_locations : []
   for (const location of locations) {
-    const fallback = location?.url_for_pdf
+    const fallback = (location as UnpaywallLocation | null)?.url_for_pdf
     if (isPublicHttpUrl(fallback)) return fallback
   }
   return null

@@ -122,6 +122,12 @@ describe('readUnpaywallPdfUrl', () => {
     expect(readUnpaywallPdfUrl({ best_oa_location: { url_for_pdf: 'ftp://example.test/x.pdf' } })).toBeNull()
   })
 
+  it('steps over junk locations instead of throwing on them', () => {
+    expect(readUnpaywallPdfUrl({ oa_locations: [null, { url_for_pdf: 'https://example.test/repo.pdf' }] })).toBe(
+      'https://example.test/repo.pdf',
+    )
+  })
+
   it('drops a location aimed at an internal host and keeps looking', () => {
     const payload = {
       best_oa_location: { url_for_pdf: 'http://169.254.169.254/latest/meta-data/' },
