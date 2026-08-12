@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
 import { ScopeToggleFace } from '../articles/article-scope-switch'
-import { ARTICLE_STATUS_VALUES } from '@/lib/publications/status-display'
+import { ARTICLE_TYPE_VALUES } from '@/lib/publications/article-type'
 import {
   ALL_FILTER,
   NO_STUDY_FILTER,
@@ -47,6 +47,7 @@ export function PublicationsDashboardView({
 }) {
   const t = useTranslations('publications.adminHome')
   const tArticles = useTranslations('publications.articles')
+  const tMyPub = useTranslations('publications.myPub')
   const [filters, setFilters] = useState<DashboardFilters>(DEFAULT_DASHBOARD_FILTERS)
   const [overviewOpen, setOverviewOpen] = useState(true)
 
@@ -69,6 +70,7 @@ export function PublicationsDashboardView({
     filters.query.trim() !== '' ||
     filters.studies.length > 0 ||
     filters.statuses.length > 0 ||
+    filters.types.length > 0 ||
     filters.yearFrom !== ALL_FILTER ||
     filters.yearTo !== ALL_FILTER ||
     filters.author !== ALL_FILTER ||
@@ -131,15 +133,14 @@ export function PublicationsDashboardView({
 
           <div className="flex items-center gap-2">
             <MultiSelect
-              key={filters.statuses.join()}
-              options={ARTICLE_STATUS_VALUES.map((status) => ({
-                label: tArticles(`status.${status}`),
-                value: status,
+              options={ARTICLE_TYPE_VALUES.map((type) => ({
+                label: tMyPub(`type.${type}`),
+                value: type,
               }))}
-              defaultValue={filters.statuses}
-              onValueChange={(values) => updateFilter({ statuses: values })}
-              placeholder={t('filters.allStatuses')}
-              aria-label={t('filters.status')}
+              defaultValue={filters.types}
+              onValueChange={(values) => updateFilter({ types: values })}
+              placeholder={t('filters.allTypes')}
+              aria-label={t('filters.type')}
               maxCount={1}
               className="h-9 min-w-[168px] rounded-full border-line bg-gray-50 dark:bg-white/10"
             />

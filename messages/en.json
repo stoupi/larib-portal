@@ -1714,6 +1714,8 @@
         "clearAuthor": "Clear the co-author filter",
         "allStudies": "All studies",
         "allStatuses": "All statuses",
+        "allTypes": "All types",
+        "type": "Article type",
         "ongoing": "In progress",
         "clearAll": "Clear filters",
         "noJournal": "No journal",

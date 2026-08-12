@@ -8,6 +8,7 @@ import type { PublicationEditData } from '@/lib/services/publications/publicatio
 import type { StudyOption } from '@/lib/services/publications/studies'
 import { ArticleScopeSwitch } from '../articles/article-scope-switch'
 import { doiUrl } from '@/lib/publications/doi'
+import { pubmedUrl } from '@/lib/publications/pubmed-id'
 
 export function ArticleReadingHeader({
   article,
@@ -59,7 +60,7 @@ export function ArticleReadingHeader({
           <div className="mt-4 flex flex-wrap items-center gap-2.5">
             {article.pubmedId && (
               <a
-                href={`https://pubmed.ncbi.nlm.nih.gov/${article.pubmedId}/`}
+                href={pubmedUrl(article.pubmedId) ?? '#'}
                 target="_blank"
                 rel="noreferrer"
                 className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-line bg-bg-surface px-3 text-[13px] font-bold text-navy-600 transition hover:bg-gray-50 dark:text-navy-300 dark:hover:bg-white/5"

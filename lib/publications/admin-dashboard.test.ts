@@ -411,3 +411,20 @@ describe('ongoing shortcut', () => {
     expect(isOngoingOnly(DEFAULT_DASHBOARD_FILTERS)).toBe(false)
   })
 })
+
+describe('article type filter', () => {
+  const mixed: DashboardArticleItem[] = [
+    article({ id: 'original', type: 'ORIGINAL' }),
+    article({ id: 'review', type: 'REVIEW' }),
+    article({ id: 'editorial', type: 'EDITORIAL' }),
+  ]
+
+  it('keeps only the chosen types and ignores the filter when empty', () => {
+    expect(
+      filterDashboardArticles(mixed, { ...DEFAULT_DASHBOARD_FILTERS, types: ['REVIEW', 'EDITORIAL'] }).map(
+        (item) => item.id,
+      ),
+    ).toEqual(['review', 'editorial'])
+    expect(filterDashboardArticles(mixed, DEFAULT_DASHBOARD_FILTERS)).toHaveLength(3)
+  })
+})

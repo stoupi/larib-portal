@@ -1712,6 +1712,8 @@
         "clearAuthor": "Annuler le filtre de co-auteur",
         "allStudies": "Toutes les études",
         "allStatuses": "Tous les statuts",
+        "allTypes": "Tous les types",
+        "type": "Type d'article",
         "ongoing": "En cours",
         "clearAll": "Effacer les filtres",
         "noJournal": "Aucune revue",

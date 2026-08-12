@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input'
 import type { StudyOption } from '@/lib/services/publications/studies'
 import type { EditorForm } from '../article/article-page'
 import { CollapsibleCard } from './collapsible-card'
-import { DoiLink } from '../article/doi-link'
+import { DoiLink, PubmedLink } from '../article/doi-link'
 
 export function EditorReferences({
   form,
@@ -39,7 +39,7 @@ export function EditorReferences({
           {editable ? (
             <Input {...form.register('pubmedId')} placeholder={t('editor.addPmid')} />
           ) : (
-            <span className="text-sm text-text-primary">{pubmedId || '—'}</span>
+            <PubmedLink pubmedId={pubmedId} />
           )}
         </label>
         <label className="grid grid-cols-[80px_1fr] items-center gap-3">

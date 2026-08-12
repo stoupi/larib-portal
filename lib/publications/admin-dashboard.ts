@@ -1,5 +1,5 @@
 import type { ArticleStatusValue } from '@/lib/services/publications/articles'
-import type { ArticleTypeValue } from './article-type'
+import { normalizeArticleType, type ArticleTypeValue } from './article-type'
 import type { MyPublicationSubmission } from '@/lib/services/publications/my-publications'
 import { ARTICLE_STATUS_VALUES, POSITION_BUCKETS, authorPositionBucket, type PositionBucket } from './status-display'
 import { matchesArticleQuery } from './article-search'
@@ -29,6 +29,7 @@ export type DashboardFilters = {
   studies: string[]
   journals: string[]
   statuses: string[]
+  types: string[]
   scopes: string[]
   yearFrom: string
   yearTo: string
@@ -45,6 +46,7 @@ export const DEFAULT_DASHBOARD_FILTERS: DashboardFilters = {
   studies: [],
   journals: [],
   statuses: [],
+  types: [],
   scopes: ['LARIB_TEAM'],
   yearFrom: ALL_FILTER,
   yearTo: ALL_FILTER,
@@ -152,6 +154,7 @@ export function filterDashboardArticles(
     if (filters.studies.length > 0 && !filters.studies.includes(articleStudyKey(article))) return false
     if (filters.journals.length > 0 && !filters.journals.includes(articleJournalKey(article))) return false
     if (filters.statuses.length > 0 && !filters.statuses.includes(article.status)) return false
+    if (filters.types.length > 0 && !filters.types.includes(normalizeArticleType(article.type))) return false
     if (filters.yearFrom !== ALL_FILTER && (article.year == null || article.year < Number(filters.yearFrom)))
       return false
     if (filters.yearTo !== ALL_FILTER && (article.year == null || article.year > Number(filters.yearTo))) return false
