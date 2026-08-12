@@ -213,7 +213,16 @@ export function ArticlePage({
               journalNames={journalNames}
               editable={visibility.cardsEditable}
             />
-            <EditorPdf articleId={article.id} pdfUrl={article.pdfUrl} editable={visibility.cardsEditable} />
+            <EditorPdf
+              article={{
+                id: article.id,
+                pdfUrl: article.pdfUrl,
+                status: article.status,
+                doi: article.doi,
+                pubmedId: article.pubmedId,
+              }}
+              editable={visibility.cardsEditable}
+            />
             <EditorJournalQueue targets={journalTargets} />
           </div>
         </div>
