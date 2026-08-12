@@ -1062,7 +1062,6 @@
         "none": "Aucun PDF pour le moment.",
         "fetchOnline": "Chercher le PDF en ligne",
         "fetching": "Recherche en cours…",
-        "fetched": "PDF trouvé et attaché",
         "fetchNotFound": "Aucune version en accès libre n'a été trouvée pour cet article.",
         "fetchFailed": "La recherche a échoué. Réessayez."
       },

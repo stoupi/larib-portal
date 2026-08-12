@@ -1064,7 +1064,6 @@
         "none": "No PDF uploaded yet.",
         "fetchOnline": "Search for the PDF online",
         "fetching": "Searching…",
-        "fetched": "PDF found and attached",
         "fetchNotFound": "No open access version found for this article.",
         "fetchFailed": "The search failed. Please try again."
       },
