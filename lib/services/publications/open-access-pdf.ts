@@ -1,0 +1,75 @@
+import {
+  idConverterUrl,
+  europePmcPdfUrl,
+  readPmcId,
+  readUnpaywallPdfUrl,
+  unpaywallUrl,
+  type OpenAccessPdf,
+} from '@/lib/publications/open-access-pdf'
+
+const REQUEST_TIMEOUT_MS = 10_000
+const FIXTURE_ORIGIN_MARKER = '{origin}'
+
+function contactEmail(): string | null {
+  const configured = process.env.OPEN_ACCESS_CONTACT_EMAIL?.trim()
+  return configured && configured.length > 0 ? configured : null
+}
+
+async function fetchJson(url: string): Promise<unknown> {
+  try {
+    const response = await fetch(url, { cache: 'no-store', signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS) })
+    if (!response.ok) return null
+    return await response.json()
+  } catch {
+    return null
+  }
+}
+
+async function fromPubmedCentral(pubmedId: string | null): Promise<OpenAccessPdf | null> {
+  const lookup = idConverterUrl(pubmedId, contactEmail())
+  if (!lookup) return null
+  const pmcid = readPmcId(await fetchJson(lookup))
+  if (!pmcid) return null
+  const url = europePmcPdfUrl(pmcid)
+  return url ? { url, source: 'europepmc' } : null
+}
+
+async function fromUnpaywall(doi: string | null): Promise<OpenAccessPdf | null> {
+  const lookup = unpaywallUrl(doi, contactEmail())
+  if (!lookup) return null
+  const url = readUnpaywallPdfUrl(await fetchJson(lookup))
+  return url ? { url, source: 'unpaywall' } : null
+}
+
+async function readFixture(
+  fixtureDir: string,
+  pubmedId: string | null,
+  doi: string | null,
+): Promise<OpenAccessPdf | null> {
+  const { readFile } = await import('node:fs/promises')
+  const { join } = await import('node:path')
+  const raw = await readFile(join(fixtureDir, 'resolutions.json'), 'utf8')
+  const resolutions = JSON.parse(raw) as Record<string, OpenAccessPdf | undefined>
+  const keys = [pubmedId, doi].filter((key): key is string => typeof key === 'string' && key.length > 0)
+  for (const key of keys) {
+    const resolution = resolutions[key]
+    if (resolution) {
+      const origin = process.env.OPEN_ACCESS_FIXTURE_ORIGIN ?? ''
+      return { ...resolution, url: resolution.url.replace(FIXTURE_ORIGIN_MARKER, origin) }
+    }
+  }
+  return null
+}
+
+export async function findOpenAccessPdf({
+  pubmedId,
+  doi,
+}: {
+  pubmedId: string | null
+  doi: string | null
+}): Promise<OpenAccessPdf | null> {
+  if (!pubmedId && !doi) return null
+  const fixtureDir = process.env.OPEN_ACCESS_FIXTURE_DIR
+  if (fixtureDir) return readFixture(fixtureDir, pubmedId, doi)
+  return (await fromPubmedCentral(pubmedId)) ?? (await fromUnpaywall(doi))
+}
