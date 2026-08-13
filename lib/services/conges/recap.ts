@@ -74,10 +74,7 @@ export function resolvePeriod(rawPeriod: string | null): RecapPeriod {
   return rawPeriod === 'monthly' ? 'monthly' : 'weekly'
 }
 
-export function isAuthorizedCron(authorizationHeader: string | null, cronSecret: string | undefined): boolean {
-  if (!cronSecret) return false
-  return authorizationHeader === `Bearer ${cronSecret}`
-}
+export { isAuthorizedCron } from '@/lib/cron-auth'
 
 export function groupEmailsByLanguage(recipients: RecapRecipient[]): Map<'EN' | 'FR', string[]> {
   const grouped = new Map<'EN' | 'FR', string[]>()
