@@ -22,6 +22,7 @@ export type DashboardArticleItem = {
   lastSubmissionAt: string | null
   acceptedAt: string | null
   pendingDays: number | null
+  carouselEmailSentAt: string | null
   submissions: MyPublicationSubmission[]
 }
 

@@ -1,7 +1,7 @@
 'use client'
 
 import { useTranslations } from 'next-intl'
-import { ArrowUp, ArrowUpDown, ChevronRight, Clock, ExternalLink, FileText, Pencil } from 'lucide-react'
+import { ArrowUp, ArrowUpDown, ChevronRight, Clock, ExternalLink, FileText, Mail, Pencil } from 'lucide-react'
 import { Link } from '@/app/i18n/navigation'
 import { cn } from '@/lib/utils'
 import { doiUrl } from '@/lib/publications/doi'
@@ -15,6 +15,7 @@ import { SubmissionHistory } from '../submission-history'
 import { ArticleStudySelect } from './article-study-select'
 import { ArticleScopeSwitch } from './article-scope-switch'
 import { ArticleDeleteButton } from './article-delete-button'
+import { CarouselEmailDialog, useCarouselEmailDialog } from '../article/carousel-email-dialog'
 
 const ADMIN_PATHS = publicationsPaths(PUBLICATIONS_ADMIN_BASE)
 
@@ -64,6 +65,8 @@ export function ArticleListRow({
   const dateFormatter = new Intl.DateTimeFormat(locale, { dateStyle: 'medium' })
   const formatDate = (iso: string | null) => (iso ? dateFormatter.format(new Date(iso)) : '—')
   const expanded = expansion?.open ?? false
+  const carouselDialog = useCarouselEmailDialog()
+  const showCarouselRow = Boolean(admin) && article.status === 'ACCEPTED'
 
   return (
     <div className={cn('border-b border-line last:border-b-0', expanded && 'bg-coral-50/40 dark:bg-coral-500/[0.05]')}>
@@ -199,6 +202,32 @@ export function ArticleListRow({
           )}
         </div>
       </div>
+
+      {showCarouselRow && (
+        <div className="flex flex-wrap items-center gap-2 px-5 pb-3">
+          <span
+            className={cn(
+              'inline-flex items-center rounded-md px-2 py-0.5 text-[11px] font-bold',
+              article.carouselEmailSentAt
+                ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-500/20 dark:text-emerald-200'
+                : 'bg-amber-100 text-amber-800 dark:bg-amber-500/20 dark:text-amber-200',
+            )}
+          >
+            {article.carouselEmailSentAt
+              ? t('carouselEmail.badgeSent', { date: formatDate(article.carouselEmailSentAt) })
+              : t('carouselEmail.badgeNotSent')}
+          </span>
+          <button
+            type="button"
+            onClick={() => carouselDialog.openFor(article.id)}
+            className="inline-flex items-center gap-1.5 rounded-lg border border-line bg-bg-surface px-2.5 py-1 text-[11.5px] font-bold text-navy-600 transition hover:bg-gray-50 dark:text-navy-300 dark:hover:bg-white/5"
+          >
+            <Mail className="h-3.5 w-3.5" strokeWidth={2} />
+            {t('carouselEmail.openDialog')}
+          </button>
+          <CarouselEmailDialog controller={carouselDialog} />
+        </div>
+      )}
 
       {expansion && expanded && (
         <div className="px-5 pb-4">
