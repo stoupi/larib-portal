@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { renderLeaveRecapEmail, renderPublicationsRecapEmail } from './email'
+import { renderLeaveRecapEmail, renderPublicationsRecapEmail, renderCarouselRequestEmailHtml } from './email'
 import type { RecapArticle } from '@/lib/publications/recap'
 
 describe('renderLeaveRecapEmail', () => {
@@ -78,5 +78,21 @@ describe('renderPublicationsRecapEmail', () => {
     expect(text).toContain('no target journal')
     expect(html).toContain('https://portal.test/en/publications')
     expect(html).toContain('Hello,')
+  })
+})
+
+describe('renderCarouselRequestEmailHtml', () => {
+  it('turns each line into a paragraph and blank lines into breaks', () => {
+    const html = renderCarouselRequestEmailHtml('Bonjour Marie DUPONT,\n\nFélicitations !')
+    expect(html).toContain('>Bonjour Marie DUPONT,</p>')
+    expect(html).toContain('<br />')
+    expect(html).toContain('>Félicitations !</p>')
+    expect(html).toContain('<!DOCTYPE html')
+  })
+
+  it('escapes HTML coming from the edited body', () => {
+    const html = renderCarouselRequestEmailHtml('<script>alert("x & y")</script>')
+    expect(html).toContain('&lt;script&gt;alert(&quot;x &amp; y&quot;)&lt;/script&gt;')
+    expect(html).not.toContain('<script>')
   })
 })

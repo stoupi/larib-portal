@@ -681,3 +681,58 @@ export async function sendPublicationsRecapEmail(
   const json = (await res.json()) as { id?: string }
   return { id: json.id ?? '' }
 }
+
+export type CarouselRequestEmailParams = {
+  to: string
+  cc: string[]
+  replyTo: string
+  subject: string
+  body: string
+}
+
+function escapeHtml(value: string): string {
+  return value
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+}
+
+export function renderCarouselRequestEmailHtml(body: string): string {
+  const paragraphs = body
+    .split('\n')
+    .map((line) =>
+      line.trim() === ''
+        ? '<br />'
+        : `<p style="margin:0 0 4px 0;font-family:${FONT_SANS};font-size:14px;line-height:21px;color:${COLORS.foreground};">${escapeHtml(line)}</p>`,
+    )
+    .join('')
+  return emailLayout(paragraphs)
+}
+
+export async function sendCarouselRequestEmail(
+  params: CarouselRequestEmailParams,
+): Promise<{ id: string } | { error: string }> {
+  const apiKey = process.env.RESEND_API_KEY
+  if (!apiKey) return { error: 'RESEND_API_KEY missing' }
+  const fromEmail = process.env.RESEND_FROM || 'noreply@your-domain.com'
+  const from = `Larib Portal <${fromEmail}>`
+  const res = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      from,
+      to: [params.to],
+      cc: params.cc,
+      reply_to: params.replyTo,
+      subject: params.subject,
+      text: params.body,
+      html: renderCarouselRequestEmailHtml(params.body),
+    }),
+  })
+  if (!res.ok) {
+    return { error: `RESEND_REQUEST_FAILED_${res.status}` }
+  }
+  const json = (await res.json()) as { id?: string }
+  return { id: json.id ?? '' }
+}
