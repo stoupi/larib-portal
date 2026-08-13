@@ -35,6 +35,9 @@ import { createStudy, updateStudy, deleteStudy, importClinicalTrialStudy, setStu
 import { previewCentreResolutions } from '@/lib/services/publications/centre-resolve'
 import { previewInvestigatorResolutions, listAuthorOptions } from '@/lib/services/publications/investigator-resolve'
 import { fetchClinicalTrial, normaliseNctId } from '@/lib/services/publications/clinicaltrials'
+import { getCarouselEmailData, markCarouselEmailSent } from '@/lib/services/publications/carousel-email'
+import { CAROUSEL_CC_RECIPIENTS, CAROUSEL_REPLY_TO } from '@/lib/publications/carousel-email'
+import { sendCarouselRequestEmail } from '@/lib/services/email'
 
 export const searchBacklogAction = appAdminAction('PUBLICATIONS')
   .inputSchema(z.object({ query: z.string().min(1), retmax: z.number().int().min(1).max(500).optional() }))
@@ -718,4 +721,36 @@ export const resolveAuthorRequestAction = appAdminAction('PUBLICATIONS')
     const result = await resolveAuthorRequest(parsedInput.id, ctx.userId, parsedInput.outcome)
     revalidateTag(PUBLICATIONS_REQUESTS_TAG)
     return result
+  })
+
+export const prepareCarouselEmailAction = appAdminAction('PUBLICATIONS')
+  .inputSchema(z.object({ articleId: z.string().min(1) }))
+  .action(async ({ parsedInput }) => {
+    const data = await getCarouselEmailData(parsedInput.articleId)
+    if (!data) throw new Error('NOT_FOUND')
+    return data
+  })
+
+export const sendCarouselEmailAction = appAdminAction('PUBLICATIONS')
+  .inputSchema(
+    z.object({
+      articleId: z.string().min(1),
+      to: z.string().email(),
+      subject: z.string().min(1),
+      body: z.string().min(1),
+    }),
+  )
+  .action(async ({ parsedInput }) => {
+    const result = await sendCarouselRequestEmail({
+      to: parsedInput.to,
+      cc: [...CAROUSEL_CC_RECIPIENTS],
+      replyTo: CAROUSEL_REPLY_TO,
+      subject: parsedInput.subject,
+      body: parsedInput.body,
+    })
+    if ('error' in result) throw new Error(result.error)
+    const sentAt = new Date()
+    await markCarouselEmailSent(parsedInput.articleId, sentAt)
+    revalidateTag(PUBLICATIONS_ARTICLES_TAG)
+    return { sentAt: sentAt.toISOString() }
   })
