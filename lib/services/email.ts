@@ -3,6 +3,7 @@ import { renderWelcomeEmail, type WelcomeEmailParams } from '@/lib/email/welcome
 import { eachDayOfInterval, endOfDay, endOfWeek, format, isWithinInterval, startOfDay, startOfWeek } from 'date-fns'
 import { fr, enUS } from 'date-fns/locale'
 import type { RecapPeriod, RecapRow, RecapStatus } from '@/lib/services/conges/recap'
+import type { RecapArticle, RecapStatusValue } from '@/lib/publications/recap'
 
 export async function sendWelcomeEmail(params: WelcomeEmailParams): Promise<{ id: string } | { error: string }>
 {
@@ -577,6 +578,102 @@ export async function sendLeaveRecapEmail(
     method: 'POST',
     headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({ from, to: params.to, subject, text, html }),
+  })
+  if (!res.ok) {
+    return { error: `RESEND_REQUEST_FAILED_${res.status}` }
+  }
+  const json = (await res.json()) as { id?: string }
+  return { id: json.id ?? '' }
+}
+
+export type PublicationsRecapEmailParams = {
+  locale: 'en' | 'fr'
+  firstName: string | null
+  articles: RecapArticle[]
+  appUrl: string
+}
+
+const PUBLICATION_STATUS_STYLE: Record<
+  RecapStatusValue,
+  { bgColor: string; label: Record<'fr' | 'en', string> }
+> = {
+  IN_PREPARATION: { bgColor: '#64748b', label: { fr: 'En préparation', en: 'In preparation' } },
+  UNDER_REVIEW: { bgColor: '#3b82f6', label: { fr: 'En revue', en: 'Under review' } },
+  TO_RESUBMIT: { bgColor: '#ea580c', label: { fr: 'À resoumettre', en: 'To resubmit' } },
+}
+
+export function renderPublicationsRecapEmail({
+  locale,
+  firstName,
+  articles,
+  appUrl,
+}: PublicationsRecapEmailParams): { subject: string; text: string; html: string } {
+  const subject =
+    locale === 'fr'
+      ? 'Vos publications en cours — récap mensuel'
+      : 'Your in-progress publications — monthly recap'
+  const greetingWithoutName = locale === 'fr' ? 'Bonjour,' : 'Hello,'
+  const greeting = firstName
+    ? locale === 'fr'
+      ? `Bonjour ${firstName},`
+      : `Hello ${firstName},`
+    : greetingWithoutName
+  const intro =
+    locale === 'fr'
+      ? 'Voici l’état de vos publications en cours dans le portail :'
+      : 'Here is the current state of your in-progress publications in the portal:'
+  const callToAction =
+    locale === 'fr'
+      ? 'Si un statut ou une information n’est plus exact, merci de le mettre à jour dans l’app.'
+      : 'If a status or any detail is no longer accurate, please update it in the app.'
+  const buttonLabel = locale === 'fr' ? 'Ouvrir mes publications' : 'Open my publications'
+  const publicationsLink = `${appUrl}/${locale}/publications`
+  const noJournalLabel = locale === 'fr' ? 'aucun journal visé' : 'no target journal'
+  const positionLabel = locale === 'fr' ? 'position auteur' : 'author position'
+
+  const textLines = articles.map((article) => {
+    const statusLabel = PUBLICATION_STATUS_STYLE[article.status].label[locale]
+    const journalLabel = article.journalName ?? noJournalLabel
+    return `- ${article.title} [${statusLabel}] — ${journalLabel} — ${positionLabel} ${article.order}/${article.totalAuthors}`
+  })
+  const text = `${greeting}\n\n${intro}\n\n${textLines.join('\n')}\n\n${callToAction}\n${publicationsLink}`
+
+  const articleRows = articles
+    .map((article) => {
+      const style = PUBLICATION_STATUS_STYLE[article.status]
+      const journalLabel = article.journalName ?? noJournalLabel
+      return `<tr>
+      <td style="padding:10px 12px;border-bottom:1px solid ${COLORS.border};font-family:${FONT_SANS};font-size:14px;color:${COLORS.foreground};">${article.title}<br /><span style="font-size:12px;color:${COLORS.mutedForeground};">${journalLabel} · ${article.order}/${article.totalAuthors}</span></td>
+      <td style="padding:10px 12px;border-bottom:1px solid ${COLORS.border};text-align:right;white-space:nowrap;"><span style="background-color:${style.bgColor};border-radius:4px;padding:3px 8px;font-family:${FONT_SANS};font-size:11px;color:#ffffff;">${style.label[locale]}</span></td>
+    </tr>`
+    })
+    .join('')
+
+  const body = `<p style="margin:0 0 16px 0;font-family:${FONT_SANS};font-size:15px;color:${COLORS.foreground};">${greeting}</p>
+    <p style="margin:0 0 16px 0;font-family:${FONT_SANS};font-size:14px;color:${COLORS.foreground};">${intro}</p>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">${articleRows}</table>
+    <p style="margin:20px 0 16px 0;font-family:${FONT_SANS};font-size:14px;color:${COLORS.foreground};">${callToAction}</p>
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:0 auto;"><tr>
+      <td style="background-color:${COLORS.primary};border-radius:8px;">
+        <a href="${publicationsLink}" target="_blank" style="display:inline-block;padding:12px 28px;font-family:${FONT_SANS};font-size:14px;font-weight:600;color:${COLORS.primaryForeground};text-decoration:none;">${buttonLabel}</a>
+      </td>
+    </tr></table>`
+
+  return { subject, text, html: emailLayout(body, subject) }
+}
+
+export async function sendPublicationsRecapEmail(
+  params: PublicationsRecapEmailParams & { to: string },
+): Promise<{ id: string } | { error: string }> {
+  const { subject, text, html } = renderPublicationsRecapEmail(params)
+  const apiKey = process.env.RESEND_API_KEY
+  if (!apiKey) return { error: 'RESEND_API_KEY missing' }
+  const fromEmail = process.env.RESEND_FROM || 'noreply@your-domain.com'
+  const from = `Larib Portal <${fromEmail}>`
+  const res = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ from, to: [params.to], subject, text, html }),
   })
   if (!res.ok) {
     return { error: `RESEND_REQUEST_FAILED_${res.status}` }
