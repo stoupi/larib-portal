@@ -19,6 +19,7 @@ const UpdateSelfSchema = z.object({
   applications: z.array(z.enum(["BESTOF_LARIB","CONGES","PUBLICATIONS"]))
     .optional(),
   locale: z.enum(["en","fr"]).optional(),
+  publicationsEmailOptOut: z.boolean().optional(),
 })
 
 export const updateSelfProfileAction = authenticatedAction
@@ -39,6 +40,7 @@ export const updateSelfProfileAction = authenticatedAction
       language,
       position: parsedInput.position ?? null,
       profilePhoto: parsedInput.profilePhoto || null,
+      publicationsEmailOptOut: parsedInput.publicationsEmailOptOut,
     } as const
 
     if (isAdmin) {

@@ -13,6 +13,7 @@ import { toast } from "sonner"
 import { COUNTRIES } from "@/lib/countries"
 import { createPositionAction } from "@/actions/positions"
 import { FileUpload } from "@/components/ui/file-upload"
+import { Switch } from "@/components/ui/switch"
 import { InputDialog } from "@/components/ui/input-dialog"
 import { Save, Shield } from "lucide-react"
 import { accessibleApplications, canAdminApp } from "@/lib/permissions"
@@ -30,6 +31,7 @@ const Schema = z.object({
   role: z.enum(["ADMIN","USER"]).optional(),
   applications: z.array(z.enum(["BESTOF_LARIB","CONGES","PUBLICATIONS"]))
     .optional(),
+  publicationsEmailOptOut: z.boolean().optional(),
 })
 
 export type ProfileEditorValues = z.infer<typeof Schema>
@@ -45,6 +47,7 @@ type Props = {
     email: string
     isAdmin: boolean
     adminApplications?: Application[]
+    hasPublicationsApp?: boolean
   }
   positions?: Array<{ id: string; name: string }>
 }
@@ -99,6 +102,7 @@ export function ProfileEditor({ initial, positions = [] }: Props) {
       position: initial.isAdmin ? toNullIfEmpty(v.position) as string | null | undefined : (initial.position ?? null),
       country: toNullIfEmpty(v.country) as string | null | undefined,
       profilePhoto: toNullIfEmpty(v.profilePhoto) as string | null | undefined,
+      publicationsEmailOptOut: initial.hasPublicationsApp ? v.publicationsEmailOptOut ?? false : undefined,
       // role & applications are display-only on the profile (managed in /admin/users) — never sent
     }
 
@@ -301,6 +305,19 @@ export function ProfileEditor({ initial, positions = [] }: Props) {
             )}
           </div>
         </div>
+
+        {initial.hasPublicationsApp && (
+          <div className="mt-4 flex items-center justify-between gap-4 rounded-lg border border-line bg-gray-50 px-3 py-2.5">
+            <label htmlFor="publications-email-opt-out" className="text-sm font-medium text-text-primary">
+              {tProfile('publicationsEmailOptOut')}
+            </label>
+            <Switch
+              id="publications-email-opt-out"
+              checked={form.watch('publicationsEmailOptOut') ?? false}
+              onCheckedChange={(checked) => form.setValue('publicationsEmailOptOut', checked)}
+            />
+          </div>
+        )}
       </section>
 
       <div className="flex justify-end border-t border-line pt-4">

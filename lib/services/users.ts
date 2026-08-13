@@ -81,6 +81,7 @@ export type UpdateUserInput = {
   profilePhoto?: string | null
   profilePhotoKey?: string | null
   congesTotalDays?: number
+  publicationsEmailOptOut?: boolean
   applications?: Array<'BESTOF_LARIB' | 'CONGES' | 'PUBLICATIONS'>
   adminApplications?: Array<'BESTOF_LARIB' | 'CONGES' | 'PUBLICATIONS'>
 }

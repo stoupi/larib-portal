@@ -110,7 +110,8 @@
     "sectionRoleAccess": "Rôle & accès",
     "profilePhotoHelp": "PNG, JPG ou WEBP jusqu'à 5 Mo",
     "selectImage": "Choisir une image",
-    "allowedApplications": "Applications autorisées"
+    "allowedApplications": "Applications autorisées",
+    "publicationsEmailOptOut": "Ne plus recevoir le récap mensuel Publications"
   },
   "dashboard": {
     "title": "Tableau de bord",

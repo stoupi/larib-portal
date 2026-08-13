@@ -112,7 +112,8 @@
     "sectionRoleAccess": "Role & access",
     "profilePhotoHelp": "PNG, JPG, or WEBP up to 5MB",
     "selectImage": "Select image",
-    "allowedApplications": "Allowed applications"
+    "allowedApplications": "Allowed applications",
+    "publicationsEmailOptOut": "Stop receiving the monthly Publications recap"
   },
   "dashboard": {
     "title": "Dashboard",

@@ -5,7 +5,7 @@ import { ProfileEditor } from "./profile-editor";
 import { PageHeader } from "@/app/[locale]/components/page-header";
 import { listPositions } from "@/lib/services/positions";
 import { prisma } from "@/lib/prisma";
-import { isSuperAdmin } from "@/lib/permissions";
+import { canAccessApp, isSuperAdmin } from "@/lib/permissions";
 
 export default async function ProfilePage({ params }: { params: Promise<{ locale: string }> }) {
   const session = await getTypedSession()
@@ -30,6 +30,7 @@ export default async function ProfilePage({ params }: { params: Promise<{ locale
       role: true,
       applications: true,
       adminApplications: true,
+      publicationsEmailOptOut: true,
     }
   })
 
@@ -55,6 +56,8 @@ export default async function ProfilePage({ params }: { params: Promise<{ locale
     role: user.role,
     applications: (user.applications ?? []) as ['BESTOF_LARIB' | 'CONGES' | 'PUBLICATIONS'] | undefined,
     adminApplications: user.adminApplications ?? [],
+    publicationsEmailOptOut: user.publicationsEmailOptOut,
+    hasPublicationsApp: canAccessApp(user, 'PUBLICATIONS'),
   }
 
   return (
