@@ -1701,6 +1701,22 @@
         "CO_INVESTIGATOR": "Co-investigator"
       }
     },
+    "carouselEmail": {
+      "dialogTitle": "LinkedIn carousel email",
+      "dialogDescription": "Review and adjust the email before sending it to the first author.",
+      "toLabel": "Recipient (first author)",
+      "ccLabel": "Cc",
+      "subjectLabel": "Subject",
+      "bodyLabel": "Message",
+      "missingEmail": "No known address for the first author — type it manually.",
+      "send": "Send",
+      "later": "Later",
+      "sentToast": "Carousel email sent",
+      "errorToast": "Failed to send the email",
+      "badgeSent": "Carousel email sent on {date}",
+      "badgeNotSent": "Carousel email not sent",
+      "openDialog": "Prepare carousel email"
+    },
     "adminHome": {
       "title": "Publications dashboard",
       "subtitle": "Manage the team's bibliographic library: articles, authors, centres, journals and studies.",

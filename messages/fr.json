@@ -1699,6 +1699,22 @@
         "CO_INVESTIGATOR": "Co-investigateur"
       }
     },
+    "carouselEmail": {
+      "dialogTitle": "Mail carrousel LinkedIn",
+      "dialogDescription": "Relis et ajuste le mail avant envoi au 1er auteur.",
+      "toLabel": "Destinataire (1er auteur)",
+      "ccLabel": "En copie",
+      "subjectLabel": "Objet",
+      "bodyLabel": "Message",
+      "missingEmail": "Aucune adresse connue pour le 1er auteur — saisis-la manuellement.",
+      "send": "Envoyer",
+      "later": "Plus tard",
+      "sentToast": "Mail carrousel envoyé",
+      "errorToast": "Échec de l'envoi du mail",
+      "badgeSent": "Mail carrousel envoyé le {date}",
+      "badgeNotSent": "Mail carrousel non envoyé",
+      "openDialog": "Préparer le mail carrousel"
+    },
     "adminHome": {
       "title": "Tableau de bord des publications",
       "subtitle": "Gérez la bibliothèque bibliographique de l’équipe : articles, auteurs, centres, revues et études.",
