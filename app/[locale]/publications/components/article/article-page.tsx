@@ -30,6 +30,7 @@ import { EditorJournalQueue } from '../editor/editor-journal-queue'
 import { EditorPdf } from '../editor/editor-pdf'
 import { ArticleReadingHeader } from './article-reading-header'
 import { ArticleAbstractTimeline } from './article-abstract-timeline'
+import { CarouselEmailDialog, useCarouselEmailDialog } from './carousel-email-dialog'
 
 const FormSchema = z.object({
   title: z.string(),
@@ -88,9 +89,17 @@ export function ArticlePage({
   const form = useForm<EditorFormValues>({ resolver: zodResolver(FormSchema), defaultValues: defaults })
   const { isDirty } = form.formState
 
+  const carouselDialog = useCarouselEmailDialog()
+  const [persistedStatus, setPersistedStatus] = useState(article.status)
+
   const save = useAction(updateArticleCoreAction, {
     onSuccess() {
       toast.success(t('editor.saved'))
+      const savedStatus = form.getValues('status')
+      if (viewer.isAdmin && persistedStatus !== 'ACCEPTED' && savedStatus === 'ACCEPTED') {
+        carouselDialog.openFor(article.id)
+      }
+      setPersistedStatus(savedStatus)
       form.reset(form.getValues())
       router.refresh()
     },
@@ -227,6 +236,7 @@ export function ArticlePage({
           </div>
         </div>
       </div>
+      <CarouselEmailDialog controller={carouselDialog} />
     </div>
   )
 }
