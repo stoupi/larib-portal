@@ -90,9 +90,6 @@ export function ArticlePage({
   const { isDirty } = form.formState
 
   const carouselDialog = useCarouselEmailDialog()
-  // A ref, not state: next-safe-action keeps the callbacks from the first render, so a
-  // state variable read here would still hold the status the page was opened with and
-  // the dialog would reopen on every later save.
   const persistedStatus = useRef(article.status)
 
   const save = useAction(updateArticleCoreAction, {

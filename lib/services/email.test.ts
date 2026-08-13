@@ -79,6 +79,27 @@ describe('renderPublicationsRecapEmail', () => {
     expect(html).toContain('https://portal.test/en/publications')
     expect(html).toContain('Hello,')
   })
+
+  it('escapes article titles and journal names in the HTML body', () => {
+    const { html } = renderPublicationsRecapEmail({
+      locale: 'en',
+      firstName: 'Marie',
+      articles: [
+        {
+          id: '1',
+          title: 'Survival < 10% & the <script>alert(1)</script> case',
+          status: 'UNDER_REVIEW',
+          journalName: 'Heart & Vessels <Suppl>',
+          order: 1,
+          totalAuthors: 2,
+        },
+      ],
+      appUrl: 'https://portal.test',
+    })
+    expect(html).not.toContain('<script>')
+    expect(html).toContain('Survival &lt; 10% &amp; the &lt;script&gt;')
+    expect(html).toContain('Heart &amp; Vessels &lt;Suppl&gt;')
+  })
 })
 
 describe('renderCarouselRequestEmailHtml', () => {

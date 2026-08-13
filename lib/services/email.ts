@@ -641,9 +641,9 @@ export function renderPublicationsRecapEmail({
   const articleRows = articles
     .map((article) => {
       const style = PUBLICATION_STATUS_STYLE[article.status]
-      const journalLabel = article.journalName ?? noJournalLabel
+      const journalLabel = escapeHtml(article.journalName ?? noJournalLabel)
       return `<tr>
-      <td style="padding:10px 12px;border-bottom:1px solid ${COLORS.border};font-family:${FONT_SANS};font-size:14px;color:${COLORS.foreground};">${article.title}<br /><span style="font-size:12px;color:${COLORS.mutedForeground};">${journalLabel} · ${article.order}/${article.totalAuthors}</span></td>
+      <td style="padding:10px 12px;border-bottom:1px solid ${COLORS.border};font-family:${FONT_SANS};font-size:14px;color:${COLORS.foreground};">${escapeHtml(article.title)}<br /><span style="font-size:12px;color:${COLORS.mutedForeground};">${journalLabel} · ${article.order}/${article.totalAuthors}</span></td>
       <td style="padding:10px 12px;border-bottom:1px solid ${COLORS.border};text-align:right;white-space:nowrap;"><span style="background-color:${style.bgColor};border-radius:4px;padding:3px 8px;font-family:${FONT_SANS};font-size:11px;color:#ffffff;">${style.label[locale]}</span></td>
     </tr>`
     })
