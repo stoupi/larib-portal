@@ -336,6 +336,53 @@ async function main() {
 			authorships: { create: [{ order: 1, author: { connect: { id: publicationsFirstAuthor.id } } }] },
 		},
 	});
+	// Dedicated fixture for the carousel email flow: its own authors and a submission
+	// carrying the journal name the email draft quotes. They stay EXTERNAL and their
+	// last names sort last, so the author picker "team" tab and the author-merge spec
+	// keep seeing exactly the rows they already assert on.
+	const carouselFirstAuthor = await prisma.author.create({
+		data: {
+			firstName: 'Nina',
+			lastName: 'Zellweger',
+			degrees: 'MD',
+			type: 'EXTERNAL',
+			centre: { connect: { name: 'Università degli Studi di Milano' } },
+			emails: ['nina.zellweger@larib-portal.test'],
+		},
+	});
+	const carouselLastAuthor = await prisma.author.create({
+		data: {
+			firstName: 'Marc',
+			lastName: 'Zurbrugg',
+			degrees: 'MD, PhD',
+			type: 'EXTERNAL',
+			centre: { connect: { name: 'Università degli Studi di Milano' } },
+			emails: ['marc.zurbrugg@larib-portal.test'],
+		},
+	});
+	await prisma.article.create({
+		data: {
+			title: 'Carousel pilot: valvular imaging in routine practice',
+			type: 'ORIGINAL',
+			status: 'UNDER_REVIEW',
+			createdBy: { connect: { id: publicationsAdmin.id } },
+			authorships: {
+				create: [
+					{ order: 1, author: { connect: { id: carouselFirstAuthor.id } } },
+					{ order: 2, isCorresponding: true, author: { connect: { id: carouselLastAuthor.id } } },
+				],
+			},
+			submissions: {
+				create: [
+					{
+						journal: { connect: { id: publicationsJournal.id } },
+						submittedAt: new Date('2026-01-15T00:00:00.000Z'),
+						status: 'SUBMITTED',
+					},
+				],
+			},
+		},
+	});
 	console.log('✅ Created publications sample data');
 
 	// Create exam types first (using upsert to handle duplicates)

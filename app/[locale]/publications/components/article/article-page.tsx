@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useForm, type UseFormReturn } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -90,16 +90,19 @@ export function ArticlePage({
   const { isDirty } = form.formState
 
   const carouselDialog = useCarouselEmailDialog()
-  const [persistedStatus, setPersistedStatus] = useState(article.status)
+  // A ref, not state: next-safe-action keeps the callbacks from the first render, so a
+  // state variable read here would still hold the status the page was opened with and
+  // the dialog would reopen on every later save.
+  const persistedStatus = useRef(article.status)
 
   const save = useAction(updateArticleCoreAction, {
     onSuccess() {
       toast.success(t('editor.saved'))
       const savedStatus = form.getValues('status')
-      if (viewer.isAdmin && persistedStatus !== 'ACCEPTED' && savedStatus === 'ACCEPTED') {
+      if (viewer.isAdmin && persistedStatus.current !== 'ACCEPTED' && savedStatus === 'ACCEPTED') {
         carouselDialog.openFor(article.id)
       }
-      setPersistedStatus(savedStatus)
+      persistedStatus.current = savedStatus
       form.reset(form.getValues())
       router.refresh()
     },
