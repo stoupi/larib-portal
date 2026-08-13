@@ -1,6 +1,7 @@
 {
   "crons": [
     { "path": "/api/cron/conges-recap?period=monthly", "schedule": "0 6 1 * *" },
-    { "path": "/api/cron/conges-recap?period=weekly", "schedule": "0 6 * * 1" }
+    { "path": "/api/cron/conges-recap?period=weekly", "schedule": "0 6 * * 1" },
+    { "path": "/api/cron/publications-recap", "schedule": "0 6 1 * *" }
   ]
 }
