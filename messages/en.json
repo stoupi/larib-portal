@@ -1712,10 +1712,7 @@
       "send": "Send",
       "later": "Later",
       "sentToast": "Carousel email sent",
-      "errorToast": "Failed to send the email",
-      "badgeSent": "Carousel email sent on {date}",
-      "badgeNotSent": "Carousel email not sent",
-      "openDialog": "Prepare carousel email"
+      "errorToast": "Failed to send the email"
     },
     "adminHome": {
       "title": "Publications dashboard",
@@ -1786,7 +1783,27 @@
       "centresDescription": "Affiliations, “ours” flagged",
       "journalsDescription": "Impact factor and SJR",
       "studiesDescription": "Investigators and centres",
-      "backToDashboard": "Publications dashboard"
+      "backToDashboard": "Publications dashboard",
+      "communicationTitle": "Communication",
+      "communicationDescription": "LinkedIn carousel emails to send"
+    },
+    "communication": {
+      "title": "Communication",
+      "subtitle": "Accepted and published articles, with the LinkedIn carousel email to send to the first author.",
+      "searchPlaceholder": "Search an article, a journal, an author…",
+      "tab": {
+        "pending": "To send",
+        "sent": "Sent",
+        "all": "All"
+      },
+      "empty": "No article in this list.",
+      "untitled": "Untitled",
+      "tagPending": "Email to send",
+      "tagSent": "Sent on {date}",
+      "sendEmail": "Send email",
+      "resendEmail": "Send again",
+      "cardTitle": "Communication",
+      "cardDescription": "LinkedIn carousel email asking the first author for the material that showcases the article."
     }
   }
 }

@@ -103,6 +103,7 @@ export async function getPublicationForEdit(articleId: string) {
       receivedAt: true,
       acceptedAt: true,
       reviewDelayDays: true,
+      carouselEmailSentAt: true,
       publishedJournal: { select: { name: true, abbreviation: true } },
       authorships: {
         orderBy: { order: 'asc' },

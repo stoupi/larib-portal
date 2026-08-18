@@ -1,8 +1,9 @@
 import { test, expect, type Locator, type Page } from '@playwright/test'
 
-test.setTimeout(120000)
+test.setTimeout(180000)
 
 const CAROUSEL_ARTICLE = 'Carousel pilot: valvular imaging in routine practice'
+const COMMUNICATED_ARTICLE = 'Carousel done: strain imaging after valve repair'
 const FIRST_AUTHOR_EMAIL = 'nina.zellweger@larib-portal.test'
 
 async function login(page: Page, email: string): Promise<void> {
@@ -23,9 +24,25 @@ async function expectPrefilledDraft(dialog: Locator): Promise<void> {
   await expect(body).toHaveValue(/Marc ZURBRUGG/)
 }
 
-test('an admin accepting an article prepares the carousel email, defers it and reopens it from the library', async ({ page }) => {
+function communicationRow(page: Page, title: string, sendLabel: string): Locator {
+  return page
+    .locator('div')
+    .filter({ has: page.getByRole('link', { name: title }) })
+    .filter({ has: page.getByRole('button', { name: sendLabel }) })
+    .last()
+}
+
+test('an admin accepts an article, defers the carousel email and sends it from the Communication module', async ({
+  page,
+}) => {
   await login(page, 'publications-admin@larib-portal.test')
   await page.goto('/en/publications/admin', { timeout: 60000 })
+
+  // The dashboard sends admins to the dedicated Communication module
+  const communicationModule = page.getByRole('link').filter({ hasText: 'LinkedIn carousel emails to send' })
+  await expect(communicationModule).toBeVisible({ timeout: 30000 })
+  // The article list itself no longer carries the carousel affordances
+  await expect(page.getByRole('button', { name: 'Send email' })).toHaveCount(0)
 
   const titleLink = page.getByRole('link', { name: CAROUSEL_ARTICLE })
   await expect(titleLink).toBeVisible({ timeout: 30000 })
@@ -55,9 +72,13 @@ test('an admin accepting an article prepares the carousel email, defers it and r
   await expect(dialog.getByText('camille.gersdorff.com@gmail.com')).toBeVisible()
   await expect(dialog.getByText('No known address for the first author — type it manually.')).toHaveCount(0)
 
-  // "Later" leaves the email unsent: the library says so and offers to compose it again
+  // "Later" leaves the email unsent: the article page keeps a Communication card to compose it again
   await dialog.getByRole('button', { name: 'Later' }).click()
   await expect(dialog).toBeHidden({ timeout: 15000 })
+  await expect(
+    page.getByText('LinkedIn carousel email asking the first author for the material that showcases the article.'),
+  ).toBeVisible({ timeout: 20000 })
+  await expect(page.getByText('Email to send')).toBeVisible()
 
   // A later save that does not change the status must not push the composer back
   await page.getByRole('textbox', { name: 'DOI' }).fill(`10.1000/carousel-e2e-${Date.now()}`)
@@ -65,33 +86,46 @@ test('an admin accepting an article prepares the carousel email, defers it and r
   await expect(page.getByText('Changes saved')).toBeVisible({ timeout: 20000 })
   await expect(dialog).toBeHidden()
 
-  await page.goto('/en/publications/admin', { timeout: 60000 })
-  const articleRow = page
-    .locator('div')
-    .filter({ has: page.getByRole('link', { name: CAROUSEL_ARTICLE }) })
-    .filter({ has: page.getByRole('button', { name: 'Prepare carousel email' }) })
-    .last()
-  await expect(articleRow.getByText('Carousel email not sent')).toBeVisible({ timeout: 30000 })
+  // The card composes the very same draft on demand
+  await page.getByRole('button', { name: 'Send email' }).click()
+  const cardDialog = page.getByRole('dialog')
+  await expectPrefilledDraft(cardDialog)
+  await cardDialog.getByRole('button', { name: 'Later' }).click()
+  await expect(cardDialog).toBeHidden({ timeout: 15000 })
 
-  await articleRow.getByRole('button', { name: 'Prepare carousel email' }).click()
-  const libraryDialog = page.getByRole('dialog')
-  await expect(libraryDialog).toBeVisible({ timeout: 20000 })
-  await expectPrefilledDraft(libraryDialog)
-  await libraryDialog.getByRole('button', { name: 'Later' }).click()
-  await expect(libraryDialog).toBeHidden({ timeout: 15000 })
+  // The Communication module splits what is still to send from what has been sent
+  await page.goto('/en/publications/admin/communication', { timeout: 60000 })
+  await expect(page.getByRole('heading', { name: 'Communication', level: 1 })).toBeVisible({ timeout: 30000 })
+  const pendingRow = communicationRow(page, CAROUSEL_ARTICLE, 'Send email')
+  await expect(pendingRow.getByText('Email to send')).toBeVisible({ timeout: 30000 })
+  await expect(pendingRow.getByText('Accepted')).toBeVisible()
+  await expect(page.getByRole('link', { name: COMMUNICATED_ARTICLE })).toHaveCount(0)
 
-  // The same affordances are translated for the French locale
-  await page.goto('/fr/publications/admin', { timeout: 60000 })
-  const frenchRow = page
-    .locator('div')
-    .filter({ has: page.getByRole('link', { name: CAROUSEL_ARTICLE }) })
-    .filter({ has: page.getByRole('button', { name: 'Préparer le mail carrousel' }) })
-    .last()
-  await expect(frenchRow.getByText('Mail carrousel non envoyé')).toBeVisible({ timeout: 30000 })
-  await frenchRow.getByRole('button', { name: 'Préparer le mail carrousel' }).click()
+  await pendingRow.getByRole('button', { name: 'Send email' }).click()
+  const moduleDialog = page.getByRole('dialog')
+  await expect(moduleDialog).toBeVisible({ timeout: 20000 })
+  await expectPrefilledDraft(moduleDialog)
+  await moduleDialog.getByRole('button', { name: 'Later' }).click()
+  await expect(moduleDialog).toBeHidden({ timeout: 15000 })
+
+  await page.getByRole('button', { name: /^Sent/ }).click()
+  const sentRow = communicationRow(page, COMMUNICATED_ARTICLE, 'Send again')
+  await expect(sentRow.getByText(/Sent on/)).toBeVisible({ timeout: 20000 })
+  await expect(page.getByRole('link', { name: CAROUSEL_ARTICLE })).toHaveCount(0)
+
+  // The same module is translated for the French locale
+  await page.goto('/fr/publications/admin/communication', { timeout: 60000 })
+  const frenchRow = communicationRow(page, CAROUSEL_ARTICLE, 'Envoyer le mail')
+  await expect(frenchRow.getByText('Mail à envoyer')).toBeVisible({ timeout: 30000 })
+  await frenchRow.getByRole('button', { name: 'Envoyer le mail' }).click()
   const frenchDialog = page.getByRole('dialog')
   await expect(frenchDialog.getByRole('heading', { name: 'Mail carrousel LinkedIn' })).toBeVisible({ timeout: 20000 })
   await expect(frenchDialog.getByLabel('Destinataire (1er auteur)')).toHaveValue(FIRST_AUTHOR_EMAIL, { timeout: 20000 })
   await frenchDialog.getByRole('button', { name: 'Plus tard' }).click()
   await expect(frenchDialog).toBeHidden({ timeout: 15000 })
+
+  await page.getByRole('button', { name: /^Envoyés/ }).click()
+  await expect(communicationRow(page, COMMUNICATED_ARTICLE, 'Renvoyer le mail').getByText(/Envoyé le/)).toBeVisible({
+    timeout: 20000,
+  })
 })

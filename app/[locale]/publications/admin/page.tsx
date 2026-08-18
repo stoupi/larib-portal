@@ -10,6 +10,7 @@ import { countAuthors } from '@/lib/services/publications/authors'
 import { countCentres } from '@/lib/services/publications/centres'
 import { countStudies, listStudyOptions } from '@/lib/services/publications/studies'
 import { countJournals, listJournalNames } from '@/lib/services/publications/journals'
+import { countPendingCarouselEmails } from '@/lib/services/publications/communication'
 
 type PageParams = {
   params: Promise<{ locale: 'en' | 'fr' }>
@@ -23,7 +24,17 @@ export default async function PublicationsAdminPage({ params }: PageParams) {
     redirect(applicationLink(locale, '/publications'))
   }
 
-  const [authorRequests, articles, studies, journalNames, authorCount, centreCount, studyCount, journalCount] = await Promise.all([
+  const [
+    authorRequests,
+    articles,
+    studies,
+    journalNames,
+    authorCount,
+    centreCount,
+    studyCount,
+    journalCount,
+    pendingCommunications,
+  ] = await Promise.all([
     listPendingAuthorRequests(),
     listDashboardArticles(),
     listStudyOptions(),
@@ -32,6 +43,7 @@ export default async function PublicationsAdminPage({ params }: PageParams) {
     countCentres(),
     countStudies(),
     countJournals(),
+    countPendingCarouselEmails(),
   ])
 
   return (
@@ -48,6 +60,7 @@ export default async function PublicationsAdminPage({ params }: PageParams) {
             centres: centreCount,
             journals: journalCount,
             studies: studyCount,
+            pendingCommunications,
           }}
         />
         <AdminAuthorRequests requests={authorRequests} />

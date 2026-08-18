@@ -31,6 +31,8 @@ import { EditorPdf } from '../editor/editor-pdf'
 import { ArticleReadingHeader } from './article-reading-header'
 import { ArticleAbstractTimeline } from './article-abstract-timeline'
 import { CarouselEmailDialog, useCarouselEmailDialog } from './carousel-email-dialog'
+import { CommunicationCard } from '../communication/communication-card'
+import { COMMUNICATION_STATUSES } from '@/lib/publications/communication'
 
 const FormSchema = z.object({
   title: z.string(),
@@ -91,6 +93,8 @@ export function ArticlePage({
 
   const carouselDialog = useCarouselEmailDialog()
   const persistedStatus = useRef(article.status)
+  const showCommunicationCard =
+    basePath === PUBLICATIONS_ADMIN_BASE && viewer.isAdmin && COMMUNICATION_STATUSES.includes(article.status)
 
   const save = useAction(updateArticleCoreAction, {
     onSuccess() {
@@ -232,6 +236,14 @@ export function ArticlePage({
               }}
               editable={visibility.cardsEditable}
             />
+            {showCommunicationCard && (
+              <CommunicationCard
+                articleId={article.id}
+                carouselEmailSentAt={article.carouselEmailSentAt}
+                locale={locale}
+                controller={carouselDialog}
+              />
+            )}
             <EditorJournalQueue targets={journalTargets} />
           </div>
         </div>

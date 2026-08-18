@@ -1710,10 +1710,7 @@
       "send": "Envoyer",
       "later": "Plus tard",
       "sentToast": "Mail carrousel envoyé",
-      "errorToast": "Échec de l'envoi du mail",
-      "badgeSent": "Mail carrousel envoyé le {date}",
-      "badgeNotSent": "Mail carrousel non envoyé",
-      "openDialog": "Préparer le mail carrousel"
+      "errorToast": "Échec de l'envoi du mail"
     },
     "adminHome": {
       "title": "Tableau de bord des publications",
@@ -1784,7 +1781,27 @@
       "centresDescription": "Affiliations, centres « maison »",
       "journalsDescription": "Facteur d’impact et SJR",
       "studiesDescription": "Investigateurs et centres",
-      "backToDashboard": "Tableau de bord"
+      "backToDashboard": "Tableau de bord",
+      "communicationTitle": "Communication",
+      "communicationDescription": "Mails carrousel LinkedIn à envoyer"
+    },
+    "communication": {
+      "title": "Communication",
+      "subtitle": "Les articles acceptés et publiés, et le mail carrousel LinkedIn à envoyer au 1er auteur.",
+      "searchPlaceholder": "Rechercher un article, un journal, un auteur…",
+      "tab": {
+        "pending": "À envoyer",
+        "sent": "Envoyés",
+        "all": "Tous"
+      },
+      "empty": "Aucun article dans cette liste.",
+      "untitled": "Sans titre",
+      "tagPending": "Mail à envoyer",
+      "tagSent": "Envoyé le {date}",
+      "sendEmail": "Envoyer le mail",
+      "resendEmail": "Renvoyer le mail",
+      "cardTitle": "Communication",
+      "cardDescription": "Mail carrousel LinkedIn demandant au 1er auteur les éléments pour valoriser l'article."
     }
   }
 }

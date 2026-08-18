@@ -383,6 +383,30 @@ async function main() {
 			},
 		},
 	});
+	// Already communicated: the Communication module lists it under "Sent" with the green tag.
+	// It signs its own author: the authors table sorts by authorship count first, so giving a
+	// second paper to Nina or Marc would push them into the top rows the author-merge spec merges.
+	const communicatedAuthor = await prisma.author.create({
+		data: {
+			firstName: 'Yara',
+			lastName: 'Zwicky',
+			degrees: 'MD',
+			type: 'EXTERNAL',
+			centre: { connect: { name: 'Università degli Studi di Milano' } },
+			emails: ['yara.zwicky@larib-portal.test'],
+		},
+	});
+	await prisma.article.create({
+		data: {
+			title: 'Carousel done: strain imaging after valve repair',
+			type: 'ORIGINAL',
+			status: 'PUBLISHED',
+			publishedAt: new Date('2026-02-20T00:00:00.000Z'),
+			carouselEmailSentAt: new Date('2026-02-24T00:00:00.000Z'),
+			createdBy: { connect: { id: publicationsAdmin.id } },
+			authorships: { create: [{ order: 1, author: { connect: { id: communicatedAuthor.id } } }] },
+		},
+	});
 	console.log('✅ Created publications sample data');
 
 	// Create exam types first (using upsert to handle duplicates)
