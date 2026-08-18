@@ -18,7 +18,7 @@
 ## Git workflow: commit and push often, ship to `main`
 
 - **Commit as soon as a coherent unit of work is done**, not only at the end of the task. Push often rather than piling up local commits — an unpushed commit is not deployed.
-- **Work directly on `main` by default.** Only branch when concurrent sessions would collide on the same files, and say why.
+- **Work directly on `main` by default.** For a small fix or cosmetic tweak, stay on `main`. But when a request reads as a real feature or substantial development — not "fix this label", but "build this" — proactively propose a worktree *before* starting, and say why: the user routinely runs several Claude terminals on this repo at once, and parallel sessions editing the same files without isolation is a recurring, real source of conflicts (see `[[concurrent-sessions-shared-worktree]]` in memory). If the user declines, work on `main` as usual.
 - **Never open a PR or MR.** Push straight to `main`; every push to `main` deploys to production.
 - **When a task finishes on a branch, always offer to merge it into `main` and push.** A finished branch left behind never reaches production — check with `git log --oneline main..<branch>` before concluding.
 - **Verify the current branch before any commit or push** and name it if it is not `main`: parallel sessions share this checkout and may have switched it.
