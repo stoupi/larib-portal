@@ -6,7 +6,17 @@ import { cn } from '@/lib/utils'
 import type { PublicationStats } from '@/lib/publications/stats'
 import { ARTICLE_STATUS_TONE, TONE_DOT_HEX } from '@/lib/publications/status-display'
 import { ARTICLE_TYPE_BAR_HEX } from '@/lib/publications/article-type'
+import { Slider } from '@/components/ui/slider'
+import {
+  NO_YEAR_RANGE,
+  hasYearRange,
+  isYearActive,
+  yearRangeBounds,
+  yearRangePatch,
+  yearSliderPatch,
+} from '@/lib/publications/year-range'
 import type { FiltersValue } from './publications-filters'
+import { ClearFilterButton } from './admin-dashboard/clear-filter-button'
 import { StatBar, StatSectionLabel } from './stat-bar'
 
 export function PublicationsStats({
@@ -32,6 +42,9 @@ export function PublicationsStats({
   const navy = { className: 'bg-gradient-to-r from-navy-500 to-navy-600' }
   const toggle = (key: keyof FiltersValue, value: string) => () =>
     onFilter({ [key]: filters[key] === value ? 'all' : value })
+  const years = stats.perYear.map((entry) => entry.year)
+  const yearBounds = years.length > 1 ? { min: Math.min(...years), max: Math.max(...years) } : null
+  const selectedYears = yearBounds ? yearRangeBounds(filters, yearBounds) : [0, 0]
 
   return (
     <div className="rounded-2xl border border-line bg-bg-surface p-5 shadow-elevation-xs">
@@ -55,31 +68,68 @@ export function PublicationsStats({
       {open && (
         <div className="grid grid-cols-1 gap-x-6 gap-y-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
           <div>
-            <StatSectionLabel>{t('myPub.stats.perYear')}</StatSectionLabel>
+            <div className="flex items-center justify-between gap-2">
+              <StatSectionLabel>{t('myPub.stats.perYear')}</StatSectionLabel>
+              {hasYearRange(filters) && (
+                <ClearFilterButton
+                  label={t('myPub.stats.clearYear')}
+                  onClear={() => onFilter(NO_YEAR_RANGE)}
+                />
+              )}
+            </div>
             {stats.perYear.length === 0 ? (
               <p className="mt-3 text-xs text-text-muted">{t('myPub.stats.noYear')}</p>
             ) : (
-              <div className="mt-3 flex h-28 items-end gap-1.5">
-                {stats.perYear.map((entry) => (
-                  <div key={entry.year} className="flex h-full w-7 flex-col items-center justify-end gap-1.5">
-                    <span className="text-xs font-extrabold text-text-primary tabular-nums">{entry.count}</span>
-                    <div
-                      className="w-full max-w-[18px] rounded-t-md bg-gradient-to-b from-coral-500 to-coral-600"
-                      style={{ height: entry.count === 0 ? 3 : Math.round((entry.count / maxYear) * 84) }}
-                    />
-                    <span className="text-[11px] font-semibold text-text-muted tabular-nums">{entry.year}</span>
-                  </div>
-                ))}
+              <div className="mt-3 flex h-28 items-end gap-1">
+                {stats.perYear.map((entry) => {
+                  const active = isYearActive(filters, entry.year)
+                  return (
+                    <button
+                      key={entry.year}
+                      type="button"
+                      aria-pressed={active}
+                      aria-label={t('myPub.stats.yearBar', { count: entry.count, year: String(entry.year) })}
+                      onClick={() => onFilter(yearRangePatch(filters, entry.year))}
+                      className="flex h-full min-w-0 flex-1 flex-col items-center justify-end gap-1.5 rounded-lg pb-0.5 transition hover:bg-gray-50 dark:hover:bg-white/5"
+                    >
+                      <span className="text-xs font-extrabold text-text-primary tabular-nums">{entry.count}</span>
+                      <span
+                        className={cn(
+                          'w-full max-w-[18px] rounded-t-md transition-colors',
+                          active
+                            ? 'bg-gradient-to-t from-coral-600 to-coral-400'
+                            : 'bg-coral-100 dark:bg-coral-500/25',
+                        )}
+                        style={{ height: entry.count === 0 ? 3 : Math.round((entry.count / maxYear) * 84) }}
+                      />
+                      <span
+                        className={cn(
+                          'text-[11px] font-semibold tabular-nums',
+                          active ? 'text-coral-600 dark:text-coral-300' : 'text-text-muted',
+                        )}
+                      >
+                        {entry.year}
+                      </span>
+                    </button>
+                  )
+                })}
               </div>
             )}
-            {stats.undated > 0 && (
-              <div className="mt-3 max-w-[260px] border-t border-line pt-3">
-                <StatBar
-                  label={t('myPub.stats.inSubmission')}
-                  count={stats.undated}
-                  pct={Math.round((stats.undated / Math.max(1, stats.total)) * 100)}
-                  color={navy}
+            {yearBounds && (
+              <div className="mt-3 px-1.5">
+                <Slider
+                  min={yearBounds.min}
+                  max={yearBounds.max}
+                  step={1}
+                  value={selectedYears}
+                  onValueChange={([from, to]) => onFilter(yearSliderPatch(yearBounds, [from, to]))}
+                  aria-label={t('myPub.stats.yearRange')}
+                  className="[&_[data-slot=slider-range]]:bg-coral-500 [&_[data-slot=slider-thumb]]:border-coral-500 [&_[data-slot=slider-thumb]]:size-4"
                 />
+                <div className="mt-1.5 flex items-center justify-between text-[11px] text-text-secondary tabular-nums">
+                  <span>{selectedYears[0]}</span>
+                  <span>{selectedYears[1]}</span>
+                </div>
               </div>
             )}
           </div>

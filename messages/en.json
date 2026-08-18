@@ -899,7 +899,9 @@
         "byType": "By type",
         "noYear": "No year yet",
         "noJournal": "No journal yet",
-        "inSubmission": "Pending"
+        "clearYear": "Clear the year filter",
+        "yearRange": "Year range",
+        "yearBar": "{count} in {year}"
       },
       "position": {
         "first": "1st author",

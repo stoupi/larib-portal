@@ -4,6 +4,9 @@ import type { MyPublicationSubmission } from '@/lib/services/publications/my-pub
 import { ARTICLE_STATUS_VALUES, POSITION_BUCKETS, authorPositionBucket, type PositionBucket } from './status-display'
 import { matchesArticleQuery } from './article-search'
 import { ARTICLE_SCOPES, type ArticleScopeValue } from './article-scope'
+import { ALL_YEARS, matchesYearRange } from './year-range'
+
+export { isYearActive, yearRangeBounds, yearRangePatch, yearSliderPatch } from './year-range'
 
 export type DashboardArticleItem = {
   id: string
@@ -39,7 +42,7 @@ export type DashboardFilters = {
   query: string
 }
 
-export const ALL_FILTER = 'all'
+export const ALL_FILTER = ALL_YEARS
 export const NO_STUDY_FILTER = 'none'
 export const NO_JOURNAL_FILTER = 'none'
 
@@ -66,44 +69,6 @@ export function articleStudyKey(article: DashboardArticleItem): string {
 
 export function articleJournalKey(article: DashboardArticleItem): string {
   return article.journal ?? NO_JOURNAL_FILTER
-}
-
-export function isYearActive(filters: DashboardFilters, year: number): boolean {
-  if (filters.yearFrom === ALL_FILTER && filters.yearTo === ALL_FILTER) return false
-  const from = filters.yearFrom === ALL_FILTER ? Number.NEGATIVE_INFINITY : Number(filters.yearFrom)
-  const to = filters.yearTo === ALL_FILTER ? Number.POSITIVE_INFINITY : Number(filters.yearTo)
-  return year >= from && year <= to
-}
-
-export function yearRangeBounds(
-  filters: DashboardFilters,
-  bounds: { min: number; max: number },
-): [number, number] {
-  const from = filters.yearFrom === ALL_FILTER ? bounds.min : Number(filters.yearFrom)
-  const to = filters.yearTo === ALL_FILTER ? bounds.max : Number(filters.yearTo)
-  return [Math.max(bounds.min, Math.min(from, to)), Math.min(bounds.max, Math.max(from, to))]
-}
-
-// Dragging the slider back to both ends means "every year", not a range.
-export function yearSliderPatch(
-  bounds: { min: number; max: number },
-  [from, to]: [number, number],
-): Partial<DashboardFilters> {
-  if (from <= bounds.min && to >= bounds.max) return { yearFrom: ALL_FILTER, yearTo: ALL_FILTER }
-  return { yearFrom: String(from), yearTo: String(to) }
-}
-
-// Clicking a year bar starts a range, extends it on either side, and clears it
-// when the clicked year is already the only one selected.
-export function yearRangePatch(filters: DashboardFilters, year: number): Partial<DashboardFilters> {
-  const selected = String(year)
-  if (filters.yearFrom === ALL_FILTER && filters.yearTo === ALL_FILTER)
-    return { yearFrom: selected, yearTo: selected }
-  if (filters.yearFrom === selected && filters.yearTo === selected)
-    return { yearFrom: ALL_FILTER, yearTo: ALL_FILTER }
-  if (filters.yearFrom !== ALL_FILTER && year < Number(filters.yearFrom)) return { yearFrom: selected }
-  if (filters.yearTo !== ALL_FILTER && year > Number(filters.yearTo)) return { yearTo: selected }
-  return { yearFrom: selected, yearTo: selected }
 }
 
 const IN_PROGRESS_STATUSES: ArticleStatusValue[] = ['IN_PREPARATION', 'UNDER_REVIEW', 'TO_RESUBMIT', 'ACCEPTED']
@@ -156,9 +121,7 @@ export function filterDashboardArticles(
     if (filters.journals.length > 0 && !filters.journals.includes(articleJournalKey(article))) return false
     if (filters.statuses.length > 0 && !filters.statuses.includes(article.status)) return false
     if (filters.types.length > 0 && !filters.types.includes(normalizeArticleType(article.type))) return false
-    if (filters.yearFrom !== ALL_FILTER && (article.year == null || article.year < Number(filters.yearFrom)))
-      return false
-    if (filters.yearTo !== ALL_FILTER && (article.year == null || article.year > Number(filters.yearTo))) return false
+    if (!matchesYearRange(filters, article.year)) return false
     if (filters.author !== ALL_FILTER && !article.authors.some((author) => author.id === filters.author)) return false
     if (filters.authorPosition !== ALL_FILTER && filters.author !== ALL_FILTER) {
       const index = article.authors.findIndex((author) => author.id === filters.author)

@@ -5,8 +5,25 @@ import { ChevronDown, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { ARTICLE_STATUS_VALUES, POSITION_BUCKETS } from '@/lib/publications/status-display'
 import { ARTICLE_TYPE_VALUES } from '@/lib/publications/article-type'
+import { ALL_YEARS, hasYearRange, type YearRange } from '@/lib/publications/year-range'
 
-export type FiltersValue = { role: string; status: string; study: string; type: string; journal: string }
+export type FiltersValue = YearRange & {
+  role: string
+  status: string
+  study: string
+  type: string
+  journal: string
+}
+
+export const DEFAULT_PUBLICATION_FILTERS: FiltersValue = {
+  role: 'all',
+  status: 'all',
+  study: 'all',
+  type: 'all',
+  journal: 'all',
+  yearFrom: ALL_YEARS,
+  yearTo: ALL_YEARS,
+}
 
 function FilterSelect({
   label,
@@ -61,7 +78,8 @@ export function PublicationsFilters({
     value.status !== 'all' ||
     value.study !== 'all' ||
     value.type !== 'all' ||
-    value.journal !== 'all'
+    value.journal !== 'all' ||
+    hasYearRange(value)
 
   return (
     <div className="flex shrink-0 items-center gap-x-2.5 rounded-xl border border-line bg-bg-surface px-3 py-1 shadow-elevation-xs">
@@ -125,7 +143,7 @@ export function PublicationsFilters({
       {active && (
         <button
           type="button"
-          onClick={() => onChange({ role: 'all', status: 'all', study: 'all', type: 'all', journal: 'all' })}
+          onClick={() => onChange(DEFAULT_PUBLICATION_FILTERS)}
           className="inline-flex h-7 shrink-0 items-center gap-1 rounded-full px-2 text-[12px] font-semibold text-text-secondary transition hover:bg-gray-100 dark:hover:bg-white/5"
         >
           <X className="h-3 w-3" strokeWidth={2.4} />

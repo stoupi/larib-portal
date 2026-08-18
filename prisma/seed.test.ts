@@ -332,6 +332,20 @@ async function main() {
 			status: 'PUBLISHED',
 			pubmedId: '34512303',
 			scope: 'OUTSIDE_TEAM',
+			publishedAt: new Date('2024-05-12T00:00:00.000Z'),
+			createdBy: { connect: { id: publicationsUser.id } },
+			authorships: { create: [{ order: 1, author: { connect: { id: publicationsFirstAuthor.id } } }] },
+		},
+	});
+	// Second published year for the same member: "My publications" needs two year bars
+	// before its year-range slider appears, and both stay out of the team library.
+	await prisma.article.create({
+		data: {
+			title: 'Prior-laboratory follow-up of aortic stenosis',
+			type: 'ORIGINAL',
+			status: 'PUBLISHED',
+			scope: 'OUTSIDE_TEAM',
+			publishedAt: new Date('2021-09-03T00:00:00.000Z'),
 			createdBy: { connect: { id: publicationsUser.id } },
 			authorships: { create: [{ order: 1, author: { connect: { id: publicationsFirstAuthor.id } } }] },
 		},

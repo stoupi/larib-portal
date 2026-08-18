@@ -9,7 +9,8 @@ import type { ArticleStatusValue } from '@/lib/services/publications/articles'
 import type { MyPublicationItem } from '@/lib/services/publications/my-publications'
 import { PublicationsStats } from './publications-stats'
 import { PublicationsTable, type SortKey } from './publications-table'
-import { PublicationsFilters, type FiltersValue } from './publications-filters'
+import { matchesYearRange } from '@/lib/publications/year-range'
+import { PublicationsFilters, DEFAULT_PUBLICATION_FILTERS, type FiltersValue } from './publications-filters'
 
 type Filter = 'all' | ArticleGroup
 
@@ -54,13 +55,7 @@ export function MyPublications({
 }) {
   const t = useTranslations('publications')
   const [filter, setFilter] = useState<Filter>('all')
-  const [filters, setFilters] = useState<FiltersValue>({
-    role: 'all',
-    status: 'all',
-    study: 'all',
-    type: 'all',
-    journal: 'all',
-  })
+  const [filters, setFilters] = useState<FiltersValue>(DEFAULT_PUBLICATION_FILTERS)
   const [sortKey, setSortKey] = useState<SortKey | null>(null)
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc')
   const [expanded, setExpanded] = useState<Set<string>>(new Set())
@@ -98,6 +93,7 @@ export function MyPublications({
       if (filters.status !== 'all' && item.status !== filters.status) return false
       if (filters.type !== 'all' && item.type !== filters.type) return false
       if (filters.journal !== 'all' && item.currentJournal !== filters.journal) return false
+      if (!matchesYearRange(filters, item.year)) return false
       if (filters.study !== 'all') {
         if (filters.study === '__none__' ? item.studyLabel != null : item.studyLabel !== filters.study) return false
       }

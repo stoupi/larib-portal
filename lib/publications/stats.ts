@@ -18,7 +18,6 @@ export type TypeCount = { type: ArticleTypeValue; count: number }
 
 export type PublicationStats = {
   total: number
-  undated: number
   perYear: YearCount[]
   byStatus: StatusCount[]
   byPosition: PositionCount[]
@@ -80,7 +79,5 @@ export function computePublicationStats(items: StatItem[]): PublicationStats {
   for (const item of items) typeCounts.set(item.type, (typeCounts.get(item.type) ?? 0) + 1)
   const byType: TypeCount[] = ARTICLE_TYPE_VALUES.map((type) => ({ type, count: typeCounts.get(type) ?? 0 }))
 
-  const undated = items.length - years.length
-
-  return { total: items.length, undated, perYear, byStatus, byPosition, byJournal, byType }
+  return { total: items.length, perYear, byStatus, byPosition, byJournal, byType }
 }

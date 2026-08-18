@@ -897,7 +897,9 @@
         "byType": "Par type",
         "noYear": "Aucune année",
         "noJournal": "Aucun journal",
-        "inSubmission": "En cours"
+        "clearYear": "Effacer le filtre par année",
+        "yearRange": "Plage d'années",
+        "yearBar": "{count} en {year}"
       },
       "position": {
         "first": "1er auteur",
