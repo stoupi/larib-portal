@@ -39,7 +39,21 @@ test('admin browses the journal bank and registers a journal from an ISSN lookup
   await page.waitForURL('**/publications/admin/journals', { timeout: 60000 })
   await expect(page.getByRole('row').filter({ hasText: 'Circulation' })).toBeVisible({ timeout: 15000 })
 
-  // The edit dialog opens from the row
-  await page.getByRole('button', { name: /^Edit European Heart Journal$/ }).click()
-  await expect(page.getByRole('heading', { name: 'Edit journal' })).toBeVisible()
+  // Editing reuses the very same form, prefilled, in "edit" mode
+  await page.getByRole('link', { name: /^Edit Circulation$/ }).click()
+  await page.waitForURL('**/publications/admin/journals/*', { timeout: 60000 })
+  await expect(page.getByRole('heading', { level: 1, name: 'Edit journal' })).toBeVisible()
+  await expect(page.getByLabel('Journal name')).toHaveValue('Circulation')
+  await expect(page.getByLabel('Short code')).toHaveValue('CIRC')
+  await expect(page.getByLabel('Impact factor', { exact: true })).toHaveValue('37.8')
+  await expect(page.getByLabel('Publisher', { exact: true })).toHaveValue('Wolters Kluwer')
+  await expect(page.getByRole('button', { name: 'Imaging', exact: true })).toHaveAttribute('aria-pressed', 'true')
+  await expect(page.getByRole('button', { name: 'Delete' })).toBeVisible()
+
+  await page.getByLabel('Impact factor', { exact: true }).fill('41.2')
+  await page.getByLabel(/^URL/).fill('https://www.ahajournals.org/journal/circ')
+  await page.getByRole('button', { name: 'Save changes' }).click()
+
+  await page.waitForURL('**/publications/admin/journals', { timeout: 60000 })
+  await expect(page.getByRole('row').filter({ hasText: 'Circulation' }).getByText('41.2')).toBeVisible({ timeout: 15000 })
 })

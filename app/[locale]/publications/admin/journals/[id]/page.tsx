@@ -1,18 +1,21 @@
 import { getTranslations } from 'next-intl/server'
-import { redirect } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
 import { requireAuth } from '@/lib/auth-guard'
 import { applicationLink } from '@/lib/application-link'
 import { canAdminApp } from '@/lib/permissions'
 import { Link } from '@/app/i18n/navigation'
+import { getJournalById } from '@/lib/services/publications/journals'
 import { JournalForm } from '@/app/[locale]/publications/components/journals/journal-form'
 import { BackToDashboard } from '@/app/[locale]/publications/components/back-to-dashboard'
 
-type PageParams = { params: Promise<{ locale: 'en' | 'fr' }> }
+type PageParams = { params: Promise<{ locale: 'en' | 'fr'; id: string }> }
 
-export default async function NewJournalPage({ params }: PageParams) {
-  const { locale } = await params
+export default async function EditJournalPage({ params }: PageParams) {
+  const { locale, id } = await params
   const session = await requireAuth()
   if (!canAdminApp(session.user, 'PUBLICATIONS')) redirect(applicationLink(locale, '/publications'))
+  const journal = await getJournalById(id)
+  if (!journal) notFound()
   const t = await getTranslations({ locale, namespace: 'publications.journals' })
 
   return (
@@ -27,13 +30,13 @@ export default async function NewJournalPage({ params }: PageParams) {
                 {t('title')}
               </Link>
               <span> › </span>
-              <span className="font-semibold text-text-secondary">{t('addJournal')}</span>
+              <span className="font-semibold text-text-secondary">{journal.name}</span>
             </nav>
-            <h1 className="text-3xl font-extrabold tracking-tight text-text-primary">{t('addJournal')}</h1>
-            <p className="max-w-2xl text-sm leading-relaxed text-text-secondary">{t('addSubtitle')}</p>
+            <h1 className="text-3xl font-extrabold tracking-tight text-text-primary">{t('editTitle')}</h1>
+            <p className="max-w-2xl text-sm leading-relaxed text-text-secondary">{t('editSubtitle')}</p>
           </div>
         </div>
-        <JournalForm journal={null} />
+        <JournalForm journal={journal} />
       </div>
     </div>
   )

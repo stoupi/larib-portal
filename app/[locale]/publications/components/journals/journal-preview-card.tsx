@@ -2,7 +2,7 @@
 
 import { useTranslations } from 'next-intl'
 import { cn } from '@/lib/utils'
-import type { JournalDraft } from './journal-create-form'
+import type { JournalDraft } from '@/lib/publications/journal-draft'
 
 function initials(name: string): string {
   const words = name.split(/[\s–-]+/).filter((word) => /[A-Za-zÀ-ÿ]/.test(word) && word.length > 2)

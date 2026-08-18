@@ -1,6 +1,7 @@
 'use client'
 
 import { useTranslations } from 'next-intl'
+import { Link } from '@/app/i18n/navigation'
 import { Pencil, CircleCheck, Clock, ChevronUp, ChevronDown, ChevronsUpDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table'
@@ -41,12 +42,10 @@ export function JournalsTable({
   journals,
   sort,
   onSort,
-  onEdit,
 }: {
   journals: JournalMetrics[]
   sort: { key: JournalSortKey; direction: 'asc' | 'desc' }
   onSort: (key: JournalSortKey) => void
-  onEdit: (journal: JournalMetrics) => void
 }) {
   const t = useTranslations('publications.journals')
 
@@ -190,14 +189,13 @@ export function JournalsTable({
                     )}
                   </TableCell>
                   <TableCell className="text-right">
-                    <button
-                      type="button"
-                      onClick={() => onEdit(journal)}
+                    <Link
+                      href={`/publications/admin/journals/${journal.id}`}
                       aria-label={`${t('edit')} ${journal.name}`}
                       className="inline-flex size-9 items-center justify-center rounded-lg border border-line text-text-muted transition hover:border-coral-200 hover:text-coral-600"
                     >
                       <Pencil className="size-4" />
-                    </button>
+                    </Link>
                   </TableCell>
                 </TableRow>
               )

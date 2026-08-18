@@ -21,7 +21,6 @@ import {
 } from '@/lib/publications/journal-metrics'
 import { JournalsSummary } from './journals-summary'
 import { JournalsTable, type JournalSortKey } from './journals-table'
-import { EditJournalDialog } from './edit-journal-dialog'
 
 type BucketFilter = 'all' | ImpactBucket
 const ALL_PUBLISHERS = 'all'
@@ -52,7 +51,6 @@ export function JournalsView({ journals }: { journals: JournalMetrics[] }) {
   const [bucket, setBucket] = useState<BucketFilter>('all')
   const [publisher, setPublisher] = useState(ALL_PUBLISHERS)
   const [sort, setSort] = useState<{ key: JournalSortKey; direction: 'asc' | 'desc' }>({ key: 'published', direction: 'desc' })
-  const [editing, setEditing] = useState<JournalMetrics | null>(null)
 
   const { execute: runRefresh, isExecuting: refreshing } = useAction(refreshSjrAction, {
     onSuccess({ data }) {
@@ -199,9 +197,7 @@ export function JournalsView({ journals }: { journals: JournalMetrics[] }) {
         </div>
       </div>
 
-      <JournalsTable journals={sorted} sort={sort} onSort={toggleSort} onEdit={setEditing} />
-
-      <EditJournalDialog journal={editing} onClose={() => setEditing(null)} />
+      <JournalsTable journals={sorted} sort={sort} onSort={toggleSort} />
     </div>
   )
 }

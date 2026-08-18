@@ -62,6 +62,41 @@ export async function listJournalNames(): Promise<string[]> {
   return journals.map((journal) => journal.name)
 }
 
+export type EditableJournal = {
+  id: string
+  name: string
+  abbreviation: string | null
+  issn: string | null
+  publisher: string | null
+  url: string | null
+  impactFactor: number | null
+  sjr: number | null
+  specialty: string | null
+  subSpecialty: string | null
+  openAccess: boolean
+  typicalDelayDays: number | null
+}
+
+export async function getJournalById(id: string): Promise<EditableJournal | null> {
+  return prisma.journal.findUnique({
+    where: { id },
+    select: {
+      id: true,
+      name: true,
+      abbreviation: true,
+      issn: true,
+      publisher: true,
+      url: true,
+      impactFactor: true,
+      sjr: true,
+      specialty: true,
+      subSpecialty: true,
+      openAccess: true,
+      typicalDelayDays: true,
+    },
+  })
+}
+
 export type UpsertJournalInput = {
   name: string
   abbreviation?: string | null
