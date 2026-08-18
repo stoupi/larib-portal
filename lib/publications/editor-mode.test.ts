@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { computeEditorVisibility, canComposeAuthorList } from './editor-mode'
+import { computeEditorVisibility, canComposeAuthorList, canEditArticle } from './editor-mode'
 import { PUBLICATIONS_BASE, PUBLICATIONS_ADMIN_BASE } from './base-path'
 
 describe('computeEditorVisibility', () => {
@@ -37,5 +37,22 @@ describe('canComposeAuthorList', () => {
   it('never lets a non-admin compose the author list', () => {
     expect(canComposeAuthorList({ isAdmin: false, basePath: PUBLICATIONS_ADMIN_BASE })).toBe(false)
     expect(canComposeAuthorList({ isAdmin: false, basePath: PUBLICATIONS_BASE })).toBe(false)
+  })
+})
+
+describe('canEditArticle', () => {
+  it('always lets the first author edit, from either branch', () => {
+    expect(canEditArticle({ isAdmin: false, isFirstAuthor: true, basePath: PUBLICATIONS_BASE })).toBe(true)
+    expect(canEditArticle({ isAdmin: false, isFirstAuthor: true, basePath: PUBLICATIONS_ADMIN_BASE })).toBe(true)
+  })
+
+  it('keeps an admin read-only on a colleague\'s paper in the member branch', () => {
+    expect(canEditArticle({ isAdmin: true, isFirstAuthor: false, basePath: PUBLICATIONS_BASE })).toBe(false)
+    expect(canEditArticle({ isAdmin: true, isFirstAuthor: false, basePath: PUBLICATIONS_ADMIN_BASE })).toBe(true)
+  })
+
+  it('never lets a co-author edit', () => {
+    expect(canEditArticle({ isAdmin: false, isFirstAuthor: false, basePath: PUBLICATIONS_BASE })).toBe(false)
+    expect(canEditArticle({ isAdmin: false, isFirstAuthor: false, basePath: PUBLICATIONS_ADMIN_BASE })).toBe(false)
   })
 })

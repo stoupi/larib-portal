@@ -14,6 +14,21 @@ export function canComposeAuthorList({
   return isAdmin && basePath === PUBLICATIONS_ADMIN_BASE
 }
 
+// Editing belongs to the first author. An admin keeps full rights, but only from the
+// admin branch: in the member branch they read a colleague's paper like anyone else.
+export function canEditArticle({
+  isAdmin,
+  isFirstAuthor,
+  basePath,
+}: {
+  isAdmin: boolean
+  isFirstAuthor: boolean
+  basePath: PublicationsBasePath
+}): boolean {
+  if (isFirstAuthor) return true
+  return isAdmin && basePath === PUBLICATIONS_ADMIN_BASE
+}
+
 export type EditorVisibility = {
   showEditButton: boolean
   showSaveBar: boolean

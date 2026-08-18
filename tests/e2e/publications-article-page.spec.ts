@@ -43,6 +43,22 @@ test('a member without edit rights reads the article but gets no editing afforda
   await expect(page.getByPlaceholder('Publication title')).toHaveCount(0)
 })
 
+test('an admin reads a colleague\'s paper from the member branch without editing it', async ({ page }) => {
+  const adminUrl = await openMultivalveArticleAsAdmin(page)
+  await expect(page.getByRole('button', { name: 'Edit' })).toBeVisible({ timeout: 30000 })
+
+  // Same paper, member branch: the admin is not its first author, so nothing is editable
+  const memberUrl = adminUrl.replace('/publications/admin/articles/', '/publications/articles/')
+  await page.goto(memberUrl, { timeout: 60000 })
+  await expect(page.getByRole('heading', { name: /Outcomes of multi-valve intervention/i })).toBeVisible({ timeout: 30000 })
+  await expect(page.getByRole('button', { name: 'Edit' })).toHaveCount(0)
+
+  // Forcing edit mode through the URL does not reopen the door
+  await page.goto(`${memberUrl}?mode=edit`, { timeout: 60000 })
+  await expect(page.getByRole('button', { name: 'Save changes' })).toHaveCount(0)
+  await expect(page.getByPlaceholder('Publication title')).toHaveCount(0)
+})
+
 test('the first author saves a title, discards a later edit, then renames the publication for good', async ({ page }) => {
   await login(page, 'publications-user@larib-portal.test')
   await page.goto('/en/publications', { timeout: 60000 })

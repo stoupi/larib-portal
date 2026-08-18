@@ -14,7 +14,12 @@ import { cn } from '@/lib/utils'
 import { ARTICLE_STATUSES } from '@/lib/services/publications/articles'
 import { ARTICLE_TYPE_VALUES, normalizeArticleType } from '@/lib/publications/article-type'
 import { isDraftDeletable } from '@/lib/publications/editor-logic'
-import { computeEditorVisibility, canComposeAuthorList, type EditorMode } from '@/lib/publications/editor-mode'
+import {
+  computeEditorVisibility,
+  canComposeAuthorList,
+  canEditArticle,
+  type EditorMode,
+} from '@/lib/publications/editor-mode'
 import { PUBLICATIONS_ADMIN_BASE, type PublicationsBasePath } from '@/lib/publications/base-path'
 import type { PublicationEditData } from '@/lib/services/publications/publication-editor'
 import type { JournalTargetItem } from '@/lib/services/publications/journal-targets'
@@ -74,7 +79,7 @@ export function ArticlePage({
   const router = useRouter()
   const searchParams = useSearchParams()
   const backHref = basePath
-  const canEdit = viewer.isAdmin || viewer.isFirstAuthor
+  const canEdit = canEditArticle({ isAdmin: viewer.isAdmin, isFirstAuthor: viewer.isFirstAuthor, basePath })
 
   const [mode, setMode] = useState<EditorMode>(searchParams.get('mode') === 'edit' ? 'edit' : 'read')
   const visibility = computeEditorVisibility({ canEdit, mode })
