@@ -32,6 +32,7 @@ if [ -z "$FORCE_PUSH_VALIDATION" ] && [ -f "$validation_passed_marker" ] &&
 	[ "$(cat "$validation_passed_marker")" = "$fingerprint" ]; then
 	echo "Pre-push validation already passed on this exact code — skipping the rerun."
 	echo "Set FORCE_PUSH_VALIDATION=1 to run it anyway."
+	rm -f "$validation_failure_marker"
 	exit 0
 fi
 
