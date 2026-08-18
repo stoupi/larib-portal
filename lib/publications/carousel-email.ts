@@ -7,13 +7,19 @@ export const CAROUSEL_CC_RECIPIENTS = [
 
 export const CAROUSEL_REPLY_TO = 'camille.gersdorff.com@gmail.com'
 
-export type CarouselAuthor = { firstName: string; lastName: string }
+export const CAROUSEL_CONTACT_FIRST_NAME = 'Camille'
+
+export const CAROUSEL_EMAIL_SUBJECT = '[Nouvelle publication] Préparation du post LinkedIn'
+
+export const CAROUSEL_EMAIL_EYEBROW = 'Nouvelle publication'
+
+export type CarouselAuthor = { firstName: string; lastName: string; isTeamMember: boolean }
 
 export type CarouselEmailDraftParams = {
   articleTitle: string
   journalName: string | null
   firstAuthor: CarouselAuthor & { email: string | null }
-  lastAuthor: CarouselAuthor | null
+  seniorAuthor: CarouselAuthor | null
 }
 
 export type CarouselEmailDraft = {
@@ -24,37 +30,58 @@ export type CarouselEmailDraft = {
 }
 
 function fullName(author: CarouselAuthor): string {
-  return `${author.firstName} ${author.lastName.toUpperCase()}`.trim()
+  return `${author.firstName} ${author.lastName}`.trim()
 }
 
+// The senior referent is the team member signing closest to the end of the author
+// list; without any team member beyond the first author, the last signer is the
+// best guess and the email asks the first author to confirm it anyway.
+export function selectSeniorAuthor(authors: CarouselAuthor[]): CarouselAuthor | null {
+  const coAuthors = authors.slice(1)
+  const teamCoAuthors = coAuthors.filter((author) => author.isTeamMember)
+  return teamCoAuthors.at(-1) ?? coAuthors.at(-1) ?? null
+}
+
+const REQUESTED_ITEMS = [
+  'le PDF de l’article accepté ou le lien vers sa publication ;',
+  'les éventuels logos à intégrer (journal, universités, centres partenaires, sociétés savantes, etc.), de préférence au format PNG et en haute définition ;',
+  'quatre à six messages clés, formulés en une phrase maximum chacun et compréhensibles par un public non spécialiste ;',
+  'les figures, graphiques ou images à mettre en avant, en précisant le message clé associé à chaque élément ;',
+  'le cas échéant, les principales limites, questions ouvertes ou perspectives à mentionner en conclusion, en deux phrases maximum ;',
+  'les personnes ou structures à citer en complément des coauteurs (financeurs, équipes de recherche, établissements, partenaires, etc.).',
+]
+
 export function buildCarouselEmailDraft(params: CarouselEmailDraftParams): CarouselEmailDraft {
-  const journalName = params.journalName ?? 'le journal'
-  const seniorAuthorName = params.lastAuthor ? fullName(params.lastAuthor) : 'le dernier auteur'
-  const body = `Bonjour ${fullName(params.firstAuthor)},
+  const contact = CAROUSEL_CONTACT_FIRST_NAME
+  const congratulations = params.journalName
+    ? `Félicitations pour l’acceptation de ton article « ${params.articleTitle} » dans ${params.journalName} !`
+    : `Félicitations pour l’acceptation de ton article « ${params.articleTitle} » !`
+  const seniorSentence = params.seniorAuthor
+    ? `Avant sa mise en ligne, le contenu sera relu par le senior référent de l’article. Merci de confirmer qu’il s’agit bien de ${fullName(params.seniorAuthor)}.`
+    : 'Avant sa mise en ligne, le contenu sera relu par le senior référent de l’article. Merci de nous confirmer de qui il s’agit.'
 
-Toutes mes félicitations pour l'acceptation de ton article intitulé « ${params.articleTitle} » dans ${journalName} !
+  const body = `Bonjour ${params.firstAuthor.firstName.trim()},
 
-Afin de préparer un carrousel LinkedIn mettant en valeur tes travaux, je te serais reconnaissant(e) de bien vouloir me transmettre les éléments suivants :
+${congratulations}
 
-- Le PDF ou le lien vers l'article accepté pour publication.
-- Les logos à intégrer (journal, universités, centres partenaires, sociétés savantes, etc.) en haute définition, au format PNG de préférence.
-- 4 à 6 messages clés que tu souhaites faire ressortir de l'article, formulés en une phrase maximum chacun. L'objectif est qu'un lecteur non spécialiste puisse saisir les principaux résultats en quelques secondes, sans avoir à lire l'article.
-- Les figures, graphiques ou images à mettre en avant (en haute définition), en précisant pour chacune le message clé associé.
-- Le cas échéant, les questions ouvertes, limites de l'étude ou pistes de réflexion que tu souhaiterais mentionner en fin de carrousel (2 phrases maximum).
-- Les personnes ou structures à citer en plus des co-auteurs (financeurs, équipes de recherche, hôpitaux, partenaires, etc.).
+Afin de préparer un carrousel LinkedIn présentant cette publication, merci de transmettre à ${contact}, en copie de ce message, les éléments suivants :
 
-N'hésite pas à me signaler tout ce qui te semblerait pertinent pour valoriser tes travaux auprès d'un public non spécialiste.
+${REQUESTED_ITEMS.map((item) => `- ${item}`).join('\n')}
 
-Pour t'inspirer, je te joins un exemple de post réalisé pour un ancien article que nous avons publié. Le post sera vérifié par le senior de l'étude — merci de confirmer s'il s'agit bien de ${seniorAuthorName} — avant d'être publié sur le compte LinkedIn du service de cardiologie ou de MIRACL.ai selon le contexte de l'étude.
+Tu peux également ajouter tout élément qui te semblerait utile pour valoriser cette publication.
 
-Merci de me transmettre ces éléments d'ici une semaine afin de respecter le calendrier de publication.
+${seniorSentence}
 
-Encore toutes mes félicitations, et merci pour ton aide !`
+Le post sera ensuite publié sur le compte LinkedIn du service de cardiologie ou de MIRACL.ai, selon le contexte de l’étude.
+
+Merci de transmettre ces éléments à ${contact} dans un délai de sept jours.
+
+Encore félicitations pour cette publication !`
 
   return {
     to: params.firstAuthor.email ?? '',
     cc: CAROUSEL_CC_RECIPIENTS,
-    subject: `Félicitations — ${params.articleTitle}`,
+    subject: CAROUSEL_EMAIL_SUBJECT,
     body,
   }
 }

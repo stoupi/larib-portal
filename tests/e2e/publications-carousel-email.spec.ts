@@ -16,12 +16,12 @@ async function login(page: Page, email: string): Promise<void> {
 
 async function expectPrefilledDraft(dialog: Locator): Promise<void> {
   await expect(dialog.getByLabel('Recipient (first author)')).toHaveValue(FIRST_AUTHOR_EMAIL, { timeout: 20000 })
-  await expect(dialog.getByLabel('Subject')).toHaveValue(`Félicitations — ${CAROUSEL_ARTICLE}`)
+  await expect(dialog.getByLabel('Subject')).toHaveValue('[Nouvelle publication] Préparation du post LinkedIn')
   const body = dialog.getByLabel('Message')
-  await expect(body).toHaveValue(/Bonjour Nina ZELLWEGER/)
+  await expect(body).toHaveValue(/Bonjour Nina,/)
   await expect(body).toHaveValue(new RegExp(CAROUSEL_ARTICLE))
   await expect(body).toHaveValue(/European Heart Journal/)
-  await expect(body).toHaveValue(/Marc ZURBRUGG/)
+  await expect(body).toHaveValue(/Merci de confirmer qu’il s’agit bien de Marc Zurbrugg\./)
 }
 
 function communicationRow(page: Page, title: string, sendLabel: string): Locator {

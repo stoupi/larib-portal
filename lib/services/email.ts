@@ -4,6 +4,11 @@ import { eachDayOfInterval, endOfDay, endOfWeek, format, isWithinInterval, start
 import { fr, enUS } from 'date-fns/locale'
 import type { RecapPeriod, RecapRow, RecapStatus } from '@/lib/services/conges/recap'
 import type { RecapArticle, RecapStatusValue } from '@/lib/publications/recap'
+import {
+  CAROUSEL_CONTACT_FIRST_NAME,
+  CAROUSEL_EMAIL_EYEBROW,
+  CAROUSEL_EMAIL_SUBJECT,
+} from '@/lib/publications/carousel-email'
 
 export async function sendWelcomeEmail(params: WelcomeEmailParams): Promise<{ id: string } | { error: string }>
 {
@@ -698,16 +703,52 @@ function escapeHtml(value: string): string {
     .replaceAll('"', '&quot;')
 }
 
-export function renderCarouselRequestEmailHtml(body: string): string {
-  const paragraphs = body
+const CAROUSEL_BULLET = /^[-\u2022]\s+/
+
+function renderCarouselParagraph(block: string): string {
+  const lines = block.split('\n').map((line) => escapeHtml(line.trim()))
+  return `<p style="margin:0 0 16px 0;font-family:${FONT_SANS};font-size:15px;line-height:24px;color:${COLORS.foreground};">${lines.join('<br />')}</p>`
+}
+
+function renderCarouselList(block: string): string {
+  const items = block
     .split('\n')
-    .map((line) =>
-      line.trim() === ''
-        ? '<br />'
-        : `<p style="margin:0 0 4px 0;font-family:${FONT_SANS};font-size:14px;line-height:21px;color:${COLORS.foreground};">${escapeHtml(line)}</p>`,
+    .filter((line) => line.trim() !== '')
+    .map((line) => escapeHtml(line.replace(CAROUSEL_BULLET, '').trim()))
+    .map(
+      (item) => `<tr>
+            <td width="16" valign="top" style="padding:0 0 12px 0;"><div style="width:6px;height:6px;margin-top:8px;background-color:${COLORS.accent};border-radius:3px;font-size:0;line-height:0;">&nbsp;</div></td>
+            <td style="padding:0 0 12px 10px;font-family:${FONT_SANS};font-size:14px;line-height:22px;color:${COLORS.foreground};">${item}</td>
+          </tr>`,
     )
     .join('')
-  return emailLayout(paragraphs)
+  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:${COLORS.secondary};border-radius:10px;margin:0 0 22px 0;">
+      <tr>
+        <td style="padding:20px 22px 8px 22px;">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">${items}</table>
+        </td>
+      </tr>
+    </table>`
+}
+
+// The admin edits the email as plain text, so the layout is rebuilt from it: the
+// first block greets, "- " blocks become the highlighted checklist, the rest are
+// paragraphs.
+export function renderCarouselRequestEmailHtml(body: string, subject = CAROUSEL_EMAIL_SUBJECT): string {
+  const [greetingBlock, ...blocks] = body.split(/\n\s*\n/).filter((block) => block.trim() !== '')
+  const greeting = `<p style="margin:0 0 8px 0;font-family:${FONT_SANS};font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:${COLORS.accent};">${escapeHtml(CAROUSEL_EMAIL_EYEBROW)}</p>
+    <p style="margin:0 0 20px 0;font-family:${FONT_SERIF};font-size:24px;line-height:32px;font-weight:700;color:${COLORS.primary};">${escapeHtml((greetingBlock ?? '').trim())}</p>`
+  const content = blocks
+    .map((block) =>
+      block.split('\n').every((line) => line.trim() === '' || CAROUSEL_BULLET.test(line.trim()))
+        ? renderCarouselList(block)
+        : renderCarouselParagraph(block),
+    )
+    .join('')
+  const footerNote = `Réponds directement à ce message pour transmettre tes éléments à ${escapeHtml(CAROUSEL_CONTACT_FIRST_NAME)}.`
+  // The inbox preview reads better with the congratulations line than with the subject again.
+  const preheader = escapeHtml((blocks.at(0) ?? subject).replaceAll('\n', ' ').trim())
+  return emailLayout(`${greeting}${content}`, preheader, footerNote)
 }
 
 export async function sendCarouselRequestEmail(
@@ -727,7 +768,7 @@ export async function sendCarouselRequestEmail(
       reply_to: params.replyTo,
       subject: params.subject,
       text: params.body,
-      html: renderCarouselRequestEmailHtml(params.body),
+      html: renderCarouselRequestEmailHtml(params.body, params.subject),
     }),
   })
   if (!res.ok) {

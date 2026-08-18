@@ -1,5 +1,9 @@
 import { prisma } from '@/lib/prisma'
-import { buildCarouselEmailDraft, type CarouselEmailDraft } from '@/lib/publications/carousel-email'
+import {
+  buildCarouselEmailDraft,
+  selectSeniorAuthor,
+  type CarouselEmailDraft,
+} from '@/lib/publications/carousel-email'
 
 export type CarouselEmailData = {
   draft: CarouselEmailDraft
@@ -25,6 +29,7 @@ export async function getCarouselEmailData(articleId: string): Promise<CarouselE
             select: {
               firstName: true,
               lastName: true,
+              type: true,
               email: true,
               emails: true,
               user: { select: { email: true } },
@@ -41,21 +46,26 @@ export async function getCarouselEmailData(articleId: string): Promise<CarouselE
   const journalName =
     acceptedSubmission?.journal.name ?? latestSubmission?.journal.name ?? article.publishedJournal?.name ?? null
 
-  const firstAuthor = article.authorships.at(0)?.author ?? null
-  const lastAuthor = article.authorships.length > 1 ? (article.authorships.at(-1)?.author ?? null) : null
-  const firstAuthorEmail = firstAuthor
-    ? (firstAuthor.email ?? firstAuthor.emails.at(0) ?? firstAuthor.user?.email ?? null)
+  const authors = article.authorships.map((authorship) => ({
+    firstName: authorship.author.firstName,
+    lastName: authorship.author.lastName,
+    isTeamMember: authorship.author.type === 'OUR_TEAM',
+  }))
+  const firstAuthorRecord = article.authorships.at(0)?.author ?? null
+  const firstAuthorEmail = firstAuthorRecord
+    ? (firstAuthorRecord.email ?? firstAuthorRecord.emails.at(0) ?? firstAuthorRecord.user?.email ?? null)
     : null
 
   const draft = buildCarouselEmailDraft({
     articleTitle: article.title,
     journalName,
     firstAuthor: {
-      firstName: firstAuthor?.firstName ?? '',
-      lastName: firstAuthor?.lastName ?? '',
+      firstName: firstAuthorRecord?.firstName ?? '',
+      lastName: firstAuthorRecord?.lastName ?? '',
+      isTeamMember: firstAuthorRecord?.type === 'OUR_TEAM',
       email: firstAuthorEmail,
     },
-    lastAuthor: lastAuthor ? { firstName: lastAuthor.firstName, lastName: lastAuthor.lastName } : null,
+    seniorAuthor: selectSeniorAuthor(authors),
   })
 
   return { draft, sentAt: article.carouselEmailSentAt, missingFirstAuthorEmail: !firstAuthorEmail }

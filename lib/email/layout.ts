@@ -14,7 +14,9 @@ export const FONT_SANS = "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', 
 
 export const LOGO_WHITE_URL = 'https://pub-e0c9b869d4ff450c826a4c7850592995.r2.dev/larib-uploads/email/logo-white.png'
 
-export function emailLayout(body: string, preheader?: string): string {
+const DEFAULT_FOOTER_NOTE = 'Message automatique &mdash; ne pas r&eacute;pondre'
+
+export function emailLayout(body: string, preheader?: string, footerNote?: string): string {
   return `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="fr">
 <head>
@@ -51,7 +53,7 @@ export function emailLayout(body: string, preheader?: string): string {
                 Portail intranet Cardio Larib
               </p>
               <p style="margin:6px 0 0 0;font-family:${FONT_SANS};font-size:11px;line-height:16px;color:#b0b5bf;text-align:center;">
-                Message automatique &mdash; ne pas r&eacute;pondre
+                ${footerNote ?? DEFAULT_FOOTER_NOTE}
               </p>
             </td>
           </tr>

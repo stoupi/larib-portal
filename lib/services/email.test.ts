@@ -103,16 +103,35 @@ describe('renderPublicationsRecapEmail', () => {
 })
 
 describe('renderCarouselRequestEmailHtml', () => {
-  it('turns each line into a paragraph and blank lines into breaks', () => {
-    const html = renderCarouselRequestEmailHtml('Bonjour Marie DUPONT,\n\nFélicitations !')
-    expect(html).toContain('>Bonjour Marie DUPONT,</p>')
-    expect(html).toContain('<br />')
-    expect(html).toContain('>Félicitations !</p>')
+  const body = [
+    'Bonjour Elsa,',
+    '',
+    'Félicitations pour l’acceptation de ton article « Valvular imaging » dans Circulation !',
+    '',
+    'Merci de transmettre les éléments suivants :',
+    '',
+    '- le PDF de l’article ;',
+    '- quatre à six messages clés.',
+    '',
+    'Encore félicitations pour cette publication !',
+  ].join('\n')
+
+  it('lays the plain text out in the portal template: eyebrow, greeting, paragraphs and bullet block', () => {
+    const html = renderCarouselRequestEmailHtml(body, '[Nouvelle publication] Préparation du post LinkedIn')
     expect(html).toContain('<!DOCTYPE html')
+    expect(html).toContain('Nouvelle publication')
+    expect(html).toContain('>Bonjour Elsa,</p>')
+    expect(html).toContain('Georgia')
+    expect(html).toContain('Circulation')
+    expect(html).toContain('>le PDF de l’article ;</td>')
+    expect(html).toContain('>quatre à six messages clés.</td>')
+    expect(html).not.toContain('- le PDF')
+    expect(html).toContain('Réponds directement à ce message')
+    expect(html).not.toContain('ne pas r&eacute;pondre')
   })
 
   it('escapes HTML coming from the edited body', () => {
-    const html = renderCarouselRequestEmailHtml('<script>alert("x & y")</script>')
+    const html = renderCarouselRequestEmailHtml('Bonjour,\n\n<script>alert("x & y")</script>')
     expect(html).toContain('&lt;script&gt;alert(&quot;x &amp; y&quot;)&lt;/script&gt;')
     expect(html).not.toContain('<script>')
   })
