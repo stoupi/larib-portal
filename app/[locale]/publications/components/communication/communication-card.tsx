@@ -29,8 +29,8 @@ export function CommunicationCard({
         </span>
       }
     >
-      <div className="space-y-3">
-        <p className="text-[13px] leading-relaxed text-text-secondary">{t('cardDescription')}</p>
+      <div className="space-y-4">
+        <p className="text-sm leading-relaxed text-text-secondary">{t('cardDescription')}</p>
         <div className="flex flex-wrap items-center gap-3">
           <CarouselEmailTag sentAt={sentAt} locale={locale} />
           <CarouselSendButton alreadySent={sentAt !== null} onClick={() => controller.openFor(articleId)} />
