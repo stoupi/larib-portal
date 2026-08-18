@@ -12,6 +12,10 @@ on:
       - main
       - develop
 
+concurrency:
+  group: tests
+  cancel-in-progress: false
+
 jobs:
   test:
     name: Run Tests
