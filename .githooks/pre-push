@@ -2,15 +2,49 @@
 set -e
 
 validation_failure_marker="$(git rev-parse --git-path agent-push-validation-failed)"
+validation_passed_marker="$(git rev-parse --git-path agent-push-validation-passed)"
+
+hash_stdin() {
+	if command -v shasum >/dev/null 2>&1; then
+		shasum -a 256 | cut -d' ' -f1
+	else
+		sha256sum | cut -d' ' -f1
+	fi
+}
+
+# Everything the validation actually reads: the committed tree, the pending edits
+# on tracked files, and the untracked sources the production build would miss.
+code_fingerprint() {
+	{
+		git rev-parse "HEAD^{tree}"
+		git diff HEAD
+		git ls-files --others --exclude-standard -z | tr '\0' '\n' | while IFS= read -r file; do
+			[ -f "$file" ] || continue
+			printf '%s ' "$file"
+			hash_stdin < "$file"
+		done
+	} | hash_stdin
+}
+
+fingerprint="$(code_fingerprint)"
+
+if [ -z "$FORCE_PUSH_VALIDATION" ] && [ -f "$validation_passed_marker" ] &&
+	[ "$(cat "$validation_passed_marker")" = "$fingerprint" ]; then
+	echo "Pre-push validation already passed on this exact code — skipping the rerun."
+	echo "Set FORCE_PUSH_VALIDATION=1 to run it anyway."
+	exit 0
+fi
 
 echo "Running the required pre-push validation..."
 printf 'validation_started_at=%s\nhead=%s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$(git rev-parse HEAD)" > "$validation_failure_marker"
 
 if npm run verify:push; then
 	rm -f "$validation_failure_marker"
+	printf '%s' "$fingerprint" > "$validation_passed_marker"
 	exit 0
 fi
 
+rm -f "$validation_passed_marker"
 printf 'validation_failed_at=%s\nhead=%s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$(git rev-parse HEAD)" > "$validation_failure_marker"
 echo "Push blocked. Fix the validation failure and retry the push."
 exit 1
