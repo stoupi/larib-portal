@@ -1,4 +1,5 @@
 import { COLORS, FONT_SERIF, FONT_SANS, emailLayout } from '@/lib/email/layout'
+import { resolveAppBaseUrl } from '@/lib/app-url'
 import { renderWelcomeEmail, type WelcomeEmailParams } from '@/lib/email/welcome-template'
 import { eachDayOfInterval, endOfDay, endOfWeek, format, isWithinInterval, startOfDay, startOfWeek } from 'date-fns'
 import { fr, enUS } from 'date-fns/locale'
@@ -239,8 +240,7 @@ function renderLeaveNotificationEmail({
 
   const pill = eventTypePillStyle(eventType)
   const pillLabel = eventTypeLabel(eventType, locale)
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || ''
-  const portalLink = `${appUrl}/${locale}/conges`
+  const portalLink = `${resolveAppBaseUrl()}/${locale}/conges`
 
   const reasonRow = reason
     ? `<tr>

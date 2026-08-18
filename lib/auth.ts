@@ -3,13 +3,14 @@ import { prismaAdapter } from 'better-auth/adapters/prisma';
 import { nextCookies } from 'better-auth/next-js';
 import { prisma } from './prisma';
 import { sendResetPasswordEmail } from './services/email';
+import { PRODUCTION_APP_URL, resolveAppBaseUrl } from './app-url';
 
 export function buildTrustedOrigins(): string[] {
 	const configuredOrigins = [
 		process.env.NEXT_PUBLIC_APP_URL,
 		process.env.VERCEL_PROJECT_PRODUCTION_URL && `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`,
 		process.env.VERCEL_URL && `https://${process.env.VERCEL_URL}`,
-		'https://www.cardiolarib-portal.com',
+		PRODUCTION_APP_URL,
 		'https://cardiolarib-portal.com',
 		'http://localhost:3000',
 		process.env.PLAYWRIGHT_PORT && `http://localhost:${process.env.PLAYWRIGHT_PORT}`,
@@ -38,7 +39,7 @@ export const auth = betterAuth({
 		},
 	},
 	secret: process.env.BETTER_AUTH_SECRET!,
-	baseURL: process.env.NEXT_PUBLIC_APP_URL!,
+	baseURL: resolveAppBaseUrl(),
 	trustedOrigins: buildTrustedOrigins(),
 	plugins: [nextCookies()],
 });

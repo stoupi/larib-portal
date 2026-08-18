@@ -5,6 +5,7 @@ import { deleteUserById, updateUser, createPlaceholderUser } from "@/lib/service
 import { listPositions, ensurePosition, updatePosition, deletePositions } from '@/lib/services/positions'
 import { createInvitation, deleteInvitationByEmail, consumeInvitation, getInvitationByEmail } from '@/lib/services/invitations'
 import { sendWelcomeEmail } from '@/lib/services/email'
+import { resolveAppBaseUrl } from '@/lib/app-url'
 import { superAdminAction } from "@/actions/safe-action"
 import { Prisma } from "@/app/generated/prisma"
 import { prisma } from "@/lib/prisma"
@@ -148,7 +149,7 @@ export const createUserInviteAction = superAdminAction
       congesTotalDays: parsedInput.congesTotalDays,
     })
 
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || ''
+    const appUrl = resolveAppBaseUrl()
     const setupLink = `${appUrl}/${parsedInput.locale}/welcome/${token}`
 
     // Send welcome email via Resend
@@ -252,7 +253,7 @@ export const resendInvitationAction = superAdminAction
       congesTotalDays: user.congesTotalDays,
     })
 
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || ''
+    const appUrl = resolveAppBaseUrl()
     const setupLink = `${appUrl}/${parsedInput.locale}/welcome/${token}`
 
     await sendWelcomeEmail({

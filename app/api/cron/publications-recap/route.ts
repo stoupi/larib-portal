@@ -4,6 +4,7 @@ import { getPublicationsRecapRecipients } from '@/lib/services/publications/reca
 import { listMyPublications } from '@/lib/services/publications/my-publications'
 import { selectRecapArticles } from '@/lib/publications/recap'
 import { sendPublicationsRecapEmail } from '@/lib/services/email'
+import { resolveAppBaseUrl } from '@/lib/app-url'
 
 export const runtime = 'nodejs'
 
@@ -16,10 +17,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
   }
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL
-  if (!appUrl) {
-    return NextResponse.json({ error: 'app_url_missing' }, { status: 500 })
-  }
+  const appUrl = resolveAppBaseUrl()
 
   const recipients = await getPublicationsRecapRecipients()
   let sent = 0
