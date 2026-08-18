@@ -1,11 +1,14 @@
 # Repository Guidelines
 
-## FIRST PRIORITY: Tests must pass before every push
+## FIRST PRIORITY: Tests must pass before pushing
 
 - Every feature and bug fix must include appropriate automated tests.
-- Before pushing any code, run `npm run verify:push` and keep fixing the implementation or tests, then rerun the command until it passes completely.
-- Never bypass the pre-push hook with `--no-verify`. A failing validation must block the push.
-- If the agentic stop hook reports a failed push validation, inspect the failure, fix its root cause, and retry the push. Do not end the task while the failure marker remains.
+- Push validation is two-tier, so pushing often to `main` stays fast:
+  - **Every push** runs a light, automatic gate: typecheck + unit tests only (well under a minute). This is the pre-push hook's default — nothing extra to do.
+  - **Right before the push that finishes the current unit of work** — the user says something like "c'est fini", "on finalise", "c'est bon", "ship it", or otherwise clearly signals they're done with this feature/fix — run the full gate once: `FULL_PUSH_VALIDATION=1 git push` (build + the full E2E suite, several minutes). If that exact code already passed the full gate (nothing changed since), it replays instantly instead of rerunning — never invoke `npm run verify:push` a second time on code that just passed it.
+  - Accepted trade-off, chosen by the user on 2026-08-18: a regression only caught by the E2E suite could land on an intermediate push and reach production (every push to `main` deploys) until the next full validation. That's deliberate, to keep iteration fast — don't "fix" it by silently running the full suite on every push again.
+- Never bypass the pre-push hook with `--no-verify`. A failing validation (light or full) must block the push.
+- If the agentic stop hook reports a failed push validation, inspect the failure, fix its root cause, and retry. Do not end the task while the failure marker remains.
 - Do not weaken, skip, or delete a test just to make validation pass. Fix the root cause.
 
 - Use postgres mcp to debug database issues and test new features

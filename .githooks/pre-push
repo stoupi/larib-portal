@@ -1,51 +1,45 @@
 #!/bin/sh
 set -e
 
+script_dir="$(cd "$(dirname "$0")/.." && pwd)"
+pv="$script_dir/scripts/push-validation.sh"
 validation_failure_marker="$(git rev-parse --git-path agent-push-validation-failed)"
-validation_passed_marker="$(git rev-parse --git-path agent-push-validation-passed)"
 
-hash_stdin() {
-	if command -v shasum >/dev/null 2>&1; then
-		shasum -a 256 | cut -d' ' -f1
-	else
-		sha256sum | cut -d' ' -f1
+# Two-tier gate (see CLAUDE.md "FIRST PRIORITY"): every push gets a fast
+# typecheck+unit check; the full build+E2E suite only runs when the user has
+# signalled they're finishing this unit of work, via FULL_PUSH_VALIDATION=1.
+if [ -n "$FULL_PUSH_VALIDATION" ]; then
+	if [ -z "$FORCE_PUSH_VALIDATION" ] && "$pv" is-cached; then
+		echo "Full pre-push validation already passed on this exact code — skipping the rerun."
+		echo "Set FORCE_PUSH_VALIDATION=1 to run it anyway."
+		rm -f "$validation_failure_marker"
+		exit 0
 	fi
-}
 
-# Everything the validation actually reads: the committed tree, the pending edits
-# on tracked files, and the untracked sources the production build would miss.
-code_fingerprint() {
-	{
-		git rev-parse "HEAD^{tree}"
-		git diff HEAD
-		git ls-files --others --exclude-standard -z | tr '\0' '\n' | while IFS= read -r file; do
-			[ -f "$file" ] || continue
-			printf '%s ' "$file"
-			hash_stdin < "$file"
-		done
-	} | hash_stdin
-}
+	echo "Running the full pre-push validation (build + E2E)..."
+	printf 'validation_started_at=%s\nhead=%s\nmode=full\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$(git rev-parse HEAD)" > "$validation_failure_marker"
 
-fingerprint="$(code_fingerprint)"
+	# verify:push stamps the pass marker itself as its last step, so this covers
+	# both a hook-triggered run and one the developer already ran by hand.
+	if npm run verify:push; then
+		rm -f "$validation_failure_marker"
+		exit 0
+	fi
 
-if [ -z "$FORCE_PUSH_VALIDATION" ] && [ -f "$validation_passed_marker" ] &&
-	[ "$(cat "$validation_passed_marker")" = "$fingerprint" ]; then
-	echo "Pre-push validation already passed on this exact code — skipping the rerun."
-	echo "Set FORCE_PUSH_VALIDATION=1 to run it anyway."
+	"$pv" record-fail
+	echo "Push blocked. Fix the validation failure and retry with FULL_PUSH_VALIDATION=1."
+	exit 1
+fi
+
+echo "Running the light pre-push validation (typecheck + unit tests)..."
+echo "Before the push that finishes this unit of work, run with FULL_PUSH_VALIDATION=1 for the full build + E2E suite."
+printf 'validation_started_at=%s\nhead=%s\nmode=light\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$(git rev-parse HEAD)" > "$validation_failure_marker"
+
+if npm run verify:push:light; then
 	rm -f "$validation_failure_marker"
 	exit 0
 fi
 
-echo "Running the required pre-push validation..."
-printf 'validation_started_at=%s\nhead=%s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$(git rev-parse HEAD)" > "$validation_failure_marker"
-
-if npm run verify:push; then
-	rm -f "$validation_failure_marker"
-	printf '%s' "$fingerprint" > "$validation_passed_marker"
-	exit 0
-fi
-
-rm -f "$validation_passed_marker"
-printf 'validation_failed_at=%s\nhead=%s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$(git rev-parse HEAD)" > "$validation_failure_marker"
+"$pv" record-fail
 echo "Push blocked. Fix the validation failure and retry the push."
 exit 1

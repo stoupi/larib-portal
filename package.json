@@ -9,6 +9,7 @@
 		"prepare": "git config core.hooksPath .githooks || true",
 		"postinstall": "prisma migrate deploy && prisma generate",
 		"lint": "next lint",
+		"typecheck": "tsc --noEmit",
 		"test:e2e": "playwright test",
 		"test:unit": "vitest run",
 		"test:e2e:ui": "playwright test --ui",
@@ -16,7 +17,8 @@
 		"test:setup": "npm run test:seed && playwright test",
 		"test:push": "npm run test:seed && PLAYWRIGHT_PORT=3100 playwright test --workers=1 --retries=2 --forbid-only",
 		"check:untracked-sources": "tsx scripts/check-untracked-sources.ts",
-		"verify:push": "npm run check:untracked-sources && npm run test:unit && npm run build && npm run test:push",
+		"verify:push": "npm run check:untracked-sources && npm run test:unit && npm run build && npm run test:push && sh scripts/push-validation.sh record-pass",
+		"verify:push:light": "npm run check:untracked-sources && npm run typecheck && npm run test:unit",
 		"test:setup ui": "npm run test:seed && playwright test --ui",
 		"test:check-passwords": "tsx scripts/check-test-passwords.ts",
 		"audit:submissions": "tsx scripts/audit-in-submission.ts"
