@@ -1081,12 +1081,14 @@
     },
     "adminRequests": {
       "title": "Demandes de liste d'auteurs",
-      "empty": "Aucune demande en attente.",
       "requestedBy": "Demandé par {name}",
       "resolve": "Résoudre",
       "dismiss": "Rejeter",
       "resolved": "Demande résolue",
-      "dismissed": "Demande rejetée"
+      "dismissed": "Demande rejetée",
+      "resolveAll": "Tout résoudre",
+      "allResolved": "{count} demandes résolues",
+      "pendingCount": "{count} demandes en attente"
     },
     "adminBanksTitle": "Gérer les banques",
     "actionError": "Une erreur est survenue. Veuillez réessayer.",

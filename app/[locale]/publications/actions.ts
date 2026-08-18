@@ -8,7 +8,12 @@ import { prisma } from '@/lib/prisma'
 import { addSubmission, updateSubmissionStatus, updateSubmission, deleteSubmission, userOwnsSubmission, SUBMISSION_STATUSES } from '@/lib/services/publications/submissions'
 import { userIsAuthorOfArticle } from '@/lib/services/publications/my-publications'
 import { createDraftArticle, updateArticleCore, deleteDraft, userIsFirstAuthor, setArticlePdf, setArticleAuthors } from '@/lib/services/publications/publication-editor'
-import { createAuthorListRequest, resolveAuthorRequest, PUBLICATIONS_REQUESTS_TAG } from '@/lib/services/publications/author-requests'
+import {
+  createAuthorListRequest,
+  resolveAuthorRequest,
+  resolveAllAuthorRequests,
+  PUBLICATIONS_REQUESTS_TAG,
+} from '@/lib/services/publications/author-requests'
 import { searchByAuthor, searchPubmed, fetchByPmids } from '@/lib/services/publications/pubmed'
 import {
   importRecords,
@@ -719,6 +724,14 @@ export const resolveAuthorRequestAction = appAdminAction('PUBLICATIONS')
   .inputSchema(z.object({ id: z.string().min(1), outcome: z.enum(['RESOLVED', 'DISMISSED']) }))
   .action(async ({ parsedInput, ctx }) => {
     const result = await resolveAuthorRequest(parsedInput.id, ctx.userId, parsedInput.outcome)
+    revalidateTag(PUBLICATIONS_REQUESTS_TAG)
+    return result
+  })
+
+export const resolveAllAuthorRequestsAction = appAdminAction('PUBLICATIONS')
+  .inputSchema(z.object({}))
+  .action(async ({ ctx }) => {
+    const result = await resolveAllAuthorRequests(ctx.userId)
     revalidateTag(PUBLICATIONS_REQUESTS_TAG)
     return result
   })

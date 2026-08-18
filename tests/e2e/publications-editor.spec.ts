@@ -38,13 +38,35 @@ test('user creates + edits a publication and requests the author list; admin res
   await page.getByRole('button', { name: /request author list to admin/i }).click()
   await expect(page.getByText('Request sent to the admin')).toBeVisible({ timeout: 15000 })
 
-  // Admin resolves the request
+  // A second publication asks for its author list too
+  await page.goto('/en/publications', { timeout: 60000 })
+  await page.getByRole('button', { name: /new publication/i }).click()
+  await page.waitForURL(/\/en\/publications\/articles\/[^/]+\?mode=edit/, { timeout: 60000 })
+  const secondTitle = `Mitral repair durability ${Date.now()}`
+  await page.getByPlaceholder('Publication title').fill(secondTitle)
+  await page.getByRole('button', { name: 'Save changes' }).click()
+  await expect(page.getByText('Changes saved')).toBeVisible({ timeout: 15000 })
+  await page.getByPlaceholder(/Marie Lambert/).fill('Same team as the first paper')
+  await page.getByRole('button', { name: /request author list to admin/i }).click()
+  await expect(page.getByText('Request sent to the admin')).toBeVisible({ timeout: 15000 })
+
+  // The admin finds both requests counted on one card, above the article library
   await page.context().clearCookies()
   await login(page, 'publications-admin@larib-portal.test')
   await page.goto('/en/publications/admin', { timeout: 60000 })
   const requests = page.getByRole('region', { name: 'Author list requests' })
   await expect(requests.getByText(title)).toBeVisible({ timeout: 15000 })
-  await requests.getByRole('button', { name: 'Resolve' }).first().click()
+  await expect(requests.getByText(secondTitle)).toBeVisible()
+  const pendingRows = await requests.getByRole('listitem').count()
+  await expect(requests.getByTitle(`${pendingRows} pending requests`)).toBeVisible()
+
+  // The newest one goes on its own button
+  await requests.getByRole('button', { name: 'Resolve', exact: true }).first().click()
   await expect(page.getByText('Request resolved')).toBeVisible({ timeout: 15000 })
-  await expect(requests.getByText(title)).toHaveCount(0, { timeout: 15000 })
+  await expect(requests.getByText(secondTitle)).toHaveCount(0, { timeout: 15000 })
+
+  // …and a single click clears what is left, taking the whole card away
+  await requests.getByRole('button', { name: 'Resolve all' }).click()
+  await expect(page.getByText(/requests resolved/)).toBeVisible({ timeout: 15000 })
+  await expect(page.getByRole('region', { name: 'Author list requests' })).toHaveCount(0, { timeout: 15000 })
 })

@@ -1083,12 +1083,14 @@
     },
     "adminRequests": {
       "title": "Author list requests",
-      "empty": "No pending requests.",
       "requestedBy": "Requested by {name}",
       "resolve": "Resolve",
       "dismiss": "Dismiss",
       "resolved": "Request resolved",
-      "dismissed": "Request dismissed"
+      "dismissed": "Request dismissed",
+      "resolveAll": "Resolve all",
+      "allResolved": "{count} requests resolved",
+      "pendingCount": "{count} pending requests"
     },
     "adminBanksTitle": "Manage banks",
     "actionError": "Something went wrong. Please try again.",

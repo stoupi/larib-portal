@@ -26,8 +26,9 @@ import { DashboardKpis } from './dashboard-kpis'
 import { DashboardCharts } from './dashboard-charts'
 import { DashboardAuthorFocus } from './dashboard-author-focus'
 import { DashboardArticlesCard } from './dashboard-articles-card'
-import { DashboardModules, type ModuleCounts } from './dashboard-modules'
+import { AdminAuthorRequests } from '../admin-author-requests'
 import { NewPublicationButton } from '../new-publication-button'
+import type { PendingAuthorRequest } from '@/lib/services/publications/author-requests'
 import type { StudyOption } from '@/lib/services/publications/studies'
 
 
@@ -35,13 +36,13 @@ import type { StudyOption } from '@/lib/services/publications/studies'
 export function PublicationsDashboardView({
   articles,
   studies,
-  moduleCounts,
+  authorRequests,
   journals,
   locale,
 }: {
   articles: DashboardArticleItem[]
   studies: StudyOption[]
-  moduleCounts: ModuleCounts
+  authorRequests: PendingAuthorRequest[]
   journals: { names: string[]; currentYear: number }
   locale: string
 }) {
@@ -211,13 +212,14 @@ export function PublicationsDashboardView({
         )}
       </section>
 
+      <AdminAuthorRequests requests={authorRequests} />
+
       <DashboardArticlesCard
         articles={filtered}
         locale={locale}
         journalNames={journals.names}
         studyOptions={studies}
       />
-      <DashboardModules counts={moduleCounts} />
     </div>
   )
 }

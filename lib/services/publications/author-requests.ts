@@ -78,6 +78,13 @@ export async function listPendingAuthorRequests(): Promise<PendingAuthorRequest[
   }))
 }
 
+export async function resolveAllAuthorRequests(adminId: string): Promise<{ count: number }> {
+  return prisma.authorListRequest.updateMany({
+    where: { status: 'PENDING' },
+    data: { status: 'RESOLVED', resolvedAt: new Date(), resolvedById: adminId },
+  })
+}
+
 export async function resolveAuthorRequest(
   id: string,
   adminId: string,

@@ -2,8 +2,8 @@ import { redirect } from 'next/navigation'
 import { requireAuth } from '@/lib/auth-guard'
 import { applicationLink } from '@/lib/application-link'
 import { canAdminApp } from '@/lib/permissions'
-import { AdminAuthorRequests } from '@/app/[locale]/publications/components/admin-author-requests'
 import { PublicationsDashboardView } from '@/app/[locale]/publications/components/admin-dashboard/dashboard-view'
+import { DashboardModules } from '@/app/[locale]/publications/components/admin-dashboard/dashboard-modules'
 import { listPendingAuthorRequests } from '@/lib/services/publications/author-requests'
 import { listDashboardArticles } from '@/lib/services/publications/dashboard'
 import { countAuthors } from '@/lib/services/publications/authors'
@@ -53,8 +53,11 @@ export default async function PublicationsAdminPage({ params }: PageParams) {
           articles={articles}
           studies={studies}
           locale={locale}
+          authorRequests={authorRequests}
           journals={{ names: journalNames, currentYear: new Date().getFullYear() }}
-          moduleCounts={{
+        />
+        <DashboardModules
+          counts={{
             articles: articles.length,
             authors: authorCount,
             centres: centreCount,
@@ -63,7 +66,6 @@ export default async function PublicationsAdminPage({ params }: PageParams) {
             pendingCommunications,
           }}
         />
-        <AdminAuthorRequests requests={authorRequests} />
       </div>
     </div>
   )
