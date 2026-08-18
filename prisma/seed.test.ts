@@ -401,6 +401,7 @@ async function main() {
 			title: 'Carousel done: strain imaging after valve repair',
 			type: 'ORIGINAL',
 			status: 'PUBLISHED',
+			acceptedAt: new Date('2026-02-10T00:00:00.000Z'),
 			publishedAt: new Date('2026-02-20T00:00:00.000Z'),
 			carouselEmailSentAt: new Date('2026-02-24T00:00:00.000Z'),
 			createdBy: { connect: { id: publicationsAdmin.id } },

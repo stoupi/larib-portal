@@ -1457,7 +1457,7 @@
       "colSjr": "SJR",
       "colActions": "Actions",
       "edit": "Éditer",
-      "editTitle": "Éditer le journal",
+      "editTitle": "Modifier la revue",
       "name": "Nom",
       "issn": "ISSN",
       "publisher": "Éditeur",
@@ -1555,7 +1555,10 @@
         "NEURO_IMAGING": "Neuro-imagerie",
         "ONCO_IMAGING": "Onco-imagerie",
         "SURGICAL_TECHNIQUES": "Techniques chirurgicales"
-      }
+      },
+      "editSubtitle": "Mettez à jour la fiche de la revue. Vous pouvez relancer une recherche par ISSN pour rafraîchir ses informations.",
+      "saveJournal": "Enregistrer les modifications",
+      "urlHint": "(optionnel)"
     },
     "studies": {
       "title": "Études",
@@ -1708,7 +1711,6 @@
       "bodyLabel": "Message",
       "missingEmail": "Aucune adresse connue pour le 1er auteur — saisis-la manuellement.",
       "send": "Envoyer",
-      "later": "Plus tard",
       "sentToast": "Mail carrousel envoyé",
       "errorToast": "Échec de l'envoi du mail"
     },
@@ -1788,7 +1790,7 @@
     "communication": {
       "title": "Communication",
       "subtitle": "Les articles acceptés et publiés, et le mail carrousel LinkedIn à envoyer au 1er auteur.",
-      "searchPlaceholder": "Rechercher un article, un journal, un auteur…",
+      "searchPlaceholder": "Rechercher un titre, un auteur, une revue…",
       "tab": {
         "pending": "À envoyer",
         "sent": "Envoyés",
@@ -1801,7 +1803,13 @@
       "sendEmail": "Envoyer le mail",
       "resendEmail": "Renvoyer le mail",
       "cardTitle": "Communication",
-      "cardDescription": "Mail carrousel LinkedIn demandant au 1er auteur les éléments pour valoriser l'article."
+      "cardDescription": "Mail carrousel LinkedIn demandant au 1er auteur les éléments pour valoriser l'article.",
+      "colTitle": "Article",
+      "colJournal": "Revue",
+      "colStatus": "Statut",
+      "colAcceptedAt": "Date d’acceptation",
+      "colEmail": "Mail carrousel",
+      "colAction": "Action"
     }
   }
 }

@@ -2,17 +2,23 @@
 
 import { useMemo, useState } from 'react'
 import { useTranslations } from 'next-intl'
-import { Search } from 'lucide-react'
+import { ChevronDown, ChevronUp, ChevronsUpDown, Search } from 'lucide-react'
 import { Link } from '@/app/i18n/navigation'
 import { Input } from '@/components/ui/input'
+import { TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table'
 import { cn } from '@/lib/utils'
 import { ARTICLE_STATUS_TONE, pillClassName } from '@/lib/publications/status-display'
 import { publicationsPaths, PUBLICATIONS_ADMIN_BASE } from '@/lib/publications/base-path'
 import {
   COMMUNICATION_TABS,
+  DEFAULT_COMMUNICATION_SORT,
   communicationTabCounts,
   filterCommunicationArticles,
+  nextCommunicationSort,
+  sortCommunicationArticles,
   type CommunicationArticleItem,
+  type CommunicationSort,
+  type CommunicationSortKey,
   type CommunicationTab,
 } from '@/lib/publications/communication'
 import { CarouselEmailDialog, useCarouselEmailDialog } from '../article/carousel-email-dialog'
@@ -32,11 +38,42 @@ export function CommunicationView({
   const tStatus = useTranslations('publications.articles.status')
   const [tab, setTab] = useState<CommunicationTab>('pending')
   const [query, setQuery] = useState('')
+  const [sort, setSort] = useState<CommunicationSort>(DEFAULT_COMMUNICATION_SORT)
   const carouselDialog = useCarouselEmailDialog()
 
   const counts = useMemo(() => communicationTabCounts(articles), [articles])
-  const visible = useMemo(() => filterCommunicationArticles(articles, tab, query), [articles, tab, query])
+  const visible = useMemo(
+    () => sortCommunicationArticles(filterCommunicationArticles(articles, tab, query), sort),
+    [articles, tab, query, sort],
+  )
   const dateFormatter = new Intl.DateTimeFormat(locale, { dateStyle: 'medium' })
+
+  function SortHead({ sortKey, label }: { sortKey: CommunicationSortKey; label: string }) {
+    const active = sort.key === sortKey
+    return (
+      <TableHead>
+        <button
+          type="button"
+          onClick={() => setSort((current) => nextCommunicationSort(current, sortKey))}
+          className={cn(
+            'inline-flex items-center gap-1 text-xs font-bold uppercase tracking-wide hover:text-text-primary',
+            active ? 'text-coral-600' : 'text-text-muted',
+          )}
+        >
+          {label}
+          {active ? (
+            sort.direction === 'asc' ? (
+              <ChevronUp className="size-3.5" />
+            ) : (
+              <ChevronDown className="size-3.5" />
+            )
+          ) : (
+            <ChevronsUpDown className="size-3.5 opacity-40" />
+          )}
+        </button>
+      </TableHead>
+    )
+  }
 
   return (
     <div className="space-y-6">
@@ -49,12 +86,13 @@ export function CommunicationView({
       </header>
 
       <div className="flex flex-wrap items-center gap-3">
-        <div className="relative w-full sm:w-80">
+        <div className="relative w-full sm:w-96">
           <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-text-muted" />
           <Input
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             placeholder={t('searchPlaceholder')}
+            aria-label={t('searchPlaceholder')}
             className="rounded-2xl bg-bg-surface pl-9 shadow-sm"
           />
         </div>
@@ -86,42 +124,73 @@ export function CommunicationView({
         </div>
       </div>
 
-      <div className="overflow-hidden rounded-2xl border border-line bg-bg-surface shadow-elevation-xs">
-        {visible.length === 0 ? (
-          <p className="px-5 py-10 text-center text-sm font-semibold text-text-secondary">{t('empty')}</p>
-        ) : (
-          visible.map((article) => (
-            <div
-              key={article.id}
-              className="flex flex-wrap items-center gap-3 border-b border-line px-5 py-4 last:border-b-0 transition-colors hover:bg-coral-50/40 dark:hover:bg-coral-500/[0.06]"
-            >
-              <div className="min-w-[240px] flex-1">
-                <Link
-                  href={ADMIN_PATHS.article(article.id)}
-                  className="block truncate text-[15px] font-extrabold text-text-primary hover:text-coral-600"
-                >
-                  {article.title || t('untitled')}
-                </Link>
-                <div className="mt-1 truncate text-[12px] text-text-secondary">
-                  {[
-                    article.firstAuthorName,
-                    article.journal,
-                    article.milestoneAt ? dateFormatter.format(new Date(article.milestoneAt)) : null,
-                  ]
-                    .filter(Boolean)
-                    .join(' · ')}
-                </div>
-              </div>
-              <span className={pillClassName(ARTICLE_STATUS_TONE[article.status])}>{tStatus(article.status)}</span>
-              <CarouselEmailTag sentAt={article.carouselEmailSentAt} locale={locale} />
-              <CarouselSendButton
-                alreadySent={article.carouselEmailSentAt !== null}
-                onClick={() => carouselDialog.openFor(article.id)}
-              />
-            </div>
-          ))
-        )}
-      </div>
+      <section className="overflow-hidden rounded-2xl border border-line bg-bg-surface shadow-elevation-xs">
+        <div className="overflow-x-auto">
+          <table className="w-full caption-bottom text-sm">
+            <TableHeader>
+              <TableRow>
+                <SortHead sortKey="title" label={t('colTitle')} />
+                <TableHead className="text-xs font-bold uppercase tracking-wide text-text-muted">
+                  {t('colJournal')}
+                </TableHead>
+                <TableHead className="text-xs font-bold uppercase tracking-wide text-text-muted">
+                  {t('colStatus')}
+                </TableHead>
+                <SortHead sortKey="acceptedAt" label={t('colAcceptedAt')} />
+                <TableHead className="text-xs font-bold uppercase tracking-wide text-text-muted">
+                  {t('colEmail')}
+                </TableHead>
+                <TableHead className="text-right text-xs font-bold uppercase tracking-wide text-text-muted">
+                  {t('colAction')}
+                </TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {visible.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={6} className="py-10 text-center text-sm font-semibold text-text-secondary">
+                    {t('empty')}
+                  </TableCell>
+                </TableRow>
+              ) : (
+                visible.map((article) => (
+                  <TableRow key={article.id}>
+                    <TableCell className="max-w-md">
+                      <Link
+                        href={ADMIN_PATHS.article(article.id)}
+                        className="block truncate font-extrabold text-text-primary hover:text-coral-600"
+                      >
+                        {article.title || t('untitled')}
+                      </Link>
+                      <span className="mt-0.5 block truncate text-[12px] text-text-secondary">
+                        {article.authorNames.join(', ') || '—'}
+                      </span>
+                    </TableCell>
+                    <TableCell className="whitespace-nowrap text-text-secondary">{article.journal ?? '—'}</TableCell>
+                    <TableCell>
+                      <span className={pillClassName(ARTICLE_STATUS_TONE[article.status])}>
+                        {tStatus(article.status)}
+                      </span>
+                    </TableCell>
+                    <TableCell className="whitespace-nowrap tabular-nums text-text-secondary">
+                      {article.acceptedAt ? dateFormatter.format(new Date(article.acceptedAt)) : '—'}
+                    </TableCell>
+                    <TableCell>
+                      <CarouselEmailTag sentAt={article.carouselEmailSentAt} locale={locale} />
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <CarouselSendButton
+                        alreadySent={article.carouselEmailSentAt !== null}
+                        onClick={() => carouselDialog.openFor(article.id)}
+                      />
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </table>
+        </div>
+      </section>
 
       <CarouselEmailDialog controller={carouselDialog} />
     </div>

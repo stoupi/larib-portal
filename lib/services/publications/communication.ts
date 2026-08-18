@@ -19,7 +19,6 @@ export async function listCommunicationArticles(): Promise<CommunicationArticleI
       },
       authorships: {
         orderBy: { order: 'asc' },
-        take: 1,
         select: { author: { select: { firstName: true, lastName: true } } },
       },
     },
@@ -28,16 +27,19 @@ export async function listCommunicationArticles(): Promise<CommunicationArticleI
   return articles.map((article) => {
     const acceptedSubmission = article.submissions.find((submission) => submission.status === 'ACCEPTED') ?? null
     const journal = article.publishedJournal ?? acceptedSubmission?.journal ?? article.submissions.at(-1)?.journal ?? null
-    const firstAuthor = article.authorships.at(0)?.author ?? null
-    const milestoneDate = article.publishedAt ?? article.acceptedAt ?? acceptedSubmission?.decidedAt ?? null
+    const authorNames = article.authorships.map((authorship) =>
+      `${authorship.author.firstName} ${authorship.author.lastName}`.trim(),
+    )
+    const acceptedDate = article.acceptedAt ?? acceptedSubmission?.decidedAt ?? null
 
     return {
       id: article.id,
       title: article.title,
       journal: journal ? journal.abbreviation ?? journal.name : null,
       status: article.status,
-      firstAuthorName: firstAuthor ? `${firstAuthor.firstName} ${firstAuthor.lastName}`.trim() : null,
-      milestoneAt: milestoneDate ? milestoneDate.toISOString() : null,
+      firstAuthorName: authorNames.at(0) ?? null,
+      authorNames,
+      acceptedAt: acceptedDate ? acceptedDate.toISOString() : null,
       carouselEmailSentAt: article.carouselEmailSentAt ? article.carouselEmailSentAt.toISOString() : null,
     }
   })

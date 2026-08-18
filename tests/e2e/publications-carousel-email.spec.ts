@@ -24,12 +24,8 @@ async function expectPrefilledDraft(dialog: Locator): Promise<void> {
   await expect(body).toHaveValue(/Merci de confirmer qu’il s’agit bien de Marc Zurbrugg\./)
 }
 
-function communicationRow(page: Page, title: string, sendLabel: string): Locator {
-  return page
-    .locator('div')
-    .filter({ has: page.getByRole('link', { name: title }) })
-    .filter({ has: page.getByRole('button', { name: sendLabel }) })
-    .last()
+function communicationRow(page: Page, title: string): Locator {
+  return page.getByRole('row').filter({ has: page.getByRole('link', { name: title }) })
 }
 
 test('an admin accepts an article, defers the carousel email and sends it from the Communication module', async ({
@@ -72,15 +68,20 @@ test('an admin accepts an article, defers the carousel email and sends it from t
   await expect(dialog.getByText('camille.gersdorff.com@gmail.com')).toBeVisible()
   await expect(dialog.getByText('No known address for the first author — type it manually.')).toHaveCount(0)
 
-  // "Later" leaves the email unsent: the article page keeps a Communication card to compose it again
-  await dialog.getByRole('button', { name: 'Later' }).click()
+  // Closing without sending leaves the email unsent: the article page keeps a
+  // Communication card to compose it again
+  await page.keyboard.press('Escape')
   await expect(dialog).toBeHidden({ timeout: 15000 })
   await expect(
     page.getByText('LinkedIn carousel email asking the first author for the material that showcases the article.'),
   ).toBeVisible({ timeout: 20000 })
   await expect(page.getByText('Email to send')).toBeVisible()
 
-  // A later save that does not change the status must not push the composer back
+  // A later save that does not change the status must not push the composer back.
+  // The pointer must leave the toast area first: sonner keeps a hovered toast open,
+  // and it sits right on top of the save button.
+  await page.mouse.move(0, 400)
+  await expect(page.getByText('Changes saved')).toBeHidden({ timeout: 20000 })
   await page.getByRole('textbox', { name: 'DOI' }).fill(`10.1000/carousel-e2e-${Date.now()}`)
   await page.getByRole('button', { name: 'Save changes' }).click()
   await expect(page.getByText('Changes saved')).toBeVisible({ timeout: 20000 })
@@ -90,42 +91,59 @@ test('an admin accepts an article, defers the carousel email and sends it from t
   await page.getByRole('button', { name: 'Send email' }).click()
   const cardDialog = page.getByRole('dialog')
   await expectPrefilledDraft(cardDialog)
-  await cardDialog.getByRole('button', { name: 'Later' }).click()
+  await page.keyboard.press('Escape')
   await expect(cardDialog).toBeHidden({ timeout: 15000 })
 
   // The Communication module splits what is still to send from what has been sent
   await page.goto('/en/publications/admin/communication', { timeout: 60000 })
   await expect(page.getByRole('heading', { name: 'Communication', level: 1 })).toBeVisible({ timeout: 30000 })
-  const pendingRow = communicationRow(page, CAROUSEL_ARTICLE, 'Send email')
+  const pendingRow = communicationRow(page, CAROUSEL_ARTICLE)
   await expect(pendingRow.getByText('Email to send')).toBeVisible({ timeout: 30000 })
   await expect(pendingRow.getByText('Accepted')).toBeVisible()
   await expect(page.getByRole('link', { name: COMMUNICATED_ARTICLE })).toHaveCount(0)
 
+  // The acceptance date lands in its column the day the article is marked accepted
+  const acceptedToday = new Intl.DateTimeFormat('en', { dateStyle: 'medium' }).format(new Date())
+  await expect(pendingRow.getByText(acceptedToday)).toBeVisible()
+
+  // Searching by author narrows the table, and the acceptance column sorts both ways
+  const search = page.getByPlaceholder('Search a title, an author, a journal…')
+  await search.fill('zellweger')
+  await expect(pendingRow).toBeVisible()
+  await search.fill('nobody-zzz')
+  await expect(page.getByText('No article in this list.')).toBeVisible()
+  await search.fill('')
+
+  await page.getByRole('button', { name: /^All/ }).click()
+  const titles = page.getByRole('row').locator('a')
+  await expect(titles.first()).toHaveText(CAROUSEL_ARTICLE, { timeout: 20000 })
+  await page.getByRole('button', { name: 'Acceptance date' }).click()
+  await expect(titles.first()).toHaveText(COMMUNICATED_ARTICLE)
+
+  await page.getByRole('button', { name: /^To send/ }).click()
   await pendingRow.getByRole('button', { name: 'Send email' }).click()
   const moduleDialog = page.getByRole('dialog')
   await expect(moduleDialog).toBeVisible({ timeout: 20000 })
   await expectPrefilledDraft(moduleDialog)
-  await moduleDialog.getByRole('button', { name: 'Later' }).click()
+  await page.keyboard.press('Escape')
   await expect(moduleDialog).toBeHidden({ timeout: 15000 })
 
   await page.getByRole('button', { name: /^Sent/ }).click()
-  const sentRow = communicationRow(page, COMMUNICATED_ARTICLE, 'Send again')
+  const sentRow = communicationRow(page, COMMUNICATED_ARTICLE)
   await expect(sentRow.getByText(/Sent on/)).toBeVisible({ timeout: 20000 })
   await expect(page.getByRole('link', { name: CAROUSEL_ARTICLE })).toHaveCount(0)
 
   // The same module is translated for the French locale
   await page.goto('/fr/publications/admin/communication', { timeout: 60000 })
-  const frenchRow = communicationRow(page, CAROUSEL_ARTICLE, 'Envoyer le mail')
+  const frenchRow = communicationRow(page, CAROUSEL_ARTICLE)
   await expect(frenchRow.getByText('Mail à envoyer')).toBeVisible({ timeout: 30000 })
   await frenchRow.getByRole('button', { name: 'Envoyer le mail' }).click()
   const frenchDialog = page.getByRole('dialog')
   await expect(frenchDialog.getByRole('heading', { name: 'Mail carrousel LinkedIn' })).toBeVisible({ timeout: 20000 })
   await expect(frenchDialog.getByLabel('Destinataire (1er auteur)')).toHaveValue(FIRST_AUTHOR_EMAIL, { timeout: 20000 })
-  await frenchDialog.getByRole('button', { name: 'Plus tard' }).click()
+  await page.keyboard.press('Escape')
   await expect(frenchDialog).toBeHidden({ timeout: 15000 })
 
   await page.getByRole('button', { name: /^Envoyés/ }).click()
-  await expect(communicationRow(page, COMMUNICATED_ARTICLE, 'Renvoyer le mail').getByText(/Envoyé le/)).toBeVisible({
-    timeout: 20000,
-  })
+  await expect(communicationRow(page, COMMUNICATED_ARTICLE).getByText(/Envoyé le/)).toBeVisible({ timeout: 20000 })
 })

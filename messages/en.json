@@ -1557,7 +1557,10 @@
         "NEURO_IMAGING": "Neuro-imaging",
         "ONCO_IMAGING": "Onco-imaging",
         "SURGICAL_TECHNIQUES": "Surgical techniques"
-      }
+      },
+      "editSubtitle": "Update the journal record. You can run an ISSN lookup again to refresh its details.",
+      "saveJournal": "Save changes",
+      "urlHint": "(optional)"
     },
     "studies": {
       "title": "Studies",
@@ -1710,7 +1713,6 @@
       "bodyLabel": "Message",
       "missingEmail": "No known address for the first author — type it manually.",
       "send": "Send",
-      "later": "Later",
       "sentToast": "Carousel email sent",
       "errorToast": "Failed to send the email"
     },
@@ -1790,7 +1792,7 @@
     "communication": {
       "title": "Communication",
       "subtitle": "Accepted and published articles, with the LinkedIn carousel email to send to the first author.",
-      "searchPlaceholder": "Search an article, a journal, an author…",
+      "searchPlaceholder": "Search a title, an author, a journal…",
       "tab": {
         "pending": "To send",
         "sent": "Sent",
@@ -1803,7 +1805,13 @@
       "sendEmail": "Send email",
       "resendEmail": "Send again",
       "cardTitle": "Communication",
-      "cardDescription": "LinkedIn carousel email asking the first author for the material that showcases the article."
+      "cardDescription": "LinkedIn carousel email asking the first author for the material that showcases the article.",
+      "colTitle": "Article",
+      "colJournal": "Journal",
+      "colStatus": "Status",
+      "colAcceptedAt": "Acceptance date",
+      "colEmail": "Carousel email",
+      "colAction": "Action"
     }
   }
 }

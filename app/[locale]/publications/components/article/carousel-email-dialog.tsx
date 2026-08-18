@@ -138,9 +138,6 @@ export function CarouselEmailDialog({ controller }: { controller: CarouselEmailC
         )}
 
         <DialogFooter>
-          <Button type="button" variant="outline" onClick={close}>
-            {t('later')}
-          </Button>
           <Button
             type="button"
             className={CORAL_BUTTON}

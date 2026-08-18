@@ -150,7 +150,18 @@ export type UpdateArticleCoreInput = {
   contributorsNote: string | null
 }
 
-export async function updateArticleCore(articleId: string, input: UpdateArticleCoreInput) {
+// Imports carry the acceptance date from the publisher; when the status is flipped
+// by hand instead, the day it is marked accepted is the only date on record.
+export async function updateArticleCore(
+  articleId: string,
+  input: UpdateArticleCoreInput,
+  now: Date = new Date(),
+) {
+  const current = await prisma.article.findUnique({
+    where: { id: articleId },
+    select: { status: true, acceptedAt: true },
+  })
+  const becomesAccepted = input.status === 'ACCEPTED' && current?.status !== 'ACCEPTED'
   return prisma.article.update({
     where: { id: articleId },
     data: {
@@ -161,6 +172,7 @@ export async function updateArticleCore(articleId: string, input: UpdateArticleC
       pubmedId: input.pubmedId,
       doi: input.doi,
       contributorsNote: input.contributorsNote,
+      ...(becomesAccepted && !current?.acceptedAt ? { acceptedAt: now } : {}),
     },
     select: { id: true },
   })
