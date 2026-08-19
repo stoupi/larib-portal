@@ -3,8 +3,11 @@ import { test, expect, type Page } from '@playwright/test'
 test.setTimeout(90000)
 
 const ARTICLE_TITLE = 'Outcomes of multi-valve intervention: a retrospective cohort'
-const EXPECTED_AUTHORS = 'Publications User¹, MD; and Jane Coauthor¹, MD, PhD.'
-const EXPECTED_AFFILIATION = '¹ Lariboisière Hospital'
+const EXPECTED_AUTHORS = 'Publications User¹, MD; and Jane Coauthor², MD, PhD.'
+// The first author's affiliation is the one this article recorded; the co-author has
+// none on the article, so their own affiliation is used — never their centre.
+const ARTICLE_AFFILIATION = 'Lariboisière Hospital, APHP, Paris, France'
+const AUTHOR_AFFILIATION = 'Inserm MASCOT - UMRS 942, University Hospital of Lariboisiere, 75010, Paris, France.'
 
 async function login(page: Page, email: string): Promise<void> {
   await page.goto('/en/login', { timeout: 60000 })
@@ -19,15 +22,20 @@ async function expectWordReadyList(page: Page): Promise<void> {
   const dialog = page.getByRole('dialog')
   await expect(dialog.getByText(ARTICLE_TITLE)).toBeVisible({ timeout: 15000 })
 
-  // Both authors share one centre: a single affiliation, numbered once and reused
-  await expect(dialog.getByText('Publications User1, MD; and Jane Coauthor1, MD, PhD.')).toBeVisible()
-  await expect(dialog.getByText('1 Lariboisière Hospital')).toBeVisible()
+  await expect(dialog.getByText('Publications User1, MD; and Jane Coauthor2, MD, PhD.')).toBeVisible()
+  await expect(dialog.getByText(`1 ${ARTICLE_AFFILIATION}`)).toBeVisible()
+  await expect(dialog.getByText(`2 ${AUTHOR_AFFILIATION}`)).toBeVisible()
+
+  // The centre both authors belong to is not an affiliation and must never leak in
+  await expect(dialog.getByText('Lariboisière Hospital', { exact: true })).toHaveCount(0)
 
   await dialog.getByRole('button', { name: 'Copy' }).click()
   await expect(page.getByText('Copied').first()).toBeVisible({ timeout: 15000 })
 
   const clipboard = await page.evaluate(() => navigator.clipboard.readText())
-  expect(clipboard).toBe([ARTICLE_TITLE, '', EXPECTED_AUTHORS, '', EXPECTED_AFFILIATION].join('\n'))
+  expect(clipboard).toBe(
+    [ARTICLE_TITLE, '', EXPECTED_AUTHORS, '', `¹ ${ARTICLE_AFFILIATION}`, `² ${AUTHOR_AFFILIATION}`].join('\n'),
+  )
 
   await dialog.getByRole('button', { name: 'Close' }).first().click()
   await expect(page.getByRole('dialog')).toHaveCount(0, { timeout: 15000 })

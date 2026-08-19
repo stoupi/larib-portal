@@ -67,14 +67,13 @@ export function EditorAuthorsAdmin({
   const exportableAuthors: ExportableAuthor[] = entries.flatMap((entry) => {
     const author = authorsById.get(entry.authorId)
     if (!author) return []
-    const storedAffiliations = affiliationsByAuthorId.get(entry.authorId) ?? []
-    const centreFallback = author.centreName ? [author.centreName] : []
+    const fromArticle = affiliationsByAuthorId.get(entry.authorId) ?? []
     return [
       {
         firstName: author.firstName,
         lastName: author.lastName,
         degrees: author.degrees,
-        affiliations: storedAffiliations.length > 0 ? storedAffiliations : centreFallback,
+        affiliations: fromArticle.length > 0 ? fromArticle : author.affiliations,
       },
     ]
   })

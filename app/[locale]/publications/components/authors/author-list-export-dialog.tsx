@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { toast } from 'sonner'
-import { Check, Copy, FileText } from 'lucide-react'
+import { Check, Copy, FileText, TriangleAlert } from 'lucide-react'
 import {
   Dialog,
   DialogContent,
@@ -46,6 +46,7 @@ export function AuthorListExportDialog({
 
   const authorList = buildAuthorListExport(title, authors)
   const plainText = authorListExportToPlainText(authorList)
+  const withoutAffiliation = authorList.authors.filter((author) => author.affiliationIndexes.length === 0)
 
   async function onCopy() {
     try {
@@ -100,6 +101,13 @@ export function AuthorListExportDialog({
               ))}
             </div>
           </div>
+
+          {withoutAffiliation.length > 0 && (
+            <p className="flex items-start gap-2 rounded-xl border border-[#FDE68A] bg-[#FFFBEB] px-3.5 py-2.5 text-[12.5px] leading-relaxed text-[#92400E] dark:border-[#FBBF24]/30 dark:bg-[#FBBF24]/10 dark:text-[#FBBF24]">
+              <TriangleAlert className="mt-0.5 h-4 w-4 shrink-0" strokeWidth={2.2} />
+              <span>{t('missingAffiliations', { names: withoutAffiliation.map((author) => author.name).join(', ') })}</span>
+            </p>
+          )}
 
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>

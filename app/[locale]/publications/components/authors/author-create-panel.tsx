@@ -95,6 +95,7 @@ export function CreateAuthorPanel({
         degrees: null,
         isOurTeam: selectedCentre?.isOwn ?? false,
         centreName: selectedCentre?.name ?? null,
+        affiliations: [],
         publicationCount: 0,
       })
       setFirstName('')

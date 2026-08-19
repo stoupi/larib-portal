@@ -305,6 +305,9 @@ async function main() {
 			centre: { connect: { id: publicationsCentre.id } },
 			emails: ['jane.coauthor@larib-portal.test'],
 			defaultAffiliation: { connect: { id: publicationsAffiliation.id } },
+			paperAffiliations: {
+				create: [{ raw: 'Inserm MASCOT - UMRS 942, University Hospital of Lariboisiere, 75010, Paris, France.', order: 0 }],
+			},
 		},
 	});
 	const publicationsStudy = await prisma.study.create({
@@ -319,7 +322,11 @@ async function main() {
 			createdBy: { connect: { id: publicationsUser.id } },
 			authorships: {
 				create: [
-					{ order: 1, author: { connect: { id: publicationsFirstAuthor.id } } },
+					{
+						order: 1,
+						author: { connect: { id: publicationsFirstAuthor.id } },
+						affiliations: { create: [{ order: 0, affiliation: { connect: { id: publicationsAffiliation.id } } }] },
+					},
 					{ order: 2, isCorresponding: true, author: { connect: { id: publicationsCoAuthor.id } } },
 				],
 			},

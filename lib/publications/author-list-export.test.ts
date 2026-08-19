@@ -42,24 +42,31 @@ describe('buildAuthorListExport', () => {
 })
 
 describe('authorshipAffiliationTexts', () => {
-  const author = { firstName: 'A', lastName: 'One', degrees: null, centre: { name: 'AP-HP - Lariboisière' } }
+  const author = {
+    firstName: 'A',
+    lastName: 'One',
+    degrees: null,
+    paperAffiliations: [{ raw: ICPS }],
+  }
 
-  it('prefers the raw address, then the affiliation name, then the linked centre', () => {
+  it('takes what the article recorded, preferring the raw address over the affiliation name', () => {
     expect(
       authorshipAffiliationTexts({
         author,
         affiliations: [
-          { affiliation: { name: 'short name', raw: LARIB, centre: null } },
-          { affiliation: { name: 'short name', raw: '  ', centre: null } },
-          { affiliation: { name: '', raw: null, centre: { name: 'Centre only' } } },
+          { affiliation: { name: 'short name', raw: LARIB } },
+          { affiliation: { name: 'short name', raw: '  ' } },
         ],
       }),
-    ).toEqual([LARIB, 'short name', 'Centre only'])
+    ).toEqual([LARIB, 'short name'])
   })
 
-  it("falls back to the author's own centre when the authorship carries no affiliation", () => {
-    expect(authorshipAffiliationTexts({ author, affiliations: [] })).toEqual(['AP-HP - Lariboisière'])
-    expect(authorshipAffiliationTexts({ author: { ...author, centre: null }, affiliations: [] })).toEqual([])
+  it("falls back to the author's own affiliations when the article recorded none", () => {
+    expect(authorshipAffiliationTexts({ author, affiliations: [] })).toEqual([ICPS])
+  })
+
+  it('leaves the author unaffiliated rather than inventing one from their centre', () => {
+    expect(authorshipAffiliationTexts({ author: { ...author, paperAffiliations: [] }, affiliations: [] })).toEqual([])
   })
 })
 

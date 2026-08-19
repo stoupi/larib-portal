@@ -362,6 +362,7 @@ export type AuthorPickerOption = {
   degrees: string | null
   isOurTeam: boolean
   centreName: string | null
+  affiliations: string[]
   publicationCount: number
 }
 
@@ -376,6 +377,7 @@ export async function listAuthorPickerOptions(): Promise<AuthorPickerOption[]> {
       degrees: true,
       type: true,
       centre: { select: { name: true } },
+      paperAffiliations: { orderBy: { order: 'asc' }, select: { raw: true } },
       _count: { select: { authorships: true } },
     },
   })
@@ -387,6 +389,7 @@ export async function listAuthorPickerOptions(): Promise<AuthorPickerOption[]> {
     degrees: author.degrees,
     isOurTeam: author.type === 'OUR_TEAM',
     centreName: author.centre?.name ?? null,
+    affiliations: author.paperAffiliations.map((affiliation) => affiliation.raw.trim()).filter(Boolean),
     publicationCount: author._count.authorships,
   }))
 }

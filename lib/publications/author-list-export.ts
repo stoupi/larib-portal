@@ -22,27 +22,28 @@ export type AuthorListExport = {
   affiliations: ExportedAffiliation[]
 }
 
+// An affiliation is the address line printed under a manuscript. It is never the
+// author's centre de rattachement, which only groups authors inside the portal.
+// What this article recorded for the author comes first; their own declared
+// affiliations fill in when the article carries none.
 export type AuthorshipSource = {
   author: {
     firstName: string
     lastName: string
     degrees: string | null
-    centre: { name: string } | null
+    paperAffiliations: Array<{ raw: string }>
   }
-  affiliations: Array<{
-    affiliation: { name: string; raw: string | null; centre: { name: string } | null }
-  }>
+  affiliations: Array<{ affiliation: { name: string; raw: string | null } }>
 }
 
 const SUPERSCRIPT_DIGITS = ['⁰', '¹', '²', '³', '⁴', '⁵', '⁶', '⁷', '⁸', '⁹']
 
 export function authorshipAffiliationTexts(authorship: AuthorshipSource): string[] {
-  const texts = authorship.affiliations
-    .map((link) => link.affiliation.raw?.trim() || link.affiliation.name.trim() || link.affiliation.centre?.name.trim() || '')
+  const fromArticle = authorship.affiliations
+    .map((link) => link.affiliation.raw?.trim() || link.affiliation.name.trim())
     .filter(Boolean)
-  if (texts.length > 0) return texts
-  const centreName = authorship.author.centre?.name.trim()
-  return centreName ? [centreName] : []
+  if (fromArticle.length > 0) return fromArticle
+  return authorship.author.paperAffiliations.map((affiliation) => affiliation.raw.trim()).filter(Boolean)
 }
 
 export function toExportableAuthors(authorships: AuthorshipSource[]): ExportableAuthor[] {

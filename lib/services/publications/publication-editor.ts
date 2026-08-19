@@ -117,7 +117,7 @@ export async function getPublicationForEdit(articleId: string) {
               lastName: true,
               degrees: true,
               userId: true,
-              centre: { select: { name: true } },
+              paperAffiliations: { orderBy: { order: 'asc' }, select: { raw: true } },
             },
           },
           affiliations: {
