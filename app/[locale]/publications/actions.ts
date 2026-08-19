@@ -571,11 +571,13 @@ export const addSubmissionAction = authenticatedAction
     if (!canAccessApp(ctx.user, 'PUBLICATIONS')) throw new Error('Forbidden')
     if (!canCurateAnySubmission(ctx.user) && !(await userIsAuthorOfArticle(ctx.userId, parsedInput.articleId)))
       throw new Error('Forbidden')
-    return addSubmission({
+    const added = await addSubmission({
       articleId: parsedInput.articleId,
       journalName: parsedInput.journalName,
       submittedAt: new Date(parsedInput.submittedAt),
     })
+    revalidateTag(PUBLICATIONS_ARTICLES_TAG)
+    return added
   })
 
 export const updateSubmissionStatusAction = authenticatedAction
@@ -590,11 +592,13 @@ export const updateSubmissionStatusAction = authenticatedAction
     if (!canAccessApp(ctx.user, 'PUBLICATIONS')) throw new Error('Forbidden')
     if (!canCurateAnySubmission(ctx.user) && !(await userOwnsSubmission(ctx.userId, parsedInput.submissionId)))
       throw new Error('Forbidden')
-    return updateSubmissionStatus({
+    const updated = await updateSubmissionStatus({
       submissionId: parsedInput.submissionId,
       status: parsedInput.status,
       decidedAt: parsedInput.decidedAt ? new Date(parsedInput.decidedAt) : null,
     })
+    revalidateTag(PUBLICATIONS_ARTICLES_TAG)
+    return updated
   })
 
 // ---- User publication editor ----

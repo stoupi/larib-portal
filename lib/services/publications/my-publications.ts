@@ -41,7 +41,7 @@ export type MyPublicationItem = {
 }
 
 const DAY_MS = 86_400_000
-const ACTIVE_STATUSES: ArticleStatusValue[] = ['UNDER_REVIEW', 'TO_RESUBMIT']
+const ACTIVE_STATUSES: ArticleStatusValue[] = ['UNDER_REVIEW', 'REVISION', 'TO_RESUBMIT']
 
 function daysBetween(from: Date, to: Date): number {
   return Math.max(0, Math.round((to.getTime() - from.getTime()) / DAY_MS))

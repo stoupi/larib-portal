@@ -1,6 +1,7 @@
 import { prisma } from '@/lib/prisma'
 import { Prisma } from '@/app/generated/prisma'
-import { siblingsToReject, isRejected } from '@/lib/publications/submission-rules'
+import { siblingsToReject, isRejected, articleStatusForSubmission } from '@/lib/publications/submission-rules'
+import type { ArticleStatusValue } from './articles'
 import { SUBMISSION_STATUSES, type SubmissionStatusValue } from '@/lib/publications/status-display'
 
 export { SUBMISSION_STATUSES }
@@ -9,6 +10,18 @@ export type { SubmissionStatusValue }
 // A status that carries a dated decision (anything past "still pending review").
 function isPending(status: SubmissionStatusValue): boolean {
   return status === 'SUBMITTED' || status === 'UNDER_REVIEW'
+}
+
+// Keeps the publication status in step with the submission just written, inside the same
+// transaction so the two can never disagree.
+async function syncArticleStatus(
+  tx: Prisma.TransactionClient,
+  articleId: string,
+  submissionStatus: SubmissionStatusValue,
+): Promise<void> {
+  const article = await tx.article.findUniqueOrThrow({ where: { id: articleId }, select: { status: true } })
+  const next = articleStatusForSubmission(submissionStatus, article.status as ArticleStatusValue)
+  if (next) await tx.article.update({ where: { id: articleId }, data: { status: next } })
 }
 
 async function findOrCreateJournalId(journalName: string): Promise<string> {
@@ -75,6 +88,7 @@ export async function addSubmission(input: AddSubmissionInput): Promise<{ id: st
         data: { status: 'REJECTED', decidedAt: input.submittedAt },
       })
     }
+    await syncArticleStatus(tx, input.articleId, 'SUBMITTED')
     return created
   })
 }
@@ -112,6 +126,7 @@ export async function updateSubmissionStatus(input: UpdateSubmissionStatusInput)
         })
       }
     }
+    await syncArticleStatus(tx, target.articleId, input.status)
     return { id: target.id }
   })
 }

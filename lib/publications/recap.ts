@@ -1,7 +1,7 @@
 import type { MyPublicationItem } from '@/lib/services/publications/my-publications'
 import type { ArticleStatusValue } from '@/lib/services/publications/articles'
 
-export const RECAP_STATUSES = ['IN_PREPARATION', 'UNDER_REVIEW', 'TO_RESUBMIT'] as const
+export const RECAP_STATUSES = ['IN_PREPARATION', 'UNDER_REVIEW', 'REVISION', 'TO_RESUBMIT'] as const
 export type RecapStatusValue = (typeof RECAP_STATUSES)[number]
 
 export type RecapArticle = {

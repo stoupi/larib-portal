@@ -1,7 +1,7 @@
 'use client'
 
 import { useTranslations } from 'next-intl'
-import { ArrowUp, ArrowUpDown, ChevronRight, Clock, ExternalLink, FileText, Pencil } from 'lucide-react'
+import { ArrowUp, ArrowUpDown, ChevronRight, ExternalLink, FileText, Pencil } from 'lucide-react'
 import { Link } from '@/app/i18n/navigation'
 import { cn } from '@/lib/utils'
 import { doiUrl } from '@/lib/publications/doi'
@@ -12,6 +12,7 @@ import { ARTICLE_SORT_KEYS, type ArticleSort, type ArticleSortKey } from '@/lib/
 import { publicationsPaths, PUBLICATIONS_ADMIN_BASE } from '@/lib/publications/base-path'
 import type { StudyOption } from '@/lib/services/publications/studies'
 import { SubmissionHistory } from '../submission-history'
+import { PendingTag } from '../pending-tag'
 import { ArticleStudySelect } from './article-study-select'
 import { ArticleScopeSwitch } from './article-scope-switch'
 import { ArticleDeleteButton } from './article-delete-button'
@@ -155,10 +156,7 @@ export function ArticleListRow({
               {formatDate(article.acceptedAt)}
             </span>
           ) : article.pendingDays != null ? (
-            <span className="inline-flex items-center gap-1.5 text-xs font-bold text-[#B45309] tabular-nums dark:text-[#FBBF24]">
-              <Clock className="h-3 w-3" strokeWidth={2.2} />
-              {t('myPub.pending', { days: article.pendingDays })}
-            </span>
+            <PendingTag pendingDays={article.pendingDays} />
           ) : null}
         </div>
 

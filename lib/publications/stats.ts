@@ -32,6 +32,7 @@ const MAX_YEAR_BARS = 12
 const STATUS_DISPLAY_ORDER: ArticleStatusValue[] = [
   'PUBLISHED',
   'UNDER_REVIEW',
+  'REVISION',
   'ACCEPTED',
   'TO_RESUBMIT',
   'IN_PREPARATION',

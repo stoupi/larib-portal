@@ -1,7 +1,7 @@
 'use client'
 
 import { useTranslations } from 'next-intl'
-import { ChevronRight, ChevronsUpDown, ArrowUp, ArrowDown, Star, Pencil, Eye, Clock, FileText, ExternalLink } from 'lucide-react'
+import { ChevronRight, ChevronsUpDown, ArrowUp, ArrowDown, Star, Pencil, Eye, FileText, ExternalLink } from 'lucide-react'
 import { Link } from '@/app/i18n/navigation'
 import { cn } from '@/lib/utils'
 import { doiUrl } from '@/lib/publications/doi'
@@ -11,6 +11,7 @@ import { ARTICLE_TYPE_BADGE } from '@/lib/publications/article-type'
 import type { MyPublicationItem } from '@/lib/services/publications/my-publications'
 import { publicationsPaths, PUBLICATIONS_BASE } from '@/lib/publications/base-path'
 import { SubmissionHistory } from './submission-history'
+import { PendingTag } from './pending-tag'
 
 export type SortKey = 'title' | 'journal' | 'study' | 'role' | 'status' | 'sub'
 
@@ -183,10 +184,7 @@ function PublicationRow({
               {fmt(item.acceptedAt)}
             </span>
           ) : item.pendingDays != null ? (
-            <span className="inline-flex items-center gap-1.5 text-xs font-bold text-[#B45309] tabular-nums dark:text-[#FBBF24]">
-              <Clock className="h-3 w-3" strokeWidth={2.2} />
-              {t('myPub.pending', { days: item.pendingDays })}
-            </span>
+            <PendingTag pendingDays={item.pendingDays} />
           ) : null}
         </div>
 

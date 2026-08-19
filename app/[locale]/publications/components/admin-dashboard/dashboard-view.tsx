@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react'
 import { useTranslations } from 'next-intl'
-import { ChevronDown, Search, X } from 'lucide-react'
+import { ChevronDown, Clock, Search, X } from 'lucide-react'
 import { MultiSelect } from '@/components/ui/multiselect'
 import { Input } from '@/components/ui/input'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
@@ -78,6 +78,7 @@ export function PublicationsDashboardView({
     filters.yearTo !== ALL_FILTER ||
     filters.author !== ALL_FILTER ||
     filters.authorPosition !== ALL_FILTER ||
+    filters.pendingOverMonth ||
     filters.scopes.join() !== DEFAULT_DASHBOARD_FILTERS.scopes.join()
 
   function updateFilter(patch: Partial<DashboardFilters>) {
@@ -151,6 +152,26 @@ export function PublicationsDashboardView({
               className="h-9 min-w-[168px] rounded-full border-line bg-gray-50 dark:bg-white/10"
             />
           </div>
+
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                type="button"
+                aria-pressed={filters.pendingOverMonth}
+                onClick={() => updateFilter({ pendingOverMonth: !filters.pendingOverMonth })}
+                className={cn(
+                  'inline-flex h-9 shrink-0 items-center gap-1.5 rounded-full border px-3.5 text-[13px] font-bold transition',
+                  filters.pendingOverMonth
+                    ? 'border-[#FDBA74] bg-[#FFF3E9] text-[#EA580C] dark:border-[rgba(234,88,12,0.32)] dark:bg-[rgba(234,88,12,0.16)] dark:text-[#FDBA74]'
+                    : 'border-line bg-gray-50 text-text-secondary hover:bg-gray-100 dark:bg-white/10 dark:hover:bg-white/15',
+                )}
+              >
+                <Clock className="size-3.5" strokeWidth={2.4} />
+                {t('filters.pendingOverMonth')}
+              </button>
+            </TooltipTrigger>
+            <TooltipContent>{t('filters.pendingOverMonthHint')}</TooltipContent>
+          </Tooltip>
 
           <Tooltip>
             <TooltipTrigger asChild>

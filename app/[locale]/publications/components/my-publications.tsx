@@ -24,10 +24,11 @@ const TABS: { key: Filter; labelKey: string }[] = [
 const STATUS_SORT: Record<ArticleStatusValue, number> = {
   IN_PREPARATION: 0,
   UNDER_REVIEW: 1,
-  TO_RESUBMIT: 2,
-  ACCEPTED: 3,
-  PUBLISHED: 4,
-  ABANDONED: 5,
+  REVISION: 2,
+  TO_RESUBMIT: 3,
+  ACCEPTED: 4,
+  PUBLISHED: 5,
+  ABANDONED: 6,
 }
 
 function timeValue(iso: string | null): number {

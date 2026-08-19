@@ -5,6 +5,7 @@ import { ARTICLE_STATUS_VALUES, POSITION_BUCKETS, authorPositionBucket, type Pos
 import { matchesArticleQuery } from './article-search'
 import { ARTICLE_SCOPES, type ArticleScopeValue } from './article-scope'
 import { ALL_YEARS, matchesYearRange } from './year-range'
+import { isPendingOverAMonth } from './pending-delay'
 
 export { isYearActive, yearRangeBounds, yearRangePatch, yearSliderPatch } from './year-range'
 
@@ -40,6 +41,7 @@ export type DashboardFilters = {
   author: string
   authorPosition: string
   query: string
+  pendingOverMonth: boolean
 }
 
 export const ALL_FILTER = ALL_YEARS
@@ -57,6 +59,7 @@ export const DEFAULT_DASHBOARD_FILTERS: DashboardFilters = {
   author: ALL_FILTER,
   authorPosition: ALL_FILTER,
   query: '',
+  pendingOverMonth: false,
 }
 
 export function toggleFilterValue(values: string[], value: string): string[] {
@@ -71,10 +74,10 @@ export function articleJournalKey(article: DashboardArticleItem): string {
   return article.journal ?? NO_JOURNAL_FILTER
 }
 
-const IN_PROGRESS_STATUSES: ArticleStatusValue[] = ['IN_PREPARATION', 'UNDER_REVIEW', 'TO_RESUBMIT', 'ACCEPTED']
+const IN_PROGRESS_STATUSES: ArticleStatusValue[] = ['IN_PREPARATION', 'UNDER_REVIEW', 'REVISION', 'TO_RESUBMIT', 'ACCEPTED']
 
 // Everything still travelling: neither accepted nor published, and not given up on.
-export const ONGOING_STATUSES: ArticleStatusValue[] = ['IN_PREPARATION', 'UNDER_REVIEW', 'TO_RESUBMIT']
+export const ONGOING_STATUSES: ArticleStatusValue[] = ['IN_PREPARATION', 'UNDER_REVIEW', 'REVISION', 'TO_RESUBMIT']
 
 export function isOngoingOnly(filters: DashboardFilters): boolean {
   return (
@@ -120,6 +123,7 @@ export function filterDashboardArticles(
     if (filters.studies.length > 0 && !filters.studies.includes(articleStudyKey(article))) return false
     if (filters.journals.length > 0 && !filters.journals.includes(articleJournalKey(article))) return false
     if (filters.statuses.length > 0 && !filters.statuses.includes(article.status)) return false
+    if (filters.pendingOverMonth && !isPendingOverAMonth(article.pendingDays)) return false
     if (filters.types.length > 0 && !filters.types.includes(normalizeArticleType(article.type))) return false
     if (!matchesYearRange(filters, article.year)) return false
     if (filters.author !== ALL_FILTER && !article.authors.some((author) => author.id === filters.author)) return false

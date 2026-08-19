@@ -90,6 +90,7 @@ enum AuthorType {
 enum ArticleStatus {
   IN_PREPARATION
   UNDER_REVIEW
+  REVISION
   TO_RESUBMIT
   ACCEPTED
   PUBLISHED
@@ -546,8 +547,9 @@ model Author {
   centres           AuthorCentre[]
   paperAffiliations AuthorAffiliation[]
 
-  authorships Authorship[]
-  studyRoles  StudyInvestigator[]
+  authorships     Authorship[]
+  studyRoles      StudyInvestigator[]
+  statisticianFor Article[]           @relation("ArticleStatistician")
 
   @@map("Author")
 }
@@ -597,6 +599,8 @@ model Article {
   pdfUrl              String?
   pdfKey              String?
   carouselEmailSentAt DateTime?
+  statisticianId      String?
+  statistician        Author?       @relation("ArticleStatistician", fields: [statisticianId], references: [id], onDelete: SetNull)
   createdById         String
   createdBy           User          @relation("ArticleCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
   createdAt           DateTime      @default(now())

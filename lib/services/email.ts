@@ -604,6 +604,7 @@ const PUBLICATION_STATUS_STYLE: Record<
 > = {
   IN_PREPARATION: { bgColor: '#64748b', label: { fr: 'En préparation', en: 'In preparation' } },
   UNDER_REVIEW: { bgColor: '#3b82f6', label: { fr: 'En revue', en: 'Under review' } },
+  REVISION: { bgColor: '#7c3aed', label: { fr: 'En révision', en: 'In revision' } },
   TO_RESUBMIT: { bgColor: '#ea580c', label: { fr: 'À resoumettre', en: 'To resubmit' } },
 }
 

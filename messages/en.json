@@ -933,6 +933,7 @@
       "submissionTag": "Sub.",
       "acceptedTag": "Accept.",
       "pending": "pending · {days} d",
+      "pendingMonths": "pending · {months} mo",
       "edit": "Edit",
       "view": "View",
       "openSite": "Open on the publisher's site",
@@ -950,6 +951,7 @@
       "addNote": "Submitting to a new journal marks the previous ones as rejected — a paper is only under review at one journal at a time.",
       "journalPlaceholder": "e.g. Circulation",
       "date": "Date",
+      "today": "Today",
       "add": "Add",
       "submissionAdded": "Submission added",
       "statusSaved": "Status updated",
@@ -1465,6 +1467,7 @@
       "status": {
         "IN_PREPARATION": "In preparation",
         "UNDER_REVIEW": "Under review",
+        "REVISION": "In revision",
         "TO_RESUBMIT": "To resubmit",
         "ACCEPTED": "Accepted",
         "PUBLISHED": "Published",
@@ -1797,7 +1800,9 @@
         "clearAll": "Clear filters",
         "noJournal": "No journal",
         "clearJournal": "Clear the journal filter",
-        "teamOnly": "Publication led by Larib's team"
+        "teamOnly": "Publication led by Larib's team",
+        "pendingOverMonth": "Pending > 1 month",
+        "pendingOverMonthHint": "Only papers waiting at a journal for more than a month"
       },
       "overview": {
         "hide": "Hide overview",

@@ -7,7 +7,7 @@ import { useAction } from 'next-safe-action/hooks'
 import { toast } from 'sonner'
 import { History, Plus, ChevronDown, Check } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { Input } from '@/components/ui/input'
+import { DateInputWithToday } from '@/components/ui/date-input-with-today'
 import {
   SUBMISSION_STATUSES,
   SUBMISSION_STATUS_TONE,
@@ -169,7 +169,7 @@ export function SubmissionHistory({
                               <span className="px-1.5 pb-2 pt-0.5 text-[10px] font-extrabold uppercase tracking-[0.06em] text-text-muted">
                                 {t('myPub.dateFor', { status: t(`myPub.subStatus.${pickStatus}`) })}
                               </span>
-                              <Input type="date" value={pickDate} onChange={(event) => setPickDate(event.target.value)} className="h-9" />
+                              <DateInputWithToday value={pickDate} onChange={setPickDate} todayLabel={t('myPub.today')} />
                               <div className="mt-2.5 flex gap-2">
                                 <button
                                   type="button"

@@ -1,4 +1,27 @@
 import type { SubmissionStatusValue } from './status-display'
+import type { ArticleStatusValue } from '@/lib/services/publications/articles'
+
+// The publication status follows its live submission: a decision at the journal is the
+// publication's own news, so it never has to be restated by hand.
+const ARTICLE_STATUS_BY_SUBMISSION: Record<SubmissionStatusValue, ArticleStatusValue> = {
+  SUBMITTED: 'UNDER_REVIEW',
+  UNDER_REVIEW: 'UNDER_REVIEW',
+  MINOR_REVISIONS: 'REVISION',
+  MAJOR_REVISIONS: 'REVISION',
+  ACCEPTED: 'ACCEPTED',
+  REJECTED: 'TO_RESUBMIT',
+}
+
+// A published paper has outlived its submissions: a late edit to the history must not
+// drag it back into the pipeline.
+export function articleStatusForSubmission(
+  submissionStatus: SubmissionStatusValue,
+  currentArticleStatus: ArticleStatusValue,
+): ArticleStatusValue | null {
+  if (currentArticleStatus === 'PUBLISHED' || currentArticleStatus === 'ABANDONED') return null
+  const next = ARTICLE_STATUS_BY_SUBMISSION[submissionStatus]
+  return next === currentArticleStatus ? null : next
+}
 
 export function isRejected(status: SubmissionStatusValue): boolean {
   return status === 'REJECTED'

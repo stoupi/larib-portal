@@ -3,7 +3,7 @@ import type { DashboardArticleItem } from '@/lib/publications/admin-dashboard'
 import { normalizeArticleType } from '@/lib/publications/article-type'
 
 const DAY_MS = 86_400_000
-const ACTIVE_STATUSES = ['UNDER_REVIEW', 'TO_RESUBMIT'] as const
+const ACTIVE_STATUSES = ['UNDER_REVIEW', 'REVISION', 'TO_RESUBMIT'] as const
 
 function daysBetween(from: Date, to: Date): number {
   return Math.max(0, Math.round((to.getTime() - from.getTime()) / DAY_MS))

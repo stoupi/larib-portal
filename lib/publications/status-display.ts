@@ -18,6 +18,7 @@ export const ARTICLE_STATUS_VALUES: ArticleStatusValue[] = [
   'PUBLISHED',
   'ACCEPTED',
   'UNDER_REVIEW',
+  'REVISION',
   'TO_RESUBMIT',
   'IN_PREPARATION',
   'ABANDONED',
@@ -26,6 +27,7 @@ export const ARTICLE_STATUS_VALUES: ArticleStatusValue[] = [
 export const ARTICLE_STATUS_TONE: Record<ArticleStatusValue, StatusTone> = {
   IN_PREPARATION: 'muted',
   UNDER_REVIEW: 'info',
+  REVISION: 'violet',
   TO_RESUBMIT: 'warning',
   ACCEPTED: 'success',
   PUBLISHED: 'success',
@@ -105,6 +107,6 @@ export type ArticleGroup = 'draft' | 'inProgress' | 'published' | 'other'
 export function articleGroup(status: ArticleStatusValue): ArticleGroup {
   if (status === 'IN_PREPARATION') return 'draft'
   if (status === 'PUBLISHED') return 'published'
-  if (status === 'UNDER_REVIEW' || status === 'TO_RESUBMIT' || status === 'ACCEPTED') return 'inProgress'
+  if (status === 'UNDER_REVIEW' || status === 'REVISION' || status === 'TO_RESUBMIT' || status === 'ACCEPTED') return 'inProgress'
   return 'other'
 }

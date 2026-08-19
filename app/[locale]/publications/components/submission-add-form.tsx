@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { useAction } from 'next-safe-action/hooks'
 import { toast } from 'sonner'
-import { Input } from '@/components/ui/input'
+import { DateInputWithToday } from '@/components/ui/date-input-with-today'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -81,7 +81,7 @@ export function SubmissionAddForm({
         <div className="flex flex-wrap items-end gap-2.5">
           <label className="flex min-w-[160px] flex-1 flex-col gap-1.5">
             <span className="text-[11px] font-semibold text-text-secondary">{t('myPub.date')}</span>
-            <Input type="date" value={date} onChange={(event) => setDate(event.target.value)} className="h-9 w-full" />
+            <DateInputWithToday value={date} onChange={setDate} todayLabel={t('myPub.today')} />
           </label>
           <button
             type="button"

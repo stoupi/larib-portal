@@ -18,6 +18,7 @@ const STATUS_BADGE: Record<string, string> = {
   PUBLISHED: 'border-emerald-200 bg-emerald-50 text-emerald-700',
   ACCEPTED: 'border-emerald-200 bg-emerald-50 text-emerald-700',
   UNDER_REVIEW: 'border-[#CBDBFF] bg-[#EEF3FF] text-[#3B6FE0]',
+  REVISION: 'border-violet-200 bg-violet-50 text-violet-700',
   TO_RESUBMIT: 'border-amber-200 bg-amber-50 text-amber-700',
   IN_PREPARATION: 'border-line bg-gray-100 text-gray-600',
   ABANDONED: 'border-line bg-gray-100 text-gray-500',

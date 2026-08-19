@@ -931,6 +931,7 @@
       "submissionTag": "Soum.",
       "acceptedTag": "Accept.",
       "pending": "en attente · {days} j",
+      "pendingMonths": "en attente · {months} mois",
       "edit": "Modifier",
       "view": "Voir",
       "openSite": "Ouvrir sur le site de l'éditeur",
@@ -948,6 +949,7 @@
       "addNote": "Soumettre à un nouveau journal marque les précédents comme refusés — un article n'est en revue qu'à un seul journal à la fois.",
       "journalPlaceholder": "ex. Circulation",
       "date": "Date",
+      "today": "Aujourd'hui",
       "add": "Ajouter",
       "submissionAdded": "Soumission ajoutée",
       "statusSaved": "Statut mis à jour",
@@ -1463,6 +1465,7 @@
       "status": {
         "IN_PREPARATION": "En préparation",
         "UNDER_REVIEW": "En revue",
+        "REVISION": "En révision",
         "TO_RESUBMIT": "À resoumettre",
         "ACCEPTED": "Accepté",
         "PUBLISHED": "Publié",
@@ -1795,7 +1798,9 @@
         "clearAll": "Effacer les filtres",
         "noJournal": "Aucune revue",
         "clearJournal": "Annuler le filtre de revue",
-        "teamOnly": "Publication menée par l'équipe Larib"
+        "teamOnly": "Publication menée par l'équipe Larib",
+        "pendingOverMonth": "En attente > 1 mois",
+        "pendingOverMonthHint": "Seulement les articles en attente chez un journal depuis plus d'un mois"
       },
       "overview": {
         "hide": "Masquer la synthèse",

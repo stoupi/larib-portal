@@ -56,6 +56,17 @@ describe('filterDashboardArticles', () => {
     expect(filterDashboardArticles(articles, DEFAULT_DASHBOARD_FILTERS)).toHaveLength(4)
   })
 
+  it('narrows to the papers a journal has been sitting on for over a month', () => {
+    const waiting = [
+      article({ id: 'fresh', status: 'UNDER_REVIEW', pendingDays: 12 }),
+      article({ id: 'exactly-a-month', status: 'UNDER_REVIEW', pendingDays: 30 }),
+      article({ id: 'stale', status: 'UNDER_REVIEW', pendingDays: 96 }),
+      article({ id: 'not-waiting', status: 'PUBLISHED', pendingDays: null }),
+    ]
+    const filtered = filterDashboardArticles(waiting, { ...DEFAULT_DASHBOARD_FILTERS, pendingOverMonth: true })
+    expect(filtered.map((entry) => entry.id)).toEqual(['stale'])
+  })
+
   it('combines study, year and status filters', () => {
     expect(
       filterDashboardArticles(articles, { ...DEFAULT_DASHBOARD_FILTERS, studies: ['eacvi'] }).map((item) => item.id),
