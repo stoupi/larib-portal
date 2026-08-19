@@ -7,11 +7,30 @@
     "publishedAt": "2023-03-07",
     "receivedAt": null,
     "acceptedAt": null,
-    "journal": { "name": "European Heart Journal", "isoAbbrev": "Eur Heart J", "issn": "0195-668X", "publisher": null },
-    "publicationTypes": ["Journal Article"],
+    "journal": {
+      "name": "European Heart Journal",
+      "isoAbbrev": "Eur Heart J",
+      "issn": "0195-668X",
+      "publisher": null
+    },
+    "publicationTypes": [
+      "Journal Article"
+    ],
     "authors": [
-      { "lastName": "Pezel", "foreName": "Theo", "initials": "T", "affiliation": "Lariboisiere Hospital, APHP, Paris, France.", "orcid": "0000-0002-1234-5678" },
-      { "lastName": "Garot", "foreName": "Jerome", "initials": "J", "affiliation": "ICPS, Massy, France.", "orcid": null }
+      {
+        "lastName": "Pezel",
+        "foreName": "Theo",
+        "initials": "T",
+        "affiliation": "Lariboisiere Hospital, APHP, Paris, France.",
+        "orcid": "0000-0002-1234-5678"
+      },
+      {
+        "lastName": "Garot",
+        "foreName": "Jerome",
+        "initials": "J",
+        "affiliation": "ICPS, Massy, France.",
+        "orcid": null
+      }
     ]
   },
   {
@@ -22,8 +41,57 @@
     "publishedAt": "2019-01-01",
     "receivedAt": null,
     "acceptedAt": null,
-    "journal": { "name": "Some Journal", "isoAbbrev": "Some J", "issn": "1111-2222", "publisher": null },
-    "publicationTypes": ["Editorial"],
-    "authors": [ { "lastName": "Pezel", "foreName": "Theo", "initials": "T", "affiliation": null, "orcid": "0000-0002-1234-5678" } ]
+    "journal": {
+      "name": "Some Journal",
+      "isoAbbrev": "Some J",
+      "issn": "1111-2222",
+      "publisher": null
+    },
+    "publicationTypes": [
+      "Editorial"
+    ],
+    "authors": [
+      {
+        "lastName": "Pezel",
+        "foreName": "Theo",
+        "initials": "T",
+        "affiliation": null,
+        "orcid": "0000-0002-1234-5678"
+      }
+    ]
+  },
+  {
+    "pmid": "39000003",
+    "title": "Strain imaging in cardiac amyloidosis.",
+    "abstract": "Strain imaging refines the detection of cardiac amyloidosis.",
+    "doi": "10.1186/s12968-022-00900-1",
+    "publishedAt": "2022-05-10",
+    "receivedAt": "2022-01-04",
+    "acceptedAt": "2022-04-02",
+    "journal": {
+      "name": "Journal of Cardiovascular Magnetic Resonance",
+      "isoAbbrev": "J Cardiovasc Magn Reson",
+      "issn": "3333-4444",
+      "publisher": null
+    },
+    "publicationTypes": [
+      "Journal Article"
+    ],
+    "authors": [
+      {
+        "lastName": "Pezel",
+        "foreName": "Theo",
+        "initials": "T",
+        "affiliation": "Lariboisiere Hospital, APHP, Paris, France.",
+        "orcid": "0000-0002-1234-5678"
+      },
+      {
+        "lastName": "Toupin",
+        "foreName": "Solenn",
+        "initials": "S",
+        "affiliation": "Lariboisiere Hospital, APHP, Paris, France.",
+        "orcid": null
+      }
+    ]
   }
 ]

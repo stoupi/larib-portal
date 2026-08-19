@@ -33,6 +33,8 @@ import { EditorReferences } from '../editor/editor-references'
 import { EditorSubmissions } from '../editor/editor-submissions'
 import { EditorJournalQueue } from '../editor/editor-journal-queue'
 import { EditorPdf } from '../editor/editor-pdf'
+import { PubmedImportDialog } from '../pubmed-import/pubmed-import-dialog'
+import type { DraftSummary } from '@/lib/publications/pubmed-import'
 import { ArticleReadingHeader } from './article-reading-header'
 import { ArticleAbstractTimeline } from './article-abstract-timeline'
 import { CarouselEmailDialog, useCarouselEmailDialog } from './carousel-email-dialog'
@@ -140,6 +142,15 @@ export function ArticlePage({
     })
   })
 
+  const draftSummary: DraftSummary = {
+    title: article.title,
+    journalName: article.publishedJournal?.name ?? null,
+    doi: article.doi,
+    abstract: article.abstract,
+    otherAuthorCount: article.authorships.filter((authorship) => authorship.author.userId !== viewer.userId).length,
+    publishedAt: article.publishedAt ? article.publishedAt.toISOString().slice(0, 10) : null,
+  }
+
   function onDiscard() {
     if (isDirty) {
       form.reset(defaults)
@@ -172,6 +183,11 @@ export function ArticlePage({
           </nav>
           {visibility.showSaveBar && (
             <div className="flex items-center gap-2.5">
+              <PubmedImportDialog
+                target={{ mode: 'fill', articleId: article.id, draft: draftSummary }}
+                basePath={basePath}
+                isAdmin={viewer.isAdmin}
+              />
               <button
                 type="button"
                 onClick={onDiscard}

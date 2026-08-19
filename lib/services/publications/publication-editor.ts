@@ -25,6 +25,21 @@ async function findOrCreateAuthorForUser(userId: string): Promise<string> {
   return author.id
 }
 
+// Who the viewer is on a paper: the author record linked to their account when it
+// exists, otherwise the name on their portal profile.
+export async function getViewerIdentity(userId: string): Promise<{ firstName: string; lastName: string; initials: string | null }> {
+  const author = await prisma.author.findFirst({
+    where: { userId },
+    select: { firstName: true, lastName: true, initials: true },
+  })
+  if (author) return author
+  const user = await prisma.user.findUniqueOrThrow({
+    where: { id: userId },
+    select: { firstName: true, lastName: true },
+  })
+  return { firstName: user.firstName ?? '', lastName: user.lastName ?? '', initials: null }
+}
+
 export async function createDraftArticle(
   userId: string,
   options: { withCreatorAsFirstAuthor: boolean } = { withCreatorAsFirstAuthor: true },

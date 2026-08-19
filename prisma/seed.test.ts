@@ -244,6 +244,24 @@ async function main() {
 	});
 	console.log('✅ Created Publications user:', publicationsUser.email);
 
+	// A member whose author identity matches the PubMed fixtures, so the member-facing
+	// PubMed import (which only accepts papers you signed) can be exercised end to end.
+	const publicationsPubmedAuthorPassword = await ctx.password.hash('ristifou');
+	const publicationsPubmedAuthor = await prisma.user.create({
+		data: {
+			id: randomUUID(),
+			name: 'Theo Pezel',
+			firstName: 'Theo',
+			lastName: 'Pezel',
+			email: 'publications-pubmed-author@larib-portal.test',
+			emailVerified: true,
+			role: 'USER',
+			applications: ['PUBLICATIONS'],
+			accounts: { create: { id: randomUUID(), providerId: 'credential', accountId: 'publications-pubmed-author@larib-portal.test', password: publicationsPubmedAuthorPassword } },
+		},
+	});
+	console.log('✅ Created Publications PubMed author:', publicationsPubmedAuthor.email);
+
 	const publicationsReaderPassword = await ctx.password.hash('ristifou');
 	const publicationsReader = await prisma.user.create({
 		data: {
@@ -310,6 +328,18 @@ async function main() {
 			},
 		},
 	});
+	await prisma.author.create({
+		data: {
+			firstName: 'Theo',
+			lastName: 'Pezel',
+			type: 'OUR_TEAM',
+			centre: { connect: { id: publicationsCentre.id } },
+			emails: [publicationsPubmedAuthor.email],
+			user: { connect: { id: publicationsPubmedAuthor.id } },
+			defaultAffiliation: { connect: { id: publicationsAffiliation.id } },
+		},
+	});
+
 	const publicationsStudy = await prisma.study.create({
 		data: { title: 'MULTIVALVE registry', description: 'Retrospective multi-valve cohort', createdBy: { connect: { id: publicationsAdmin.id } } },
 	});
@@ -626,6 +656,7 @@ async function main() {
 	console.log('  Bestof Admin: bestof-admin@larib-portal.test / ristifou');
 	console.log('  Publications Admin: publications-admin@larib-portal.test / ristifou');
 	console.log('  Publications User: publications-user@larib-portal.test / ristifou');
+	console.log('  Publications PubMed author: publications-pubmed-author@larib-portal.test / ristifou');
 }
 
 main()

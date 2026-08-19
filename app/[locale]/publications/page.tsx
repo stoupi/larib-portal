@@ -2,11 +2,13 @@ import { getTranslations } from 'next-intl/server'
 import { redirect } from 'next/navigation'
 import { requireAuth } from '@/lib/auth-guard'
 import { applicationLink } from '@/lib/application-link'
-import { canAccessApp } from '@/lib/permissions'
+import { canAccessApp, canAdminApp } from '@/lib/permissions'
+import { PUBLICATIONS_BASE } from '@/lib/publications/base-path'
 import { listMyPublications } from '@/lib/services/publications/my-publications'
 import { listJournalNames } from '@/lib/services/publications/journals'
 import { MyPublications } from './components/my-publications'
 import { NewPublicationButton } from './components/new-publication-button'
+import { PubmedImportDialog } from './components/pubmed-import/pubmed-import-dialog'
 
 type PageParams = { params: Promise<{ locale: 'en' | 'fr' }> }
 
@@ -29,7 +31,14 @@ export default async function PublicationsPage({ params }: PageParams) {
               <p className="mt-1.5 max-w-lg text-sm leading-relaxed text-text-secondary">{t('myPub.subtitle')}</p>
             </div>
           </div>
-          <NewPublicationButton />
+          <div className="flex flex-wrap items-center gap-2.5">
+            <PubmedImportDialog
+              target={{ mode: 'create' }}
+              basePath={PUBLICATIONS_BASE}
+              isAdmin={canAdminApp(session.user, 'PUBLICATIONS')}
+            />
+            <NewPublicationButton />
+          </div>
         </header>
 
         <MyPublications items={items} locale={locale} journalNames={journalNames} />

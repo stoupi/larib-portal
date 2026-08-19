@@ -7,30 +7,31 @@ import { canAccessApp, canAdminApp } from '@/lib/permissions'
 import { prisma } from '@/lib/prisma'
 import { addSubmission, updateSubmissionStatus, updateSubmission, deleteSubmission, userOwnsSubmission, SUBMISSION_STATUSES } from '@/lib/services/publications/submissions'
 import { userIsAuthorOfArticle } from '@/lib/services/publications/my-publications'
-import { createDraftArticle, updateArticleCore, deleteDraft, userIsFirstAuthor, setArticlePdf, setArticleAuthors } from '@/lib/services/publications/publication-editor'
+import { createDraftArticle, updateArticleCore, deleteDraft, userIsFirstAuthor, setArticlePdf, setArticleAuthors, getViewerIdentity } from '@/lib/services/publications/publication-editor'
+import { searchPubmedWithLibraryMatches, buildRecordPreview, loadRecordWithPreview } from '@/lib/services/publications/pubmed-search'
+import { viewerIsAmongAuthors, defaultPubmedQueryForViewer } from '@/lib/publications/pubmed-import'
 import {
   createAuthorListRequest,
   resolveAuthorRequest,
   resolveAllAuthorRequests,
   PUBLICATIONS_REQUESTS_TAG,
 } from '@/lib/services/publications/author-requests'
-import { searchByAuthor, searchPubmed, fetchByPmids } from '@/lib/services/publications/pubmed'
+import { searchByAuthor, fetchByPmids } from '@/lib/services/publications/pubmed'
 import {
   importRecords,
+  fillArticleFromRecord,
   PUBLICATIONS_JOURNALS_TAG,
   PUBLICATIONS_AUTHORS_TAG,
   PUBLICATIONS_ARTICLES_TAG,
 } from '@/lib/services/publications/import'
 import { updateAuthor, deleteAuthor, deleteAuthorWithAuthorships, mergeAuthors, recomputeAuthorCentres, createAuthor, getAuthorDetail, getAuthorForEdit, resolveAuthorAffiliations, isPrismaKnownError } from '@/lib/services/publications/authors'
 import { findAuthorDuplicates, matchAuthorsAgainstBank, normalizeName } from '@/lib/services/publications/author-dedup'
-import { normalizeName as normalizeAuthorName, authorFirstInitial } from '@/lib/services/publications/import-dedupe'
 import { fetchPublicationByIdentifier } from '@/lib/services/publications/publication-lookup'
 import { backfillAffiliations, PUBLICATIONS_CENTRES_TAG, PUBLICATIONS_AFFILIATIONS_TAG } from '@/lib/services/publications/affiliations'
 import { renameCentre, setCentreOwn, deleteCentre, mergeCentres, getCentreAuthors, getCentreStudies, createCentre, updateCentre, listCentreOptions } from '@/lib/services/publications/centres'
-import { updateArticleStatus, updateArticleType, updateArticleStudy, updateArticleScope, deleteArticle, findKnownPublications, listPublicationTitles, ARTICLE_STATUSES } from '@/lib/services/publications/articles'
+import { updateArticleStatus, updateArticleType, updateArticleStudy, updateArticleScope, deleteArticle, ARTICLE_STATUSES } from '@/lib/services/publications/articles'
 import { ARTICLE_TYPE_VALUES } from '@/lib/publications/article-type'
 import { ARTICLE_SCOPES } from '@/lib/publications/article-scope'
-import { matchCandidates } from '@/lib/publications/import-candidates'
 import { findLibraryDuplicates } from '@/lib/services/publications/duplicates'
 import { createJournal, updateJournal, deleteJournal, isPrismaKnownError as isJournalError } from '@/lib/services/publications/journals'
 import { searchCrossref, lookupJournalByIssn } from '@/lib/services/publications/journals-catalog'
@@ -44,35 +45,22 @@ import { getCarouselEmailData, markCarouselEmailSent } from '@/lib/services/publ
 import { CAROUSEL_CC_RECIPIENTS, CAROUSEL_REPLY_TO } from '@/lib/publications/carousel-email'
 import { sendCarouselRequestEmail } from '@/lib/services/email'
 
+const CANDIDATE_ABSTRACT_PREVIEW_LENGTH = 400
+
 export const searchBacklogAction = appAdminAction('PUBLICATIONS')
   .inputSchema(z.object({ query: z.string().min(1), retmax: z.number().int().min(1).max(500).optional() }))
-  .action(async ({ parsedInput }) => {
-    const candidates = await searchPubmed(parsedInput.query, parsedInput.retmax ?? 200)
-    const [known, library] = await Promise.all([
-      findKnownPublications(candidates.map(({ pmid, doi }) => ({ pmid, doi }))),
-      listPublicationTitles(),
-    ])
-    return matchCandidates(candidates, known, library)
-  })
+  .action(async ({ parsedInput }) => searchPubmedWithLibraryMatches(parsedInput.query, parsedInput.retmax ?? 200))
 
 export const fetchCandidateDetailAction = appAdminAction('PUBLICATIONS')
   .inputSchema(z.object({ pmid: z.string().min(1) }))
   .action(async ({ parsedInput }) => {
-    const [record] = await fetchByPmids([parsedInput.pmid])
-    if (!record) return null
-    const teamAuthors = await prisma.author.findMany({
-      where: { type: 'OUR_TEAM' },
-      select: { firstName: true, lastName: true, initials: true },
-    })
-    const authors = record.authors.map((author) => ({
-      name: `${author.foreName ?? author.initials ?? ''} ${author.lastName}`.trim(),
-      team: teamAuthors.some(
-        (teamAuthor) =>
-          normalizeAuthorName(teamAuthor.lastName) === normalizeAuthorName(author.lastName) &&
-          authorFirstInitial(teamAuthor) === authorFirstInitial(author),
-      ),
-    }))
-    return { authors, abstract: record.abstract ? record.abstract.slice(0, 400) : null, doi: record.doi }
+    const preview = await buildRecordPreview(parsedInput.pmid, null)
+    if (!preview) return null
+    return {
+      authors: preview.authors.map(({ name, team }) => ({ name, team })),
+      abstract: preview.abstract ? preview.abstract.slice(0, CANDIDATE_ABSTRACT_PREVIEW_LENGTH) : null,
+      doi: preview.doi,
+    }
   })
 
 export const importBacklogAction = appAdminAction('PUBLICATIONS')
@@ -617,6 +605,69 @@ export const createDraftArticleAction = authenticatedAction
     if (!canAccessApp(ctx.user, 'PUBLICATIONS')) throw new Error('Forbidden')
     const asAdmin = parsedInput.asAdmin && canAdminApp(ctx.user, 'PUBLICATIONS')
     return createDraftArticle(ctx.userId, { withCreatorAsFirstAuthor: !asAdmin })
+  })
+
+// ---- PubMed import, open to every member ----
+
+const MEMBER_SEARCH_RETMAX = 60
+
+export const searchPubmedCandidatesAction = appMemberAction('PUBLICATIONS')
+  .inputSchema(z.object({ query: z.string().min(1) }))
+  .action(async ({ parsedInput }) => searchPubmedWithLibraryMatches(parsedInput.query, MEMBER_SEARCH_RETMAX))
+
+export const suggestPubmedQueryAction = appMemberAction('PUBLICATIONS')
+  .inputSchema(z.object({}))
+  .action(async ({ ctx }) => ({ query: defaultPubmedQueryForViewer(await getViewerIdentity(ctx.userId)) }))
+
+export const fetchPubmedRecordPreviewAction = appMemberAction('PUBLICATIONS')
+  .inputSchema(z.object({ pmid: z.string().min(1) }))
+  .action(async ({ parsedInput, ctx }) =>
+    buildRecordPreview(parsedInput.pmid, await getViewerIdentity(ctx.userId)),
+  )
+
+// A member may only bring in a paper they signed; an admin keeps the unrestricted module.
+async function loadImportableRecord(user: { id: string }, isAdmin: boolean, pmid: string) {
+  const viewer = await getViewerIdentity(user.id)
+  const loaded = await loadRecordWithPreview(pmid, viewer)
+  if (!loaded) throw new Error('PUBMED_RECORD_NOT_FOUND')
+  if (!isAdmin && !viewerIsAmongAuthors(loaded.record.authors, viewer)) throw new Error('NOT_AN_AUTHOR')
+  return loaded
+}
+
+export const createArticleFromPubmedAction = authenticatedAction
+  .inputSchema(z.object({ pmid: z.string().min(1) }))
+  .action(async ({ parsedInput, ctx }) => {
+    if (!canAccessApp(ctx.user, 'PUBLICATIONS')) throw new Error('Forbidden')
+    const isAdmin = canAdminApp(ctx.user, 'PUBLICATIONS')
+    const { record, preview } = await loadImportableRecord(ctx.user, isAdmin, parsedInput.pmid)
+    if (preview.existingArticleId) return { articleId: preview.existingArticleId, alreadyPresent: true }
+
+    const report = await importRecords([record], ctx.userId, new Map([[record.pmid, preview.proposedScope]]))
+    if (report.articlesCreated === 0) throw new Error('IMPORT_FAILED')
+    const created = await prisma.article.findFirstOrThrow({ where: { pubmedId: record.pmid }, select: { id: true } })
+    revalidateTag(PUBLICATIONS_JOURNALS_TAG)
+    revalidateTag(PUBLICATIONS_AUTHORS_TAG)
+    revalidateTag(PUBLICATIONS_ARTICLES_TAG)
+    return { articleId: created.id, alreadyPresent: false }
+  })
+
+export const importPubmedIntoArticleAction = authenticatedAction
+  .inputSchema(z.object({ articleId: z.string().min(1), pmid: z.string().min(1) }))
+  .action(async ({ parsedInput, ctx }) => {
+    const isAdmin = canAdminApp(ctx.user, 'PUBLICATIONS')
+    const canEdit = isAdmin || (await userIsFirstAuthor(ctx.userId, parsedInput.articleId))
+    if (!canEdit) throw new Error('Forbidden')
+
+    const { record, preview } = await loadImportableRecord(ctx.user, isAdmin, parsedInput.pmid)
+    if (preview.existingArticleId && preview.existingArticleId !== parsedInput.articleId) {
+      return { articleId: preview.existingArticleId, alreadyPresent: true }
+    }
+
+    await fillArticleFromRecord(parsedInput.articleId, record, preview.proposedScope)
+    revalidateTag(PUBLICATIONS_JOURNALS_TAG)
+    revalidateTag(PUBLICATIONS_AUTHORS_TAG)
+    revalidateTag(PUBLICATIONS_ARTICLES_TAG)
+    return { articleId: parsedInput.articleId, alreadyPresent: false }
   })
 
 export const setArticleAuthorsAction = appAdminAction('PUBLICATIONS')

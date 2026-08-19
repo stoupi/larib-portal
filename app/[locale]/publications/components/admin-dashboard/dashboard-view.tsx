@@ -28,6 +28,8 @@ import { DashboardAuthorFocus } from './dashboard-author-focus'
 import { DashboardArticlesCard } from './dashboard-articles-card'
 import { AdminAuthorRequests } from '../admin-author-requests'
 import { NewPublicationButton } from '../new-publication-button'
+import { PubmedImportDialog } from '../pubmed-import/pubmed-import-dialog'
+import { PUBLICATIONS_ADMIN_BASE } from '@/lib/publications/base-path'
 import type { PendingAuthorRequest } from '@/lib/services/publications/author-requests'
 import type { StudyOption } from '@/lib/services/publications/studies'
 
@@ -92,7 +94,10 @@ export function PublicationsDashboardView({
             <p className="mt-1.5 max-w-xl text-sm leading-relaxed text-text-secondary">{t('subtitle')}</p>
           </div>
         </div>
-        <NewPublicationButton asAdmin />
+        <div className="flex flex-wrap items-center gap-2.5">
+          <PubmedImportDialog target={{ mode: 'create' }} basePath={PUBLICATIONS_ADMIN_BASE} isAdmin />
+          <NewPublicationButton asAdmin />
+        </div>
       </header>
 
       <section className="space-y-3 rounded-2xl border border-line bg-bg-surface p-3 shadow-elevation-xs">
