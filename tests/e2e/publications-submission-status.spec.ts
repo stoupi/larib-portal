@@ -61,10 +61,23 @@ test('the first author picks the publication statistician from the author bank',
   const dialog = page.getByRole('dialog')
   await expect(dialog.getByRole('heading', { name: 'Statistician' })).toBeVisible()
 
-  await dialog.getByLabel(/search/i).fill('Coauthor')
-  await dialog.getByRole('button', { name: /Jane COAUTHOR/i }).click()
+  // The statistician may not be in the bank yet, so the dialog can create them on the spot.
+  // The name is unique to this run: other specs rename and merge the seeded authors.
+  const lastName = `Stat${Date.now()}`
+  await dialog.getByRole('button', { name: 'New author' }).click()
+  await dialog.getByLabel('First name').fill('Nadia')
+  await dialog.getByLabel('Last name').fill(lastName)
+  await dialog.getByPlaceholder(/search your centre bank/i).fill('Lariboisière')
+  await dialog.getByRole('option', { name: /Lariboisière/ }).first().click()
+  await dialog.getByRole('button', { name: 'Create & select' }).click()
+
+  const statisticianButton = page.getByRole('button', { name: new RegExp(`Nadia ${lastName.toUpperCase()}`, 'i') })
   await expect(page.getByText('Changes saved')).toBeVisible({ timeout: 15000 })
-  await expect(page.getByRole('button', { name: /Jane COAUTHOR/i })).toBeVisible({ timeout: 15000 })
+  await expect(statisticianButton).toBeVisible({ timeout: 15000 })
+
+  // It survives a reload: the pick is stored on the publication, not held in the page
+  await page.reload()
+  await expect(statisticianButton).toBeVisible({ timeout: 30000 })
 
   // It can be taken back off the publication
   await page.getByRole('button', { name: /remove the statistician/i }).click()

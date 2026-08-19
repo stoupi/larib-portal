@@ -131,12 +131,20 @@ export function CreateAuthorPanel({
         <div className="space-y-3 border-t border-line px-4 py-3">
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div className="space-y-1.5">
-              <Label>{t('picker.firstName')}</Label>
-              <Input value={firstName} onChange={(event) => setFirstName(event.target.value)} />
+              <Label htmlFor="new-author-first-name">{t('picker.firstName')}</Label>
+              <Input
+                id="new-author-first-name"
+                value={firstName}
+                onChange={(event) => setFirstName(event.target.value)}
+              />
             </div>
             <div className="space-y-1.5">
-              <Label>{t('picker.lastName')}</Label>
-              <Input value={lastName} onChange={(event) => setLastName(event.target.value)} />
+              <Label htmlFor="new-author-last-name">{t('picker.lastName')}</Label>
+              <Input
+                id="new-author-last-name"
+                value={lastName}
+                onChange={(event) => setLastName(event.target.value)}
+              />
             </div>
           </div>
 
