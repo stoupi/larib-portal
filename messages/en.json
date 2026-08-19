@@ -1093,7 +1093,15 @@
       "moveDown": "Move down",
       "markCorresponding": "Mark as corresponding",
       "saveAuthors": "Save the author list",
-      "authorsSaved": "Author list updated"
+      "authorsSaved": "Author list updated",
+      "statistician": {
+        "label": "Statistician",
+        "add": "Pick a statistician",
+        "clear": "Remove the statistician",
+        "title": "Statistician",
+        "subtitle": "Pick them from the author bank, or create the author if they are not in it yet."
+      },
+      "setSubmissionStatus": "Change the submission status"
     },
     "adminRequests": {
       "title": "Author list requests",

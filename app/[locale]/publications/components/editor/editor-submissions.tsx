@@ -2,12 +2,12 @@
 
 import { useState } from 'react'
 import { useTranslations } from 'next-intl'
-import { useRouter } from 'next/navigation'
 import { useAction } from 'next-safe-action/hooks'
 import { toast } from 'sonner'
 import { Plus, Pencil, Trash2, ChevronDown, Check } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Input } from '@/components/ui/input'
+import { DateInputWithToday } from '@/components/ui/date-input-with-today'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -55,7 +55,6 @@ export function EditorSubmissions({
   editable: boolean
 }) {
   const t = useTranslations('publications')
-  const router = useRouter()
   const fmt = new Intl.DateTimeFormat(locale, { dateStyle: 'medium' })
   const formatIso = (value: string | null) => (value ? fmt.format(new Date(value)) : '')
 
@@ -68,7 +67,10 @@ export function EditorSubmissions({
   const [editDate, setEditDate] = useState('')
   const [deleteId, setDeleteId] = useState<string | null>(null)
 
-  const done = () => router.refresh()
+  // A submission decision now moves the publication status too, and that status lives in
+  // the edit form's own state: a soft refresh would leave a stale value on screen, and
+  // saving it back would silently undo the change.
+  const done = () => window.location.reload()
   const activePriorSubmission = submissions.filter((row) => row.status !== 'REJECTED').at(-1) ?? null
   const activePrior = activePriorSubmission
     ? {
@@ -184,7 +186,7 @@ export function EditorSubmissions({
                         <div className="flex items-center gap-1.5">
                           {editable ? (
                             <div className="relative">
-                              <button type="button" onClick={() => { setMenuId(menuId === row.id ? null : row.id); setPickStatus(null) }} className={cn(pillClassName(tone), 'cursor-pointer')}>
+                              <button type="button" aria-label={t('editor.setSubmissionStatus')} onClick={() => { setMenuId(menuId === row.id ? null : row.id); setPickStatus(null) }} className={cn(pillClassName(tone), 'cursor-pointer')}>
                                 {t(`myPub.subStatus.${status}`)}
                                 <ChevronDown className="h-3 w-3" strokeWidth={2.4} />
                               </button>
@@ -203,7 +205,7 @@ export function EditorSubmissions({
                                     ) : (
                                       <>
                                         <span className="px-1.5 pb-2 pt-0.5 text-[10px] font-extrabold uppercase tracking-[0.06em] text-text-muted">{t('myPub.dateFor', { status: t(`myPub.subStatus.${pickStatus}`) })}</span>
-                                        <Input type="date" value={pickDate} onChange={(event) => setPickDate(event.target.value)} className="h-9" />
+                                        <DateInputWithToday value={pickDate} onChange={setPickDate} todayLabel={t('myPub.today')} />
                                         <div className="mt-2.5 flex gap-2">
                                           <button type="button" onClick={() => setPickStatus(null)} className="h-9 flex-1 rounded-lg border border-line text-[12.5px] font-bold text-text-secondary">{t('myPub.back')}</button>
                                           <button type="button" disabled={!pickDate || setStatus.isExecuting} onClick={() => setStatus.execute({ submissionId: row.id, status: pickStatus, decidedAt: pickDate })} className="h-9 flex-1 rounded-lg bg-gradient-to-b from-navy-600 to-navy-700 text-[12.5px] font-bold text-white disabled:opacity-50">{t('myPub.confirm')}</button>

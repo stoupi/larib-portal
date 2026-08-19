@@ -233,7 +233,17 @@ export function ArticlePage({
               <EditorAuthors article={article} viewer={viewer} form={form} editable={visibility.cardsEditable} />
             )}
             <ArticleAbstractTimeline article={article} locale={locale} />
-            <EditorReferences form={form} studyOptions={studyOptions} editable={visibility.cardsEditable} />
+            <EditorReferences
+              form={form}
+              studyOptions={studyOptions}
+              statistician={{
+                articleId: article.id,
+                current: article.statistician,
+                authors: pickerAuthors,
+                centres,
+              }}
+              editable={visibility.cardsEditable}
+            />
           </div>
           <div className="space-y-5">
             <EditorSubmissions

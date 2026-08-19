@@ -1,26 +1,55 @@
 'use client'
 
 import { useTranslations } from 'next-intl'
+import { useAction } from 'next-safe-action/hooks'
+import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
 import { Input } from '@/components/ui/input'
 import type { StudyOption } from '@/lib/services/publications/studies'
+import type { PickerAuthor } from '@/lib/publications/author-picker'
 import type { EditorForm } from '../article/article-page'
 import { CollapsibleCard } from './collapsible-card'
 import { DoiLink, PubmedLink } from '../article/doi-link'
+import { StatisticianPicker } from '../authors/statistician-picker'
+import type { PickerCentre } from '../authors/author-create-panel'
+import { setArticleStatisticianAction } from '../../actions'
+
+export type StatisticianSlot = {
+  articleId: string
+  current: { id: string; firstName: string; lastName: string; degrees: string | null } | null
+  authors: PickerAuthor[]
+  centres: PickerCentre[]
+}
 
 export function EditorReferences({
   form,
   studyOptions,
+  statistician,
   editable,
 }: {
   form: EditorForm
   studyOptions: StudyOption[]
+  statistician: StatisticianSlot
   editable: boolean
 }) {
   const t = useTranslations('publications')
+  const router = useRouter()
   const pubmedId = form.watch('pubmedId')
   const doi = form.watch('doi')
   const studyId = form.watch('studyId')
   const studyLabel = studyOptions.find((option) => option.id === studyId)?.label ?? null
+
+  // The statistician is saved on the spot rather than through the form: it is picked from
+  // the author bank, so there is nothing to type and nothing to discard.
+  const saveStatistician = useAction(setArticleStatisticianAction, {
+    onSuccess() {
+      toast.success(t('editor.saved'))
+      router.refresh()
+    },
+    onError() {
+      toast.error(t('editor.actionError'))
+    },
+  })
 
   return (
     <CollapsibleCard
@@ -68,6 +97,17 @@ export function EditorReferences({
             <span className="text-sm text-text-primary">{studyLabel ?? '—'}</span>
           )}
         </label>
+        <div className="grid grid-cols-[80px_1fr] items-center gap-3">
+          <span className="text-sm font-semibold text-text-secondary">{t('editor.statistician.label')}</span>
+          <StatisticianPicker
+            current={statistician.current}
+            bank={{ authors: statistician.authors, centres: statistician.centres }}
+            editable={editable}
+            onSelect={(statisticianId) =>
+              saveStatistician.execute({ articleId: statistician.articleId, statisticianId })
+            }
+          />
+        </div>
       </div>
     </CollapsibleCard>
   )

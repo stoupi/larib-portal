@@ -92,6 +92,10 @@ export async function setArticleAuthors(articleId: string, desired: AuthorshipEn
   return { id: articleId }
 }
 
+export async function setArticleStatistician(articleId: string, statisticianId: string | null): Promise<{ id: string }> {
+  return prisma.article.update({ where: { id: articleId }, data: { statisticianId }, select: { id: true } })
+}
+
 export type ArticlePdf = { url: string; key: string } | null
 
 export async function setArticlePdf(articleId: string, pdf: ArticlePdf): Promise<{ id: string }> {
@@ -133,6 +137,8 @@ export async function getPublicationForEdit(articleId: string) {
       acceptedAt: true,
       reviewDelayDays: true,
       carouselEmailSentAt: true,
+      statisticianId: true,
+      statistician: { select: { id: true, firstName: true, lastName: true, degrees: true } },
       publishedJournal: { select: { name: true, abbreviation: true } },
       authorships: {
         orderBy: { order: 'asc' },

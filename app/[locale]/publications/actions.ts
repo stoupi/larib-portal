@@ -7,7 +7,7 @@ import { canAccessApp, canAdminApp } from '@/lib/permissions'
 import { prisma } from '@/lib/prisma'
 import { addSubmission, updateSubmissionStatus, updateSubmission, deleteSubmission, userOwnsSubmission, SUBMISSION_STATUSES } from '@/lib/services/publications/submissions'
 import { userIsAuthorOfArticle } from '@/lib/services/publications/my-publications'
-import { createDraftArticle, updateArticleCore, deleteDraft, userIsFirstAuthor, setArticlePdf, setArticleAuthors, getViewerIdentity, findOrCreateAuthorForUser } from '@/lib/services/publications/publication-editor'
+import { createDraftArticle, updateArticleCore, deleteDraft, userIsFirstAuthor, setArticlePdf, setArticleAuthors, setArticleStatistician, getViewerIdentity, findOrCreateAuthorForUser } from '@/lib/services/publications/publication-editor'
 import { searchPubmedWithLibraryMatches, buildRecordPreview, loadRecordWithPreview } from '@/lib/services/publications/pubmed-search'
 import { viewerIsAmongAuthors, defaultPubmedQueryForViewer } from '@/lib/publications/pubmed-import'
 import {
@@ -719,6 +719,16 @@ export const updateArticleCoreAction = authenticatedAction
     })
     revalidateTag(PUBLICATIONS_ARTICLES_TAG)
     return updated
+  })
+
+export const setArticleStatisticianAction = authenticatedAction
+  .inputSchema(z.object({ articleId: z.string().min(1), statisticianId: z.string().min(1).nullable() }))
+  .action(async ({ parsedInput, ctx }) => {
+    const canEdit = canAdminApp(ctx.user, 'PUBLICATIONS') || (await userIsFirstAuthor(ctx.userId, parsedInput.articleId))
+    if (!canEdit) throw new Error('Forbidden')
+    const saved = await setArticleStatistician(parsedInput.articleId, parsedInput.statisticianId)
+    revalidateTag(PUBLICATIONS_ARTICLES_TAG)
+    return saved
   })
 
 export const saveArticlePdfAction = authenticatedAction

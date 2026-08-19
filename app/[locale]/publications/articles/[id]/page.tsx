@@ -29,8 +29,8 @@ export default async function ArticleRoute({ params }: PageParams) {
       listJournalTargets(id),
       listStudyOptions(),
       listJournalNames(),
-      isAdmin ? listAuthorPickerOptions() : Promise.resolve([]),
-      isAdmin ? listCentres() : Promise.resolve([]),
+      isAdmin || isFirstAuthor ? listAuthorPickerOptions() : Promise.resolve([]),
+      isAdmin || isFirstAuthor ? listCentres() : Promise.resolve([]),
     ])
 
   const centres = centreRows.map((centre) => ({

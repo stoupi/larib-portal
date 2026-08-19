@@ -1091,7 +1091,15 @@
       "moveDown": "Descendre",
       "markCorresponding": "Désigner comme correspondant",
       "saveAuthors": "Enregistrer la liste d'auteurs",
-      "authorsSaved": "Liste d'auteurs mise à jour"
+      "authorsSaved": "Liste d'auteurs mise à jour",
+      "statistician": {
+        "label": "Statisticien",
+        "add": "Choisir un statisticien",
+        "clear": "Retirer le statisticien",
+        "title": "Statisticien",
+        "subtitle": "Choisissez-le dans la banque d'auteurs, ou créez l'auteur s'il n'y est pas encore."
+      },
+      "setSubmissionStatus": "Changer le statut de la soumission"
     },
     "adminRequests": {
       "title": "Demandes de liste d'auteurs",
