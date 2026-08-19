@@ -9,7 +9,7 @@ import { Plus, Save } from 'lucide-react'
 import type { PickerAuthor } from '@/lib/publications/author-picker'
 import { markCorresponding } from '@/lib/publications/corresponding-author'
 import type { AuthorshipEntry } from '@/lib/publications/author-list'
-import { authorshipAffiliationTexts, type ExportableAuthor } from '@/lib/publications/author-list-export'
+import { articleAffiliationTexts, type ExportCandidate } from '@/lib/publications/author-list-export'
 import type { PublicationEditData } from '@/lib/services/publications/publication-editor'
 import { setArticleAuthorsAction } from '../../actions'
 import { AuthorPickerDialog } from '../authors/author-picker-dialog'
@@ -53,27 +53,27 @@ export function EditorAuthorsAdmin({
     [pickerAuthors],
   )
 
-  const affiliationsByAuthorId = useMemo(
+  const articleAffiliationsByAuthorId = useMemo(
     () =>
       new Map(
         article.authorships.map((authorship) => [
           authorship.author.id,
-          authorshipAffiliationTexts(authorship),
+          articleAffiliationTexts(authorship),
         ]),
       ),
     [article.authorships],
   )
 
-  const exportableAuthors: ExportableAuthor[] = entries.flatMap((entry) => {
+  const exportCandidates: ExportCandidate[] = entries.flatMap((entry) => {
     const author = authorsById.get(entry.authorId)
     if (!author) return []
-    const fromArticle = affiliationsByAuthorId.get(entry.authorId) ?? []
     return [
       {
+        authorId: entry.authorId,
         firstName: author.firstName,
         lastName: author.lastName,
         degrees: author.degrees,
-        affiliations: fromArticle.length > 0 ? fromArticle : author.affiliations,
+        articleAffiliations: articleAffiliationsByAuthorId.get(entry.authorId) ?? [],
       },
     ]
   })
@@ -109,8 +109,8 @@ export function EditorAuthorsAdmin({
         </>
       }
       actions={
-        exportableAuthors.length > 0 && (
-          <AuthorListExportDialog title={article.title} authors={exportableAuthors} />
+        exportCandidates.length > 0 && (
+          <AuthorListExportDialog title={article.title} candidates={exportCandidates} />
         )
       }
     >

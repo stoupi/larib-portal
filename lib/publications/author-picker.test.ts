@@ -18,7 +18,6 @@ function author(overrides: Partial<PickerAuthor> = {}): PickerAuthor {
     degrees: 'MD PhD',
     isOurTeam: true,
     centreName: 'Hôpital Lariboisière',
-    affiliations: [],
     publicationCount: 12,
     ...overrides,
   }

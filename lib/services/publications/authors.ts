@@ -186,6 +186,32 @@ export async function getAuthorDetail(id: string): Promise<AuthorDetail> {
   }
 }
 
+// Same resolution the author sheet displays: the affiliations recorded on the author,
+// or, when none were ever filled in, the ones derived from their past publications.
+export async function resolveAuthorAffiliations(authorIds: string[]): Promise<Record<string, string[]>> {
+  if (authorIds.length === 0) return {}
+  const authors = await prisma.author.findMany({
+    where: { id: { in: authorIds } },
+    select: {
+      id: true,
+      paperAffiliations: { orderBy: { order: 'asc' }, select: { raw: true } },
+      authorships: {
+        select: {
+          article: { select: { publishedAt: true } },
+          affiliations: { orderBy: { order: 'asc' }, select: { affiliation: { select: { raw: true, name: true } } } },
+        },
+      },
+    },
+  })
+  return Object.fromEntries(
+    authors.map((author) => {
+      const stored = author.paperAffiliations.map((affiliation) => affiliation.raw.trim()).filter(Boolean)
+      if (stored.length > 0) return [author.id, stored]
+      return [author.id, deriveAffiliations(author.authorships, () => false).map((affiliation) => affiliation.raw)]
+    }),
+  )
+}
+
 export type LinkableUser = { id: string; firstName: string | null; lastName: string | null; email: string }
 
 export async function listLinkableUsers(): Promise<LinkableUser[]> {
@@ -362,7 +388,6 @@ export type AuthorPickerOption = {
   degrees: string | null
   isOurTeam: boolean
   centreName: string | null
-  affiliations: string[]
   publicationCount: number
 }
 
@@ -377,7 +402,6 @@ export async function listAuthorPickerOptions(): Promise<AuthorPickerOption[]> {
       degrees: true,
       type: true,
       centre: { select: { name: true } },
-      paperAffiliations: { orderBy: { order: 'asc' }, select: { raw: true } },
       _count: { select: { authorships: true } },
     },
   })
@@ -389,7 +413,6 @@ export async function listAuthorPickerOptions(): Promise<AuthorPickerOption[]> {
     degrees: author.degrees,
     isOurTeam: author.type === 'OUR_TEAM',
     centreName: author.centre?.name ?? null,
-    affiliations: author.paperAffiliations.map((affiliation) => affiliation.raw.trim()).filter(Boolean),
     publicationCount: author._count.authorships,
   }))
 }

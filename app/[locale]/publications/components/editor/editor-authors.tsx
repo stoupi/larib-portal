@@ -7,7 +7,7 @@ import { toast } from 'sonner'
 import { UserPlus, Mail, Send, User } from 'lucide-react'
 import { Textarea } from '@/components/ui/textarea'
 import type { PublicationEditData } from '@/lib/services/publications/publication-editor'
-import { toExportableAuthors } from '@/lib/publications/author-list-export'
+import { toExportCandidates } from '@/lib/publications/author-list-export'
 import { requestAuthorListAction } from '../../actions'
 import type { EditorForm, EditorViewer } from '../article/article-page'
 import { AuthorListExportDialog } from '../authors/author-list-export-dialog'
@@ -64,7 +64,7 @@ export function EditorAuthors({
         article.authorships.length > 0 && (
           <AuthorListExportDialog
             title={form.watch('title')}
-            authors={toExportableAuthors(article.authorships)}
+            candidates={toExportCandidates(article.authorships)}
           />
         )
       }

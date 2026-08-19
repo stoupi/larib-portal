@@ -62,4 +62,19 @@ test('admin and first author both export the author list in a Word-ready format'
   await page.goto(adminUrl.replace('/publications/admin/articles/', '/publications/articles/'), { timeout: 60000 })
   await expect(page.getByRole('heading', { name: /Outcomes of multi-valve intervention/i })).toBeVisible({ timeout: 30000 })
   await expectWordReadyList(page)
+
+  // An author with nothing on record is not left unaffiliated: this paper carries no
+  // affiliation and the author has none on their sheet, so the one derived from their
+  // other publications is used — the same list their author sheet displays.
+  await page.goto('/en/publications', { timeout: 60000 })
+  const derivedLink = page.getByRole('link', { name: /Personal cohort study from a previous laboratory/i })
+  await expect(derivedLink).toBeVisible({ timeout: 30000 })
+  await derivedLink.click()
+  await page.waitForURL(/\/en\/publications\/articles\/[^/]+$/, { timeout: 30000 })
+
+  await page.getByRole('button', { name: 'Word format' }).click()
+  const dialog = page.getByRole('dialog')
+  await expect(dialog.getByText(`1 ${ARTICLE_AFFILIATION}`)).toBeVisible({ timeout: 15000 })
+  await expect(dialog.getByText('Publications User1, MD.')).toBeVisible()
+  await expect(dialog.getByText(/No affiliation on record/)).toHaveCount(0)
 })

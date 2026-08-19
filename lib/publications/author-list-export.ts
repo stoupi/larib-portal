@@ -24,34 +24,52 @@ export type AuthorListExport = {
 
 // An affiliation is the address line printed under a manuscript. It is never the
 // author's centre de rattachement, which only groups authors inside the portal.
-// What this article recorded for the author comes first; their own declared
-// affiliations fill in when the article carries none.
 export type AuthorshipSource = {
-  author: {
-    firstName: string
-    lastName: string
-    degrees: string | null
-    paperAffiliations: Array<{ raw: string }>
-  }
+  author: { id: string; firstName: string; lastName: string; degrees: string | null }
   affiliations: Array<{ affiliation: { name: string; raw: string | null } }>
+}
+
+export type ExportCandidate = {
+  authorId: string
+  firstName: string
+  lastName: string
+  degrees: string | null
+  articleAffiliations: string[]
 }
 
 const SUPERSCRIPT_DIGITS = ['⁰', '¹', '²', '³', '⁴', '⁵', '⁶', '⁷', '⁸', '⁹']
 
-export function authorshipAffiliationTexts(authorship: AuthorshipSource): string[] {
-  const fromArticle = authorship.affiliations
+export function articleAffiliationTexts(authorship: AuthorshipSource): string[] {
+  return authorship.affiliations
     .map((link) => link.affiliation.raw?.trim() || link.affiliation.name.trim())
     .filter(Boolean)
-  if (fromArticle.length > 0) return fromArticle
-  return authorship.author.paperAffiliations.map((affiliation) => affiliation.raw.trim()).filter(Boolean)
 }
 
-export function toExportableAuthors(authorships: AuthorshipSource[]): ExportableAuthor[] {
+export function toExportCandidates(authorships: AuthorshipSource[]): ExportCandidate[] {
   return authorships.map((authorship) => ({
+    authorId: authorship.author.id,
     firstName: authorship.author.firstName,
     lastName: authorship.author.lastName,
     degrees: authorship.author.degrees,
-    affiliations: authorshipAffiliationTexts(authorship),
+    articleAffiliations: articleAffiliationTexts(authorship),
+  }))
+}
+
+// What this article recorded for the author wins — that is what the paper itself
+// says. Otherwise the author's own affiliations, resolved the way their sheet
+// shows them: the ones on record, or the ones derived from their publications.
+export function resolveExportableAuthors(
+  candidates: ExportCandidate[],
+  affiliationsByAuthorId: Record<string, string[]>,
+): ExportableAuthor[] {
+  return candidates.map((candidate) => ({
+    firstName: candidate.firstName,
+    lastName: candidate.lastName,
+    degrees: candidate.degrees,
+    affiliations:
+      candidate.articleAffiliations.length > 0
+        ? candidate.articleAffiliations
+        : affiliationsByAuthorId[candidate.authorId] ?? [],
   }))
 }
 

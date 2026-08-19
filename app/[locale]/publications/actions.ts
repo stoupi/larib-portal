@@ -21,7 +21,7 @@ import {
   PUBLICATIONS_AUTHORS_TAG,
   PUBLICATIONS_ARTICLES_TAG,
 } from '@/lib/services/publications/import'
-import { updateAuthor, deleteAuthor, deleteAuthorWithAuthorships, mergeAuthors, recomputeAuthorCentres, createAuthor, getAuthorDetail, getAuthorForEdit, isPrismaKnownError } from '@/lib/services/publications/authors'
+import { updateAuthor, deleteAuthor, deleteAuthorWithAuthorships, mergeAuthors, recomputeAuthorCentres, createAuthor, getAuthorDetail, getAuthorForEdit, resolveAuthorAffiliations, isPrismaKnownError } from '@/lib/services/publications/authors'
 import { findAuthorDuplicates, matchAuthorsAgainstBank, normalizeName } from '@/lib/services/publications/author-dedup'
 import { normalizeName as normalizeAuthorName, authorFirstInitial } from '@/lib/services/publications/import-dedupe'
 import { fetchPublicationByIdentifier } from '@/lib/services/publications/publication-lookup'
@@ -383,6 +383,10 @@ export const createAuthorAction = appMemberAction('PUBLICATIONS')
     revalidateTag(PUBLICATIONS_AUTHORS_TAG)
     return { status: 'created' as const, author: created }
   })
+
+export const resolveAuthorAffiliationsAction = appMemberAction('PUBLICATIONS')
+  .inputSchema(z.object({ authorIds: z.array(z.string().min(1)).min(1) }))
+  .action(async ({ parsedInput }) => resolveAuthorAffiliations(parsedInput.authorIds))
 
 export const fetchPublicationAuthorsAction = appMemberAction('PUBLICATIONS')
   .inputSchema(z.object({ identifier: z.string().min(1) }))

@@ -6,7 +6,6 @@ export type PickerAuthor = {
   degrees: string | null
   isOurTeam: boolean
   centreName: string | null
-  affiliations: string[]
   publicationCount: number
 }
 

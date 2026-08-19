@@ -1024,6 +1024,7 @@
         "copy": "Copy",
         "copied": "Copied",
         "copyError": "The copy failed. Select the text and copy it by hand.",
+        "resolveError": "The affiliations could not be loaded. Close the window and try again.",
         "missingAffiliations": "No affiliation on record for: {names}. Fill it in on their author sheet — the centre they belong to is not an affiliation.",
         "close": "Close"
       },

@@ -2,8 +2,9 @@ import { describe, expect, it } from 'vitest'
 import {
   authorListExportToHtml,
   authorListExportToPlainText,
-  authorshipAffiliationTexts,
   buildAuthorListExport,
+  resolveExportableAuthors,
+  toExportCandidates,
 } from './author-list-export'
 
 const LARIB = 'Université Paris Cité, Department of Cardiology, University Hospital of Lariboisiere, 75010, Paris, France.'
@@ -41,32 +42,37 @@ describe('buildAuthorListExport', () => {
   })
 })
 
-describe('authorshipAffiliationTexts', () => {
-  const author = {
-    firstName: 'A',
-    lastName: 'One',
-    degrees: null,
-    paperAffiliations: [{ raw: ICPS }],
-  }
+describe('toExportCandidates + resolveExportableAuthors', () => {
+  const authorships = [
+    {
+      author: { id: 'pezel', firstName: 'Theo', lastName: 'Pezel', degrees: 'MD, PhD' },
+      affiliations: [],
+    },
+    {
+      author: { id: 'toupin', firstName: 'Solenn', lastName: 'Toupin', degrees: 'PhD' },
+      affiliations: [
+        { affiliation: { name: 'short name', raw: LARIB } },
+        { affiliation: { name: 'short name', raw: '  ' } },
+      ],
+    },
+  ]
 
-  it('takes what the article recorded, preferring the raw address over the affiliation name', () => {
-    expect(
-      authorshipAffiliationTexts({
-        author,
-        affiliations: [
-          { affiliation: { name: 'short name', raw: LARIB } },
-          { affiliation: { name: 'short name', raw: '  ' } },
-        ],
-      }),
-    ).toEqual([LARIB, 'short name'])
+  it('keeps what the article recorded, preferring the raw address over the affiliation name', () => {
+    const candidates = toExportCandidates(authorships)
+    expect(candidates.map((candidate) => candidate.articleAffiliations)).toEqual([[], [LARIB, 'short name']])
   })
 
-  it("falls back to the author's own affiliations when the article recorded none", () => {
-    expect(authorshipAffiliationTexts({ author, affiliations: [] })).toEqual([ICPS])
+  it('resolves the authors the article says nothing about from their own affiliations', () => {
+    const resolved = resolveExportableAuthors(toExportCandidates(authorships), {
+      pezel: [ICPS, LARIB],
+      toupin: ['never used, the article wins'],
+    })
+    expect(resolved.map((author) => author.affiliations)).toEqual([[ICPS, LARIB], [LARIB, 'short name']])
   })
 
-  it('leaves the author unaffiliated rather than inventing one from their centre', () => {
-    expect(authorshipAffiliationTexts({ author: { ...author, paperAffiliations: [] }, affiliations: [] })).toEqual([])
+  it('leaves an author unaffiliated rather than inventing one when nothing resolves', () => {
+    const resolved = resolveExportableAuthors(toExportCandidates(authorships), {})
+    expect(resolved[0].affiliations).toEqual([])
   })
 })
 
