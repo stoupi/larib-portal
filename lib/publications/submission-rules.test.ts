@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { siblingsToReject, articleStatusForSubmission } from './submission-rules'
+import { siblingsToReject, articleStatusForSubmission, articleStatusBackfill } from './submission-rules'
 
 describe('siblingsToReject', () => {
   const subs = [
@@ -46,5 +46,23 @@ describe('articleStatusForSubmission', () => {
     expect(articleStatusForSubmission('REJECTED', 'PUBLISHED')).toBeNull()
     expect(articleStatusForSubmission('ACCEPTED', 'PUBLISHED')).toBeNull()
     expect(articleStatusForSubmission('SUBMITTED', 'ABANDONED')).toBeNull()
+  })
+})
+
+describe('articleStatusBackfill', () => {
+  it('catches up a publication left behind by its submission', () => {
+    expect(articleStatusBackfill('ACCEPTED', 'UNDER_REVIEW')).toBe('ACCEPTED')
+    expect(articleStatusBackfill('MAJOR_REVISIONS', 'TO_RESUBMIT')).toBe('REVISION')
+    expect(articleStatusBackfill('REJECTED', 'IN_PREPARATION')).toBe('TO_RESUBMIT')
+  })
+
+  it('never takes back an acceptance recorded by hand', () => {
+    expect(articleStatusBackfill('UNDER_REVIEW', 'ACCEPTED')).toBeNull()
+    expect(articleStatusBackfill('REJECTED', 'ACCEPTED')).toBeNull()
+  })
+
+  it('leaves published and abandoned papers alone, like the live rule', () => {
+    expect(articleStatusBackfill('ACCEPTED', 'PUBLISHED')).toBeNull()
+    expect(articleStatusBackfill('SUBMITTED', 'ABANDONED')).toBeNull()
   })
 })

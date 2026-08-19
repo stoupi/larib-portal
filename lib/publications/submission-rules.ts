@@ -23,6 +23,17 @@ export function articleStatusForSubmission(
   return next === currentArticleStatus ? null : next
 }
 
+// Catching up publications written before the status followed its submission. Unlike the
+// live rule this one never takes an acceptance back: an accepted paper whose submission
+// history lags behind was marked by hand, and that judgement outranks a stale record.
+export function articleStatusBackfill(
+  submissionStatus: SubmissionStatusValue,
+  currentArticleStatus: ArticleStatusValue,
+): ArticleStatusValue | null {
+  if (currentArticleStatus === 'ACCEPTED') return null
+  return articleStatusForSubmission(submissionStatus, currentArticleStatus)
+}
+
 export function isRejected(status: SubmissionStatusValue): boolean {
   return status === 'REJECTED'
 }
