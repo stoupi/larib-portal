@@ -1016,6 +1016,16 @@
       "atJournal": "at {journal}",
       "authorsTitle": "Authors",
       "authorsManagedByAdmin": "The full co-author list is proposed and maintained by the admin.",
+      "exportList": {
+        "trigger": "Word format",
+        "dialogTitle": "Author list ready for Word",
+        "dialogHint": "Title, co-authors and numbered affiliations, laid out as in a manuscript. Copy, then paste into Word.",
+        "untitled": "Untitled publication",
+        "copy": "Copy",
+        "copied": "Copied",
+        "copyError": "The copy failed. Select the text and copy it by hand.",
+        "close": "Close"
+      },
       "you": "You",
       "corresponding": "Corresponding",
       "contributorsLabel": "Report contributors to the study",

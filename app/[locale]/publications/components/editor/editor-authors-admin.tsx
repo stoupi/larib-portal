@@ -9,27 +9,33 @@ import { Plus, Save } from 'lucide-react'
 import type { PickerAuthor } from '@/lib/publications/author-picker'
 import { markCorresponding } from '@/lib/publications/corresponding-author'
 import type { AuthorshipEntry } from '@/lib/publications/author-list'
+import { authorshipAffiliationTexts, type ExportableAuthor } from '@/lib/publications/author-list-export'
+import type { PublicationEditData } from '@/lib/services/publications/publication-editor'
 import { setArticleAuthorsAction } from '../../actions'
 import { AuthorPickerDialog } from '../authors/author-picker-dialog'
+import { AuthorListExportDialog } from '../authors/author-list-export-dialog'
 import { AuthorOrderList } from '../authors/author-order-list'
 import { CollapsibleCard } from './collapsible-card'
 
 export function EditorAuthorsAdmin({
-  articleId,
-  initialAuthors,
+  article,
   pickerAuthors,
   centres,
   editable,
 }: {
-  articleId: string
-  initialAuthors: AuthorshipEntry[]
+  article: PublicationEditData
   pickerAuthors: PickerAuthor[]
   centres: { id: string; name: string; city: string | null; isOwn: boolean }[]
   editable: boolean
 }) {
   const t = useTranslations('publications.editor')
   const router = useRouter()
-  const [entries, setEntries] = useState<AuthorshipEntry[]>(initialAuthors)
+  const [entries, setEntries] = useState<AuthorshipEntry[]>(() =>
+    article.authorships.map((authorship) => ({
+      authorId: authorship.author.id,
+      isCorresponding: authorship.isCorresponding,
+    })),
+  )
   const [pickerOpen, setPickerOpen] = useState(false)
 
   const save = useAction(setArticleAuthorsAction, {
@@ -46,6 +52,32 @@ export function EditorAuthorsAdmin({
     () => new Map(pickerAuthors.map((author) => [author.id, author])),
     [pickerAuthors],
   )
+
+  const affiliationsByAuthorId = useMemo(
+    () =>
+      new Map(
+        article.authorships.map((authorship) => [
+          authorship.author.id,
+          authorshipAffiliationTexts(authorship),
+        ]),
+      ),
+    [article.authorships],
+  )
+
+  const exportableAuthors: ExportableAuthor[] = entries.flatMap((entry) => {
+    const author = authorsById.get(entry.authorId)
+    if (!author) return []
+    const storedAffiliations = affiliationsByAuthorId.get(entry.authorId) ?? []
+    const centreFallback = author.centreName ? [author.centreName] : []
+    return [
+      {
+        firstName: author.firstName,
+        lastName: author.lastName,
+        degrees: author.degrees,
+        affiliations: storedAffiliations.length > 0 ? storedAffiliations : centreFallback,
+      },
+    ]
+  })
 
   function addAuthors(authorIds: string[]) {
     setEntries((current) => [
@@ -76,6 +108,11 @@ export function EditorAuthorsAdmin({
             {entries.length}
           </span>
         </>
+      }
+      actions={
+        exportableAuthors.length > 0 && (
+          <AuthorListExportDialog title={article.title} authors={exportableAuthors} />
+        )
       }
     >
       <p className="text-sm text-text-secondary">{t('authorsAdminHint')}</p>
@@ -118,7 +155,7 @@ export function EditorAuthorsAdmin({
           <button
             type="button"
             disabled={save.isExecuting}
-            onClick={() => save.execute({ articleId, authors: entries })}
+            onClick={() => save.execute({ articleId: article.id, authors: entries })}
             className="mt-4 inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-b from-coral-500 to-coral-600 text-sm font-bold text-white shadow-[0_8px_18px_-6px_rgba(214,31,85,0.55)] transition hover:brightness-105 disabled:opacity-60"
           >
             <Save className="h-4 w-4" strokeWidth={2.2} />

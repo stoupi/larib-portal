@@ -1014,6 +1014,16 @@
       "atJournal": "à {journal}",
       "authorsTitle": "Auteurs",
       "authorsManagedByAdmin": "La liste complète des co-auteurs est proposée et maintenue par l'admin.",
+      "exportList": {
+        "trigger": "Format Word",
+        "dialogTitle": "Liste d'auteurs prête pour Word",
+        "dialogHint": "Titre, co-auteurs et affiliations numérotées, mis en page comme dans un manuscrit. Copiez, puis collez dans Word.",
+        "untitled": "Publication sans titre",
+        "copy": "Copier",
+        "copied": "Copié",
+        "copyError": "La copie a échoué. Sélectionnez le texte et copiez-le à la main.",
+        "close": "Fermer"
+      },
       "you": "Vous",
       "corresponding": "Correspondant",
       "contributorsLabel": "Signaler les contributeurs de l'étude",

@@ -117,11 +117,15 @@ export async function getPublicationForEdit(articleId: string) {
               lastName: true,
               degrees: true,
               userId: true,
+              centre: { select: { name: true } },
             },
           },
           affiliations: {
             orderBy: { order: 'asc' },
-            select: { order: true, affiliation: { select: { centre: { select: { name: true } } } } },
+            select: {
+              order: true,
+              affiliation: { select: { name: true, raw: true, centre: { select: { name: true } } } },
+            },
           },
         },
       },

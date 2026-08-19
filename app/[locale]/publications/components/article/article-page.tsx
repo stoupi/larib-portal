@@ -208,11 +208,7 @@ export function ArticlePage({
           <div className="space-y-5">
             {canComposeAuthorList({ isAdmin: viewer.isAdmin, basePath }) ? (
               <EditorAuthorsAdmin
-                articleId={article.id}
-                initialAuthors={article.authorships.map((authorship) => ({
-                  authorId: authorship.author.id,
-                  isCorresponding: authorship.isCorresponding,
-                }))}
+                article={article}
                 pickerAuthors={pickerAuthors}
                 centres={centres}
                 editable={visibility.cardsEditable}
