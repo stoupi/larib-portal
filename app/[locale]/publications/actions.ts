@@ -7,7 +7,7 @@ import { canAccessApp, canAdminApp } from '@/lib/permissions'
 import { prisma } from '@/lib/prisma'
 import { addSubmission, updateSubmissionStatus, updateSubmission, deleteSubmission, userOwnsSubmission, SUBMISSION_STATUSES } from '@/lib/services/publications/submissions'
 import { userIsAuthorOfArticle } from '@/lib/services/publications/my-publications'
-import { createDraftArticle, updateArticleCore, deleteDraft, userIsFirstAuthor, setArticlePdf, setArticleAuthors, getViewerIdentity } from '@/lib/services/publications/publication-editor'
+import { createDraftArticle, updateArticleCore, deleteDraft, userIsFirstAuthor, setArticlePdf, setArticleAuthors, getViewerIdentity, findOrCreateAuthorForUser } from '@/lib/services/publications/publication-editor'
 import { searchPubmedWithLibraryMatches, buildRecordPreview, loadRecordWithPreview } from '@/lib/services/publications/pubmed-search'
 import { viewerIsAmongAuthors, defaultPubmedQueryForViewer } from '@/lib/publications/pubmed-import'
 import {
@@ -626,11 +626,15 @@ export const fetchPubmedRecordPreviewAction = appMemberAction('PUBLICATIONS')
   )
 
 // A member may only bring in a paper they signed; an admin keeps the unrestricted module.
-async function loadImportableRecord(user: { id: string }, isAdmin: boolean, pmid: string) {
-  const viewer = await getViewerIdentity(user.id)
+// Their author record is created first when missing, so the PubMed author list matches it
+// and the paper comes back attached to their account instead of to a nameless duplicate.
+async function loadImportableRecord(userId: string, isAdmin: boolean, pmid: string) {
+  const viewer = await getViewerIdentity(userId)
   const loaded = await loadRecordWithPreview(pmid, viewer)
   if (!loaded) throw new Error('PUBMED_RECORD_NOT_FOUND')
-  if (!isAdmin && !viewerIsAmongAuthors(loaded.record.authors, viewer)) throw new Error('NOT_AN_AUTHOR')
+  const signedByViewer = viewerIsAmongAuthors(loaded.record.authors, viewer)
+  if (!isAdmin && !signedByViewer) throw new Error('NOT_AN_AUTHOR')
+  if (signedByViewer) await findOrCreateAuthorForUser(userId)
   return loaded
 }
 
@@ -639,7 +643,7 @@ export const createArticleFromPubmedAction = authenticatedAction
   .action(async ({ parsedInput, ctx }) => {
     if (!canAccessApp(ctx.user, 'PUBLICATIONS')) throw new Error('Forbidden')
     const isAdmin = canAdminApp(ctx.user, 'PUBLICATIONS')
-    const { record, preview } = await loadImportableRecord(ctx.user, isAdmin, parsedInput.pmid)
+    const { record, preview } = await loadImportableRecord(ctx.userId, isAdmin, parsedInput.pmid)
     if (preview.existingArticleId) return { articleId: preview.existingArticleId, alreadyPresent: true }
 
     const report = await importRecords([record], ctx.userId, new Map([[record.pmid, preview.proposedScope]]))
@@ -658,7 +662,7 @@ export const importPubmedIntoArticleAction = authenticatedAction
     const canEdit = isAdmin || (await userIsFirstAuthor(ctx.userId, parsedInput.articleId))
     if (!canEdit) throw new Error('Forbidden')
 
-    const { record, preview } = await loadImportableRecord(ctx.user, isAdmin, parsedInput.pmid)
+    const { record, preview } = await loadImportableRecord(ctx.userId, isAdmin, parsedInput.pmid)
     if (preview.existingArticleId && preview.existingArticleId !== parsedInput.articleId) {
       return { articleId: preview.existingArticleId, alreadyPresent: true }
     }

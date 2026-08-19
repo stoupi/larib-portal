@@ -4,22 +4,36 @@ import type { ArticleStatusValue } from './articles'
 import { PUBLICATIONS_ARTICLES_TAG } from './import'
 import { ARTICLE_TYPE_VALUES, type ArticleTypeValue } from '@/lib/publications/article-type'
 import { planAuthorshipChanges, type AuthorshipEntry } from '@/lib/publications/author-list'
+import { pickAuthorMatch } from './import-dedupe'
 
 export { PUBLICATIONS_ARTICLES_TAG, ARTICLE_TYPE_VALUES }
 
-async function findOrCreateAuthorForUser(userId: string): Promise<string> {
-  const existing = await prisma.author.findFirst({ where: { userId }, select: { id: true } })
-  if (existing) return existing.id
+export async function findOrCreateAuthorForUser(userId: string): Promise<string> {
+  const linked = await prisma.author.findFirst({ where: { userId }, select: { id: true } })
+  if (linked) return linked.id
   const user = await prisma.user.findUniqueOrThrow({
     where: { id: userId },
     select: { firstName: true, lastName: true, email: true },
   })
+  const firstName = user.firstName ?? user.email.split('@')[0]
+  const lastName = user.lastName ?? ''
+
+  // The bank often already holds this person, imported from a paper before they ever
+  // signed in. Claiming that record beats creating a second one nobody can tell apart.
+  if (lastName.length > 0) {
+    const unclaimed = await prisma.author.findMany({
+      where: { userId: null, lastName: { equals: lastName, mode: 'insensitive' } },
+      select: { id: true, firstName: true, lastName: true, initials: true, orcid: true },
+    })
+    const samePerson = pickAuthorMatch(unclaimed, { lastName, foreName: firstName })
+    if (samePerson) {
+      await prisma.author.update({ where: { id: samePerson.id }, data: { userId } })
+      return samePerson.id
+    }
+  }
+
   const author = await prisma.author.create({
-    data: {
-      firstName: user.firstName ?? user.email.split('@')[0],
-      lastName: user.lastName ?? '',
-      userId,
-    },
+    data: { firstName, lastName, userId },
     select: { id: true },
   })
   return author.id

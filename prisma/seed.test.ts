@@ -244,8 +244,9 @@ async function main() {
 	});
 	console.log('✅ Created Publications user:', publicationsUser.email);
 
-	// A member whose author identity matches the PubMed fixtures, so the member-facing
-	// PubMed import (which only accepts papers you signed) can be exercised end to end.
+	// A member whose profile name matches the PubMed fixtures, so the member-facing PubMed
+	// import (which only accepts papers you signed) can be exercised end to end. They have
+	// no author record yet on purpose: the import must create and link one.
 	const publicationsPubmedAuthorPassword = await ctx.password.hash('ristifou');
 	const publicationsPubmedAuthor = await prisma.user.create({
 		data: {
@@ -328,18 +329,6 @@ async function main() {
 			},
 		},
 	});
-	await prisma.author.create({
-		data: {
-			firstName: 'Theo',
-			lastName: 'Pezel',
-			type: 'OUR_TEAM',
-			centre: { connect: { id: publicationsCentre.id } },
-			emails: [publicationsPubmedAuthor.email],
-			user: { connect: { id: publicationsPubmedAuthor.id } },
-			defaultAffiliation: { connect: { id: publicationsAffiliation.id } },
-		},
-	});
-
 	const publicationsStudy = await prisma.study.create({
 		data: { title: 'MULTIVALVE registry', description: 'Retrospective multi-valve cohort', createdBy: { connect: { id: publicationsAdmin.id } } },
 	});
