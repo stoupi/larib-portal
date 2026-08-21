@@ -129,8 +129,11 @@ test('My affiliations: the member reads their own affiliations and rewrites the 
   }
   await expect(dialog.getByRole('listitem')).toHaveText([`1${first}`, `2${second}`])
 
-  // The order is the member's to decide, and it is what gets saved
-  await dialog.getByRole('button', { name: `Move ${second} up` }).click()
+  // The order is the member's to decide: the rows are dragged, and it is what gets saved
+  await dialog.getByRole('button', { name: `Reorder ${second}` }).focus()
+  await page.keyboard.press('Space')
+  await page.keyboard.press('ArrowUp')
+  await page.keyboard.press('Space')
   await expect(dialog.getByRole('listitem')).toHaveText([`1${second}`, `2${first}`])
   await dialog.getByRole('button', { name: 'Save' }).click()
   await expect(dialog).toHaveCount(0, { timeout: 30000 })

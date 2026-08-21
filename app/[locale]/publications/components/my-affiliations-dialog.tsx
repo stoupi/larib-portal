@@ -1,11 +1,28 @@
 'use client'
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import { useAction } from 'next-safe-action/hooks'
 import { toast } from 'sonner'
-import { Building2, ChevronDown, ChevronUp, Plus, Save, X } from 'lucide-react'
+import {
+  DndContext,
+  KeyboardSensor,
+  PointerSensor,
+  closestCenter,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from '@dnd-kit/core'
+import {
+  SortableContext,
+  arrayMove,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
+import { Building2, GripVertical, Plus, Save, X } from 'lucide-react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -15,12 +32,54 @@ import { updateMyAffiliationsAction } from '../actions'
 const AFFILIATIONS_MAX = 10
 const CORAL = 'gap-2 bg-gradient-to-b from-coral-500 to-coral-600 text-white shadow-[0_10px_22px_-8px_rgba(214,31,85,0.6)] hover:brightness-105'
 
-function moved(affiliations: string[], from: number, to: number): string[] {
-  if (to < 0 || to >= affiliations.length) return affiliations
-  const reordered = [...affiliations]
-  const [moving] = reordered.splice(from, 1)
-  reordered.splice(to, 0, moving)
-  return reordered
+// Two affiliations can read the same while being distinct rows, so the sortable key is a
+// row identity of its own rather than the text.
+type AffiliationRow = { id: string; raw: string }
+
+function SortableAffiliationRow({
+  row,
+  rank,
+  onRemove,
+}: {
+  row: AffiliationRow
+  rank: number
+  onRemove: () => void
+}) {
+  const t = useTranslations('publications.myAffiliations')
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: row.id })
+
+  return (
+    <li
+      ref={setNodeRef}
+      style={{ transform: CSS.Transform.toString(transform), transition }}
+      className={cn(
+        'flex items-center gap-3 rounded-xl border border-line bg-gray-25 px-4 py-3 dark:bg-white/5',
+        isDragging && 'z-10 shadow-lg',
+      )}
+    >
+      <button
+        type="button"
+        aria-label={t('reorder', { affiliation: row.raw })}
+        className="shrink-0 cursor-grab touch-none rounded-md p-1 text-text-muted transition hover:bg-gray-50 hover:text-text-secondary active:cursor-grabbing dark:hover:bg-white/5"
+        {...attributes}
+        {...listeners}
+      >
+        <GripVertical className="h-4 w-4" />
+      </button>
+      <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-gray-100 text-xs font-bold text-gray-600">
+        {rank}
+      </span>
+      <span className="flex-1 text-sm leading-snug text-text-primary">{row.raw}</span>
+      <button
+        type="button"
+        aria-label={t('remove', { affiliation: row.raw })}
+        onClick={onRemove}
+        className="shrink-0 text-text-muted transition hover:text-coral-600"
+      >
+        <X className="h-4 w-4" />
+      </button>
+    </li>
+  )
 }
 
 export function MyAffiliationsDialog({
@@ -35,9 +94,44 @@ export function MyAffiliationsDialog({
   const t = useTranslations('publications.myAffiliations')
   const tAuthors = useTranslations('publications.authors')
   const router = useRouter()
+  const nextRowId = useRef(0)
   const [open, setOpen] = useState(false)
-  const [draft, setDraft] = useState<string[]>(affiliations)
+  const [rows, setRows] = useState<AffiliationRow[]>([])
   const [newAffiliation, setNewAffiliation] = useState('')
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
+  )
+
+  function makeRow(raw: string): AffiliationRow {
+    nextRowId.current += 1
+    return { id: `affiliation-${nextRowId.current}`, raw }
+  }
+
+  function openDialog(nextOpen: boolean) {
+    setOpen(nextOpen)
+    if (nextOpen) {
+      setRows(affiliations.map(makeRow))
+      setNewAffiliation('')
+    }
+  }
+
+  function addAffiliation() {
+    const value = newAffiliation.trim()
+    if (!value || rows.length >= AFFILIATIONS_MAX) return
+    setRows((current) => [...current, makeRow(value)])
+    setNewAffiliation('')
+  }
+
+  function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event
+    if (!over || active.id === over.id) return
+    const fromIndex = rows.findIndex((row) => row.id === active.id)
+    const toIndex = rows.findIndex((row) => row.id === over.id)
+    if (fromIndex === -1 || toIndex === -1) return
+    setRows(arrayMove(rows, fromIndex, toIndex))
+  }
 
   const save = useAction(updateMyAffiliationsAction, {
     onSuccess() {
@@ -49,21 +143,6 @@ export function MyAffiliationsDialog({
       toast.error(t('error'))
     },
   })
-
-  function openDialog(nextOpen: boolean) {
-    setOpen(nextOpen)
-    if (nextOpen) {
-      setDraft(affiliations)
-      setNewAffiliation('')
-    }
-  }
-
-  function addAffiliation() {
-    const value = newAffiliation.trim()
-    if (!value || draft.length >= AFFILIATIONS_MAX) return
-    setDraft((current) => [...current, value])
-    setNewAffiliation('')
-  }
 
   return (
     <Dialog open={open} onOpenChange={openDialog}>
@@ -97,53 +176,31 @@ export function MyAffiliationsDialog({
             <span className="h-px flex-1 bg-line" />
           </div>
 
-          {derivedFromPublications && draft.length > 0 && (
+          {derivedFromPublications && rows.length > 0 && (
             <p className="text-[13px] leading-relaxed text-text-secondary">{t('derivedHint')}</p>
           )}
 
-          <ul className="space-y-2">
-            {draft.map((affiliation, index) => (
-              <li
-                key={`${affiliation}-${index}`}
-                className="flex items-center gap-3 rounded-xl border border-line bg-gray-25 px-4 py-3 dark:bg-white/5"
-              >
-                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-gray-100 text-xs font-bold text-gray-600">
-                  {index + 1}
-                </span>
-                <span className="flex-1 text-sm leading-snug text-text-primary">{affiliation}</span>
-                <span className="flex shrink-0 flex-col">
-                  <button
-                    type="button"
-                    aria-label={t('moveUp', { affiliation })}
-                    disabled={index === 0}
-                    onClick={() => setDraft(moved(draft, index, index - 1))}
-                    className="text-text-muted transition hover:text-coral-600 disabled:opacity-30 disabled:hover:text-text-muted"
-                  >
-                    <ChevronUp className="h-4 w-4" />
-                  </button>
-                  <button
-                    type="button"
-                    aria-label={t('moveDown', { affiliation })}
-                    disabled={index === draft.length - 1}
-                    onClick={() => setDraft(moved(draft, index, index + 1))}
-                    className="text-text-muted transition hover:text-coral-600 disabled:opacity-30 disabled:hover:text-text-muted"
-                  >
-                    <ChevronDown className="h-4 w-4" />
-                  </button>
-                </span>
-                <button
-                  type="button"
-                  aria-label={t('remove', { affiliation })}
-                  onClick={() => setDraft(draft.filter((_, position) => position !== index))}
-                  className="text-text-muted transition hover:text-coral-600"
-                >
-                  <X className="h-4 w-4" />
-                </button>
-              </li>
-            ))}
-          </ul>
-
-          {draft.length === 0 && <p className="text-[13px] text-text-secondary">{t('empty')}</p>}
+          {rows.length > 0 ? (
+            <div className="space-y-2">
+              <p className="text-xs text-text-muted">{t('reorderHint')}</p>
+              <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+                <SortableContext items={rows.map((row) => row.id)} strategy={verticalListSortingStrategy}>
+                  <ul className="space-y-2">
+                    {rows.map((row, index) => (
+                      <SortableAffiliationRow
+                        key={row.id}
+                        row={row}
+                        rank={index + 1}
+                        onRemove={() => setRows(rows.filter((candidate) => candidate.id !== row.id))}
+                      />
+                    ))}
+                  </ul>
+                </SortableContext>
+              </DndContext>
+            </div>
+          ) : (
+            <p className="text-[13px] text-text-secondary">{t('empty')}</p>
+          )}
 
           <div className="flex gap-2">
             <Input
@@ -172,7 +229,7 @@ export function MyAffiliationsDialog({
           <Button
             type="button"
             disabled={save.isExecuting}
-            onClick={() => save.execute({ affiliations: draft })}
+            onClick={() => save.execute({ affiliations: rows.map((row) => row.raw) })}
             className={CORAL}
           >
             <Save className="h-4 w-4" />
