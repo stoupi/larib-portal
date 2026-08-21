@@ -6,6 +6,7 @@ import { Link } from '@/app/i18n/navigation'
 import { cn } from '@/lib/utils'
 import { doiUrl } from '@/lib/publications/doi'
 import { ArticleScopeSwitch } from './articles/article-scope-switch'
+import { ArticleDeleteButton } from './articles/article-delete-button'
 import { ARTICLE_STATUS_TONE, pillClassName } from '@/lib/publications/status-display'
 import { ARTICLE_TYPE_BADGE } from '@/lib/publications/article-type'
 import type { MyPublicationItem } from '@/lib/services/publications/my-publications'
@@ -223,6 +224,9 @@ function PublicationRow({
           >
             {item.isFirst ? <Pencil className="h-3.5 w-3.5" strokeWidth={2} /> : <Eye className="h-3.5 w-3.5" strokeWidth={2} />}
           </Link>
+          {item.canDelete && (
+            <ArticleDeleteButton articleId={item.id} articleTitle={item.title || t('myPub.untitled')} />
+          )}
         </div>
       </div>
 

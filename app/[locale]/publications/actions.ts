@@ -29,7 +29,7 @@ import { findAuthorDuplicates, matchAuthorsAgainstBank, normalizeName } from '@/
 import { fetchPublicationByIdentifier } from '@/lib/services/publications/publication-lookup'
 import { backfillAffiliations, PUBLICATIONS_CENTRES_TAG, PUBLICATIONS_AFFILIATIONS_TAG } from '@/lib/services/publications/affiliations'
 import { renameCentre, setCentreOwn, deleteCentre, mergeCentres, getCentreAuthors, getCentreStudies, createCentre, updateCentre, listCentreOptions } from '@/lib/services/publications/centres'
-import { updateArticleStatus, updateArticleType, updateArticleStudy, updateArticleScope, deleteArticle, ARTICLE_STATUSES } from '@/lib/services/publications/articles'
+import { updateArticleStatus, updateArticleType, updateArticleStudy, updateArticleScope, deleteArticle, userCreatedArticleInPreparation, ARTICLE_STATUSES } from '@/lib/services/publications/articles'
 import { ARTICLE_TYPE_VALUES } from '@/lib/publications/article-type'
 import { ARTICLE_SCOPES } from '@/lib/publications/article-scope'
 import { findLibraryDuplicates } from '@/lib/services/publications/duplicates'
@@ -230,9 +230,14 @@ export const updateArticleStatusAction = appAdminAction('PUBLICATIONS')
     return updated
   })
 
-export const deleteArticleAction = appAdminAction('PUBLICATIONS')
+export const deleteArticleAction = authenticatedAction
   .inputSchema(z.object({ id: z.string().min(1) }))
-  .action(async ({ parsedInput }) => {
+  .action(async ({ parsedInput, ctx }) => {
+    if (!canAccessApp(ctx.user, 'PUBLICATIONS')) throw new Error('Forbidden')
+    const canDelete =
+      canAdminApp(ctx.user, 'PUBLICATIONS') ||
+      (await userCreatedArticleInPreparation(ctx.userId, parsedInput.id))
+    if (!canDelete) throw new Error('Forbidden')
     const result = await deleteArticle(parsedInput.id)
     revalidateTag(PUBLICATIONS_ARTICLES_TAG)
     revalidateTag(PUBLICATIONS_STUDIES_TAG)

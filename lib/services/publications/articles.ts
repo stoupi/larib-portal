@@ -100,4 +100,12 @@ export async function deleteArticle(id: string): Promise<{ deleted: boolean }> {
   return { deleted: true }
 }
 
+export async function userCreatedArticleInPreparation(userId: string, articleId: string): Promise<boolean> {
+  const article = await prisma.article.findFirst({
+    where: { id: articleId, createdById: userId, status: 'IN_PREPARATION' },
+    select: { id: true },
+  })
+  return article != null
+}
+
 export { PUBLICATIONS_ARTICLES_TAG }

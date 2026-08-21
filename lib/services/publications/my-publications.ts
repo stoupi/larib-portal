@@ -33,6 +33,7 @@ export type MyPublicationItem = {
   totalAuthors: number
   positionBucket: PositionBucket
   isFirst: boolean
+  canDelete: boolean
   authors: string[]
   lastSubmissionAt: string | null
   acceptedAt: string | null
@@ -62,6 +63,7 @@ export async function listMyPublications(userId: string, now: Date = new Date())
       type: true,
       status: true,
       scope: true,
+      createdById: true,
       doi: true,
       pdfUrl: true,
       publishedAt: true,
@@ -130,6 +132,7 @@ export async function listMyPublications(userId: string, now: Date = new Date())
       totalAuthors,
       positionBucket,
       isFirst: isFirstAuthor(positionBucket),
+      canDelete: article.createdById === userId && article.status === 'IN_PREPARATION',
       authors,
       lastSubmissionAt: lastSubmissionDate ? lastSubmissionDate.toISOString() : null,
       acceptedAt: acceptedDate ? acceptedDate.toISOString() : null,

@@ -70,6 +70,42 @@ test('My publications: the year chart filters the table and clears again', async
   await expect(page.getByText('Outcomes of multi-valve intervention: a retrospective cohort')).toHaveCount(0)
 })
 
+test('My publications: the author deletes their own in-preparation article, and only that one', async ({ page }) => {
+  await login(page, 'publications-user@larib-portal.test')
+
+  // A freshly created publication stays in preparation and belongs to its author
+  await page.goto('/en/publications', { timeout: 60000 })
+  await page.getByRole('button', { name: /new publication/i }).click()
+  await page.waitForURL(/\/en\/publications\/articles\/[^/]+\?mode=edit/, { timeout: 60000 })
+  const title = `Draft to be deleted ${Date.now()}`
+  await page.getByPlaceholder('Publication title').fill(title)
+  await page.getByRole('button', { name: 'Save changes' }).click()
+  await expect(page.getByText('Changes saved')).toBeVisible({ timeout: 15000 })
+
+  await page.goto('/en/publications', { timeout: 60000 })
+  const draftRow = page.getByRole('link', { name: title })
+  await expect(draftRow).toBeVisible({ timeout: 30000 })
+
+  // A publication already under review keeps no delete action
+  await expect(
+    page.getByLabel('Delete publication: Outcomes of multi-valve intervention: a retrospective cohort'),
+  ).toHaveCount(0)
+
+  // Deleting asks for a confirmation first, and cancelling keeps the publication
+  await page.getByLabel(`Delete publication: ${title}`).click()
+  const dialog = page.getByRole('alertdialog')
+  await expect(dialog.getByText(title)).toBeVisible()
+  await dialog.getByRole('button', { name: 'Cancel' }).click()
+  await expect(dialog).toHaveCount(0)
+  await expect(draftRow).toBeVisible()
+
+  // Confirming removes it from the list for good
+  await page.getByLabel(`Delete publication: ${title}`).click()
+  await page.getByRole('alertdialog').getByRole('button', { name: 'Delete publication' }).click()
+  await expect(draftRow).toHaveCount(0, { timeout: 30000 })
+  await expect(page.getByLabel(`Delete publication: ${title}`)).toHaveCount(0)
+})
+
 test('Publications gating: user without access is redirected away', async ({ page }) => {
   await login(page, 'bestof-admin@larib-portal.test')
   await page.goto('/en/publications', { timeout: 60000 })
