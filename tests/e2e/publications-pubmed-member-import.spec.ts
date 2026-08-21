@@ -19,6 +19,8 @@ async function openPaperInImportDialog(page: Page, paper: RegExp): Promise<void>
   await page.getByRole('button', { name: /import from pubmed/i }).click()
   const dialog = page.getByRole('dialog')
   await expect(dialog).toBeVisible()
+  const search = dialog.getByLabel('Search PubMed')
+  if ((await search.inputValue()) === '') await search.fill('Toupin S')
   await dialog.getByRole('button', { name: /^search$/i }).click()
   await expect(dialog.getByRole('button', { name: paper })).toBeVisible({ timeout: 30000 })
   await dialog.getByRole('button', { name: paper }).click()
@@ -95,4 +97,25 @@ test('a member cannot import from the editor a paper they did not sign', async (
   const dialog = page.getByRole('dialog')
   await expect(dialog.getByText(/you do not appear among the authors/i)).toBeVisible({ timeout: 30000 })
   await expect(dialog.getByRole('button', { name: /import this paper|replace the draft/i })).toHaveCount(0)
+})
+
+test('an admin importing from their own space is held to the same author rule', async ({ page }) => {
+  await login(page, 'publications-admin@larib-portal.test')
+
+  // In "My publications", the unrestricted admin module does not apply
+  await page.goto('/en/publications', { timeout: 60000 })
+  await openPaperInImportDialog(page, FILL_PAPER)
+  const dialog = page.getByRole('dialog')
+  await expect(dialog.getByText(/you do not appear among the authors/i)).toBeVisible({ timeout: 30000 })
+  await expect(dialog.getByRole('button', { name: /import this paper/i })).toHaveCount(0)
+
+  // The admin dashboard still imports any paper of the team's backlog
+  await page.goto('/en/publications/admin', { timeout: 60000 })
+  await openPaperInImportDialog(page, FILL_PAPER)
+  await expect(dialog.getByText(/you do not appear among the authors/i)).toHaveCount(0)
+  await expect(
+    dialog
+      .getByRole('button', { name: /import this paper/i })
+      .or(dialog.getByText(/this paper is already in the app/i)),
+  ).toBeVisible({ timeout: 30000 })
 })

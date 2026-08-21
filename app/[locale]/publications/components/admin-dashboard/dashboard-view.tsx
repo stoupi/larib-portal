@@ -96,7 +96,7 @@ export function PublicationsDashboardView({
           </div>
         </div>
         <div className="flex flex-wrap items-center gap-2.5">
-          <PubmedImportDialog target={{ mode: 'create' }} basePath={PUBLICATIONS_ADMIN_BASE} isAdmin />
+          <PubmedImportDialog target={{ mode: 'create' }} basePath={PUBLICATIONS_ADMIN_BASE} canImportAnyone />
           <NewPublicationButton asAdmin />
         </div>
       </header>

@@ -637,22 +637,22 @@ export const fetchPubmedRecordPreviewAction = appMemberAction('PUBLICATIONS')
 // A member may only bring in a paper they signed; an admin keeps the unrestricted module.
 // Their author record is created first when missing, so the PubMed author list matches it
 // and the paper comes back attached to their account instead of to a nameless duplicate.
-async function loadImportableRecord(userId: string, isAdmin: boolean, pmid: string) {
+async function loadImportableRecord(userId: string, canImportAnyone: boolean, pmid: string) {
   const viewer = await getViewerIdentity(userId)
   const loaded = await loadRecordWithPreview(pmid, viewer)
   if (!loaded) throw new Error('PUBMED_RECORD_NOT_FOUND')
   const signedByViewer = viewerIsAmongAuthors(loaded.record.authors, viewer)
-  if (!isAdmin && !signedByViewer) throw new Error('NOT_AN_AUTHOR')
+  if (!canImportAnyone && !signedByViewer) throw new Error('NOT_AN_AUTHOR')
   if (signedByViewer) await findOrCreateAuthorForUser(userId)
   return loaded
 }
 
 export const createArticleFromPubmedAction = authenticatedAction
-  .inputSchema(z.object({ pmid: z.string().min(1) }))
+  .inputSchema(z.object({ pmid: z.string().min(1), asAdmin: z.boolean().default(false) }))
   .action(async ({ parsedInput, ctx }) => {
     if (!canAccessApp(ctx.user, 'PUBLICATIONS')) throw new Error('Forbidden')
-    const isAdmin = canAdminApp(ctx.user, 'PUBLICATIONS')
-    const { record, preview } = await loadImportableRecord(ctx.userId, isAdmin, parsedInput.pmid)
+    const canImportAnyone = parsedInput.asAdmin && canAdminApp(ctx.user, 'PUBLICATIONS')
+    const { record, preview } = await loadImportableRecord(ctx.userId, canImportAnyone, parsedInput.pmid)
     if (preview.existingArticleId) return { articleId: preview.existingArticleId, alreadyPresent: true }
 
     const report = await importRecords([record], ctx.userId, new Map([[record.pmid, preview.proposedScope]]))
@@ -665,13 +665,14 @@ export const createArticleFromPubmedAction = authenticatedAction
   })
 
 export const importPubmedIntoArticleAction = authenticatedAction
-  .inputSchema(z.object({ articleId: z.string().min(1), pmid: z.string().min(1) }))
+  .inputSchema(z.object({ articleId: z.string().min(1), pmid: z.string().min(1), asAdmin: z.boolean().default(false) }))
   .action(async ({ parsedInput, ctx }) => {
     const isAdmin = canAdminApp(ctx.user, 'PUBLICATIONS')
     const canEdit = isAdmin || (await userIsFirstAuthor(ctx.userId, parsedInput.articleId))
     if (!canEdit) throw new Error('Forbidden')
 
-    const { record, preview } = await loadImportableRecord(ctx.userId, isAdmin, parsedInput.pmid)
+    const canImportAnyone = parsedInput.asAdmin && isAdmin
+    const { record, preview } = await loadImportableRecord(ctx.userId, canImportAnyone, parsedInput.pmid)
     if (preview.existingArticleId && preview.existingArticleId !== parsedInput.articleId) {
       return { articleId: preview.existingArticleId, alreadyPresent: true }
     }

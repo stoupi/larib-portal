@@ -4,6 +4,7 @@ import { requireAuth } from '@/lib/auth-guard'
 import { applicationLink } from '@/lib/application-link'
 import { canAccessApp, canAdminApp } from '@/lib/permissions'
 import { PUBLICATIONS_BASE } from '@/lib/publications/base-path'
+import { canImportAnyPublication } from '@/lib/publications/editor-mode'
 import { listMyPublications } from '@/lib/services/publications/my-publications'
 import { listJournalNames } from '@/lib/services/publications/journals'
 import { MyPublications } from './components/my-publications'
@@ -35,7 +36,10 @@ export default async function PublicationsPage({ params }: PageParams) {
             <PubmedImportDialog
               target={{ mode: 'create' }}
               basePath={PUBLICATIONS_BASE}
-              isAdmin={canAdminApp(session.user, 'PUBLICATIONS')}
+              canImportAnyone={canImportAnyPublication({
+                isAdmin: canAdminApp(session.user, 'PUBLICATIONS'),
+                basePath: PUBLICATIONS_BASE,
+              })}
             />
             <NewPublicationButton />
           </div>

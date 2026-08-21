@@ -29,6 +29,18 @@ export function canEditArticle({
   return isAdmin && basePath === PUBLICATIONS_ADMIN_BASE
 }
 
+// Importing a paper someone else signed belongs to the admin module. In their own
+// space, even an admin only brings in publications they authored.
+export function canImportAnyPublication({
+  isAdmin,
+  basePath,
+}: {
+  isAdmin: boolean
+  basePath: PublicationsBasePath
+}): boolean {
+  return isAdmin && basePath === PUBLICATIONS_ADMIN_BASE
+}
+
 export type EditorVisibility = {
   showEditButton: boolean
   showSaveBar: boolean

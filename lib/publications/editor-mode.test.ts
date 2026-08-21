@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { computeEditorVisibility, canComposeAuthorList, canEditArticle } from './editor-mode'
+import { computeEditorVisibility, canComposeAuthorList, canEditArticle, canImportAnyPublication } from './editor-mode'
 import { PUBLICATIONS_BASE, PUBLICATIONS_ADMIN_BASE } from './base-path'
 
 describe('computeEditorVisibility', () => {
@@ -37,6 +37,15 @@ describe('canComposeAuthorList', () => {
   it('never lets a non-admin compose the author list', () => {
     expect(canComposeAuthorList({ isAdmin: false, basePath: PUBLICATIONS_ADMIN_BASE })).toBe(false)
     expect(canComposeAuthorList({ isAdmin: false, basePath: PUBLICATIONS_BASE })).toBe(false)
+  })
+})
+
+describe('canImportAnyPublication', () => {
+  it('only opens the unrestricted import inside the admin area', () => {
+    expect(canImportAnyPublication({ isAdmin: true, basePath: PUBLICATIONS_ADMIN_BASE })).toBe(true)
+    expect(canImportAnyPublication({ isAdmin: true, basePath: PUBLICATIONS_BASE })).toBe(false)
+    expect(canImportAnyPublication({ isAdmin: false, basePath: PUBLICATIONS_ADMIN_BASE })).toBe(false)
+    expect(canImportAnyPublication({ isAdmin: false, basePath: PUBLICATIONS_BASE })).toBe(false)
   })
 })
 

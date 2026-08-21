@@ -28,12 +28,12 @@ export type PubmedImportTarget = { mode: 'create' } | { mode: 'fill'; articleId:
 export function PubmedImportDialog({
   target,
   basePath,
-  isAdmin,
+  canImportAnyone,
   compact = false,
 }: {
   target: PubmedImportTarget
   basePath: PublicationsBasePath
-  isAdmin: boolean
+  canImportAnyone: boolean
   compact?: boolean
 }) {
   const t = useTranslations('publications.pubmedImport')
@@ -136,8 +136,9 @@ export function PubmedImportDialog({
 
   function confirmImport() {
     if (!preview) return
-    if (target.mode === 'fill') fillArticle.execute({ articleId: target.articleId, pmid: preview.pmid })
-    else createArticle.execute({ pmid: preview.pmid })
+    if (target.mode === 'fill')
+      fillArticle.execute({ articleId: target.articleId, pmid: preview.pmid, asAdmin: canImportAnyone })
+    else createArticle.execute({ pmid: preview.pmid, asAdmin: canImportAnyone })
   }
 
   const replacedFields =
@@ -172,7 +173,7 @@ export function PubmedImportDialog({
           <PubmedImportPreview
             preview={preview}
             decision={{
-              blockedAsNonAuthor: !isAdmin && !preview.viewerIsAuthor,
+              blockedAsNonAuthor: !canImportAnyone && !preview.viewerIsAuthor,
               conflictingArticleId,
               replacedFields,
               isImporting,

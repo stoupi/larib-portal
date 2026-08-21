@@ -18,6 +18,7 @@ import {
   computeEditorVisibility,
   canComposeAuthorList,
   canEditArticle,
+  canImportAnyPublication,
   type EditorMode,
 } from '@/lib/publications/editor-mode'
 import { PUBLICATIONS_ADMIN_BASE, type PublicationsBasePath } from '@/lib/publications/base-path'
@@ -186,7 +187,7 @@ export function ArticlePage({
               <PubmedImportDialog
                 target={{ mode: 'fill', articleId: article.id, draft: draftSummary }}
                 basePath={basePath}
-                isAdmin={viewer.isAdmin}
+                canImportAnyone={canImportAnyPublication({ isAdmin: viewer.isAdmin, basePath })}
               />
               <button
                 type="button"
