@@ -70,7 +70,7 @@ type PortalStatus = 'active' | 'invited' | 'none'
 
 function portalStatus(author: AuthorListItem): PortalStatus {
   if (!author.user) return 'none'
-  return author.user.emailVerified ? 'active' : 'invited'
+  return author.user.activated ? 'active' : 'invited'
 }
 
 const TYPE_TABS = [

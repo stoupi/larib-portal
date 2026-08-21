@@ -236,7 +236,9 @@ async function main() {
 			id: randomUUID(),
 			name: 'Publications User',
 			email: 'publications-user@larib-portal.test',
-			emailVerified: true,
+			// Set their own password from an invitation and never verified their email:
+			// the portal status must read them as active all the same.
+			emailVerified: false,
 			role: 'USER',
 			applications: ['PUBLICATIONS'],
 			accounts: { create: { id: randomUUID(), providerId: 'credential', accountId: 'publications-user@larib-portal.test', password: publicationsUserPassword } },

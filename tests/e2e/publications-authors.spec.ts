@@ -18,6 +18,10 @@ test('admin browses, edits and merges authors', async ({ page }) => {
   // Two seeded authors are present (displayed as "FirstName LASTNAME")
   await expect(page.getByRole('row', { name: /Jane COAUTHOR/i })).toBeVisible()
 
+  // A member who signs in with the password they chose reads as active, whether or not
+  // they ever verified their email address
+  await expect(page.getByRole('row', { name: /Publications USER/i }).getByText('Active')).toBeVisible()
+
   // Edit the first-author row
   await page.getByRole('row', { name: /Publications USER/i }).getByRole('button', { name: /^edit$/i }).click()
   const dialog = page.getByRole('dialog')

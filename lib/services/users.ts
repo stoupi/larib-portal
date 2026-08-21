@@ -1,6 +1,7 @@
 import { prisma } from '@/lib/prisma'
 import { Prisma } from '@/app/generated/prisma'
 import type { InvitationStatus } from './invitations'
+import { accountsAreActivated } from '@/lib/account-status'
 
 export type UserWithAdminFields = Prisma.UserGetPayload<{
   select: {
@@ -204,11 +205,8 @@ export async function listUsersWithOnboardingStatus(): Promise<UserWithOnboardin
       createdAt: true,
       updatedAt: true,
       accounts: {
-        where: {
-          providerId: 'credential',
-        },
         select: {
-          id: true,
+          providerId: true,
           password: true,
         },
       },
@@ -235,13 +233,13 @@ export async function listUsersWithOnboardingStatus(): Promise<UserWithOnboardin
 
   return users.map((user) => {
     const { accounts, ...userWithoutAccounts } = user
-    const hasPassword = accounts.some((account) => account.password !== null)
+    const activated = accountsAreActivated(accounts)
     const invitation = invitationByEmail.get(user.email)
 
     let onboardingStatus: InvitationStatus = 'ACTIVE'
     let invitationExpiresAt: Date | undefined
 
-    if (hasPassword) {
+    if (activated) {
       onboardingStatus = 'ACTIVE'
     } else if (invitation) {
       invitationExpiresAt = invitation.expiresAt

@@ -1,10 +1,11 @@
 import { prisma } from '@/lib/prisma'
+import { accountsAreActivated } from '@/lib/account-status'
 import { Prisma, type AuthorType } from '@/app/generated/prisma'
 import { planAuthorshipMerge } from './authors-merge'
 import { pickPrimaryCentre } from './author-centre'
 import { PUBLICATIONS_AUTHORS_TAG, PUBLICATIONS_ARTICLES_TAG } from './import'
 
-export type AuthorListItem = Prisma.AuthorGetPayload<{
+type AuthorListRow = Prisma.AuthorGetPayload<{
   select: {
     id: true
     firstName: true
@@ -16,14 +17,23 @@ export type AuthorListItem = Prisma.AuthorGetPayload<{
     type: true
     userId: true
     centreId: true
-    user: { select: { id: true; firstName: true; lastName: true; email: true; emailVerified: true } }
     centre: { select: { id: true; name: true } }
     _count: { select: { authorships: true } }
   }
 }>
 
+export type PortalUserSummary = {
+  id: string
+  firstName: string | null
+  lastName: string | null
+  email: string
+  activated: boolean
+}
+
+export type AuthorListItem = AuthorListRow & { user: PortalUserSummary | null }
+
 export async function listAuthors(): Promise<AuthorListItem[]> {
-  return prisma.author.findMany({
+  const authors = await prisma.author.findMany({
     orderBy: [{ authorships: { _count: 'desc' } }, { lastName: 'asc' }],
     select: {
       id: true,
@@ -36,11 +46,32 @@ export async function listAuthors(): Promise<AuthorListItem[]> {
       type: true,
       userId: true,
       centreId: true,
-      user: { select: { id: true, firstName: true, lastName: true, email: true, emailVerified: true } },
+      user: {
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          email: true,
+          accounts: { select: { providerId: true, password: true } },
+        },
+      },
       centre: { select: { id: true, name: true } },
       _count: { select: { authorships: true } },
     },
   })
+
+  return authors.map(({ user, ...author }) => ({
+    ...author,
+    user: user
+      ? {
+          id: user.id,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email,
+          activated: accountsAreActivated(user.accounts),
+        }
+      : null,
+  }))
 }
 
 export async function countAuthors(): Promise<number> {
@@ -127,7 +158,16 @@ export async function getAuthorDetail(id: string): Promise<AuthorDetail> {
       where: { id },
       select: {
         paperAffiliations: { orderBy: { order: 'asc' }, select: { raw: true } },
-        user: { select: { firstName: true, lastName: true, email: true, position: true, emailVerified: true, applications: true } },
+        user: {
+          select: {
+            firstName: true,
+            lastName: true,
+            email: true,
+            position: true,
+            applications: true,
+            accounts: { select: { providerId: true, password: true } },
+          },
+        },
         authorships: {
           select: {
             order: true,
@@ -179,7 +219,7 @@ export async function getAuthorDetail(id: string): Promise<AuthorDetail> {
           name: `${author.user.firstName ?? ''} ${author.user.lastName ?? ''}`.trim(),
           email: author.user.email,
           position: author.user.position,
-          active: author.user.emailVerified,
+          active: accountsAreActivated(author.user.accounts),
           applications: author.user.applications,
         }
       : null,
