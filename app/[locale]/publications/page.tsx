@@ -8,7 +8,7 @@ import { canImportAnyPublication } from '@/lib/publications/editor-mode'
 import { listMyPublications } from '@/lib/services/publications/my-publications'
 import { listJournalNames } from '@/lib/services/publications/journals'
 import { getMyAffiliations } from '@/lib/services/publications/authors'
-import { MyAffiliationsCard } from './components/my-affiliations-card'
+import { MyAffiliationsDialog } from './components/my-affiliations-dialog'
 import { MyPublications } from './components/my-publications'
 import { NewPublicationButton } from './components/new-publication-button'
 import { PubmedImportDialog } from './components/pubmed-import/pubmed-import-dialog'
@@ -39,6 +39,10 @@ export default async function PublicationsPage({ params }: PageParams) {
             </div>
           </div>
           <div className="flex flex-wrap items-center gap-2.5">
+            <MyAffiliationsDialog
+              affiliations={myAffiliations.affiliations}
+              derivedFromPublications={myAffiliations.derivedFromPublications}
+            />
             <PubmedImportDialog
               target={{ mode: 'create' }}
               basePath={PUBLICATIONS_BASE}
@@ -50,11 +54,6 @@ export default async function PublicationsPage({ params }: PageParams) {
             <NewPublicationButton />
           </div>
         </header>
-
-        <MyAffiliationsCard
-          affiliations={myAffiliations.affiliations}
-          derivedFromPublications={myAffiliations.derivedFromPublications}
-        />
 
         <MyPublications items={items} locale={locale} journalNames={journalNames} />
       </div>

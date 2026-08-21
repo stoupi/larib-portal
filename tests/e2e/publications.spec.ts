@@ -110,27 +110,36 @@ test('My affiliations: the member reads their own affiliations and rewrites the 
   await login(page, 'publications-user@larib-portal.test')
   await page.goto('/en/publications', { timeout: 60000 })
 
-  // The card lists the affiliations the member's author record carries
-  const card = page.getByRole('region', { name: 'My affiliations' })
-  await expect(card).toBeVisible({ timeout: 30000 })
-  await expect(card.getByRole('listitem').first()).toBeVisible()
+  // The header button opens the affiliations the member's author record carries
+  await page.getByRole('button', { name: 'My affiliations' }).click()
+  const dialog = page.getByRole('dialog')
+  await expect(dialog.getByRole('listitem').first()).toBeVisible({ timeout: 30000 })
 
-  // Editing drops every line, adds a new one, and the list comes back saved
-  const newAffiliation = `Université Paris Cité, Paris, France ${Date.now()}`
-  await card.getByRole('button', { name: 'Edit' }).click()
-  const removeButtons = card.getByRole('button', { name: /^Remove / })
+  // Everything already there goes, then two new lines come in
+  const removeButtons = dialog.getByRole('button', { name: /^Remove / })
   for (let remaining = await removeButtons.count(); remaining > 0; remaining--) {
     await removeButtons.first().click()
   }
-  await card.getByLabel('New affiliation').fill(newAffiliation)
-  await card.getByRole('button', { name: 'Add', exact: true }).click()
-  await card.getByRole('button', { name: 'Save' }).click()
+  const stamp = Date.now()
+  const first = `Université Paris Cité, Paris, France ${stamp}`
+  const second = `MIRACL.ai laboratory, Paris, France ${stamp}`
+  for (const affiliation of [first, second]) {
+    await dialog.getByLabel('New affiliation').fill(affiliation)
+    await dialog.getByRole('button', { name: 'Add', exact: true }).click()
+  }
+  await expect(dialog.getByRole('listitem')).toHaveText([`1${first}`, `2${second}`])
 
-  await expect(card.getByRole('listitem')).toHaveText([newAffiliation], { timeout: 30000 })
+  // The order is the member's to decide, and it is what gets saved
+  await dialog.getByRole('button', { name: `Move ${second} up` }).click()
+  await expect(dialog.getByRole('listitem')).toHaveText([`1${second}`, `2${first}`])
+  await dialog.getByRole('button', { name: 'Save' }).click()
+  await expect(dialog).toHaveCount(0, { timeout: 30000 })
+
+  await page.getByRole('button', { name: 'My affiliations' }).click()
+  await expect(page.getByRole('dialog').getByRole('listitem')).toHaveText([`1${second}`, `2${first}`], { timeout: 30000 })
 
   await page.goto('/fr/publications', { timeout: 60000 })
-  const carte = page.getByRole('region', { name: 'Mes affiliations' })
-  await expect(carte.getByRole('button', { name: 'Modifier' })).toBeVisible({ timeout: 30000 })
+  await expect(page.getByRole('button', { name: 'Mes affiliations' })).toBeVisible({ timeout: 30000 })
 })
 
 test('Publications gating: user without access is redirected away', async ({ page }) => {
