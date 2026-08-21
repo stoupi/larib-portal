@@ -964,6 +964,21 @@
         "REJECTED": "Rejected"
       }
     },
+    "myAffiliations": {
+      "title": "My affiliations",
+      "hint": "The affiliations that describe you on a paper. They are reused when your author list is prepared.",
+      "derivedHint": "Read from your past publications. Edit them to record your own list.",
+      "empty": "No affiliation recorded yet.",
+      "edit": "Edit",
+      "add": "Add",
+      "addLabel": "New affiliation",
+      "addPlaceholder": "e.g. Inserm MASCOT UMRS-942, Hôpital Lariboisière, Paris, France",
+      "remove": "Remove {affiliation}",
+      "save": "Save",
+      "cancel": "Cancel",
+      "saved": "Affiliations saved",
+      "error": "Could not save your affiliations. Please try again."
+    },
     "editor": {
       "picker": {
         "title": "Add authors",

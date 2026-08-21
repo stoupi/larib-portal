@@ -24,7 +24,7 @@ import {
   PUBLICATIONS_AUTHORS_TAG,
   PUBLICATIONS_ARTICLES_TAG,
 } from '@/lib/services/publications/import'
-import { updateAuthor, deleteAuthor, deleteAuthorWithAuthorships, mergeAuthors, recomputeAuthorCentres, createAuthor, getAuthorDetail, getAuthorForEdit, resolveAuthorAffiliations, isPrismaKnownError } from '@/lib/services/publications/authors'
+import { setAuthorAffiliations, updateAuthor, deleteAuthor, deleteAuthorWithAuthorships, mergeAuthors, recomputeAuthorCentres, createAuthor, getAuthorDetail, getAuthorForEdit, resolveAuthorAffiliations, isPrismaKnownError } from '@/lib/services/publications/authors'
 import { findAuthorDuplicates, matchAuthorsAgainstBank, normalizeName } from '@/lib/services/publications/author-dedup'
 import { fetchPublicationByIdentifier } from '@/lib/services/publications/publication-lookup'
 import { backfillAffiliations, PUBLICATIONS_CENTRES_TAG, PUBLICATIONS_AFFILIATIONS_TAG } from '@/lib/services/publications/affiliations'
@@ -614,6 +614,16 @@ export const createDraftArticleAction = authenticatedAction
     if (!canAccessApp(ctx.user, 'PUBLICATIONS')) throw new Error('Forbidden')
     const asAdmin = parsedInput.asAdmin && canAdminApp(ctx.user, 'PUBLICATIONS')
     return createDraftArticle(ctx.userId, { withCreatorAsFirstAuthor: !asAdmin })
+  })
+
+export const updateMyAffiliationsAction = authenticatedAction
+  .inputSchema(z.object({ affiliations: z.array(z.string().trim().min(1).max(500)).max(10) }))
+  .action(async ({ parsedInput, ctx }) => {
+    if (!canAccessApp(ctx.user, 'PUBLICATIONS')) throw new Error('Forbidden')
+    const authorId = await findOrCreateAuthorForUser(ctx.userId)
+    const saved = await setAuthorAffiliations(authorId, parsedInput.affiliations)
+    revalidateTag(PUBLICATIONS_AUTHORS_TAG)
+    return saved
   })
 
 // ---- PubMed import, open to every member ----

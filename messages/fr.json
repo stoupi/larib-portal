@@ -962,6 +962,21 @@
         "REJECTED": "Refusé"
       }
     },
+    "myAffiliations": {
+      "title": "Mes affiliations",
+      "hint": "Les affiliations qui vous décrivent sur un article. Elles sont reprises lors de la préparation de la liste d'auteurs.",
+      "derivedHint": "Déduites de vos publications passées. Modifiez-les pour enregistrer votre propre liste.",
+      "empty": "Aucune affiliation enregistrée pour l'instant.",
+      "edit": "Modifier",
+      "add": "Ajouter",
+      "addLabel": "Nouvelle affiliation",
+      "addPlaceholder": "ex. Inserm MASCOT UMRS-942, Hôpital Lariboisière, Paris, France",
+      "remove": "Supprimer {affiliation}",
+      "save": "Enregistrer",
+      "cancel": "Annuler",
+      "saved": "Affiliations enregistrées",
+      "error": "Impossible d'enregistrer vos affiliations. Réessayez."
+    },
     "editor": {
       "picker": {
         "title": "Ajouter des auteurs",

@@ -356,6 +356,44 @@ export async function getAuthorForEdit(id: string): Promise<AuthorEditData | nul
   }
 }
 
+export type MyAffiliations = { affiliations: string[]; derivedFromPublications: boolean }
+
+// What the member sees of their own affiliations: the ones they recorded, or, as long as
+// they never recorded any, the ones their past papers spell out.
+export async function getMyAffiliations(userId: string): Promise<MyAffiliations> {
+  const author = await prisma.author.findFirst({
+    where: { userId },
+    select: {
+      paperAffiliations: { orderBy: { order: 'asc' }, select: { raw: true } },
+      authorships: {
+        select: {
+          article: { select: { publishedAt: true } },
+          affiliations: { orderBy: { order: 'asc' }, select: { affiliation: { select: { raw: true, name: true } } } },
+        },
+      },
+    },
+  })
+  if (!author) return { affiliations: [], derivedFromPublications: false }
+
+  const stored = author.paperAffiliations.map((affiliation) => affiliation.raw.trim()).filter(Boolean)
+  if (stored.length > 0) return { affiliations: stored, derivedFromPublications: false }
+
+  const derived = deriveAffiliations(author.authorships, () => false).map((affiliation) => affiliation.raw)
+  return { affiliations: derived, derivedFromPublications: derived.length > 0 }
+}
+
+export async function setAuthorAffiliations(authorId: string, affiliations: string[]): Promise<{ id: string }> {
+  const cleaned = affiliations.map((raw) => raw.trim()).filter(Boolean)
+  return prisma.$transaction(async (tx) => {
+    await tx.authorAffiliation.deleteMany({ where: { authorId } })
+    return tx.author.update({
+      where: { id: authorId },
+      data: { paperAffiliations: { create: cleaned.map((raw, index) => ({ raw, order: index })) } },
+      select: { id: true },
+    })
+  })
+}
+
 export type CreateAuthorInput = {
   firstName: string
   lastName: string

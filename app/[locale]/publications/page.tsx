@@ -7,6 +7,8 @@ import { PUBLICATIONS_BASE } from '@/lib/publications/base-path'
 import { canImportAnyPublication } from '@/lib/publications/editor-mode'
 import { listMyPublications } from '@/lib/services/publications/my-publications'
 import { listJournalNames } from '@/lib/services/publications/journals'
+import { getMyAffiliations } from '@/lib/services/publications/authors'
+import { MyAffiliationsCard } from './components/my-affiliations-card'
 import { MyPublications } from './components/my-publications'
 import { NewPublicationButton } from './components/new-publication-button'
 import { PubmedImportDialog } from './components/pubmed-import/pubmed-import-dialog'
@@ -19,7 +21,11 @@ export default async function PublicationsPage({ params }: PageParams) {
   if (!canAccessApp(session.user, 'PUBLICATIONS')) redirect(applicationLink(locale, '/dashboard'))
 
   const t = await getTranslations({ locale, namespace: 'publications' })
-  const [items, journalNames] = await Promise.all([listMyPublications(session.user.id), listJournalNames()])
+  const [items, journalNames, myAffiliations] = await Promise.all([
+    listMyPublications(session.user.id),
+    listJournalNames(),
+    getMyAffiliations(session.user.id),
+  ])
 
   return (
     <div className="app-gradient min-h-full px-4 py-8 md:px-8">
@@ -44,6 +50,11 @@ export default async function PublicationsPage({ params }: PageParams) {
             <NewPublicationButton />
           </div>
         </header>
+
+        <MyAffiliationsCard
+          affiliations={myAffiliations.affiliations}
+          derivedFromPublications={myAffiliations.derivedFromPublications}
+        />
 
         <MyPublications items={items} locale={locale} journalNames={journalNames} />
       </div>

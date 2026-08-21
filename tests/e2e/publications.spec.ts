@@ -106,6 +106,33 @@ test('My publications: the author deletes their own in-preparation article, and 
   await expect(page.getByLabel(`Delete publication: ${title}`)).toHaveCount(0)
 })
 
+test('My affiliations: the member reads their own affiliations and rewrites the list', async ({ page }) => {
+  await login(page, 'publications-user@larib-portal.test')
+  await page.goto('/en/publications', { timeout: 60000 })
+
+  // The card lists the affiliations the member's author record carries
+  const card = page.getByRole('region', { name: 'My affiliations' })
+  await expect(card).toBeVisible({ timeout: 30000 })
+  await expect(card.getByRole('listitem').first()).toBeVisible()
+
+  // Editing drops every line, adds a new one, and the list comes back saved
+  const newAffiliation = `Université Paris Cité, Paris, France ${Date.now()}`
+  await card.getByRole('button', { name: 'Edit' }).click()
+  const removeButtons = card.getByRole('button', { name: /^Remove / })
+  for (let remaining = await removeButtons.count(); remaining > 0; remaining--) {
+    await removeButtons.first().click()
+  }
+  await card.getByLabel('New affiliation').fill(newAffiliation)
+  await card.getByRole('button', { name: 'Add', exact: true }).click()
+  await card.getByRole('button', { name: 'Save' }).click()
+
+  await expect(card.getByRole('listitem')).toHaveText([newAffiliation], { timeout: 30000 })
+
+  await page.goto('/fr/publications', { timeout: 60000 })
+  const carte = page.getByRole('region', { name: 'Mes affiliations' })
+  await expect(carte.getByRole('button', { name: 'Modifier' })).toBeVisible({ timeout: 30000 })
+})
+
 test('Publications gating: user without access is redirected away', async ({ page }) => {
   await login(page, 'bestof-admin@larib-portal.test')
   await page.goto('/en/publications', { timeout: 60000 })
