@@ -17,10 +17,15 @@ export function ArticleHistoryCard({
   const t = useTranslations('publications.logbook')
 
   return (
-    <section className="overflow-hidden rounded-2xl border border-line bg-bg-surface">
+    <section
+      aria-labelledby="article-history-title"
+      className="overflow-hidden rounded-2xl border border-line bg-bg-surface"
+    >
       <header className="flex items-center gap-2 border-b border-line px-4 py-3">
         <History aria-hidden className="size-4 text-coral-600" />
-        <h2 className="text-sm font-extrabold text-text-primary">{t('articleHistory.title')}</h2>
+        <h2 id="article-history-title" className="text-sm font-extrabold text-text-primary">
+          {t('articleHistory.title')}
+        </h2>
       </header>
 
       {entries.length === 0 ? (
