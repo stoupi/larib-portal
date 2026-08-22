@@ -1872,7 +1872,8 @@
       "studiesDescription": "Investigators and centres",
       "backToDashboard": "Publications dashboard",
       "communicationTitle": "Communication",
-      "communicationDescription": "LinkedIn carousel emails to send"
+      "communicationDescription": "LinkedIn carousel emails to send",
+      "logbookDescription": "Who changed what, and when"
     },
     "communication": {
       "title": "Communication",
@@ -1897,6 +1898,81 @@
       "colAcceptedAt": "Acceptance date",
       "colEmail": "Carousel email",
       "colAction": "Action"
+    },
+    "logbook": {
+      "title": "Logbook",
+      "description": "Who changed what, and when",
+      "empty": "No change matches these filters.",
+      "loadMore": "Load more",
+      "createdBy": "by {name}",
+      "groupedOperation": "{count} changes in the same operation",
+      "showDetail": "Show detail",
+      "hideDetail": "Hide detail",
+      "emptyValue": "empty",
+      "filters": {
+        "actor": "Changed by",
+        "entity": "Object type",
+        "action": "Kind",
+        "field": "Changed field",
+        "from": "From",
+        "to": "To",
+        "search": "Search",
+        "searchPlaceholder": "Title, author, centre…",
+        "reset": "Clear filters",
+        "all": "All",
+        "allActors": "Everyone",
+        "allEntities": "All objects",
+        "allActions": "All kinds",
+        "allFields": "All fields"
+      },
+      "actions": {
+        "CREATE": "Creation",
+        "UPDATE": "Change",
+        "DELETE": "Deletion"
+      },
+      "sources": {
+        "UI": "Interface",
+        "IMPORT": "Import",
+        "CRON": "Scheduled job",
+        "SCRIPT": "Script"
+      },
+      "entities": {
+        "ARTICLE": "Publication",
+        "SUBMISSION": "Submission",
+        "JOURNAL_TARGET": "Target journal",
+        "AUTHOR": "Author",
+        "AUTHORSHIP": "Author on a publication",
+        "AUTHORSHIP_AFFILIATION": "Signing author affiliation",
+        "AUTHOR_AFFILIATION": "Author affiliation",
+        "AUTHOR_CENTRE": "Author centre",
+        "AFFILIATION": "Affiliation",
+        "CENTRE": "Centre",
+        "CENTRE_ALIAS": "Centre alias",
+        "JOURNAL": "Journal",
+        "STUDY": "Study",
+        "STUDY_INVESTIGATOR": "Investigator",
+        "AUTHOR_LIST_REQUEST": "Author list request"
+      },
+      "fields": {
+        "status": "Status",
+        "title": "Title",
+        "journalId": "Journal",
+        "studyId": "Study",
+        "submittedAt": "Submitted on",
+        "decidedAt": "Decided on",
+        "doi": "DOI",
+        "pubmedId": "PubMed",
+        "name": "Name",
+        "centreId": "Centre",
+        "authorId": "Author",
+        "order": "Position",
+        "isCorresponding": "Corresponding author",
+        "other": "Other field"
+      },
+      "articleHistory": {
+        "title": "History",
+        "empty": "No change recorded for this publication yet."
+      }
     }
   }
 }
