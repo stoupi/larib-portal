@@ -54,7 +54,7 @@ function single(params: LogbookSearchParams, key: string): string | null {
   return trimmed.length > 0 ? trimmed : null
 }
 
-function oneOf<T extends string>(value: string | null, allowed: readonly T[]): T | null {
+export function oneOf<T extends string>(value: string | null, allowed: readonly T[]): T | null {
   return value !== null && (allowed as readonly string[]).includes(value) ? (value as T) : null
 }
 

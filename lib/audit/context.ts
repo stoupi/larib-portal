@@ -7,7 +7,8 @@ export type PendingAuditEvent = {
   model: string
   entity: AuditEntity
   entityId: string
-  entityLabel: string
+  // Null for pivot rows, which borrow their publication's title when written.
+  entityLabel: string | null
   articleId: string | null
   action: AuditAction
   changes: AuditFieldChange[]

@@ -10,7 +10,9 @@ export type AuditedModelConfig = {
   entity: AuditEntity
   auditedFields: readonly string[]
   labelFields: readonly string[]
-  buildLabel: (record: AuditRecord) => string
+  // Null for pivot rows (a submission, an authorship): they have no name of their own
+  // and borrow their publication's title, resolved when the event is written.
+  buildLabel: (record: AuditRecord) => string | null
   articleIdField: string | null
   ignoredFields: readonly string[]
   referenceFields: Readonly<Record<string, AuditReference>>
@@ -23,16 +25,20 @@ function text(record: AuditRecord, field: string): string {
   return typeof value === 'string' ? value.trim() : ''
 }
 
-function joinLabel(parts: readonly string[]): string {
+export function joinLabel(parts: readonly string[]): string | null {
   const label = parts.filter((part) => part.length > 0).join(' ')
-  return label.length > 0 ? label : '—'
+  return label.length > 0 ? label : null
+}
+
+export function labelFromFields(record: AuditRecord, fields: readonly string[]): string | null {
+  return joinLabel(fields.map((field) => text(record, field)))
 }
 
 const JOURNAL_REFERENCE: AuditReference = { model: 'journal', labelFields: ['name'] }
 const CENTRE_REFERENCE: AuditReference = { model: 'centre', labelFields: ['name'] }
 const STUDY_REFERENCE: AuditReference = { model: 'study', labelFields: ['title'] }
 const AUTHOR_REFERENCE: AuditReference = { model: 'author', labelFields: ['firstName', 'lastName'] }
-const ARTICLE_REFERENCE: AuditReference = { model: 'article', labelFields: ['title'] }
+export const ARTICLE_REFERENCE: AuditReference = { model: 'article', labelFields: ['title'] }
 
 export const AUDITED_MODELS: Readonly<Record<string, AuditedModelConfig>> = {
   Article: {
@@ -68,7 +74,7 @@ export const AUDITED_MODELS: Readonly<Record<string, AuditedModelConfig>> = {
     entity: 'SUBMISSION',
     auditedFields: ['articleId', 'journalId', 'submittedAt', 'status', 'decidedAt', 'invitedToResubmit', 'notes'],
     labelFields: ['articleId'],
-    buildLabel: () => '—',
+    buildLabel: () => null,
     articleIdField: 'articleId',
     ignoredFields: [...BOOKKEEPING_FIELDS],
     referenceFields: { journalId: JOURNAL_REFERENCE, articleId: ARTICLE_REFERENCE },
@@ -77,7 +83,7 @@ export const AUDITED_MODELS: Readonly<Record<string, AuditedModelConfig>> = {
     entity: 'JOURNAL_TARGET',
     auditedFields: ['articleId', 'journalId', 'rank'],
     labelFields: [],
-    buildLabel: () => '—',
+    buildLabel: () => null,
     articleIdField: 'articleId',
     ignoredFields: [...BOOKKEEPING_FIELDS],
     referenceFields: { journalId: JOURNAL_REFERENCE, articleId: ARTICLE_REFERENCE },
@@ -106,7 +112,7 @@ export const AUDITED_MODELS: Readonly<Record<string, AuditedModelConfig>> = {
     entity: 'AUTHORSHIP',
     auditedFields: ['articleId', 'authorId', 'order', 'isCorresponding'],
     labelFields: [],
-    buildLabel: () => '—',
+    buildLabel: () => null,
     articleIdField: 'articleId',
     ignoredFields: [...BOOKKEEPING_FIELDS],
     referenceFields: { authorId: AUTHOR_REFERENCE, articleId: ARTICLE_REFERENCE },
@@ -115,7 +121,7 @@ export const AUDITED_MODELS: Readonly<Record<string, AuditedModelConfig>> = {
     entity: 'AUTHORSHIP_AFFILIATION',
     auditedFields: ['authorshipId', 'affiliationId', 'order'],
     labelFields: [],
-    buildLabel: () => '—',
+    buildLabel: () => null,
     articleIdField: null,
     ignoredFields: [...BOOKKEEPING_FIELDS],
     referenceFields: {},
@@ -133,7 +139,7 @@ export const AUDITED_MODELS: Readonly<Record<string, AuditedModelConfig>> = {
     entity: 'AUTHOR_CENTRE',
     auditedFields: ['authorId', 'centreId', 'isPrimary', 'order'],
     labelFields: [],
-    buildLabel: () => '—',
+    buildLabel: () => null,
     articleIdField: null,
     ignoredFields: [...BOOKKEEPING_FIELDS],
     referenceFields: { authorId: AUTHOR_REFERENCE, centreId: CENTRE_REFERENCE },
@@ -212,7 +218,7 @@ export const AUDITED_MODELS: Readonly<Record<string, AuditedModelConfig>> = {
     entity: 'STUDY_INVESTIGATOR',
     auditedFields: ['studyId', 'authorId', 'role', 'centreId'],
     labelFields: [],
-    buildLabel: () => '—',
+    buildLabel: () => null,
     articleIdField: null,
     ignoredFields: [...BOOKKEEPING_FIELDS],
     referenceFields: { studyId: STUDY_REFERENCE, authorId: AUTHOR_REFERENCE, centreId: CENTRE_REFERENCE },
@@ -221,7 +227,7 @@ export const AUDITED_MODELS: Readonly<Record<string, AuditedModelConfig>> = {
     entity: 'AUTHOR_LIST_REQUEST',
     auditedFields: ['articleId', 'requestedById', 'note', 'status', 'resolvedAt', 'resolvedById'],
     labelFields: [],
-    buildLabel: () => '—',
+    buildLabel: () => null,
     articleIdField: 'articleId',
     ignoredFields: [...BOOKKEEPING_FIELDS],
     referenceFields: { articleId: ARTICLE_REFERENCE },

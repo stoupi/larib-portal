@@ -3,7 +3,7 @@
 import { useTranslations } from 'next-intl'
 import { History } from 'lucide-react'
 import type { LogbookEntry } from '@/lib/services/publications/logbook'
-import { LogbookEntryRow } from '../logbook/logbook-entry-row'
+import { LogbookEntryRow } from '@/app/[locale]/publications/components/logbook/logbook-entry-row'
 
 export function ArticleHistoryCard({
   entries,

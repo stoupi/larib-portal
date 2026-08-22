@@ -21,8 +21,12 @@ describe('label building', () => {
     expect(auditConfigFor('Author')?.buildLabel({ firstName: 'Jean', lastName: 'Dupont' })).toBe('Jean Dupont')
   })
 
-  it('falls back to a readable placeholder when the naming fields are empty', () => {
-    expect(auditConfigFor('Article')?.buildLabel({ title: null })).toBe('—')
+  it('reports no label at all when the naming fields are empty', () => {
+    expect(auditConfigFor('Article')?.buildLabel({ title: null })).toBeNull()
+  })
+
+  it('reports no label for a pivot row, which borrows its publication title', () => {
+    expect(auditConfigFor('Submission')?.buildLabel({ status: 'SUBMITTED' })).toBeNull()
   })
 })
 

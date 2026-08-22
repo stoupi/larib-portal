@@ -8,6 +8,7 @@ import { SingleSelect, type SingleSelectOption } from '@/components/ui/single-se
 import {
   hasActiveLogbookFilter,
   logbookFiltersToQuery,
+  oneOf,
   LOGBOOK_ACTIONS,
   LOGBOOK_ENTITIES,
   LOGBOOK_FILTERABLE_FIELDS,
@@ -27,6 +28,18 @@ export function LogbookFiltersBar({ filters, actors }: { filters: LogbookFilters
   const navigate = (next: LogbookFilters): void => {
     const query = logbookFiltersToQuery(next).toString()
     router.replace(query.length > 0 ? `${LOGBOOK_PATH}?${query}` : LOGBOOK_PATH)
+  }
+
+  // Enter and losing focus both land here, so ignore the second one.
+  const searchFor = (value: string): void => {
+    const query = value.trim() || null
+    if (query !== filters.query) navigate({ ...filters, query })
+  }
+
+  // Only the filters this bar exposes are cleared: a logbook scoped to one publication
+  // must not silently widen to the whole journal.
+  const clearVisibleFilters = (): void => {
+    navigate({ ...EMPTY_LOGBOOK_FILTERS, articleId: filters.articleId })
   }
 
   const actorOptions: SingleSelectOption[] = [
@@ -68,7 +81,7 @@ export function LogbookFiltersBar({ filters, actors }: { filters: LogbookFilters
           <SingleSelect
             options={entityOptions}
             value={filters.entity ?? ANY}
-            onChange={(value) => navigate({ ...filters, entity: value ? (value as LogbookFilters['entity']) : null })}
+            onChange={(value) => navigate({ ...filters, entity: oneOf(value, LOGBOOK_ENTITIES) })}
             placeholder={t('filters.allEntities')}
           />
         </label>
@@ -78,7 +91,7 @@ export function LogbookFiltersBar({ filters, actors }: { filters: LogbookFilters
           <SingleSelect
             options={actionOptions}
             value={filters.action ?? ANY}
-            onChange={(value) => navigate({ ...filters, action: value ? (value as LogbookFilters['action']) : null })}
+            onChange={(value) => navigate({ ...filters, action: oneOf(value, LOGBOOK_ACTIONS) })}
             placeholder={t('filters.allActions')}
           />
         </label>
@@ -88,7 +101,7 @@ export function LogbookFiltersBar({ filters, actors }: { filters: LogbookFilters
           <SingleSelect
             options={fieldOptions}
             value={filters.field ?? ANY}
-            onChange={(value) => navigate({ ...filters, field: value ? (value as LogbookFilters['field']) : null })}
+            onChange={(value) => navigate({ ...filters, field: oneOf(value, LOGBOOK_FILTERABLE_FIELDS) })}
             placeholder={t('filters.allFields')}
           />
         </label>
@@ -121,9 +134,9 @@ export function LogbookFiltersBar({ filters, actors }: { filters: LogbookFilters
             defaultValue={filters.query ?? ''}
             placeholder={t('filters.searchPlaceholder')}
             onKeyDown={(event) => {
-              if (event.key === 'Enter') navigate({ ...filters, query: event.currentTarget.value || null })
+              if (event.key === 'Enter') searchFor(event.currentTarget.value)
             }}
-            onBlur={(event) => navigate({ ...filters, query: event.target.value || null })}
+            onBlur={(event) => searchFor(event.target.value)}
           />
         </label>
       </div>
@@ -131,7 +144,7 @@ export function LogbookFiltersBar({ filters, actors }: { filters: LogbookFilters
       {hasActiveLogbookFilter(filters) && (
         <button
           type="button"
-          onClick={() => navigate(EMPTY_LOGBOOK_FILTERS)}
+          onClick={clearVisibleFilters}
           className="mt-3 inline-flex items-center gap-1.5 text-[13px] font-bold text-coral-600 hover:underline"
         >
           <X aria-hidden className="size-3.5" />

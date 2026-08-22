@@ -52,8 +52,7 @@ const ENTRY_SELECTION = {
   },
 } satisfies Prisma.AuditEventSelect
 
-// The `to` bound is a plain day, and the user means "up to the end of that day".
-function endOfDay(day: string): Date {
+function startOfNextDay(day: string): Date {
   const bound = new Date(`${day}T00:00:00.000Z`)
   bound.setUTCDate(bound.getUTCDate() + 1)
   return bound
@@ -71,7 +70,7 @@ function whereFromFilters(filters: LogbookFilters): Prisma.AuditEventWhereInput 
   if (filters.from || filters.to) {
     where.createdAt = {
       ...(filters.from ? { gte: new Date(`${filters.from}T00:00:00.000Z`) } : {}),
-      ...(filters.to ? { lt: endOfDay(filters.to) } : {}),
+      ...(filters.to ? { lt: startOfNextDay(filters.to) } : {}),
     }
   }
 

@@ -7,7 +7,7 @@ function statusEvent(): PendingAuditEvent {
     model: 'Submission',
     entity: 'SUBMISSION',
     entityId: 'sub-1',
-    entityLabel: '—',
+    entityLabel: null,
     articleId: 'article-9',
     action: 'UPDATE',
     changes: [
@@ -20,12 +20,17 @@ function statusEvent(): PendingAuditEvent {
 describe('collectReferenceLookups', () => {
   it('lists the ids whose label we must fetch, grouped by model', () => {
     const lookups = collectReferenceLookups([statusEvent()])
-    expect(lookups.get('journal')).toEqual(new Set(['journal-1', 'journal-2']))
+    expect(lookups.get('journal')?.ids).toEqual(new Set(['journal-1', 'journal-2']))
+  })
+
+  it('carries the fields that name each referenced model, straight from the registry', () => {
+    const lookups = collectReferenceLookups([statusEvent()])
+    expect(lookups.get('journal')?.labelFields).toEqual(['name'])
   })
 
   it('also fetches the label of the publication a pivot row belongs to', () => {
     const lookups = collectReferenceLookups([statusEvent()])
-    expect(lookups.get('article')).toEqual(new Set(['article-9']))
+    expect(lookups.get('article')?.ids).toEqual(new Set(['article-9']))
   })
 
   it('asks for nothing when no field is a reference', () => {
