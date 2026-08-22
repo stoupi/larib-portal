@@ -23,7 +23,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
 import { AlertCircle, AlertTriangle, Calendar as CalendarIcon, Info, ChevronLeft, ChevronRight, Send } from 'lucide-react'
 import { requestLeaveAction } from '../actions'
-import { countWorkingDays, getExcludedDaysInfo, getHolidayDatesForCalendar } from '@/lib/services/conges'
+import { countWorkingDays, getExcludedDaysInfo, getHolidayDatesForCalendar } from '@/lib/services/conges/french-holidays'
 import type { DateRange, Matcher } from 'react-day-picker'
 import { getIso, pluralize, dayPickerClassNames } from './day-picker-shared'
 

@@ -15,7 +15,8 @@ import { Select } from '@/components/ui/select'
 import { MultiSelect } from '@/components/ui/multiselect'
 import { DialogFooter } from '@/components/ui/dialog'
 import { createStudyAction, updateStudyAction, createAuthorAction } from '../actions'
-import { STUDY_STATUSES, type StudyListItem } from '@/lib/services/publications/studies'
+import { STUDY_STATUSES } from '@/lib/publications/status-values'
+import type { StudyListItem } from '@/lib/services/publications/studies'
 import type { AuthorOption } from '@/lib/services/publications/authors'
 
 const FormSchema = z.object({

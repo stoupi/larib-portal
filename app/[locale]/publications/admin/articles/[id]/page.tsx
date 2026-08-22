@@ -8,6 +8,7 @@ import { listStudyOptions } from '@/lib/services/publications/studies'
 import { listJournalNames } from '@/lib/services/publications/journals'
 import { listAuthorPickerOptions } from '@/lib/services/publications/authors'
 import { listCentres } from '@/lib/services/publications/centres'
+import { listArticleLogbookEntries } from '@/lib/services/publications/logbook'
 import { ArticlePage } from '@/app/[locale]/publications/components/article/article-page'
 import { publicationsPaths, PUBLICATIONS_BASE, PUBLICATIONS_ADMIN_BASE } from '@/lib/publications/base-path'
 
@@ -26,13 +27,14 @@ export default async function AdminArticleRoute({ params }: PageParams) {
 
   const isFirstAuthor = await userIsFirstAuthor(session.user.id, id)
 
-  const [journalTargets, studyOptions, journalNames, pickerAuthors, centreRows] =
+  const [journalTargets, studyOptions, journalNames, pickerAuthors, centreRows, history] =
     await Promise.all([
       listJournalTargets(id),
       listStudyOptions(),
       listJournalNames(),
       listAuthorPickerOptions(),
       listCentres(),
+      listArticleLogbookEntries(id),
     ])
 
   const centres = centreRows.map((centre) => ({
@@ -46,7 +48,7 @@ export default async function AdminArticleRoute({ params }: PageParams) {
     <ArticlePage
       locale={locale}
       article={article}
-      options={{ journalTargets, studyOptions, journalNames, pickerAuthors, centres }}
+      options={{ journalTargets, studyOptions, journalNames, pickerAuthors, centres, history }}
       viewer={{ userId: session.user.id, isFirstAuthor, isAdmin: true }}
       basePath={PUBLICATIONS_ADMIN_BASE}
     />

@@ -4,8 +4,10 @@ import { PUBLICATIONS_ARTICLES_TAG } from './import'
 import type { ArticleTypeValue } from '@/lib/publications/article-type'
 import type { ArticleScopeValue } from '@/lib/publications/article-scope'
 
-export const ARTICLE_STATUSES = ['IN_PREPARATION', 'UNDER_REVIEW', 'REVISION', 'TO_RESUBMIT', 'ACCEPTED', 'PUBLISHED', 'ABANDONED'] as const
-export type ArticleStatusValue = (typeof ARTICLE_STATUSES)[number]
+import type { ArticleStatusValue } from '@/lib/publications/status-values'
+
+export { ARTICLE_STATUSES } from '@/lib/publications/status-values'
+export type { ArticleStatusValue }
 
 export type ArticleListItem = Prisma.ArticleGetPayload<{
   select: {

@@ -5,8 +5,10 @@ import { loadCentreIndex, resolveCentre } from './centre-resolve'
 import { investigatorKey, loadInvestigatorIndex, matchInvestigator } from './investigator-resolve'
 
 export const PUBLICATIONS_STUDIES_TAG = 'publications:studies'
-export const STUDY_STATUSES = ['PLANNED', 'ONGOING', 'COMPLETED', 'STOPPED'] as const
-export type StudyStatusValue = (typeof STUDY_STATUSES)[number]
+import type { StudyStatusValue } from '@/lib/publications/status-values'
+
+export { STUDY_STATUSES } from '@/lib/publications/status-values'
+export type { StudyStatusValue }
 
 export type StudyListItem = Prisma.StudyGetPayload<{
   select: {
