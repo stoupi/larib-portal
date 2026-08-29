@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import { redirect } from 'next/navigation'
 import { requireAuth } from '@/lib/auth-guard'
 import { applicationLink } from '@/lib/application-link'
@@ -49,13 +50,15 @@ export default async function PublicationsAdminPage({ params }: PageParams) {
   return (
     <div className="app-gradient min-h-full px-4 py-8 md:px-8">
       <div className="mx-auto max-w-[1800px] space-y-6">
-        <PublicationsDashboardView
-          articles={articles}
-          studies={studies}
-          locale={locale}
-          authorRequests={authorRequests}
-          journals={{ names: journalNames, currentYear: new Date().getFullYear() }}
-        />
+        <Suspense fallback={null}>
+          <PublicationsDashboardView
+            articles={articles}
+            studies={studies}
+            locale={locale}
+            authorRequests={authorRequests}
+            journals={{ names: journalNames, currentYear: new Date().getFullYear() }}
+          />
+        </Suspense>
         <DashboardModules
           counts={{
             articles: articles.length,
