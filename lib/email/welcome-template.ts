@@ -14,13 +14,13 @@ export function renderWelcomeEmail({ locale, firstName, lastName, position, setu
   const isFr = locale === 'fr'
   const fullName = [firstName, lastName].filter(Boolean).join(' ') || undefined
 
-  const subject = isFr ? 'Bienvenue sur le portail Cardio Larib' : 'Welcome to the Cardio Larib portal'
+  const subject = isFr ? 'Bienvenue sur le portail Larib Portal' : 'Welcome to the Larib Portal'
   const eyebrow = isFr ? 'BIENVENUE DANS L’ÉQUIPE' : 'WELCOME TO THE TEAM'
   const greeting = isFr ? 'Bonjour' : 'Dear'
   const nameLine = fullName ? ` ${fullName}` : ''
   const intro = isFr
-    ? 'Votre compte sur le portail intranet Cardio Larib a été créé. En quelques clics, configurez votre accès et rejoignez la plateforme de l’équipe.'
-    : 'Your account on the Cardio Larib intranet portal has been created. In just a few clicks, set up your access and join the team platform.'
+    ? 'Votre compte sur le portail intranet Larib Portal a été créé. En quelques clics, configurez votre accès et rejoignez la plateforme de l’équipe.'
+    : 'Your account on the Larib Portal intranet has been created. In just a few clicks, set up your access and join the team platform.'
   const stepsTitle = isFr ? 'Trois étapes pour démarrer' : 'Three steps to get started'
   const steps = isFr
     ? ['Cliquez sur le bouton ci-dessous', 'Choisissez votre mot de passe', 'Connectez-vous et explorez vos applications']
@@ -35,8 +35,8 @@ export function renderWelcomeEmail({ locale, firstName, lastName, position, setu
     ? 'Veuillez cliquer sur le lien ci-dessous pour configurer votre compte :'
     : 'Please click the link below to set up your account:'
   const preheader = isFr
-    ? 'Votre accès au portail Cardio Larib est prêt à être configuré'
-    : 'Your Cardio Larib portal access is ready to set up'
+    ? 'Votre accès au portail Larib Portal est prêt à être configuré'
+    : 'Your Larib Portal access is ready to set up'
 
   const accessLine = accessEndDate ? `\n\n${expiresText} ${accessEndDate.toISOString().slice(0, 10)}.` : ''
   const text = `${greeting}${nameLine},\n\n${intro}\n\n${linkInstruction}\n\n${setupLink}${accessLine}`

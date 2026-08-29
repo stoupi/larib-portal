@@ -102,6 +102,14 @@ describe('renderPublicationsRecapEmail', () => {
   })
 })
 
+describe('portal branding', () => {
+  it('never signs an email as Cardio Larib', () => {
+    const html = renderCarouselRequestEmailHtml('Bonjour Alice,\n\nFélicitations !')
+    expect(html).not.toContain('Cardio Larib')
+    expect(html).toContain('Larib Portal')
+  })
+})
+
 describe('renderCarouselRequestEmailHtml', () => {
   const body = [
     'Bonjour Elsa,',

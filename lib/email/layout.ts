@@ -22,7 +22,7 @@ export function emailLayout(body: string, preheader?: string, footerNote?: strin
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Cardio Larib</title>
+  <title>Larib Portal</title>
 </head>
 <body style="margin:0;padding:0;background-color:${COLORS.background};font-family:${FONT_SANS};">
   ${preheader ? `<div style="display:none;font-size:1px;color:${COLORS.background};line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;">${preheader}</div>` : ''}
@@ -33,7 +33,7 @@ export function emailLayout(body: string, preheader?: string, footerNote?: strin
           <!-- Navy Header -->
           <tr>
             <td align="center" style="background-color:${COLORS.primary};padding:24px 44px;border-radius:12px 12px 0 0;">
-              <img src="${LOGO_WHITE_URL}" alt="Cardio Larib" width="160" height="109" style="display:block;border:0;margin:0 auto;" />
+              <img src="${LOGO_WHITE_URL}" alt="Larib Portal" width="160" height="109" style="display:block;border:0;margin:0 auto;" />
             </td>
           </tr>
           <!-- Accent line -->
@@ -50,7 +50,7 @@ export function emailLayout(body: string, preheader?: string, footerNote?: strin
           <tr>
             <td style="padding:24px 0 0 0;">
               <p style="margin:0;font-family:${FONT_SANS};font-size:12px;line-height:18px;color:${COLORS.mutedForeground};text-align:center;">
-                Portail intranet Cardio Larib
+                Portail intranet Larib Portal
               </p>
               <p style="margin:6px 0 0 0;font-family:${FONT_SANS};font-size:11px;line-height:16px;color:#b0b5bf;text-align:center;">
                 ${footerNote ?? DEFAULT_FOOTER_NOTE}
