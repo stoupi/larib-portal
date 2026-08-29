@@ -21,7 +21,8 @@
 		"verify:push:light": "npm run check:untracked-sources && npm run typecheck && npm run test:unit",
 		"test:setup ui": "npm run test:seed && playwright test --ui",
 		"test:check-passwords": "tsx scripts/check-test-passwords.ts",
-		"audit:submissions": "tsx scripts/audit-in-submission.ts"
+		"audit:submissions": "tsx scripts/audit-in-submission.ts",
+		"logbook:seed": "tsx scripts/seed-publications-logbook.ts"
 	},
 	"dependencies": {
 		"@ai-sdk/google": "^1.2.19",

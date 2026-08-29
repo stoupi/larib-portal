@@ -3,7 +3,7 @@
 import { useTranslations, useLocale } from 'next-intl'
 import { Star, GraduationCap, Clock, Pencil } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { ARTICLE_STATUSES } from '@/lib/services/publications/articles'
+import { ARTICLE_STATUSES } from '@/lib/publications/status-values'
 import { ARTICLE_STATUS_TONE, SUBMISSION_STATUS_TONE, TONE_DOT_HEX, type SubmissionStatusValue } from '@/lib/publications/status-display'
 import { ARTICLE_TYPE_VALUES } from '@/lib/publications/article-type'
 import type { PublicationEditData } from '@/lib/services/publications/publication-editor'

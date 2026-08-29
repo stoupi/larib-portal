@@ -1870,7 +1870,8 @@
       "studiesDescription": "Investigateurs et centres",
       "backToDashboard": "Tableau de bord",
       "communicationTitle": "Communication",
-      "communicationDescription": "Mails carrousel LinkedIn à envoyer"
+      "communicationDescription": "Mails carrousel LinkedIn à envoyer",
+      "logbookDescription": "Qui a modifié quoi, et quand"
     },
     "communication": {
       "title": "Communication",
@@ -1895,6 +1896,80 @@
       "colAcceptedAt": "Date d’acceptation",
       "colEmail": "Mail carrousel",
       "colAction": "Action"
+    },
+    "logbook": {
+      "title": "Logbook",
+      "description": "Qui a modifié quoi, et quand",
+      "empty": "Aucune modification ne correspond à ces filtres.",
+      "loadMore": "Charger plus",
+      "createdBy": "par {name}",
+      "groupedOperation": "{count} modifications dans la même opération",
+      "showDetail": "Voir le détail",
+      "hideDetail": "Masquer le détail",
+      "emptyValue": "vide",
+      "filters": {
+        "actor": "Modifié par",
+        "entity": "Type d'objet",
+        "action": "Nature",
+        "field": "Champ modifié",
+        "from": "Du",
+        "to": "Au",
+        "search": "Recherche",
+        "searchPlaceholder": "Titre, auteur, centre…",
+        "reset": "Effacer les filtres",
+        "allActors": "Tout le monde",
+        "allEntities": "Tous les objets",
+        "allActions": "Toutes les natures",
+        "allFields": "Tous les champs"
+      },
+      "actions": {
+        "CREATE": "Création",
+        "UPDATE": "Modification",
+        "DELETE": "Suppression"
+      },
+      "sources": {
+        "UI": "Interface",
+        "IMPORT": "Import",
+        "CRON": "Tâche planifiée",
+        "SCRIPT": "Script"
+      },
+      "entities": {
+        "ARTICLE": "Publication",
+        "SUBMISSION": "Soumission",
+        "JOURNAL_TARGET": "Revue visée",
+        "AUTHOR": "Auteur",
+        "AUTHORSHIP": "Auteur d'une publication",
+        "AUTHORSHIP_AFFILIATION": "Affiliation d'un auteur signataire",
+        "AUTHOR_AFFILIATION": "Affiliation d'auteur",
+        "AUTHOR_CENTRE": "Centre d'un auteur",
+        "AFFILIATION": "Affiliation",
+        "CENTRE": "Centre",
+        "CENTRE_ALIAS": "Alias de centre",
+        "JOURNAL": "Revue",
+        "STUDY": "Étude",
+        "STUDY_INVESTIGATOR": "Investigateur",
+        "AUTHOR_LIST_REQUEST": "Demande de liste d'auteurs"
+      },
+      "fields": {
+        "status": "Statut",
+        "title": "Titre",
+        "journalId": "Revue",
+        "studyId": "Étude",
+        "submittedAt": "Date de soumission",
+        "decidedAt": "Date de décision",
+        "doi": "DOI",
+        "pubmedId": "PubMed",
+        "name": "Nom",
+        "centreId": "Centre",
+        "authorId": "Auteur",
+        "order": "Position",
+        "isCorresponding": "Auteur correspondant",
+        "other": "Autre champ"
+      },
+      "articleHistory": {
+        "title": "Historique",
+        "empty": "Aucune modification enregistrée pour cette publication."
+      }
     }
   }
 }

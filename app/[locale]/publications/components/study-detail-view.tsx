@@ -18,7 +18,8 @@ import { StudyForm } from './study-form'
 import { StudyCentresSection } from './study-centres-section'
 import { StudyPublicationsSection } from './study-publications-section'
 import { setStudyStatusAction, deleteStudyAction } from '../actions'
-import { STUDY_STATUSES, type StudyDetailData, type StudyListItem, type StudyStatusValue } from '@/lib/services/publications/studies'
+import { STUDY_STATUSES, type StudyStatusValue } from '@/lib/publications/status-values'
+import type { StudyDetailData, StudyListItem } from '@/lib/services/publications/studies'
 import type { AuthorOption } from '@/lib/services/publications/authors'
 
 export type CentreOption = { id: string; name: string; shortCode: string | null; city: string | null; country: string | null; isOwn: boolean }

@@ -689,3 +689,72 @@ model JournalTarget {
   @@unique([articleId, journalId])
   @@map("JournalTarget")
 }
+
+enum AuditAction {
+  CREATE
+  UPDATE
+  DELETE
+}
+
+enum AuditSource {
+  UI
+  IMPORT
+  CRON
+  SCRIPT
+}
+
+enum AuditEntity {
+  ARTICLE
+  SUBMISSION
+  JOURNAL_TARGET
+  AUTHOR
+  AUTHORSHIP
+  AUTHORSHIP_AFFILIATION
+  AUTHOR_AFFILIATION
+  AUTHOR_CENTRE
+  AFFILIATION
+  CENTRE
+  CENTRE_ALIAS
+  JOURNAL
+  STUDY
+  STUDY_INVESTIGATOR
+  AUTHOR_LIST_REQUEST
+}
+
+model AuditEvent {
+  id          String        @id @default(cuid())
+  operationId String
+  entity      AuditEntity
+  entityId    String
+  entityLabel String
+  articleId   String?
+  action      AuditAction
+  actorId     String?
+  actorLabel  String?
+  source      AuditSource   @default(UI)
+  summary     String?
+  createdAt   DateTime      @default(now())
+  changes     AuditChange[]
+
+  @@index([createdAt])
+  @@index([articleId, createdAt])
+  @@index([entity, entityId, createdAt])
+  @@index([actorId, createdAt])
+  @@index([operationId])
+  @@map("AuditEvent")
+}
+
+model AuditChange {
+  id       String     @id @default(cuid())
+  eventId  String
+  event    AuditEvent @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  field    String
+  oldValue String?
+  newValue String?
+  oldLabel String?
+  newLabel String?
+
+  @@index([eventId])
+  @@index([field])
+  @@map("AuditChange")
+}

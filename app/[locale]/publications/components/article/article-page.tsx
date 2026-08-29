@@ -11,7 +11,7 @@ import { toast } from 'sonner'
 import { Save, ChevronRight } from 'lucide-react'
 import { Link, useRouter } from '@/app/i18n/navigation'
 import { cn } from '@/lib/utils'
-import { ARTICLE_STATUSES } from '@/lib/services/publications/articles'
+import { ARTICLE_STATUSES } from '@/lib/publications/status-values'
 import { ARTICLE_TYPE_VALUES, normalizeArticleType } from '@/lib/publications/article-type'
 import { isDraftDeletable } from '@/lib/publications/editor-logic'
 import {
@@ -36,6 +36,8 @@ import { EditorJournalQueue } from '../editor/editor-journal-queue'
 import { EditorPdf } from '../editor/editor-pdf'
 import { PubmedImportDialog } from '../pubmed-import/pubmed-import-dialog'
 import type { DraftSummary } from '@/lib/publications/pubmed-import'
+import type { LogbookEntry } from '@/lib/services/publications/logbook'
+import { ArticleHistoryCard } from './article-history-card'
 import { ArticleReadingHeader } from './article-reading-header'
 import { ArticleAbstractTimeline } from './article-abstract-timeline'
 import { CarouselEmailDialog, useCarouselEmailDialog } from './carousel-email-dialog'
@@ -62,6 +64,7 @@ export type EditorOptions = {
   journalNames: string[]
   pickerAuthors: PickerAuthor[]
   centres: { id: string; name: string; city: string | null; isOwn: boolean }[]
+  history: LogbookEntry[]
 }
 
 export function ArticlePage({
@@ -77,7 +80,7 @@ export function ArticlePage({
   viewer: EditorViewer
   basePath: PublicationsBasePath
 }) {
-  const { journalTargets, studyOptions, journalNames, pickerAuthors, centres } = options
+  const { journalTargets, studyOptions, journalNames, pickerAuthors, centres, history } = options
   const t = useTranslations('publications')
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -273,6 +276,7 @@ export function ArticlePage({
               />
             )}
             <EditorJournalQueue targets={journalTargets} />
+            <ArticleHistoryCard entries={history} locale={locale} basePath={basePath} />
           </div>
         </div>
       </div>
