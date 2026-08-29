@@ -705,9 +705,14 @@ function escapeHtml(value: string): string {
 }
 
 const CAROUSEL_BULLET = /^[-\u2022]\s+/
+const CAROUSEL_QUOTED_SEGMENT = /\u00ab[^\u00bb]*\u00bb/g
+
+function boldQuotedSegments(escapedLine: string): string {
+  return escapedLine.replace(CAROUSEL_QUOTED_SEGMENT, (quotedSegment) => `<strong>${quotedSegment}</strong>`)
+}
 
 function renderCarouselParagraph(block: string): string {
-  const lines = block.split('\n').map((line) => escapeHtml(line.trim()))
+  const lines = block.split('\n').map((line) => boldQuotedSegments(escapeHtml(line.trim())))
   return `<p style="margin:0 0 16px 0;font-family:${FONT_SANS};font-size:15px;line-height:24px;color:${COLORS.foreground};">${lines.join('<br />')}</p>`
 }
 
@@ -746,7 +751,7 @@ export function renderCarouselRequestEmailHtml(body: string, subject = CAROUSEL_
         : renderCarouselParagraph(block),
     )
     .join('')
-  const footerNote = `Réponds directement à ce message pour transmettre tes éléments à ${escapeHtml(CAROUSEL_CONTACT_FIRST_NAME)}.`
+  const footerNote = `Réponds directement à ce message pour transmettre tes éléments à ${escapeHtml(CAROUSEL_CONTACT_FIRST_NAME)}. Ceci est un email automatique envoyé depuis Larib Portal.`
   // The inbox preview reads better with the congratulations line than with the subject again.
   const preheader = escapeHtml((blocks.at(0) ?? subject).replaceAll('\n', ' ').trim())
   return emailLayout(`${greeting}${content}`, preheader, footerNote)

@@ -143,4 +143,21 @@ describe('renderCarouselRequestEmailHtml', () => {
     expect(html).toContain('&lt;script&gt;alert(&quot;x &amp; y&quot;)&lt;/script&gt;')
     expect(html).not.toContain('<script>')
   })
+
+  it('bolds whatever sits between French quotes', () => {
+    const html = renderCarouselRequestEmailHtml(
+      'Bonjour Alice,\n\nFélicitations pour l’acceptation de ton article « Mitral valve repair » dans Circulation !',
+    )
+    expect(html).toContain('<strong>« Mitral valve repair »</strong>')
+  })
+
+  it('says the email is automatic', () => {
+    const html = renderCarouselRequestEmailHtml('Bonjour Alice,\n\nFélicitations !')
+    expect(html).toContain('email automatique')
+  })
+
+  it('leaves a body without quotes untouched', () => {
+    const html = renderCarouselRequestEmailHtml('Bonjour Alice,\n\nFélicitations !')
+    expect(html).not.toContain('<strong>')
+  })
 })
