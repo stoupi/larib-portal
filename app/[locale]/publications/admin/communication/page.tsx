@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import { redirect } from 'next/navigation'
 import { requireAuth } from '@/lib/auth-guard'
 import { applicationLink } from '@/lib/application-link'
@@ -18,7 +19,9 @@ export default async function PublicationsCommunicationPage({ params }: PagePara
     <div className="app-gradient min-h-full px-4 py-8 md:px-8">
       <div className="mx-auto max-w-[1800px] space-y-4">
         <BackToDashboard locale={locale} />
-        <CommunicationView articles={articles} locale={locale} />
+        <Suspense fallback={null}>
+          <CommunicationView articles={articles} locale={locale} />
+        </Suspense>
       </div>
     </div>
   )

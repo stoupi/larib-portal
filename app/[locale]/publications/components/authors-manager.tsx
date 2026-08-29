@@ -33,6 +33,8 @@ import { EditAuthorDialog } from './edit-author-dialog'
 import type { CentreOption } from './centre-picker'
 import { publicationsPaths, type PublicationsBasePath } from '@/lib/publications/base-path'
 import { OurTeamDot } from './authors/our-team-dot'
+import { useUrlAuthorsFilters } from './authors/use-url-authors-filters'
+import type { AuthorSortKey, PortalStatusFilter, PortalStatusValue } from '@/lib/publications/authors-filter-params'
 
 function authorLabel(author: AuthorListItem): string {
   return `${author.firstName} ${author.lastName.toUpperCase()}`.trim()
@@ -66,9 +68,7 @@ function normalizeNameKey(author: AuthorListItem): string {
   return `${normalize(author.firstName)}|${normalize(author.lastName)}`
 }
 
-type PortalStatus = 'active' | 'invited' | 'none'
-
-function portalStatus(author: AuthorListItem): PortalStatus {
+function portalStatus(author: AuthorListItem): PortalStatusValue {
   if (!author.user) return 'none'
   return author.user.activated ? 'active' : 'invited'
 }
@@ -79,9 +79,7 @@ const TYPE_TABS = [
   { value: 'EXTERNAL' as const, key: 'tabExternal' },
 ]
 
-type SortKey = 'name' | 'type' | 'centre' | 'papers' | 'portal'
-
-function sortValue(author: AuthorListItem, key: SortKey): string | number {
+function sortValue(author: AuthorListItem, key: AuthorSortKey): string | number {
   switch (key) {
     case 'name':
       return author.lastName.toLowerCase()
@@ -100,12 +98,8 @@ export function AuthorsManager({ authors, users, centres, basePath }: { authors:
   const t = useTranslations('publications')
   const router = useRouter()
   const paths = publicationsPaths(basePath)
-  const [query, setQuery] = useState('')
-  const [typeFilter, setTypeFilter] = useState<'ALL' | 'OUR_TEAM' | 'EXTERNAL'>('ALL')
-  const [centreFilter, setCentreFilter] = useState('')
-  const [portalFilter, setPortalFilter] = useState<'ALL' | PortalStatus>('ALL')
-  const [sortKey, setSortKey] = useState<SortKey>('papers')
-  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc')
+  const { filters, updateFilters } = useUrlAuthorsFilters()
+  const { query, typeFilter, centreFilter, portalFilter, sortKey, sortDir } = filters
   const [editData, setEditData] = useState<AuthorEditData | null>(null)
   const [deleteTarget, setDeleteTarget] = useState<AuthorListItem | null>(null)
   const [selected, setSelected] = useState<Set<string>>(new Set())
@@ -161,16 +155,15 @@ export function AuthorsManager({ authors, users, centres, basePath }: { authors:
     })
   }, [filtered, sortKey, sortDir])
 
-  function toggleSort(key: SortKey) {
+  function toggleSort(key: AuthorSortKey) {
     if (sortKey === key) {
-      setSortDir((direction) => (direction === 'asc' ? 'desc' : 'asc'))
+      updateFilters({ sortDir: sortDir === 'asc' ? 'desc' : 'asc' })
     } else {
-      setSortKey(key)
-      setSortDir('asc')
+      updateFilters({ sortKey: key, sortDir: 'asc' })
     }
   }
 
-  function SortHead({ sortKey: key, label, align }: { sortKey: SortKey; label: string; align?: 'right' }) {
+  function SortHead({ sortKey: key, label, align }: { sortKey: AuthorSortKey; label: string; align?: 'right' }) {
     return (
       <TableHead className={align === 'right' ? 'text-right' : undefined}>
         <button type="button" onClick={() => toggleSort(key)} className={cn('inline-flex items-center gap-1 hover:text-text-primary', align === 'right' && 'flex-row-reverse')}>
@@ -289,14 +282,14 @@ export function AuthorsManager({ authors, users, centres, basePath }: { authors:
       <div className="flex shrink-0 flex-wrap items-center gap-3">
         <div className="relative w-full sm:max-w-xs">
           <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-text-muted" />
-          <Input value={query} onChange={(event) => setQuery(event.target.value)} placeholder={t('authors.search')} className="rounded-2xl bg-bg-surface pl-9 shadow-sm" />
+          <Input value={query} onChange={(event) => updateFilters({ query: event.target.value })} placeholder={t('authors.search')} className="rounded-2xl bg-bg-surface pl-9 shadow-sm" />
         </div>
         <div className="inline-flex rounded-2xl border border-line bg-bg-surface p-1 shadow-sm">
           {TYPE_TABS.map((tab) => (
             <button
               key={tab.value}
               type="button"
-              onClick={() => setTypeFilter(tab.value)}
+              onClick={() => updateFilters({ typeFilter: tab.value })}
               className={cn(
                 'flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-bold text-text-secondary transition',
                 typeFilter === tab.value && 'bg-gradient-to-b from-coral-500 to-coral-600 text-white shadow-[0_8px_18px_-8px_rgba(214,31,85,0.6)]',
@@ -311,7 +304,7 @@ export function AuthorsManager({ authors, users, centres, basePath }: { authors:
         </div>
         <div className="ml-auto flex items-center gap-1 rounded-2xl border border-line bg-bg-surface px-3 py-1.5 shadow-sm">
           <span className="text-sm font-bold text-text-primary">{t('authors.filterCentre')}</span>
-          <Select value={centreFilter} onChange={(event) => setCentreFilter(event.target.value)} className="w-40 truncate border-0 shadow-none">
+          <Select value={centreFilter} onChange={(event) => updateFilters({ centreFilter: event.target.value })} className="w-40 truncate border-0 shadow-none">
             <option value="">{t('authors.filterAll')}</option>
             {centres.map((centre) => (
               <option key={centre.id} value={centre.id} title={centre.name}>{truncateName(centre.name)}</option>
@@ -319,7 +312,7 @@ export function AuthorsManager({ authors, users, centres, basePath }: { authors:
           </Select>
           <span className="mx-1 h-5 w-px bg-line" />
           <span className="text-sm font-bold text-text-primary">{t('authors.filterPortal')}</span>
-          <Select value={portalFilter} onChange={(event) => setPortalFilter(event.target.value as 'ALL' | PortalStatus)} className="w-28 border-0 shadow-none">
+          <Select value={portalFilter} onChange={(event) => updateFilters({ portalFilter: event.target.value as PortalStatusFilter })} className="w-28 border-0 shadow-none">
             <option value="ALL">{t('authors.filterAll')}</option>
             <option value="active">{t('authors.portalActive')}</option>
             <option value="invited">{t('authors.portalInvited')}</option>

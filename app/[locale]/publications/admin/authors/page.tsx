@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import { redirect } from 'next/navigation'
 import { requireAuth } from '@/lib/auth-guard'
 import { applicationLink } from '@/lib/application-link'
@@ -25,7 +26,9 @@ export default async function PublicationsAuthorsPage({ params }: PageParams) {
   return (
     <div className="flex h-[100dvh] flex-col gap-3 overflow-hidden p-4 md:p-6">
       <BackToDashboard locale={locale} />
-      <AuthorsManager authors={authors} users={users} centres={centres} basePath={PUBLICATIONS_ADMIN_BASE} />
+      <Suspense fallback={null}>
+        <AuthorsManager authors={authors} users={users} centres={centres} basePath={PUBLICATIONS_ADMIN_BASE} />
+      </Suspense>
     </div>
   )
 }

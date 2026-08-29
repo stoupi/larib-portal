@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { useTranslations } from 'next-intl'
 import { ChevronDown, ChevronUp, ChevronsUpDown, Search } from 'lucide-react'
 import { Link } from '@/app/i18n/navigation'
@@ -11,16 +11,14 @@ import { ARTICLE_STATUS_TONE, pillClassName } from '@/lib/publications/status-di
 import { publicationsPaths, PUBLICATIONS_ADMIN_BASE } from '@/lib/publications/base-path'
 import {
   COMMUNICATION_TABS,
-  DEFAULT_COMMUNICATION_SORT,
   communicationTabCounts,
   filterCommunicationArticles,
   nextCommunicationSort,
   sortCommunicationArticles,
   type CommunicationArticleItem,
-  type CommunicationSort,
   type CommunicationSortKey,
-  type CommunicationTab,
 } from '@/lib/publications/communication'
+import { useUrlCommunicationFilters } from './use-url-communication-filters'
 import { CarouselEmailDialog, useCarouselEmailDialog } from '../article/carousel-email-dialog'
 import { CarouselEmailTag } from './carousel-email-tag'
 import { CarouselSendButton } from './carousel-send-button'
@@ -36,9 +34,8 @@ export function CommunicationView({
 }) {
   const t = useTranslations('publications.communication')
   const tStatus = useTranslations('publications.articles.status')
-  const [tab, setTab] = useState<CommunicationTab>('pending')
-  const [query, setQuery] = useState('')
-  const [sort, setSort] = useState<CommunicationSort>(DEFAULT_COMMUNICATION_SORT)
+  const { filters, updateFilters } = useUrlCommunicationFilters()
+  const { tab, query, sort } = filters
   const carouselDialog = useCarouselEmailDialog()
 
   const counts = useMemo(() => communicationTabCounts(articles), [articles])
@@ -54,7 +51,7 @@ export function CommunicationView({
       <TableHead>
         <button
           type="button"
-          onClick={() => setSort((current) => nextCommunicationSort(current, sortKey))}
+          onClick={() => updateFilters({ sort: nextCommunicationSort(sort, sortKey) })}
           className={cn(
             'inline-flex items-center gap-1 text-xs font-bold uppercase tracking-wide hover:text-text-primary',
             active ? 'text-coral-600' : 'text-text-muted',
@@ -90,7 +87,7 @@ export function CommunicationView({
           <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-text-muted" />
           <Input
             value={query}
-            onChange={(event) => setQuery(event.target.value)}
+            onChange={(event) => updateFilters({ query: event.target.value })}
             placeholder={t('searchPlaceholder')}
             aria-label={t('searchPlaceholder')}
             className="rounded-2xl bg-bg-surface pl-9 shadow-sm"
@@ -101,7 +98,7 @@ export function CommunicationView({
             <button
               key={candidate}
               type="button"
-              onClick={() => setTab(candidate)}
+              onClick={() => updateFilters({ tab: candidate })}
               className={cn(
                 'flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-bold text-text-secondary transition',
                 tab === candidate &&
