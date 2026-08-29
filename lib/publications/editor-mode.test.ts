@@ -1,5 +1,11 @@
 import { describe, it, expect } from 'vitest'
-import { computeEditorVisibility, canComposeAuthorList, canEditArticle, canImportAnyPublication } from './editor-mode'
+import {
+  computeEditorVisibility,
+  canComposeAuthorList,
+  canEditArticle,
+  canImportAnyPublication,
+  canRequestAuthorList,
+} from './editor-mode'
 import { PUBLICATIONS_BASE, PUBLICATIONS_ADMIN_BASE } from './base-path'
 
 describe('computeEditorVisibility', () => {
@@ -46,6 +52,21 @@ describe('canImportAnyPublication', () => {
     expect(canImportAnyPublication({ isAdmin: true, basePath: PUBLICATIONS_BASE })).toBe(false)
     expect(canImportAnyPublication({ isAdmin: false, basePath: PUBLICATIONS_ADMIN_BASE })).toBe(false)
     expect(canImportAnyPublication({ isAdmin: false, basePath: PUBLICATIONS_BASE })).toBe(false)
+  })
+})
+
+describe('canRequestAuthorList', () => {
+  it('lets a signer of the publication request the author list', () => {
+    expect(canRequestAuthorList({ isAdmin: false, signsThePublication: true })).toBe(true)
+  })
+
+  it('hides the request from a reader who does not sign the publication', () => {
+    expect(canRequestAuthorList({ isAdmin: false, signsThePublication: false })).toBe(false)
+  })
+
+  it('hides the request from an admin, who composes the list themselves instead', () => {
+    expect(canRequestAuthorList({ isAdmin: true, signsThePublication: true })).toBe(false)
+    expect(canRequestAuthorList({ isAdmin: true, signsThePublication: false })).toBe(false)
   })
 })
 

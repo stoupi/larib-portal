@@ -1053,6 +1053,7 @@
       "requestAuthorList": "Request author list to admin",
       "requestSent": "Request sent to the admin",
       "alreadyRequested": "Author list already requested",
+      "requestAuthorListHint": "The Publications admins get an email and complete the list.",
       "referencesTitle": "References",
       "referencesSubtitle": "No references yet · fill them in when available.",
       "pmid": "PMID",

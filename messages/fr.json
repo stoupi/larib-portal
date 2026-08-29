@@ -1051,6 +1051,7 @@
       "requestAuthorList": "Demander la liste d'auteurs à l'admin",
       "requestSent": "Demande envoyée à l'admin",
       "alreadyRequested": "Liste d'auteurs déjà demandée",
+      "requestAuthorListHint": "Les admins Publications reçoivent un mail et complètent la liste.",
       "referencesTitle": "Références",
       "referencesSubtitle": "Aucune référence pour l'instant · à compléter dès disponibilité.",
       "pmid": "PMID",

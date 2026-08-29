@@ -29,6 +29,19 @@ export function canEditArticle({
   return isAdmin && basePath === PUBLICATIONS_ADMIN_BASE
 }
 
+// Requesting the author list belongs to a signer of the publication. An admin
+// composes the list themselves from the admin area, so they never need to ask for it.
+export function canRequestAuthorList({
+  isAdmin,
+  signsThePublication,
+}: {
+  isAdmin: boolean
+  signsThePublication: boolean
+}): boolean {
+  if (isAdmin) return false
+  return signsThePublication
+}
+
 // Importing a paper someone else signed belongs to the admin module. In their own
 // space, even an admin only brings in publications they authored.
 export function canImportAnyPublication({

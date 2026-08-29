@@ -8,6 +8,7 @@ import { UserPlus, Mail, Send, User } from 'lucide-react'
 import { Textarea } from '@/components/ui/textarea'
 import type { PublicationEditData } from '@/lib/services/publications/publication-editor'
 import { toExportCandidates } from '@/lib/publications/author-list-export'
+import { canRequestAuthorList } from '@/lib/publications/editor-mode'
 import { requestAuthorListAction } from '../../actions'
 import type { EditorForm, EditorViewer } from '../article/article-page'
 import { AuthorListExportDialog } from '../authors/author-list-export-dialog'
@@ -35,6 +36,8 @@ export function EditorAuthors({
   const t = useTranslations('publications')
   const router = useRouter()
   const alreadyRequested = article.authorRequests.length > 0
+  const signsThePublication = article.authorships.some((authorship) => authorship.author.userId === viewer.userId)
+  const showRequestButton = canRequestAuthorList({ isAdmin: viewer.isAdmin, signsThePublication })
 
   const request = useAction(requestAuthorListAction, {
     onSuccess() {
@@ -138,16 +141,19 @@ export function EditorAuthors({
         </div>
       )}
 
-      {editable && (
-        <button
-          type="button"
-          disabled={alreadyRequested || request.isExecuting}
-          onClick={() => request.execute({ articleId: article.id, note: form.getValues('contributorsNote').trim() || null })}
-          className="mt-4 inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-b from-coral-500 to-coral-600 text-sm font-bold text-white shadow-[0_8px_18px_-6px_rgba(214,31,85,0.55)] transition hover:brightness-105 disabled:opacity-60"
-        >
-          <Send className="h-4 w-4" strokeWidth={2.2} />
-          {alreadyRequested ? t('editor.alreadyRequested') : t('editor.requestAuthorList')}
-        </button>
+      {showRequestButton && (
+        <>
+          <button
+            type="button"
+            disabled={alreadyRequested || request.isExecuting}
+            onClick={() => request.execute({ articleId: article.id, note: form.getValues('contributorsNote').trim() || null })}
+            className="mt-4 inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-b from-coral-500 to-coral-600 text-sm font-bold text-white shadow-[0_8px_18px_-6px_rgba(214,31,85,0.55)] transition hover:brightness-105 disabled:opacity-60"
+          >
+            <Send className="h-4 w-4" strokeWidth={2.2} />
+            {alreadyRequested ? t('editor.alreadyRequested') : t('editor.requestAuthorList')}
+          </button>
+          <p className="mt-1.5 text-xs leading-relaxed text-text-muted">{t('editor.requestAuthorListHint')}</p>
+        </>
       )}
     </CollapsibleCard>
   )
