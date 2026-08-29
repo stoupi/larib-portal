@@ -50,7 +50,7 @@ export function emailLayout(body: string, preheader?: string, footerNote?: strin
           <tr>
             <td style="padding:24px 0 0 0;">
               <p style="margin:0;font-family:${FONT_SANS};font-size:12px;line-height:18px;color:${COLORS.mutedForeground};text-align:center;">
-                Portail intranet Larib Portal
+                Larib Portal
               </p>
               <p style="margin:6px 0 0 0;font-family:${FONT_SANS};font-size:11px;line-height:16px;color:#b0b5bf;text-align:center;">
                 ${footerNote ?? DEFAULT_FOOTER_NOTE}
