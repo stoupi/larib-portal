@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import { usePathname, useSearchParams } from 'next/navigation'
 import {
   authorsFiltersFromSearchParams,
@@ -13,10 +14,11 @@ export function useUrlAuthorsFilters(): {
 } {
   const pathname = usePathname()
   const searchParams = useSearchParams()
-  const filters = authorsFiltersFromSearchParams(searchParams)
+  const [filters, setFilters] = useState<AuthorsFilters>(() => authorsFiltersFromSearchParams(searchParams))
 
   function updateFilters(patch: Partial<AuthorsFilters>) {
     const nextFilters = { ...filters, ...patch }
+    setFilters(nextFilters)
     const nextSearchParams = authorsFiltersToSearchParams(nextFilters)
     const queryString = nextSearchParams.toString()
     window.history.replaceState(null, '', queryString ? `${pathname}?${queryString}` : pathname)
