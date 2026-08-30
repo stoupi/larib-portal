@@ -27,6 +27,20 @@ test('admin dashboard shows metrics, filters the library and opens its modules',
 
   const articleLink = page.getByRole('link', { name: SEEDED_ARTICLE })
   await expect(articleLink).toBeVisible()
+
+  // Filters survive a round trip through a publication
+  const searchField = page.getByPlaceholder('Author, journal, article, study…')
+  await searchField.fill('multi-valve')
+  await expect(searchField).toHaveValue('multi-valve')
+  await expect(articleLink).toBeVisible()
+  await expect(page).toHaveURL(/query=multi-valve/, { timeout: 20000 })
+  await articleLink.click()
+  await page.waitForURL(/\/publications\/admin\/articles\//, { timeout: 60000 })
+  await page.goBack()
+  await page.waitForURL(/\/publications\/admin(\?|$)/, { timeout: 60000 })
+  await expect(page).toHaveURL(/query=multi-valve/, { timeout: 20000 })
+  await expect(searchField).toHaveValue('multi-valve')
+  await searchField.fill('')
   const studySelect = page.getByLabel(`Assign a study: ${SEEDED_ARTICLE}`)
   await expect(studySelect).toHaveValue(/.+/)
   await expect(page.locator('span', { hasText: /^Under review$/ }).first()).toBeVisible()

@@ -26,6 +26,7 @@ import { DashboardKpis } from './dashboard-kpis'
 import { DashboardCharts } from './dashboard-charts'
 import { DashboardAuthorFocus } from './dashboard-author-focus'
 import { DashboardArticlesCard } from './dashboard-articles-card'
+import { useUrlDashboardFilters } from './use-url-filters'
 import { AdminAuthorRequests } from '../admin-author-requests'
 import { NewPublicationButton } from '../new-publication-button'
 import { PubmedImportDialog } from '../pubmed-import/pubmed-import-dialog'
@@ -51,7 +52,7 @@ export function PublicationsDashboardView({
   const t = useTranslations('publications.adminHome')
   const tArticles = useTranslations('publications.articles')
   const tMyPub = useTranslations('publications.myPub')
-  const [filters, setFilters] = useState<DashboardFilters>(DEFAULT_DASHBOARD_FILTERS)
+  const { filters, updateFilter, clearFilters } = useUrlDashboardFilters()
   const [overviewOpen, setOverviewOpen] = useState(true)
 
   const years = useMemo(() => dashboardYearOptions(articles), [articles])
@@ -80,10 +81,6 @@ export function PublicationsDashboardView({
     filters.authorPosition !== ALL_FILTER ||
     filters.pendingOverMonth ||
     filters.scopes.join() !== DEFAULT_DASHBOARD_FILTERS.scopes.join()
-
-  function updateFilter(patch: Partial<DashboardFilters>) {
-    setFilters((current) => ({ ...current, ...patch }))
-  }
 
   return (
     <div className="space-y-6">
@@ -196,7 +193,7 @@ export function PublicationsDashboardView({
           {hasActiveFilters && (
             <button
               type="button"
-              onClick={() => setFilters(DEFAULT_DASHBOARD_FILTERS)}
+              onClick={clearFilters}
               className="ml-auto inline-flex h-9 items-center gap-1.5 rounded-full border border-coral-200 bg-coral-50 px-3.5 text-[13px] font-bold text-coral-600 transition hover:brightness-95 dark:border-coral-500/30 dark:bg-coral-500/15 dark:text-coral-300"
             >
               <X className="size-3.5" strokeWidth={2.6} />
