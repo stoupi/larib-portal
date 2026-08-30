@@ -17,7 +17,7 @@ export function useUrlDashboardFilters(): {
   function writeUrl(nextFilters: DashboardFilters) {
     const nextSearchParams = filtersToSearchParams(nextFilters)
     const queryString = nextSearchParams.toString()
-    window.history.replaceState(null, '', queryString ? `${pathname}?${queryString}` : pathname)
+    window.history.replaceState(window.history.state, '', queryString ? `${pathname}?${queryString}` : pathname)
   }
 
   function updateFilter(patch: Partial<DashboardFilters>) {

@@ -21,7 +21,7 @@ export function useUrlAuthorsFilters(): {
     setFilters(nextFilters)
     const nextSearchParams = authorsFiltersToSearchParams(nextFilters)
     const queryString = nextSearchParams.toString()
-    window.history.replaceState(null, '', queryString ? `${pathname}?${queryString}` : pathname)
+    window.history.replaceState(window.history.state, '', queryString ? `${pathname}?${queryString}` : pathname)
   }
 
   return { filters, updateFilters }
