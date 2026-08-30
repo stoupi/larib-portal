@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import { usePathname, useSearchParams } from 'next/navigation'
 import {
   communicationFiltersFromSearchParams,
@@ -13,10 +14,11 @@ export function useUrlCommunicationFilters(): {
 } {
   const pathname = usePathname()
   const searchParams = useSearchParams()
-  const filters = communicationFiltersFromSearchParams(searchParams)
+  const [filters, setFilters] = useState<CommunicationFilters>(() => communicationFiltersFromSearchParams(searchParams))
 
   function updateFilters(patch: Partial<CommunicationFilters>) {
     const nextFilters = { ...filters, ...patch }
+    setFilters(nextFilters)
     const nextSearchParams = communicationFiltersToSearchParams(nextFilters)
     const queryString = nextSearchParams.toString()
     window.history.replaceState(null, '', queryString ? `${pathname}?${queryString}` : pathname)

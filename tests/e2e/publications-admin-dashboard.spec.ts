@@ -51,6 +51,9 @@ test('admin dashboard shows metrics, filters the library and opens its modules',
   await search.fill('')
   await expect(articleLink).toBeVisible()
 
+  await search.fill('')
+  await expect(articleLink).toBeVisible()
+
   // Clicking a column header sorts the list, then a third click clears the sort
   const titleHeader = page.getByRole('button', { name: 'Title', exact: true })
   const titles = page.locator('a[href*="/publications/articles/"]:not([href*="mode=edit"])')

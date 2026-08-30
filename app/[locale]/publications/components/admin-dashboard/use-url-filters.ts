@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import { usePathname, useSearchParams } from 'next/navigation'
 import { filtersFromSearchParams, filtersToSearchParams } from '@/lib/publications/dashboard-filter-params'
 import type { DashboardFilters } from '@/lib/publications/admin-dashboard'
@@ -11,17 +12,24 @@ export function useUrlDashboardFilters(): {
 } {
   const pathname = usePathname()
   const searchParams = useSearchParams()
-  const filters = filtersFromSearchParams(searchParams)
+  const [filters, setFilters] = useState<DashboardFilters>(() => filtersFromSearchParams(searchParams))
 
-  function updateFilter(patch: Partial<DashboardFilters>) {
-    const nextFilters = { ...filters, ...patch }
+  function writeUrl(nextFilters: DashboardFilters) {
     const nextSearchParams = filtersToSearchParams(nextFilters)
     const queryString = nextSearchParams.toString()
     window.history.replaceState(null, '', queryString ? `${pathname}?${queryString}` : pathname)
   }
 
+  function updateFilter(patch: Partial<DashboardFilters>) {
+    const nextFilters = { ...filters, ...patch }
+    setFilters(nextFilters)
+    writeUrl(nextFilters)
+  }
+
   function clearFilters() {
-    window.history.replaceState(null, '', pathname)
+    const nextFilters = filtersFromSearchParams(new URLSearchParams())
+    setFilters(nextFilters)
+    writeUrl(nextFilters)
   }
 
   return { filters, updateFilter, clearFilters }

@@ -282,7 +282,12 @@ export function AuthorsManager({ authors, users, centres, basePath }: { authors:
       <div className="flex shrink-0 flex-wrap items-center gap-3">
         <div className="relative w-full sm:max-w-xs">
           <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-text-muted" />
-          <Input value={query} onChange={(event) => updateFilters({ query: event.target.value })} placeholder={t('authors.search')} className="rounded-2xl bg-bg-surface pl-9 shadow-sm" />
+          <Input
+            value={query}
+            onChange={(event) => updateFilters({ query: event.target.value })}
+            placeholder={t('authors.search')}
+            className="rounded-2xl bg-bg-surface pl-9 shadow-sm"
+          />
         </div>
         <div className="inline-flex rounded-2xl border border-line bg-bg-surface p-1 shadow-sm">
           {TYPE_TABS.map((tab) => (
