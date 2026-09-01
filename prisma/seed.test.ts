@@ -353,6 +353,22 @@ async function main() {
 			},
 		},
 	});
+	// A paper the member co-signs without leading it: the only shape where the
+	// "report an error" entry point appears.
+	await prisma.article.create({
+		data: {
+			title: 'Co-signed review of valve imaging',
+			type: 'REVIEW',
+			status: 'UNDER_REVIEW',
+			createdBy: { connect: { id: publicationsAdmin.id } },
+			authorships: {
+				create: [
+					{ order: 1, author: { connect: { id: publicationsCoAuthor.id } } },
+					{ order: 2, author: { connect: { id: publicationsFirstAuthor.id } } },
+				],
+			},
+		},
+	});
 	await prisma.article.create({
 		data: {
 			title: 'Personal cohort study from a previous laboratory',

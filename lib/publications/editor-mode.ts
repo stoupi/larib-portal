@@ -42,6 +42,22 @@ export function canRequestAuthorList({
   return isFirstAuthor && basePath === PUBLICATIONS_BASE
 }
 
+// Reporting an error belongs to a co-author who cannot fix the paper themselves.
+// The first author edits it, and the admin area corrects it directly, so neither
+// has anything to report.
+export function canReportIssue({
+  signsThePublication,
+  isFirstAuthor,
+  basePath,
+}: {
+  signsThePublication: boolean
+  isFirstAuthor: boolean
+  basePath: PublicationsBasePath
+}): boolean {
+  if (basePath !== PUBLICATIONS_BASE) return false
+  return signsThePublication && !isFirstAuthor
+}
+
 // Importing a paper someone else signed belongs to the admin module. In their own
 // space, even an admin only brings in publications they authored.
 export function canImportAnyPublication({

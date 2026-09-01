@@ -31,7 +31,7 @@ import { AdminAuthorRequests } from '../admin-author-requests'
 import { NewPublicationButton } from '../new-publication-button'
 import { PubmedImportDialog } from '../pubmed-import/pubmed-import-dialog'
 import { PUBLICATIONS_ADMIN_BASE } from '@/lib/publications/base-path'
-import type { PendingAuthorRequest } from '@/lib/services/publications/author-requests'
+import type { PendingAuthorRequest } from '@/lib/services/publications/publication-requests'
 import type { StudyOption } from '@/lib/services/publications/studies'
 
 

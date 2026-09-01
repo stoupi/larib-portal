@@ -4,6 +4,7 @@ import {
   canComposeAuthorList,
   canEditArticle,
   canImportAnyPublication,
+  canReportIssue,
   canRequestAuthorList,
 } from './editor-mode'
 import { PUBLICATIONS_BASE, PUBLICATIONS_ADMIN_BASE } from './base-path'
@@ -71,6 +72,24 @@ describe('canRequestAuthorList', () => {
   it('hides the request inside the admin area, where the list is composed directly', () => {
     expect(canRequestAuthorList({ isFirstAuthor: true, basePath: PUBLICATIONS_ADMIN_BASE })).toBe(false)
     expect(canRequestAuthorList({ isFirstAuthor: false, basePath: PUBLICATIONS_ADMIN_BASE })).toBe(false)
+  })
+})
+
+describe('canReportIssue', () => {
+  it('lets a co-author who does not sign first report an error from their space', () => {
+    expect(canReportIssue({ signsThePublication: true, isFirstAuthor: false, basePath: PUBLICATIONS_BASE })).toBe(true)
+  })
+
+  it('keeps the first author out: they correct the paper themselves', () => {
+    expect(canReportIssue({ signsThePublication: true, isFirstAuthor: true, basePath: PUBLICATIONS_BASE })).toBe(false)
+  })
+
+  it('keeps a reader who does not sign the publication out', () => {
+    expect(canReportIssue({ signsThePublication: false, isFirstAuthor: false, basePath: PUBLICATIONS_BASE })).toBe(false)
+  })
+
+  it('hides the report inside the admin area, which fixes the paper directly', () => {
+    expect(canReportIssue({ signsThePublication: true, isFirstAuthor: false, basePath: PUBLICATIONS_ADMIN_BASE })).toBe(false)
   })
 })
 

@@ -223,9 +223,9 @@ export const AUDITED_MODELS: Readonly<Record<string, AuditedModelConfig>> = {
     ignoredFields: [...BOOKKEEPING_FIELDS],
     referenceFields: { studyId: STUDY_REFERENCE, authorId: AUTHOR_REFERENCE, centreId: CENTRE_REFERENCE },
   },
-  AuthorListRequest: {
-    entity: 'AUTHOR_LIST_REQUEST',
-    auditedFields: ['articleId', 'requestedById', 'note', 'status', 'resolvedAt', 'resolvedById'],
+  PublicationRequest: {
+    entity: 'PUBLICATION_REQUEST',
+    auditedFields: ['kind', 'articleId', 'requestedById', 'note', 'message', 'status', 'resolvedAt', 'resolvedById'],
     labelFields: [],
     buildLabel: () => null,
     articleIdField: 'articleId',

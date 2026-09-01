@@ -73,7 +73,7 @@ async function main() {
   const authorshipAffiliations = await source.authorshipAffiliation.findMany()
   const submissions = await source.submission.findMany()
   const journalTargets = await source.journalTarget.findMany()
-  const authorListRequests = await source.authorListRequest.findMany()
+  const publicationRequests = await source.publicationRequest.findMany()
 
   const toTransfer: TransferCounts = {
     Centre: centres.length,
@@ -91,7 +91,7 @@ async function main() {
     AuthorshipAffiliation: authorshipAffiliations.length,
     Submission: submissions.length,
     JournalTarget: journalTargets.length,
-    AuthorListRequest: authorListRequests.length,
+    PublicationRequest: publicationRequests.length,
   }
 
   const droppedAuthorUserLinks = authors.filter(
@@ -164,13 +164,13 @@ async function main() {
   inserted.JournalTarget = await insertInBatches(journalTargets, (batch) =>
     target.journalTarget.createMany({ data: batch, skipDuplicates: true }),
   )
-  inserted.AuthorListRequest = await insertInBatches(
-    authorListRequests.map((request) => ({
+  inserted.PublicationRequest = await insertInBatches(
+    publicationRequests.map((request) => ({
       ...request,
       requestedById: ownerOr(request.requestedById),
       resolvedById: request.resolvedById ? ownerOr(request.resolvedById) : null,
     })),
-    (batch) => target.authorListRequest.createMany({ data: batch, skipDuplicates: true }),
+    (batch) => target.publicationRequest.createMany({ data: batch, skipDuplicates: true }),
   )
 
   console.log('\nInserted:')

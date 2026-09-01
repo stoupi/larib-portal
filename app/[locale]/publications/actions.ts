@@ -12,10 +12,11 @@ import { searchPubmedWithLibraryMatches, buildRecordPreview, loadRecordWithPrevi
 import { viewerIsAmongAuthors, defaultPubmedQueryForViewer } from '@/lib/publications/pubmed-import'
 import {
   createAuthorListRequest,
+  reportPublicationIssue,
   resolveAuthorRequest,
   resolveAllAuthorRequests,
   PUBLICATIONS_REQUESTS_TAG,
-} from '@/lib/services/publications/author-requests'
+} from '@/lib/services/publications/publication-requests'
 import { searchByAuthor, fetchByPmids } from '@/lib/services/publications/pubmed'
 import {
   importRecords,
@@ -807,6 +808,15 @@ export const requestAuthorListAction = authenticatedAction
       if (error instanceof Error && error.message === 'REQUEST_EXISTS') throw new Error('REQUEST_EXISTS')
       throw error
     }
+  })
+
+export const reportPublicationIssueAction = authenticatedAction
+  .inputSchema(z.object({ articleId: z.string().min(1), message: z.string().trim().min(1) }))
+  .action(async ({ parsedInput, ctx }) => {
+    if (!(await userIsAuthorOfArticle(ctx.userId, parsedInput.articleId))) throw new Error('Forbidden')
+    const result = await reportPublicationIssue(parsedInput.articleId, ctx.userId, parsedInput.message)
+    revalidateTag(PUBLICATIONS_REQUESTS_TAG)
+    return result
   })
 
 export const resolveAuthorRequestAction = appAdminAction('PUBLICATIONS')

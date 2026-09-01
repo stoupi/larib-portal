@@ -365,6 +365,34 @@ export async function sendAuthorListRequestEmail(
   return { ok: res.ok }
 }
 
+export type PublicationIssueEmailParams = {
+  to: string[]
+  cc: string[]
+  articleTitle: string
+  reporterName: string
+  message: string
+}
+
+export async function sendPublicationIssueEmail(
+  params: PublicationIssueEmailParams,
+): Promise<{ ok: boolean }> {
+  if (params.to.length === 0) return { ok: true }
+  const apiKey = process.env.RESEND_API_KEY
+  if (!apiKey) return { ok: false }
+  const from = process.env.RESEND_FROM || 'noreply@your-domain.com'
+  const title = params.articleTitle || 'Untitled publication'
+  const subject = `Error reported — ${title}`
+  const body =
+    `${params.reporterName} reported an error on "${title}".\n\n${params.message}\n\n` +
+    'Ceci est un email automatique envoyé depuis Larib Portal.'
+  const res = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ from, to: params.to, cc: params.cc.length > 0 ? params.cc : undefined, subject, text: body }),
+  })
+  return { ok: res.ok }
+}
+
 export type LeaveRecapEmailParams = {
   to: string[]
   locale: 'en' | 'fr'

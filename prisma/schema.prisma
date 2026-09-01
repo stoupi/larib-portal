@@ -57,8 +57,8 @@ model User {
   authoredBy             Author[]
   studiesCreated         Study[]             @relation("StudyCreatedBy")
   articlesCreated        Article[]           @relation("ArticleCreatedBy")
-  authorRequestsMade     AuthorListRequest[] @relation("AuthorListRequestedBy")
-  authorRequestsResolved AuthorListRequest[] @relation("AuthorListResolvedBy")
+  authorRequestsMade     PublicationRequest[] @relation("PublicationRequestedBy")
+  authorRequestsResolved PublicationRequest[] @relation("PublicationRequestResolvedBy")
 
   @@map("User")
 }
@@ -121,7 +121,7 @@ enum SubmissionStatus {
   SUBMITTED
 }
 
-enum AuthorListRequestStatus {
+enum PublicationRequestStatus {
   PENDING
   RESOLVED
   DISMISSED
@@ -609,26 +609,33 @@ model Article {
   authorships    Authorship[]
   submissions    Submission[]
   journalTargets JournalTarget[]
-  authorRequests AuthorListRequest[]
+  authorRequests PublicationRequest[]
 
   @@map("Article")
 }
 
-model AuthorListRequest {
-  id            String                  @id @default(cuid())
+enum PublicationRequestKind {
+  AUTHOR_LIST
+  ERROR_REPORT
+}
+
+model PublicationRequest {
+  id            String                   @id @default(cuid())
+  kind          PublicationRequestKind   @default(AUTHOR_LIST)
   articleId     String
-  article       Article                 @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  article       Article                  @relation(fields: [articleId], references: [id], onDelete: Cascade)
   requestedById String
-  requestedBy   User                    @relation("AuthorListRequestedBy", fields: [requestedById], references: [id], onDelete: Cascade)
+  requestedBy   User                     @relation("PublicationRequestedBy", fields: [requestedById], references: [id], onDelete: Cascade)
   note          String?
-  status        AuthorListRequestStatus @default(PENDING)
-  createdAt     DateTime                @default(now())
+  message       String?
+  status        PublicationRequestStatus @default(PENDING)
+  createdAt     DateTime                 @default(now())
   resolvedAt    DateTime?
   resolvedById  String?
-  resolvedBy    User?                   @relation("AuthorListResolvedBy", fields: [resolvedById], references: [id], onDelete: SetNull)
+  resolvedBy    User?                    @relation("PublicationRequestResolvedBy", fields: [resolvedById], references: [id], onDelete: SetNull)
 
   @@index([articleId, status])
-  @@map("AuthorListRequest")
+  @@map("PublicationRequest")
 }
 
 model Authorship {
@@ -718,7 +725,7 @@ enum AuditEntity {
   JOURNAL
   STUDY
   STUDY_INVESTIGATOR
-  AUTHOR_LIST_REQUEST
+  PUBLICATION_REQUEST
 }
 
 model AuditEvent {

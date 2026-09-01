@@ -8,11 +8,12 @@ import { UserPlus, Mail, Send, User } from 'lucide-react'
 import { Textarea } from '@/components/ui/textarea'
 import type { PublicationEditData } from '@/lib/services/publications/publication-editor'
 import { toExportCandidates } from '@/lib/publications/author-list-export'
-import { canRequestAuthorList } from '@/lib/publications/editor-mode'
+import { canReportIssue, canRequestAuthorList } from '@/lib/publications/editor-mode'
 import type { PublicationsBasePath } from '@/lib/publications/base-path'
 import { requestAuthorListAction } from '../../actions'
 import type { EditorForm, EditorViewer } from '../article/article-page'
 import { AuthorListExportDialog } from '../authors/author-list-export-dialog'
+import { ReportIssueDialog } from '../article/report-issue-dialog'
 import { CollapsibleCard } from './collapsible-card'
 
 function degreeBadges(degrees: string | null): string[] {
@@ -40,6 +41,12 @@ export function EditorAuthors({
   const router = useRouter()
   const alreadyRequested = article.authorRequests.length > 0
   const showRequestButton = canRequestAuthorList({ isFirstAuthor: viewer.isFirstAuthor, basePath })
+  const signsThePublication = article.authorships.some((authorship) => authorship.author.userId === viewer.userId)
+  const showReportButton = canReportIssue({
+    signsThePublication,
+    isFirstAuthor: viewer.isFirstAuthor,
+    basePath,
+  })
 
   const request = useAction(requestAuthorListAction, {
     onSuccess() {
@@ -157,6 +164,8 @@ export function EditorAuthors({
           <p className="mt-1.5 text-xs leading-relaxed text-text-muted">{t('editor.requestAuthorListHint')}</p>
         </>
       )}
+
+      {showReportButton && <ReportIssueDialog articleId={article.id} />}
     </CollapsibleCard>
   )
 }

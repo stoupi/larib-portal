@@ -6,7 +6,7 @@ import { useAction } from 'next-safe-action/hooks'
 import { toast } from 'sonner'
 import { Check, CheckCheck, X, Inbox } from 'lucide-react'
 import { Link } from '@/app/i18n/navigation'
-import type { PendingAuthorRequest } from '@/lib/services/publications/author-requests'
+import type { PendingAuthorRequest } from '@/lib/services/publications/publication-requests'
 import { publicationsPaths, PUBLICATIONS_ADMIN_BASE } from '@/lib/publications/base-path'
 import { resolveAuthorRequestAction, resolveAllAuthorRequestsAction } from '../actions'
 
@@ -80,10 +80,18 @@ export function AdminAuthorRequests({ requests }: { requests: PendingAuthorReque
               >
                 {request.articleTitle || t('myPub.untitled')}
               </Link>
-              <p className="mt-0.5 text-xs text-white/80">
-                {t('adminRequests.requestedBy', { name: request.requesterName })} · {fmt.format(request.createdAt)}
+              <p className="mt-0.5 flex flex-wrap items-center gap-2 text-xs text-white/80">
+                <span className="rounded-full bg-white/25 px-2 py-0.5 font-extrabold uppercase tracking-wider text-white">
+                  {request.kind === 'ERROR_REPORT'
+                    ? t('editor.requestKindErrorReport')
+                    : t('editor.requestKindAuthorList')}
+                </span>
+                <span>
+                  {t('adminRequests.requestedBy', { name: request.requesterName })} · {fmt.format(request.createdAt)}
+                </span>
               </p>
               {request.note && <p className="mt-1.5 whitespace-pre-line text-sm text-white/90">{request.note}</p>}
+              {request.message && <p className="mt-1.5 whitespace-pre-line text-sm text-white/90">{request.message}</p>}
             </div>
             <div className="flex items-center gap-2">
               <button
