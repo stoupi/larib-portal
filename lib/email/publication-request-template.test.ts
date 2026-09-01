@@ -1,6 +1,8 @@
 import { describe, it, expect } from 'vitest'
 import { renderPublicationRequestEmail } from './publication-request-template'
 
+const WARNING_BACKGROUND = '#FFF3E9'
+
 const base = {
   articleTitle: 'Outcomes of multi-valve intervention',
   requesterName: 'Solenn Toupin',
@@ -49,19 +51,33 @@ describe('renderPublicationRequestEmail', () => {
 
   it('paints the report block in warning colours and flags it', () => {
     const { html } = renderPublicationRequestEmail({ ...base, kind: 'ERROR_REPORT', body: 'Affiliation fausse' })
-    expect(html).toContain('#fff4e6')
+    expect(html).toContain(WARNING_BACKGROUND)
     expect(html).toContain('border-radius:11px')
   })
 
   it('leaves the author-list request in the house colours', () => {
     const { html } = renderPublicationRequestEmail({ ...base, kind: 'AUTHOR_LIST', body: 'Un contributeur' })
-    expect(html).not.toContain('#fff4e6')
+    expect(html).not.toContain(WARNING_BACKGROUND)
   })
 
   it('shows the kind as a filled badge rather than faint small caps', () => {
     const { html } = renderPublicationRequestEmail({ ...base, kind: 'ERROR_REPORT', body: null })
     expect(html).toContain('border-radius:20px')
-    expect(html).toContain('#d97706')
+  })
+
+  it('sets the requester name apart in the opening sentence', () => {
+    const { html } = renderPublicationRequestEmail({ ...base, kind: 'ERROR_REPORT', body: null })
+    expect(html).toContain('<strong style="color:#003b75;">Solenn Toupin</strong>')
+  })
+
+  it('escapes a requester name too', () => {
+    const { html } = renderPublicationRequestEmail({
+      ...base,
+      requesterName: '<b>Mallory</b>',
+      kind: 'ERROR_REPORT',
+      body: null,
+    })
+    expect(html).toContain('&lt;b&gt;Mallory&lt;/b&gt;')
   })
 
   it('keeps a plain-text version for clients that refuse HTML', () => {

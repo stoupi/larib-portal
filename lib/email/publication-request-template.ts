@@ -12,7 +12,7 @@ export type PublicationRequestEmailParams = {
 
 const UNTITLED = 'Publication sans titre'
 
-const WARNING = { background: '#fff4e6', border: '#e5a54b', badge: '#d97706', foreground: '#7c5e20' }
+const WARNING = { background: '#FFF3E9', border: '#FDBA74', badge: '#F97316', label: '#EA580C' }
 
 const WORDING: Record<
   PublicationRequestKindValue,
@@ -74,7 +74,7 @@ export function renderPublicationRequestEmail({
   const badgeColor = isReport ? WARNING.badge : COLORS.accent
   const blockBackground = isReport ? WARNING.background : COLORS.secondary
   const blockBorder = isReport ? WARNING.border : COLORS.accent
-  const labelColor = isReport ? WARNING.foreground : COLORS.primary
+  const labelColor = isReport ? WARNING.label : COLORS.primary
   // A round badge rather than the ⚠ character: every mail client draws a table cell,
   // not every one has the glyph.
   const warningBadge = isReport
@@ -96,7 +96,7 @@ export function renderPublicationRequestEmail({
                 ${warningBadge}
                 <td>
                   <p style="margin:0 0 10px 0;font-family:${FONT_SANS};font-size:12px;font-weight:700;letter-spacing:0.6px;text-transform:uppercase;color:${labelColor};">${escapeHtml(wording.bodyLabel)}</p>
-                  ${paragraphs(body, isReport ? WARNING.foreground : COLORS.foreground)}
+                  ${paragraphs(body, COLORS.foreground)}
                 </td>
               </tr>
             </table>
@@ -118,7 +118,7 @@ export function renderPublicationRequestEmail({
       ${escapeHtml(title)}
     </p>
     <p style="margin:0 0 24px 0;font-family:${FONT_SANS};font-size:15px;line-height:24px;color:${COLORS.foreground};">
-      ${escapeHtml(intro)}
+      ${wording.intro(`<strong style="color:${COLORS.primary};">${escapeHtml(requesterName)}</strong>`)}
     </p>
     ${bodyBlock}
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 8px 0;">
