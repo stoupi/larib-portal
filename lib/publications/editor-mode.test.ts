@@ -57,39 +57,61 @@ describe('canImportAnyPublication', () => {
 })
 
 describe('canRequestAuthorList', () => {
-  it('lets the first author request the list from their own space', () => {
-    expect(canRequestAuthorList({ isFirstAuthor: true, basePath: PUBLICATIONS_BASE })).toBe(true)
+  it('lets the first author request the list while the paper is still in preparation', () => {
+    expect(
+      canRequestAuthorList({ isFirstAuthor: true, basePath: PUBLICATIONS_BASE, status: 'IN_PREPARATION' }),
+    ).toBe(true)
   })
 
-  it('still lets an admin request it from their own space, where they cannot compose it', () => {
-    expect(canRequestAuthorList({ isFirstAuthor: true, basePath: PUBLICATIONS_BASE })).toBe(true)
+  it('closes the request once the paper has been submitted: the list left with it', () => {
+    for (const status of ['UNDER_REVIEW', 'REVISION', 'TO_RESUBMIT', 'ACCEPTED', 'PUBLISHED'] as const) {
+      expect(canRequestAuthorList({ isFirstAuthor: true, basePath: PUBLICATIONS_BASE, status })).toBe(false)
+    }
   })
 
   it('hides the request from a co-author who does not sign first', () => {
-    expect(canRequestAuthorList({ isFirstAuthor: false, basePath: PUBLICATIONS_BASE })).toBe(false)
+    expect(
+      canRequestAuthorList({ isFirstAuthor: false, basePath: PUBLICATIONS_BASE, status: 'IN_PREPARATION' }),
+    ).toBe(false)
   })
 
   it('hides the request inside the admin area, where the list is composed directly', () => {
-    expect(canRequestAuthorList({ isFirstAuthor: true, basePath: PUBLICATIONS_ADMIN_BASE })).toBe(false)
-    expect(canRequestAuthorList({ isFirstAuthor: false, basePath: PUBLICATIONS_ADMIN_BASE })).toBe(false)
+    expect(
+      canRequestAuthorList({ isFirstAuthor: true, basePath: PUBLICATIONS_ADMIN_BASE, status: 'IN_PREPARATION' }),
+    ).toBe(false)
   })
 })
 
 describe('canReportIssue', () => {
-  it('lets a co-author who does not sign first report an error from their space', () => {
-    expect(canReportIssue({ signsThePublication: true, isFirstAuthor: false, basePath: PUBLICATIONS_BASE })).toBe(true)
+  const inPreparation = { basePath: PUBLICATIONS_BASE, status: 'IN_PREPARATION' } as const
+  const submitted = { basePath: PUBLICATIONS_BASE, status: 'UNDER_REVIEW' } as const
+
+  it('lets a co-author who does not sign first report an error at any stage', () => {
+    expect(canReportIssue({ ...inPreparation, signsThePublication: true, isFirstAuthor: false })).toBe(true)
+    expect(canReportIssue({ ...submitted, signsThePublication: true, isFirstAuthor: false })).toBe(true)
   })
 
-  it('keeps the first author out: they correct the paper themselves', () => {
-    expect(canReportIssue({ signsThePublication: true, isFirstAuthor: true, basePath: PUBLICATIONS_BASE })).toBe(false)
+  it('keeps the first author out while they can still ask for the list', () => {
+    expect(canReportIssue({ ...inPreparation, signsThePublication: true, isFirstAuthor: true })).toBe(false)
+  })
+
+  it('takes over for the first author once the paper is submitted', () => {
+    expect(canReportIssue({ ...submitted, signsThePublication: true, isFirstAuthor: true })).toBe(true)
   })
 
   it('keeps a reader who does not sign the publication out', () => {
-    expect(canReportIssue({ signsThePublication: false, isFirstAuthor: false, basePath: PUBLICATIONS_BASE })).toBe(false)
+    expect(canReportIssue({ ...submitted, signsThePublication: false, isFirstAuthor: false })).toBe(false)
   })
 
   it('hides the report inside the admin area, which fixes the paper directly', () => {
-    expect(canReportIssue({ signsThePublication: true, isFirstAuthor: false, basePath: PUBLICATIONS_ADMIN_BASE })).toBe(false)
+    expect(
+      canReportIssue({
+        signsThePublication: true,
+        isFirstAuthor: false,
+        basePath: PUBLICATIONS_ADMIN_BASE,
+        status: 'UNDER_REVIEW',
+      }),
+    ).toBe(false)
   })
 })
 

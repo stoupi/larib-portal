@@ -1960,7 +1960,7 @@
         "JOURNAL": "Journal",
         "STUDY": "Study",
         "STUDY_INVESTIGATOR": "Investigator",
-        "AUTHOR_LIST_REQUEST": "Author list request"
+        "PUBLICATION_REQUEST": "Publication request"
       },
       "fields": {
         "status": "Status",

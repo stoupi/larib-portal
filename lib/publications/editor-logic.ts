@@ -22,17 +22,21 @@ export function pickAuthorRequestRecipients(candidates: RecipientCandidate[]): s
 export type IssueRecipients = { to: string[]; cc: string[]; firstAuthorReached: boolean }
 
 // An error report goes to whoever can act on it: the first author, with the admins
-// in copy. Until the author bank holds every address, the first author often has
-// none — the admins then carry it alone, and the sender is told so.
+// in copy. Two cases send it to the admins alone — the first author has no address
+// on file, or they are the one reporting, and nobody writes to themselves.
 export function pickIssueRecipients({
   firstAuthorEmail,
+  reporterEmail,
   adminEmails,
 }: {
   firstAuthorEmail: string | null
+  reporterEmail: string | null
   adminEmails: string[]
 }): IssueRecipients {
   const admins = adminEmails.filter((email, index) => email && adminEmails.indexOf(email) === index)
-  if (!firstAuthorEmail) return { to: admins, cc: [], firstAuthorReached: false }
+  if (!firstAuthorEmail || firstAuthorEmail === reporterEmail) {
+    return { to: admins, cc: [], firstAuthorReached: false }
+  }
   return {
     to: [firstAuthorEmail],
     cc: admins.filter((email) => email !== firstAuthorEmail),

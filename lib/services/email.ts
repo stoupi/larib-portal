@@ -1,6 +1,7 @@
 import { COLORS, FONT_SERIF, FONT_SANS, emailLayout } from '@/lib/email/layout'
 import { resolveAppBaseUrl } from '@/lib/app-url'
 import { renderWelcomeEmail, type WelcomeEmailParams } from '@/lib/email/welcome-template'
+import { renderPublicationRequestEmail } from '@/lib/email/publication-request-template'
 import { eachDayOfInterval, endOfDay, endOfWeek, format, isWithinInterval, startOfDay, startOfWeek } from 'date-fns'
 import { fr, enUS } from 'date-fns/locale'
 import type { RecapPeriod, RecapRow, RecapStatus } from '@/lib/services/conges/recap'
@@ -343,6 +344,7 @@ export type AuthorListRequestEmailParams = {
   articleTitle: string
   requesterName: string
   note: string | null
+  articleUrl: string
 }
 
 export async function sendAuthorListRequestEmail(
@@ -351,16 +353,18 @@ export async function sendAuthorListRequestEmail(
   if (params.recipients.length === 0) return { ok: true }
   const apiKey = process.env.RESEND_API_KEY
   if (!apiKey) return { ok: false }
-  const from = process.env.RESEND_FROM || 'noreply@your-domain.com'
-  const title = params.articleTitle || 'Untitled publication'
-  const subject = `Author list request — ${title}`
-  const body =
-    `${params.requesterName} requested the author list for "${title}".` +
-    (params.note ? `\n\nContributors reported:\n${params.note}` : '')
+  const fromEmail = process.env.RESEND_FROM || 'noreply@your-domain.com'
+  const { subject, text, html } = renderPublicationRequestEmail({
+    kind: 'AUTHOR_LIST',
+    articleTitle: params.articleTitle,
+    requesterName: params.requesterName,
+    body: params.note,
+    articleUrl: params.articleUrl,
+  })
   const res = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ from, to: params.recipients, subject, text: body }),
+    body: JSON.stringify({ from: `Larib Portal <${fromEmail}>`, to: params.recipients, subject, text, html }),
   })
   return { ok: res.ok }
 }
@@ -371,6 +375,7 @@ export type PublicationIssueEmailParams = {
   articleTitle: string
   reporterName: string
   message: string
+  articleUrl: string
 }
 
 export async function sendPublicationIssueEmail(
@@ -379,16 +384,25 @@ export async function sendPublicationIssueEmail(
   if (params.to.length === 0) return { ok: true }
   const apiKey = process.env.RESEND_API_KEY
   if (!apiKey) return { ok: false }
-  const from = process.env.RESEND_FROM || 'noreply@your-domain.com'
-  const title = params.articleTitle || 'Untitled publication'
-  const subject = `Error reported — ${title}`
-  const body =
-    `${params.reporterName} reported an error on "${title}".\n\n${params.message}\n\n` +
-    'Ceci est un email automatique envoyé depuis Larib Portal.'
+  const fromEmail = process.env.RESEND_FROM || 'noreply@your-domain.com'
+  const { subject, text, html } = renderPublicationRequestEmail({
+    kind: 'ERROR_REPORT',
+    articleTitle: params.articleTitle,
+    requesterName: params.reporterName,
+    body: params.message,
+    articleUrl: params.articleUrl,
+  })
   const res = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ from, to: params.to, cc: params.cc.length > 0 ? params.cc : undefined, subject, text: body }),
+    body: JSON.stringify({
+      from: `Larib Portal <${fromEmail}>`,
+      to: params.to,
+      cc: params.cc.length > 0 ? params.cc : undefined,
+      subject,
+      text,
+      html,
+    }),
   })
   return { ok: res.ok }
 }

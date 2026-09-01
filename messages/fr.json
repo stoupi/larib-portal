@@ -1958,7 +1958,7 @@
         "JOURNAL": "Revue",
         "STUDY": "Étude",
         "STUDY_INVESTIGATOR": "Investigateur",
-        "AUTHOR_LIST_REQUEST": "Demande de liste d'auteurs"
+        "PUBLICATION_REQUEST": "Demande sur une publication"
       },
       "fields": {
         "status": "Statut",

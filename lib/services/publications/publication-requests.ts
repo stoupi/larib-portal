@@ -1,8 +1,15 @@
 import { prisma } from '@/lib/prisma'
+import { resolveAppBaseUrl } from '@/lib/app-url'
+import { publicationsPaths, PUBLICATIONS_ADMIN_BASE } from '@/lib/publications/base-path'
 import { pickAuthorRequestRecipients, pickIssueRecipients } from '@/lib/publications/editor-logic'
 import { sendAuthorListRequestEmail, sendPublicationIssueEmail } from '@/lib/services/email'
 
 export const PUBLICATIONS_REQUESTS_TAG = 'publications:requests'
+
+// A link read from an inbox must reach the deployed domain, never a per-build URL.
+function adminArticleUrl(articleId: string): string {
+  return `${resolveAppBaseUrl()}/fr${publicationsPaths(PUBLICATIONS_ADMIN_BASE).article(articleId)}`
+}
 
 export async function createAuthorListRequest(
   articleId: string,
@@ -29,7 +36,13 @@ export async function createAuthorListRequest(
   const requesterName =
     [requester.firstName, requester.lastName].filter(Boolean).join(' ') || requester.email
   try {
-    await sendAuthorListRequestEmail({ recipients, articleTitle: request.article.title, requesterName, note })
+    await sendAuthorListRequestEmail({
+      recipients,
+      articleTitle: request.article.title,
+      requesterName,
+      note,
+      articleUrl: adminArticleUrl(articleId),
+    })
   } catch (error) {
     console.error('sendAuthorListRequestEmail failed', error)
   }
@@ -130,6 +143,7 @@ export async function reportPublicationIssue(
 
   const recipients = pickIssueRecipients({
     firstAuthorEmail,
+    reporterEmail: request.requestedBy.email,
     adminEmails: await publicationsAdminEmails(),
   })
   const reporter = request.requestedBy
@@ -141,6 +155,7 @@ export async function reportPublicationIssue(
       articleTitle: request.article.title,
       reporterName,
       message,
+      articleUrl: adminArticleUrl(articleId),
     })
   } catch (error) {
     console.error('sendPublicationIssueEmail failed', error)

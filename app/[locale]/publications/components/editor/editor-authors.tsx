@@ -40,12 +40,17 @@ export function EditorAuthors({
   const t = useTranslations('publications')
   const router = useRouter()
   const alreadyRequested = article.authorRequests.length > 0
-  const showRequestButton = canRequestAuthorList({ isFirstAuthor: viewer.isFirstAuthor, basePath })
+  const showRequestButton = canRequestAuthorList({
+    isFirstAuthor: viewer.isFirstAuthor,
+    basePath,
+    status: article.status,
+  })
   const signsThePublication = article.authorships.some((authorship) => authorship.author.userId === viewer.userId)
   const showReportButton = canReportIssue({
     signsThePublication,
     isFirstAuthor: viewer.isFirstAuthor,
     basePath,
+    status: article.status,
   })
 
   const request = useAction(requestAuthorListAction, {

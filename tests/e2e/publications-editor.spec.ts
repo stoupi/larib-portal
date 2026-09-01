@@ -18,12 +18,23 @@ test('user creates + edits a publication and requests the author list; admin res
   await page.getByRole('button', { name: /new publication/i }).click()
   await page.waitForURL(/\/en\/publications\/articles\/[^/]+\?mode=edit/, { timeout: 60000 })
 
-  // Edit the header (title + status) and save
+  // Edit the header and save, leaving the paper in preparation
   const title = `TAVR low-risk 5-year outcomes ${Date.now()}`
   await page.getByPlaceholder('Publication title').fill(title)
+  await page.getByRole('button', { name: 'Save changes' }).click()
+  await expect(page.getByText('Changes saved')).toBeVisible({ timeout: 15000 })
+
+  // Request the author list to the admin, which only a paper in preparation allows
+  await page.getByPlaceholder(/Marie Lambert/).fill('Dr. Test helped with imaging analysis')
+  await page.getByRole('button', { name: /request author list to admin/i }).click()
+  await expect(page.getByText('Request sent to the admin')).toBeVisible({ timeout: 15000 })
+
+  // Submitting closes that door: the list left with the paper, an error report replaces it
   await page.getByRole('combobox').nth(1).selectOption('UNDER_REVIEW')
   await page.getByRole('button', { name: 'Save changes' }).click()
   await expect(page.getByText('Changes saved')).toBeVisible({ timeout: 15000 })
+  await expect(page.getByRole('button', { name: /request author list to admin/i })).toHaveCount(0, { timeout: 15000 })
+  await expect(page.getByRole('button', { name: 'Report an error' })).toBeVisible()
 
   // Add a submission
   const journalName = `E2E Journal ${Date.now()}`
@@ -32,11 +43,6 @@ test('user creates + edits a publication and requests the author list; admin res
   await page.locator('input[type="date"]').first().fill('2025-05-18')
   await page.getByRole('button', { name: 'Add', exact: true }).click()
   await expect(page.getByText(journalName).first()).toBeVisible({ timeout: 15000 })
-
-  // Request the author list to the admin
-  await page.getByPlaceholder(/Marie Lambert/).fill('Dr. Test helped with imaging analysis')
-  await page.getByRole('button', { name: /request author list to admin/i }).click()
-  await expect(page.getByText('Request sent to the admin')).toBeVisible({ timeout: 15000 })
 
   // A second publication asks for its author list too
   await page.goto('/en/publications', { timeout: 60000 })

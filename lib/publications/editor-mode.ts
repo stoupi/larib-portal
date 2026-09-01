@@ -1,4 +1,5 @@
 import { PUBLICATIONS_ADMIN_BASE, PUBLICATIONS_BASE, type PublicationsBasePath } from './base-path'
+import type { ArticleStatusValue } from './status-values'
 
 export type EditorMode = 'read' | 'edit'
 
@@ -29,33 +30,38 @@ export function canEditArticle({
   return isAdmin && basePath === PUBLICATIONS_ADMIN_BASE
 }
 
-// Requesting the author list belongs to the first author, from their own space.
-// The admin area composes the list directly, so the request has no place there —
-// including for an admin, who reads their own papers from the member branch.
+// Requesting the author list belongs to the first author, from their own space, and
+// only while the paper is still in preparation: once it is submitted the list has
+// left with it, and renegotiating it is a correction, not a request.
 export function canRequestAuthorList({
   isFirstAuthor,
   basePath,
+  status,
 }: {
   isFirstAuthor: boolean
   basePath: PublicationsBasePath
+  status: ArticleStatusValue
 }): boolean {
-  return isFirstAuthor && basePath === PUBLICATIONS_BASE
+  if (basePath !== PUBLICATIONS_BASE) return false
+  return isFirstAuthor && status === 'IN_PREPARATION'
 }
 
-// Reporting an error belongs to a co-author who cannot fix the paper themselves.
-// The first author edits it, and the admin area corrects it directly, so neither
-// has anything to report.
+// Reporting an error is the way out for everyone the author-list request leaves
+// behind: a co-author who never composes the list, and the first author once the
+// paper is submitted. The admin area corrects the paper directly, so it reports nothing.
 export function canReportIssue({
   signsThePublication,
   isFirstAuthor,
   basePath,
+  status,
 }: {
   signsThePublication: boolean
   isFirstAuthor: boolean
   basePath: PublicationsBasePath
+  status: ArticleStatusValue
 }): boolean {
-  if (basePath !== PUBLICATIONS_BASE) return false
-  return signsThePublication && !isFirstAuthor
+  if (basePath !== PUBLICATIONS_BASE || !signsThePublication) return false
+  return !canRequestAuthorList({ isFirstAuthor, basePath, status })
 }
 
 // Importing a paper someone else signed belongs to the admin module. In their own
