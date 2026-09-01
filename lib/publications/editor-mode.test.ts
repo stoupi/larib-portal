@@ -56,17 +56,21 @@ describe('canImportAnyPublication', () => {
 })
 
 describe('canRequestAuthorList', () => {
-  it('lets a signer of the publication request the author list', () => {
-    expect(canRequestAuthorList({ isAdmin: false, signsThePublication: true })).toBe(true)
+  it('lets the first author request the list from their own space', () => {
+    expect(canRequestAuthorList({ isFirstAuthor: true, basePath: PUBLICATIONS_BASE })).toBe(true)
   })
 
-  it('hides the request from a reader who does not sign the publication', () => {
-    expect(canRequestAuthorList({ isAdmin: false, signsThePublication: false })).toBe(false)
+  it('still lets an admin request it from their own space, where they cannot compose it', () => {
+    expect(canRequestAuthorList({ isFirstAuthor: true, basePath: PUBLICATIONS_BASE })).toBe(true)
   })
 
-  it('hides the request from an admin, who composes the list themselves instead', () => {
-    expect(canRequestAuthorList({ isAdmin: true, signsThePublication: true })).toBe(false)
-    expect(canRequestAuthorList({ isAdmin: true, signsThePublication: false })).toBe(false)
+  it('hides the request from a co-author who does not sign first', () => {
+    expect(canRequestAuthorList({ isFirstAuthor: false, basePath: PUBLICATIONS_BASE })).toBe(false)
+  })
+
+  it('hides the request inside the admin area, where the list is composed directly', () => {
+    expect(canRequestAuthorList({ isFirstAuthor: true, basePath: PUBLICATIONS_ADMIN_BASE })).toBe(false)
+    expect(canRequestAuthorList({ isFirstAuthor: false, basePath: PUBLICATIONS_ADMIN_BASE })).toBe(false)
   })
 })
 

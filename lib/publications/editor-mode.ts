@@ -1,4 +1,4 @@
-import { PUBLICATIONS_ADMIN_BASE, type PublicationsBasePath } from './base-path'
+import { PUBLICATIONS_ADMIN_BASE, PUBLICATIONS_BASE, type PublicationsBasePath } from './base-path'
 
 export type EditorMode = 'read' | 'edit'
 
@@ -29,17 +29,17 @@ export function canEditArticle({
   return isAdmin && basePath === PUBLICATIONS_ADMIN_BASE
 }
 
-// Requesting the author list belongs to a signer of the publication. An admin
-// composes the list themselves from the admin area, so they never need to ask for it.
+// Requesting the author list belongs to the first author, from their own space.
+// The admin area composes the list directly, so the request has no place there —
+// including for an admin, who reads their own papers from the member branch.
 export function canRequestAuthorList({
-  isAdmin,
-  signsThePublication,
+  isFirstAuthor,
+  basePath,
 }: {
-  isAdmin: boolean
-  signsThePublication: boolean
+  isFirstAuthor: boolean
+  basePath: PublicationsBasePath
 }): boolean {
-  if (isAdmin) return false
-  return signsThePublication
+  return isFirstAuthor && basePath === PUBLICATIONS_BASE
 }
 
 // Importing a paper someone else signed belongs to the admin module. In their own

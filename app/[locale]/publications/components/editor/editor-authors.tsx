@@ -9,6 +9,7 @@ import { Textarea } from '@/components/ui/textarea'
 import type { PublicationEditData } from '@/lib/services/publications/publication-editor'
 import { toExportCandidates } from '@/lib/publications/author-list-export'
 import { canRequestAuthorList } from '@/lib/publications/editor-mode'
+import type { PublicationsBasePath } from '@/lib/publications/base-path'
 import { requestAuthorListAction } from '../../actions'
 import type { EditorForm, EditorViewer } from '../article/article-page'
 import { AuthorListExportDialog } from '../authors/author-list-export-dialog'
@@ -27,17 +28,18 @@ export function EditorAuthors({
   viewer,
   form,
   editable,
+  basePath,
 }: {
   article: PublicationEditData
   viewer: EditorViewer
   form: EditorForm
   editable: boolean
+  basePath: PublicationsBasePath
 }) {
   const t = useTranslations('publications')
   const router = useRouter()
   const alreadyRequested = article.authorRequests.length > 0
-  const signsThePublication = article.authorships.some((authorship) => authorship.author.userId === viewer.userId)
-  const showRequestButton = canRequestAuthorList({ isAdmin: viewer.isAdmin, signsThePublication })
+  const showRequestButton = canRequestAuthorList({ isFirstAuthor: viewer.isFirstAuthor, basePath })
 
   const request = useAction(requestAuthorListAction, {
     onSuccess() {

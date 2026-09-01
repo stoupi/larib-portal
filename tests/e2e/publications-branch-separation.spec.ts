@@ -41,3 +41,28 @@ test('a member stays on the user branch and a shared admin link still resolves',
   await page.waitForURL(/\/en\/publications\/articles\/[^/?]+$/, { timeout: 30000 })
   await expect(page.getByRole('heading', { name: /Outcomes of multi-valve intervention/i })).toBeVisible()
 })
+
+test('an admin reading their own paper from their space can still ask for the author list', async ({ page }) => {
+  await login(page, 'publications-admin@larib-portal.test')
+
+  // In their own space an admin leads a publication like any member: no composer here,
+  // so the request button has to be the way out.
+  await page.goto('/en/publications', { timeout: 60000 })
+  await page.getByRole('button', { name: /new publication/i }).click()
+  await page.waitForURL(/\/en\/publications\/articles\/[^/]+\?mode=edit/, { timeout: 60000 })
+  const ownPaper = `Admin own paper ${Date.now()}`
+  await page.getByPlaceholder('Publication title').fill(ownPaper)
+  await page.getByRole('button', { name: 'Save changes' }).click()
+  await expect(page.getByText('Changes saved')).toBeVisible({ timeout: 15000 })
+
+  const requestButton = page.getByRole('button', { name: /request author list to admin/i })
+  await expect(requestButton).toBeVisible()
+  await requestButton.click()
+  await expect(page.getByText('Request sent to the admin')).toBeVisible({ timeout: 15000 })
+
+  // The same paper opened on the admin branch composes the list instead of asking for it
+  const articleId = page.url().split('/articles/')[1].split('?')[0]
+  await page.goto(`/en/publications/admin/articles/${articleId}?mode=edit`, { timeout: 60000 })
+  await expect(page.getByRole('button', { name: 'Add authors' })).toBeVisible()
+  await expect(page.getByRole('button', { name: /request author list to admin/i })).toHaveCount(0)
+})

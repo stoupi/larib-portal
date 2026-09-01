@@ -234,7 +234,7 @@ export function ArticlePage({
                 editable={visibility.cardsEditable}
               />
             ) : (
-              <EditorAuthors article={article} viewer={viewer} form={form} editable={visibility.cardsEditable} />
+              <EditorAuthors article={article} viewer={viewer} form={form} editable={visibility.cardsEditable} basePath={basePath} />
             )}
             <ArticleAbstractTimeline article={article} locale={locale} />
             <EditorReferences
