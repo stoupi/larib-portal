@@ -191,8 +191,7 @@ test('admin dashboard shows metrics, filters the library and opens its modules',
   await authorPicker.getByRole('button', { name: 'Add authors', exact: true }).click()
   await expect(authorPicker).toBeHidden({ timeout: 15000 })
   await page.getByRole('button', { name: 'Mark as corresponding' }).click()
-  await page.getByRole('button', { name: 'Save the author list' }).click()
-  await expect(page.getByText('Author list updated')).toBeVisible()
+  await expect(page.getByText('Author list updated')).toBeVisible({ timeout: 20000 })
   await expect(page.getByText(firstAuthorLabel).first()).toBeVisible()
 
   // …and deletes that draft from the library, after confirming

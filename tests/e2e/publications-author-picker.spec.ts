@@ -110,7 +110,6 @@ test('an admin searches the bank, adds authors, reorders and marks the correspon
   await expect(rows.nth(1)).toContainText('Corresponding')
   await expect(rows.nth(0)).not.toContainText('Corresponding')
 
-  await card.getByRole('button', { name: 'Save the author list' }).click()
   await expect(page.getByText('Author list updated')).toBeVisible({ timeout: 20000 })
 
   // Order and corresponding flag survive the round trip
@@ -152,4 +151,34 @@ test('an admin creates an author from the dialog and is warned about a close nam
   // The confirm control is named apart from the main submit, so neither is ambiguous
   await expect(dialog.getByRole('button', { name: 'Create anyway' })).toBeVisible()
   await expect(create).toHaveCount(1)
+})
+
+test('the author list survives an action that refreshes the page', async ({ page }) => {
+  await login(page, 'publications-admin@larib-portal.test')
+  await page.goto('/en/publications/admin', { timeout: 60000 })
+  await page.getByRole('button', { name: 'New publication' }).click()
+  await page.waitForURL(/\/publications\/admin\/articles\/[^/]+\?mode=edit/, { timeout: 60000 })
+
+  const title = `Submission before saving ${Date.now()}`
+  await page.getByPlaceholder('Publication title').fill(title)
+  await page.getByRole('button', { name: 'Save changes' }).click()
+  await expect(page.getByText('Changes saved')).toBeVisible({ timeout: 15000 })
+
+  await page.getByRole('button', { name: 'Add authors' }).click()
+  const picker = page.getByRole('dialog')
+  const chosen = (await picker.getByRole('listitem').first().getByRole('checkbox').getAttribute('aria-label')) ?? ''
+  expect(chosen).not.toBe('')
+  await picker.getByRole('listitem').first().getByRole('checkbox').click()
+  await picker.getByRole('button', { name: 'Add authors', exact: true }).click()
+  await expect(picker).toBeHidden({ timeout: 15000 })
+  await expect(page.getByText('Author list updated')).toBeVisible({ timeout: 20000 })
+
+  // Adding a submission refreshes the page; the list used to vanish with it
+  await page.getByRole('button', { name: 'Add a submission' }).click()
+  await page.getByPlaceholder('e.g. Circulation').fill(`Journal ${Date.now()}`)
+  await page.locator('input[type="date"]').first().fill('2026-05-18')
+  await page.getByRole('button', { name: 'Add', exact: true }).click()
+
+  await expect(page.getByText('No author yet — add the first one.')).toHaveCount(0, { timeout: 20000 })
+  await expect(authorsCard(page).getByText(chosen).first()).toBeVisible()
 })

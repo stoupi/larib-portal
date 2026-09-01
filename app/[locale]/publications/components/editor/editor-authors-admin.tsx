@@ -1,11 +1,11 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import { useAction } from 'next-safe-action/hooks'
 import { toast } from 'sonner'
-import { Plus, Save } from 'lucide-react'
+import { Plus } from 'lucide-react'
 import type { PickerAuthor } from '@/lib/publications/author-picker'
 import { markCorresponding } from '@/lib/publications/corresponding-author'
 import type { AuthorshipEntry } from '@/lib/publications/author-list'
@@ -38,15 +38,29 @@ export function EditorAuthorsAdmin({
   )
   const [pickerOpen, setPickerOpen] = useState(false)
 
+  // One write at a time: two lists in flight can land out of order and the older one
+  // then wins, silently undoing the last edit.
+  const queuedEntries = useRef<AuthorshipEntry[] | null>(null)
+
   const save = useAction(setArticleAuthorsAction, {
     onSuccess() {
+      if (flushQueued()) return
       toast.success(t('authorsSaved'))
       router.refresh()
     },
     onError() {
+      queuedEntries.current = null
       toast.error(t('actionError'))
     },
   })
+
+  function flushQueued(): boolean {
+    const queued = queuedEntries.current
+    if (!queued) return false
+    queuedEntries.current = null
+    save.execute({ articleId: article.id, authors: queued })
+    return true
+  }
 
   const authorsById = useMemo(
     () => new Map(pickerAuthors.map((author) => [author.id, author])),
@@ -78,21 +92,32 @@ export function EditorAuthorsAdmin({
     ]
   })
 
+  // Persisted on every change: a list left pending in the browser was lost to the
+  // next refresh, and nothing on screen said it had never been saved.
+  function persist(next: AuthorshipEntry[]) {
+    setEntries(next)
+    if (save.isExecuting) {
+      queuedEntries.current = next
+      return
+    }
+    save.execute({ articleId: article.id, authors: next })
+  }
+
   function addAuthors(authorIds: string[]) {
-    setEntries((current) => [
-      ...current,
+    persist([
+      ...entries,
       ...authorIds
-        .filter((authorId) => !current.some((entry) => entry.authorId === authorId))
+        .filter((authorId) => !entries.some((entry) => entry.authorId === authorId))
         .map((authorId) => ({ authorId, isCorresponding: false })),
     ])
   }
 
   function toggleCorresponding(authorId: string) {
-    setEntries((current) => markCorresponding(current, authorId))
+    persist(markCorresponding(entries, authorId))
   }
 
   function removeAuthor(authorId: string) {
-    setEntries((current) => current.filter((entry) => entry.authorId !== authorId))
+    persist(entries.filter((entry) => entry.authorId !== authorId))
   }
 
   return (
@@ -125,7 +150,7 @@ export function EditorAuthorsAdmin({
           <AuthorOrderList
             entries={entries}
             authorsById={authorsById}
-            onReorder={setEntries}
+            onReorder={persist}
             onToggleCorresponding={toggleCorresponding}
             onRemove={removeAuthor}
             editable={editable}
@@ -151,15 +176,6 @@ export function EditorAuthorsAdmin({
             alreadyAddedIds={entries.map((entry) => entry.authorId)}
             onConfirm={addAuthors}
           />
-          <button
-            type="button"
-            disabled={save.isExecuting}
-            onClick={() => save.execute({ articleId: article.id, authors: entries })}
-            className="mt-4 inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-b from-coral-500 to-coral-600 text-sm font-bold text-white shadow-[0_8px_18px_-6px_rgba(214,31,85,0.55)] transition hover:brightness-105 disabled:opacity-60"
-          >
-            <Save className="h-4 w-4" strokeWidth={2.2} />
-            {t('saveAuthors')}
-          </button>
         </>
       )}
     </CollapsibleCard>

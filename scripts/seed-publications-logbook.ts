@@ -115,6 +115,7 @@ async function main(): Promise<void> {
       source: 'SCRIPT',
       summary: SUMMARY,
       events: entries.map((entry) => entry.event),
+      captures: [],
     }
     await writeAuditOperation(prismaWithoutAudit, operation)
   }

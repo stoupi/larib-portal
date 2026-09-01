@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { currentAuditOperation, pushAuditEvent, runAuditedOperation } from './context'
+import { currentAuditOperation, pushAuditCapture, pushAuditEvent, runAuditedOperation } from './context'
 
 const META = {
   actorId: 'user-1',
@@ -110,5 +110,53 @@ describe('runAuditedOperation', () => {
 
   it('drops buffered events on the floor when there is no operation', () => {
     expect(() => pushAuditEvent(statusEvent())).not.toThrow()
+  })
+})
+
+describe('deferred captures', () => {
+  it('resolves them only once the work is over, so a committed transaction is seen', async () => {
+    const order: string[] = []
+    const flush = vi.fn(async () => {})
+
+    await runAuditedOperation(
+      META,
+      async () => {
+        pushAuditCapture(async () => {
+          order.push('capture')
+          return [statusEvent()]
+        })
+        order.push('work')
+      },
+      flush,
+    )
+
+    expect(order).toEqual(['work', 'capture'])
+    expect(flush).toHaveBeenCalledOnce()
+    expect(flush.mock.calls[0][0].events).toHaveLength(1)
+  })
+
+  it('flushes nothing when every capture comes back empty', async () => {
+    const flush = vi.fn(async () => {})
+    await runAuditedOperation(META, async () => pushAuditCapture(async () => []), flush)
+    expect(flush).not.toHaveBeenCalled()
+  })
+
+  it('keeps the other captures when one throws', async () => {
+    const flush = vi.fn(async () => {})
+    await runAuditedOperation(
+      META,
+      async () => {
+        pushAuditCapture(async () => {
+          throw new Error('read failed')
+        })
+        pushAuditCapture(async () => [statusEvent()])
+      },
+      flush,
+    )
+    expect(flush.mock.calls[0][0].events).toHaveLength(1)
+  })
+
+  it('ignores a capture pushed outside any operation', () => {
+    expect(() => pushAuditCapture(async () => [statusEvent()])).not.toThrow()
   })
 })

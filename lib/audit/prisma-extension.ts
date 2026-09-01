@@ -1,6 +1,6 @@
 import type { AuditAction, PrismaClient } from '@/app/generated/prisma'
 import { buildAuditEvents } from './capture'
-import { currentAuditOperation, pushAuditEvent } from './context'
+import { currentAuditOperation, pushAuditCapture } from './context'
 import type { AuditRecord } from './diff'
 import { auditConfigFor, auditSelectionFor } from './registry'
 
@@ -66,16 +66,11 @@ export function withAuditLog(baseClient: PrismaClient): PrismaClient {
 
           const result = await query(args)
 
-          try {
-            const ids = before.length > 0 ? before.map((row) => row.id) : [idOf(result)].filter(Boolean)
+          const ids = before.length > 0 ? before.map((row) => row.id) : [idOf(result)].filter(Boolean)
+          pushAuditCapture(async () => {
             const after = action === 'DELETE' ? [] : await readRows(baseClient, model, { id: { in: ids } })
-
-            for (const event of buildAuditEvents({ model, action, before, after })) {
-              pushAuditEvent(event)
-            }
-          } catch (error) {
-            console.error('Audit capture failed:', error)
-          }
+            return buildAuditEvents({ model, action, before, after })
+          })
 
           return result
         },
