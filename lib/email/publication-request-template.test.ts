@@ -47,6 +47,23 @@ describe('renderPublicationRequestEmail', () => {
     expect(html).toContain('&lt;script&gt;')
   })
 
+  it('paints the report block in warning colours and flags it', () => {
+    const { html } = renderPublicationRequestEmail({ ...base, kind: 'ERROR_REPORT', body: 'Affiliation fausse' })
+    expect(html).toContain('#fff4e6')
+    expect(html).toContain('border-radius:11px')
+  })
+
+  it('leaves the author-list request in the house colours', () => {
+    const { html } = renderPublicationRequestEmail({ ...base, kind: 'AUTHOR_LIST', body: 'Un contributeur' })
+    expect(html).not.toContain('#fff4e6')
+  })
+
+  it('shows the kind as a filled badge rather than faint small caps', () => {
+    const { html } = renderPublicationRequestEmail({ ...base, kind: 'ERROR_REPORT', body: null })
+    expect(html).toContain('border-radius:20px')
+    expect(html).toContain('#d97706')
+  })
+
   it('keeps a plain-text version for clients that refuse HTML', () => {
     const { text } = renderPublicationRequestEmail({ ...base, kind: 'ERROR_REPORT', body: 'Affiliation à corriger' })
     expect(text).toContain('Affiliation à corriger')

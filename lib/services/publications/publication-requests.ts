@@ -7,8 +7,12 @@ import { sendAuthorListRequestEmail, sendPublicationIssueEmail } from '@/lib/ser
 export const PUBLICATIONS_REQUESTS_TAG = 'publications:requests'
 
 // A link read from an inbox must reach the deployed domain, never a per-build URL.
-function adminArticleUrl(articleId: string): string {
-  return `${resolveAppBaseUrl()}/fr${publicationsPaths(PUBLICATIONS_ADMIN_BASE).article(articleId)}`
+// Composing the author list needs edit mode; reading a report does not. A recipient
+// without admin rights lands on their own view of the same paper.
+function adminArticleUrl(articleId: string, mode: 'read' | 'edit'): string {
+  const paths = publicationsPaths(PUBLICATIONS_ADMIN_BASE)
+  const path = mode === 'edit' ? paths.articleEdit(articleId) : paths.article(articleId)
+  return `${resolveAppBaseUrl()}/fr${path}`
 }
 
 export async function createAuthorListRequest(
@@ -41,7 +45,7 @@ export async function createAuthorListRequest(
       articleTitle: request.article.title,
       requesterName,
       note,
-      articleUrl: adminArticleUrl(articleId),
+      articleUrl: adminArticleUrl(articleId, 'edit'),
     })
   } catch (error) {
     console.error('sendAuthorListRequestEmail failed', error)
@@ -155,7 +159,7 @@ export async function reportPublicationIssue(
       articleTitle: request.article.title,
       reporterName,
       message,
-      articleUrl: adminArticleUrl(articleId),
+      articleUrl: adminArticleUrl(articleId, 'read'),
     })
   } catch (error) {
     console.error('sendPublicationIssueEmail failed', error)
