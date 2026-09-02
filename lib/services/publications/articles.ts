@@ -1,4 +1,5 @@
 import { prisma } from '@/lib/prisma'
+import { isLinkedinShortLink, linkedinPostRef } from '@/lib/publications/linkedin-post'
 import { Prisma } from '@/app/generated/prisma'
 import { PUBLICATIONS_ARTICLES_TAG } from './import'
 import type { ArticleTypeValue } from '@/lib/publications/article-type'
@@ -52,15 +53,28 @@ export async function updateArticleType(id: string, type: ArticleTypeValue) {
   return prisma.article.update({ where: { id }, data: { type }, select: { id: true } })
 }
 
-// The link is stored as pasted so the admin can see what they typed; the embed is
-// derived at render time, and an unreadable link simply shows as a plain link.
+// A lnkd.in link carries no post id: only the redirect knows where it goes, so it is
+// followed once, here, and the address it lands on is what gets stored. Everything else
+// is stored as pasted, and the embed is derived at render time.
+async function resolveLinkedinUrl(url: string): Promise<string> {
+  if (!isLinkedinShortLink(url)) return url
+  try {
+    const response = await fetch(url, { redirect: 'follow', signal: AbortSignal.timeout(8000) })
+    return linkedinPostRef(response.url) ? response.url : url
+  } catch (error) {
+    console.error('resolveLinkedinUrl failed', error)
+    return url
+  }
+}
+
 export async function setArticleLinkedinPost(
   id: string,
   input: { url: string | null; postedAt: Date | null },
 ) {
+  const url = input.url ? await resolveLinkedinUrl(input.url) : null
   return prisma.article.update({
     where: { id },
-    data: { linkedinPostUrl: input.url, linkedinPostedAt: input.url ? input.postedAt : null },
+    data: { linkedinPostUrl: url, linkedinPostedAt: url ? input.postedAt : null },
     select: { id: true, linkedinPostUrl: true, linkedinPostedAt: true },
   })
 }

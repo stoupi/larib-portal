@@ -5,10 +5,11 @@ import { useTranslations, useLocale } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import { useAction } from 'next-safe-action/hooks'
 import { toast } from 'sonner'
-import { ExternalLink, Linkedin, Save, X } from 'lucide-react'
+import { ExternalLink, Save, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { LinkedinBadge } from '@/components/ui/linkedin-badge'
 import { linkedinEmbedUrl } from '@/lib/publications/linkedin-post'
 import { setLinkedinPostAction } from '../../actions'
 
@@ -52,7 +53,7 @@ export function LinkedinPostPanel({
   return (
     <div className="space-y-3 border-t border-dashed border-line pt-4">
       <div className="flex items-center gap-2">
-        <Linkedin className="size-4 text-[#0A66C2]" strokeWidth={2.2} />
+        <LinkedinBadge />
         <h3 className="text-sm font-semibold text-text-primary">{t('linkedinTitle')}</h3>
       </div>
 

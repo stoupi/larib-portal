@@ -1,29 +1,47 @@
 const LINKEDIN_HOSTS = /^([a-z]{2}\.)?linkedin\.com$/
+const LINKEDIN_SHORT_HOST = 'lnkd.in'
 
-// LinkedIn writes the same post two ways: a share link ending in the activity id, and a
-// feed URL carrying the URN. Both reduce to the one embed address.
-const ACTIVITY_FROM_SHARE = /activity-(\d{6,})/
-const ACTIVITY_FROM_URN = /urn:li:activity:(\d{6,})/
+// A post is addressed by one of three urn types depending on how it was created, and
+// the embed keeps whichever one the link carried.
+const URN_TYPES = ['activity', 'share', 'ugcPost'] as const
+type UrnType = (typeof URN_TYPES)[number]
 
-export function linkedinActivityId(rawUrl: string | null | undefined): string | null {
+const URN_IN_PATH = new RegExp(`urn:li:(${URN_TYPES.join('|')}):(\\d{6,})`)
+const TYPE_IN_SHARE = new RegExp(`(${URN_TYPES.join('|')})-(\\d{6,})`)
+
+export type LinkedinPostRef = { type: UrnType; id: string }
+
+function parsed(rawUrl: string | null | undefined): URL | null {
   const value = (rawUrl ?? '').trim()
   if (value === '') return null
-
-  let url: URL
   try {
-    url = new URL(value)
+    const url = new URL(value)
+    return url.protocol === 'https:' ? url : null
   } catch {
     return null
   }
-  if (url.protocol !== 'https:') return null
+}
+
+// A shortened link hides the post behind a redirect: nothing can be read from it here.
+export function isLinkedinShortLink(rawUrl: string | null | undefined): boolean {
+  const url = parsed(rawUrl)
+  return url?.hostname.replace(/^www\./, '') === LINKEDIN_SHORT_HOST
+}
+
+export function linkedinPostRef(rawUrl: string | null | undefined): LinkedinPostRef | null {
+  const url = parsed(rawUrl)
+  if (!url) return null
   if (!LINKEDIN_HOSTS.test(url.hostname.replace(/^www\./, ''))) return null
 
   const path = decodeURIComponent(url.pathname)
-  const match = ACTIVITY_FROM_URN.exec(path) ?? ACTIVITY_FROM_SHARE.exec(path)
-  return match ? match[1] : null
+  const urn = URN_IN_PATH.exec(path)
+  if (urn) return { type: urn[1] as UrnType, id: urn[2] }
+
+  const share = TYPE_IN_SHARE.exec(path)
+  return share ? { type: share[1] as UrnType, id: share[2] } : null
 }
 
 export function linkedinEmbedUrl(rawUrl: string | null | undefined): string | null {
-  const activityId = linkedinActivityId(rawUrl)
-  return activityId ? `https://www.linkedin.com/embed/feed/update/urn:li:activity:${activityId}` : null
+  const ref = linkedinPostRef(rawUrl)
+  return ref ? `https://www.linkedin.com/embed/feed/update/urn:li:${ref.type}:${ref.id}` : null
 }

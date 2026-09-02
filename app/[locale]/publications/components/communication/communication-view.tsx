@@ -2,9 +2,10 @@
 
 import { useMemo } from 'react'
 import { useTranslations } from 'next-intl'
-import { ChevronDown, ChevronUp, ChevronsUpDown, Linkedin, Search } from 'lucide-react'
+import { ChevronDown, ChevronUp, ChevronsUpDown, Search } from 'lucide-react'
 import { Link } from '@/app/i18n/navigation'
 import { Input } from '@/components/ui/input'
+import { LinkedinBadge } from '@/components/ui/linkedin-badge'
 import { TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table'
 import { cn } from '@/lib/utils'
 import { ARTICLE_STATUS_TONE, pillClassName } from '@/lib/publications/status-display'
@@ -181,9 +182,9 @@ export function CommunicationView({
                             target="_blank"
                             rel="noreferrer"
                             aria-label={`${t('linkedinOpen')}: ${article.title}`}
-                            className="inline-flex text-[#0A66C2] transition hover:opacity-80"
+                            className="inline-flex transition hover:opacity-80"
                           >
-                            <Linkedin className="size-4" strokeWidth={2.2} />
+                            <LinkedinBadge />
                           </a>
                         )}
                       </div>
