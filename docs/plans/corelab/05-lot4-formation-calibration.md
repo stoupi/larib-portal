@@ -2,7 +2,7 @@
 
 > **Pour Claude :** lis d'abord `docs/plans/corelab/00-cadre.md`. Exécute avec `superpowers:executing-plans`. Lots 2 et 3 terminés.
 
-**Objectif :** un lecteur ajouté à une étude suit ses modules (vidéos YouTube non répertoriées + quiz), la calibration s'ouvre automatiquement, il lit et signe ses cas de calibration, le PI les revoit d'un coup et le certifie ; le lecteur passe en production. Le PI saisit et signe le gold standard avec le même formulaire.
+**Objectif :** un lecteur ajouté à une étude suit ses modules (vidéos hébergées sur R2 + quiz), la calibration s'ouvre automatiquement, il lit et signe ses cas de calibration, le PI les revoit d'un coup et le certifie ; le lecteur passe en production. Le PI saisit et signe le gold standard avec le même formulaire.
 
 **Écrans :** Lecteur 2b (Ma formation), 3a (Formation d'une étude), 3b (Calibration et retour du PI), 3c–3e (cas, saisie, signature) ; Admin 5 (Calibration et gold standard) ; éditeur de gold standard ; revue consolidée du PI ; onglet Formation de l'administration (gestion des modules).
 
@@ -32,7 +32,7 @@ Le `correctChoiceId` ne quitte jamais le serveur : le service renvoie les questi
 
 ## Tâche 4.2 : logique pure de formation
 
-**Fichiers :** `lib/corelab/training/progress.ts` (+ test), `quiz-schema.ts` (+ test), `lib/corelab/training/youtube.ts` (+ test)
+**Fichiers :** `lib/corelab/training/progress.ts` (+ test), `quiz-schema.ts` (+ test), `lib/corelab/training/video.ts` (+ test)
 
 ```ts
 // progress.ts
@@ -44,11 +44,13 @@ export function trainingComplete(status: ReturnType<typeof requiredModulesStatus
 export function nextUnlockedModule(status): string | null   // premier non complété dans l'ordre ; les modules suivants sont verrouillés
 export function scoreQuiz(quiz: Quiz, answers: Record<string, string>): { score: number; passed: boolean; correct: number; total: number }  // score en %, passed si ≥ passThreshold (défaut 80)
 
-// youtube.ts
-export function parseYoutubeVideoId(input: string): string | null  // accepte un id nu, une URL watch?v=, youtu.be/, /embed/
-export function youtubeEmbedUrl(videoId: string): string           // https://www.youtube-nocookie.com/embed/<id>?rel=0
+// video.ts
+export const VIDEO_MIME_TYPES = ['video/mp4', 'video/webm'] as const
+export const VIDEO_MAX_BYTES = 2 * 1024 * 1024 * 1024
+export function buildTrainingVideoKey(moduleId: string, fileName: string): string   // corelab/training/<moduleId>/<ts>-<nom nettoyé>
+export function isAcceptedVideo(mimeType: string, size: number): boolean
 ```
-Tests : reconnaissance entre études (module CORE complété une fois compte pour deux études), version changée → non complété, quiz 7/8 avec seuil 80 → 88 % réussi, 6/8 → échec, extraction d'id sur les quatre formes d'URL.
+Tests : reconnaissance entre études (module CORE complété une fois compte pour deux études), version changée → non complété, quiz 7/8 avec seuil 80 → 88 % réussi, 6/8 → échec, clé de vidéo nettoyée, refus d'un `video/x-msvideo` et d'un fichier trop gros.
 
 **Commit :** `feat(corelab): training progression and quiz scoring rules`.
 
@@ -62,7 +64,8 @@ listModulesForStudyAdmin(studyId)                 // exigences ordonnées + modu
 listMyTraining(userId)                            // toutes les études actives du membre, exigences, complétions → structure de la maquette 2b (socle / logiciels / par étude)
 getStudyTraining(studyId, userId)                 // pour la maquette 3a
 getModuleForReader(moduleId, userId)              // module sans correctChoiceId ; refuse si verrouillé (module précédent non complété)
-createModule(input) / updateModule(id, input)     // updateModule incrémente `version` si youtubeVideoId ou quiz change
+createModule(input) / updateModule(id, input)     // updateModule incrémente `version` si videoKey ou quiz change
+getTrainingVideoUrl(moduleId, userId)             // vérifie que l'utilisateur est membre d'une étude exigeant le module (ou admin), renvoie une URL GET signée R2 valable 6 h (ajouter `r2GetSignedDownloadUrl(key, expiresInSeconds)` dans lib/services/r2-s3.ts avec GetObjectCommand + getSignedUrl)
 setStudyRequirements(studyId, moduleIds: string[])
 completeVideoModule(userId, moduleId)             // upsert completion avec moduleVersion
 submitQuiz(userId, moduleId, answers)             // scoreQuiz ; enregistre la completion seulement si passed ; renvoie score
@@ -79,8 +82,8 @@ unlockCalibrationIfTrained(studyId, userId)       // si trainingComplete → mem
 
 - `app/[locale]/corelab/training/page.tsx` — Ma formation (maquette 2b) : compteur global, « Où en êtes-vous par étude », onglets Socle / Logiciels / Par étude, cartes de module avec état (`Validé`, `À faire`, `Verrouillé`, `Reprendre`).
 - `app/[locale]/corelab/studies/[studyId]/training/page.tsx` — Formation d'une étude (maquette 3a) : liste ordonnée, modules reconnus depuis ailleurs marqués, échéance `trainingDueAt`, texte « La calibration s'ouvrira automatiquement à la validation du quiz final ».
-- `app/[locale]/corelab/training/modules/[moduleId]/page.tsx` — module : vidéo (`iframe` `youtubeEmbedUrl`, `allow="encrypted-media; picture-in-picture"`) + bouton « J'ai terminé ce module » ; ou quiz (une question par carte, `Controller` radio, bouton « Valider », résultat, « Reprendre » si échec).
-- `app/[locale]/corelab/admin/training/page.tsx` — gestion des modules (sans maquette) : tableau Titre · Portée · Type · Durée · Version · Études qui l'exigent ; dialogue de création/édition (titre, portée, logiciel, type, id ou URL YouTube, durée, seuil, éditeur de quiz simple : questions et choix en `useFieldArray`) ; archivage.
+- `app/[locale]/corelab/training/modules/[moduleId]/page.tsx` — module : vidéo (`<video controls controlsList="nodownload" src={signedUrl}>`, URL signée obtenue côté serveur dans `page.tsx`) + bouton « J'ai terminé ce module » ; ou quiz (une question par carte, `Controller` radio, bouton « Valider », résultat, « Reprendre » si échec).
+- `app/[locale]/corelab/admin/training/page.tsx` — gestion des modules (sans maquette) : tableau Titre · Portée · Type · Durée · Version · Études qui l'exigent ; dialogue de création/édition (titre, portée, logiciel, type, durée, seuil, éditeur de quiz simple : questions et choix en `useFieldArray`) ; dépôt de la vidéo **directement du navigateur vers R2** par URL pré-signée : route `app/api/corelab/uploads/training-video-signed/route.ts` sur le modèle de `app/api/uploads/clinical-pdf-signed/route.ts` (garde `canAdminApp('CORELAB')`, `r2GetSignedUploadUrl`), puis `setModuleVideoAction({ moduleId, key, mimeType, size })` ; barre de progression avec `XMLHttpRequest` (les vidéos font plusieurs centaines de Mo, un envoi via une fonction Vercel est impossible) ; archivage.
 - `admin/studies/[studyId]/training/page.tsx` — exigences de l'étude : liste des modules disponibles avec cases à cocher et ordre (`@dnd-kit/sortable` déjà présent, ou boutons ▲▼).
 - `app/[locale]/corelab/studies/[studyId]/page.tsx` — remplace le texte neutre du lot 2 par des raccourcis selon la phase du membre (formation / calibration / production plus tard).
 
@@ -136,10 +139,10 @@ Actions : `admin/actions-calibration.ts` (`corelabAdminAction` : `createCaseActi
 
 ## Tâche 4.7 : seed et E2E
 
-Seed : un module CORE (vidéo, `youtubeVideoId: 'dQw4w9WgXcQ'`), un module STUDY quiz (2 questions, seuil 50) pour `MIR-DJ-TEST`, exigences `[core, quiz]`, `corelab-reader-new@` sans complétion ; un cas `CAL-MIR-DJ-TEST-001` (1 examen) au gold standard signé sur Cine seulement (valeurs : FEVG 52, VTD 172, VTS 82, et les booléens/catégoriels requis de Cine).
+Seed : un module CORE (vidéo, `videoKey: 'corelab/training/seed/sample.mp4'`, `videoMimeType: 'video/mp4'`, `videoSize: 1024` — la clé n'a pas besoin d'exister sur R2 : la page affiche la balise `<video>` avec une URL signée, l'E2E ne lit pas le flux), un module STUDY quiz (2 questions, seuil 50) pour `MIR-DJ-TEST`, exigences `[core, quiz]`, `corelab-reader-new@` sans complétion ; un cas `CAL-MIR-DJ-TEST-001` (1 examen) au gold standard signé sur Cine seulement (valeurs : FEVG 52, VTD 172, VTS 82, et les booléens/catégoriels requis de Cine).
 
 E2E `tests/e2e/corelab-training-calibration.spec.ts`, un parcours :
-1. `corelab-reader-new@` : `/en/corelab/studies/<id>/training` → 0/2, ouvre le module vidéo (iframe présente), « J'ai terminé ce module » → 1/2 ; quiz : répond faux → « échec », rejoue juste → « réussi », la page de l'étude affiche « Calibration ».
+1. `corelab-reader-new@` : `/en/corelab/studies/<id>/training` → 0/2, ouvre le module vidéo (balise `video` présente avec un `src` contenant `X-Amz-Signature`), « J'ai terminé ce module » → 1/2 ; quiz : répond faux → « échec », rejoue juste → « réussi », la page de l'étude affiche « Calibration ».
 2. Data manager : assigne `CAL-…-001` à `corelab-reader-new@`.
 3. Lecteur : ouvre le cas, saisit FEVG 48, VTD 168, VTS 91 et les requis de Cine, signe avec `ristifou` → cas `Soumis` ; la page Calibration affiche « en attente de revue ».
 4. PI (`corelab-pi@`) : Admin 5 (le PI y accède via son onglet Calibration lecteur/PI ; s'assurer que la page PI est `corelabStudyAction(['PI'])`) → bouton « Relire » visible ; ouvre la revue : FEVG « dans la tolérance », VTS 91 vs 82 « dans la tolérance » (absolue 15) ; met un commentaire ; « Certifier » avec `ristifou` → le lecteur apparaît « Certifié ».
@@ -160,6 +163,7 @@ E2E `tests/e2e/corelab-training-calibration.spec.ts`, un parcours :
 ## Pièges connus
 
 - Le PI accède à l'administration de la calibration **de son étude** sans être admin d'app : la page Admin 5 doit accepter `['PI', 'DATA_MANAGER']`, et l'entrée de navigation côté PI passe par l'onglet Calibration de `/corelab/studies/[studyId]`.
-- YouTube : un id de vidéo « privée » renvoie une iframe vide. Vérifier avec l'utilisateur que la vidéo est « non répertoriée ».
+- Les URL signées expirent : ne jamais les stocker en base ni les mettre en cache ; les régénérer à chaque rendu de la page.
+- Le CORS du bucket R2 doit autoriser `PUT` et `GET` depuis l'origine de l'app (déjà configuré, voir `docs/R2_CORS_CONFIGURATION.md`) ; sur un nouveau domaine, l'ajouter.
 - Le quiz ne doit jamais envoyer `correctChoiceId` au client : vérifier le `select`/mapping du service.
 - `unlockCalibrationIfTrained` ne rétrograde jamais : un membre déjà en CALIBRATION ou PRODUCTION reste où il est.

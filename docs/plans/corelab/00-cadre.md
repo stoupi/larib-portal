@@ -19,7 +19,7 @@
 | C | Attribution d'une étude depuis l'onglet Équipe de l'étude ; un nouveau lecteur commence toujours par formation → calibration → production, même sur une étude en production | oui |
 | 1 | Export : format long (une ligne par variable) **et** format large (une ligne par patient, une colonne par variable) ; une colonne par segment (`<fieldId>_seg_05`), alignée sur 17 segments | les deux |
 | 2 | Adresse IP conservée dans le journal d'audit | oui |
-| 3 | Vidéos de formation hébergées sur YouTube en mode **non répertorié** (un lien « privé » YouTube n'est pas lisible par les autres comptes ; « non répertorié » l'est sans être indexé) | oui |
+| 3 | Vidéos de formation hébergées sur **R2** (dépôt direct navigateur → R2 par URL pré-signée, lecture par URL signée de 6 h dans une balise `<video>`). Choisi le 2 sept. contre YouTube « non répertorié », pour qu'un lien copié ne donne pas accès à la vidéo | R2 |
 | 4 | Ne pas réutiliser le modèle `Centre` de Publications ; les centres recruteurs sont `CorelabSite` | oui |
 | 5 | Expiration de session glissante de 12 heures, globale au portail | oui |
 | 6 | Maquetter l'arbitrage du relecteur et la revue du PI avant de les coder | oui |
@@ -43,6 +43,17 @@
 | 9 | Bibliothèque et éditeur de CRF | `10-lot9-bibliotheque.md` | 8 | non (deuxième étude) |
 
 Les lots 5 et 4 peuvent être menés en parallèle par deux sessions **à condition** d'utiliser deux worktrees (voir `[[concurrent-sessions-shared-worktree]]`). Sinon, dans l'ordre.
+
+## 2 bis. Dossier de travail
+
+Tout le code CoreLab s'écrit dans le dépôt **larib-portal**, sous `app/[locale]/corelab/`, `lib/corelab/`, `lib/services/corelab/`. Le dossier `/Users/solenntoupin/Documents/wildcoding/corelab` (ancien projet autonome) est une **référence en lecture seule** : on y lit des règles, des définitions et de la logique pure pour les transposer ; on n'y écrit jamais et on n'y lance rien. Un instantané existe dans `/Users/solenntoupin/Documents/wildcoding/corelab-snapshot-2026-09-02.tgz`. Sa base Neon ne contient aucune lecture signée (vérifié le 2 sept. 2026 : 0 `reading_submissions`, 0 `signatures`) : rien à migrer.
+
+Parce que l'utilisateur mène plusieurs sessions en parallèle sur `larib-portal`, le travail CoreLab se fait dans un **worktree dédié** : `/Users/solenntoupin/Documents/wildcoding/larib-portal-corelab`, branche `corelab`. Règles :
+- Ouvrir les sessions CoreLab dans ce dossier, pas dans `larib-portal`.
+- En fin de chaque tâche : commit sur `corelab`, puis `git fetch origin && git rebase origin/main` (résoudre les conflits s'il y en a), puis `git push origin corelab:main`. Chaque push sur `main` déploie : ne pousser qu'un état qui passe le hook (il tourne aussi dans le worktree, le `.git` est partagé).
+- Le serveur de dev du dossier principal reste sur le port 3000 ; dans le worktree, `PORT=3001 npm run dev` si besoin, et toujours `PLAYWRIGHT_PORT=3100` pour les E2E.
+- `.env` et `.env.test` ne sont pas versionnés : ils ont été copiés dans le worktree ; les deux dossiers pointent vers les mêmes bases Neon. Après un `git pull`, relancer `npm install` si `package-lock.json` a changé.
+- Ne jamais laisser la branche `corelab` en avance de plus d'un lot sur `main`.
 
 ## 3. Règles d'exécution (obligatoires)
 
@@ -229,7 +240,9 @@ model CorelabTrainingModule {
   description     String                    @default("")
   type            CorelabTrainingModuleType
   durationMinutes Int                       @default(0)
-  youtubeVideoId  String?
+  videoKey        String?
+  videoMimeType   String?
+  videoSize       Int?
   quiz            Json?
   passThreshold   Int?
   version         Int                       @default(1)

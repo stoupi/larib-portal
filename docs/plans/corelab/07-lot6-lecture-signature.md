@@ -56,7 +56,7 @@ readinessForSignature(assignmentId)                             // par examen : 
 submitReading(assignmentId, userId, signatureId, client)        // snapshot des valeurs + drapeaux + documents (clé, taille), snapshotHash, version = dernière + 1, status SUBMITTED ; patient → UNDER_REVIEW si tous les lecteurs ont SUBMITTED ; déclenche notifyReviewerIfReady
 notifyReviewerIfReady(patientId)                                // si REVIEWER assigné : e-mail + dueDate = now + reviewDeadlineDays ; sinon rien (badge « Manquant » lot 5)
 ```
-Documents (`lib/services/corelab/documents.ts`) : `listSlots(studyId)` (JSON de l'étude), `registerUpload(assignmentId, examId, slotKey, file)` → statut `CONFORMANT` si l'extension est dans `accept`, sinon `REJECTED` avec `statusNote`, `deleteDocument`, `studyDocuments(studyId)`, `addStudyDocument`. Route d'upload `app/api/corelab/uploads/reading-document/route.ts` (garde : lecteur propriétaire de l'assignation ; 50 Mo ; clé `corelab/<studyId>/patients/<patientId>/<assignmentId>/<slot>-<ts>-<nom>`) ; téléchargement via URL signée R2 (`r2GetSignedGetUrl` à ajouter, 10 min).
+Documents (`lib/services/corelab/documents.ts`) : `listSlots(studyId)` (JSON de l'étude), `registerUpload(assignmentId, examId, slotKey, file)` → statut `CONFORMANT` si l'extension est dans `accept`, sinon `REJECTED` avec `statusNote`, `deleteDocument`, `studyDocuments(studyId)`, `addStudyDocument`. Dépôt **direct navigateur → R2** par URL pré-signée : route `app/api/corelab/uploads/reading-document-signed/route.ts` sur le modèle de `app/api/uploads/clinical-pdf-signed/route.ts` (garde : lecteur propriétaire de l'assignation ; extension dans `accept` de l'emplacement ; clé `corelab/<studyId>/patients/<patientId>/<assignmentId>/<slot>-<ts>-<nom>`), puis `registerReadingDocumentAction({ assignmentId, examId, slotKey, key, fileName, mimeType, size })` ; téléchargement via `r2GetSignedDownloadUrl` (10 min).
 
 Renvoi (`lib/services/corelab/document-returns.ts`) : `returnForDocuments(patientId, requestedById, message, slotKeys)` → statut d'assignation `RETURNED`, patient `RETURNED_FOR_DOCUMENTS`, documents concernés `MISSING` ; `resolveReturn(returnId)` quand toutes les pièces obligatoires sont `CONFORMANT` → statuts rétablis (`SUBMITTED` / `UNDER_REVIEW`), la signature d'origine reste valable (aucune nouvelle soumission).
 
@@ -104,6 +104,6 @@ E2E `tests/e2e/corelab-reading.spec.ts` :
 
 ## Pièges connus
 
-- Les fichiers vont sur R2 par la route d'upload (multipart côté serveur, 50 Mo) : pas de `presigned PUT` depuis le navigateur pour rester sous une seule règle CORS déjà en place.
+- Les fichiers vont sur R2 par URL pré-signée depuis le navigateur : une fonction Vercel n'accepte pas un corps de requête de plus de 4,5 Mo, un masque de segmentation peut dépasser cette taille. Le CORS R2 autorise déjà `PUT` depuis l'app.
 - Ne jamais écraser une valeur `MODIFIED` par un ré-import ; le rapport doit dire « N valeurs conservées car modifiées ».
 - Le snapshot signé doit contenir les valeurs **et** les drapeaux **et** la liste des pièces (clé + taille), sinon la preuve est incomplète.

@@ -8,78 +8,15 @@
 
 ---
 
-### Tâche 0.1 : mettre le code CoreLab autonome sous git
+### Tâche 0.1 : instantané du code CoreLab autonome
 
-**Fichiers :**
-- Créer : `/Users/solenntoupin/Documents/wildcoding/corelab/.gitignore`
-
-**Étape 1 : vérifier qu'il n'y a pas déjà de dépôt**
-
-```bash
-git -C /Users/solenntoupin/Documents/wildcoding/corelab rev-parse --is-inside-work-tree 2>&1
-```
-Attendu : `fatal: not a git repository`. Si un dépôt existe, passer à la tâche 0.2.
-
-**Étape 2 : écrire le `.gitignore`**
-
-```gitignore
-node_modules/
-dist/
-.env
-.env.*
-!.env.example
-uploads/
-*.log
-.DS_Store
-```
-
-**Étape 3 : initialiser et committer**
-
-```bash
-cd /Users/solenntoupin/Documents/wildcoding/corelab
-git init -b main
-git add .gitignore corelab-api corelab-ui docs data figma chatgpt.md
-git status --short | grep -c "" 
-git commit -m "chore: snapshot of the standalone CoreLab code before the port to larib-portal"
-```
-Vérifier avant le commit que `git status --short | grep "\.env$"` ne renvoie rien (les secrets ne doivent pas être stagés).
-
-**Étape 4 : dépôt distant**
-
-Demander à l'utilisateur de créer un dépôt privé GitHub `corelab-legacy` (ou le créer avec `gh repo create corelab-legacy --private --source=. --push` si `gh` est authentifié). Si `gh` n'est pas disponible, s'arrêter là et le signaler : le snapshot local suffit pour continuer.
+> **Déjà fait le 2 septembre 2026.** L'utilisateur ne veut pas travailler dans l'ancien dossier ; il n'est donc pas mis sous git. Un instantané `corelab-snapshot-2026-09-02.tgz` (7 Mo, sans `node_modules`, `.env`, `uploads`) est dans `/Users/solenntoupin/Documents/wildcoding/`. Vérifier seulement que le fichier existe.
 
 ---
 
-### Tâche 0.2 : compter les données réelles dans la base CoreLab autonome
+### Tâche 0.2 : données réelles dans la base CoreLab autonome
 
-**Étape 1 : lire l'URL de la base**
-
-```bash
-grep DATABASE_URL /Users/solenntoupin/Documents/wildcoding/corelab/corelab-api/.env | cut -d= -f1
-```
-Ne jamais afficher la valeur complète dans la réponse.
-
-**Étape 2 : compter**
-
-```bash
-cd /Users/solenntoupin/Documents/wildcoding/corelab/corelab-api
-node -e "
-require('dotenv').config();
-const { neon } = require('@neondatabase/serverless');
-const sql = neon(process.env.DATABASE_URL);
-(async () => {
-  for (const table of ['users','studies','patients','reading_submissions','signatures','audit_log']) {
-    const rows = await sql('select count(*)::int as n from ' + table);
-    console.log(table, rows[0].n);
-  }
-})();
-"
-```
-
-**Étape 3 : conclure**
-
-- `reading_submissions = 0` et `signatures = 0` → aucune donnée réelle, le portage repart de zéro. Écrire cette conclusion en mémoire (`corelab-portal-plan.md`, section « État de la base autonome »).
-- Sinon, s'arrêter et le signaler à l'utilisateur avec les chiffres : une migration de données doit être décidée avant le lot 6.
+> **Déjà fait le 2 septembre 2026.** Base Neon du projet autonome : 8 utilisateurs, 1 étude, 5 patients, **0 soumission, 0 signature**, 34 lignes d'audit de démonstration. Le portage repart de zéro ; aucune migration de données.
 
 ---
 
@@ -141,4 +78,4 @@ git push
 
 > **Déjà fait le 2 septembre 2026.** Rien à faire si `git log --oneline -1 -- docs/plans/corelab` renvoie un commit.
 
-**Fini quand :** le snapshot CoreLab est commité localement (et poussé si possible), la question des données réelles est tranchée et écrite en mémoire, les maquettes et les plans sont sur `main`.
+**Fini quand :** l'instantané existe, les maquettes et les plans sont sur `main`, le worktree `larib-portal-corelab` existe (voir `00-cadre.md` §2 bis). Tout est fait au 2 septembre 2026 : le lot 0 est clos.

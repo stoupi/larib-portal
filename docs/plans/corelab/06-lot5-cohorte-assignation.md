@@ -52,7 +52,7 @@ previewCohortImport(studyId, fileKey)          // lit le fichier depuis R2 (r2Ge
 commitCohortImport(studyId, fileKey, fileName, importedById)   // rejoue parse + validate, crée les sites NEW_SITE, les patients (UNASSIGNED) et examens des lignes READY/WARNING, enregistre CorelabCohortImport { report, importedRows }
 listPatients(studyId, filters?)                // patients + examens + assignations (user, role, status) + drapeau « relecteur manquant » (statut SUBMITTED sans REVIEWER)
 ```
-Route d'upload : `app/api/corelab/uploads/cohort/route.ts` sur le modèle de `app/api/uploads/publication-pdf/route.ts` (garde `canAdminApp('CORELAB')`, 10 Mo max, types csv/xlsx, clé `corelab/<studyId>/cohort/<ts>-<nom>`), renvoie `{ key }`.
+Route d'upload : `app/api/corelab/uploads/cohort/route.ts` sur le modèle de `app/api/uploads/publication-pdf/route.ts` (garde `canAdminApp('CORELAB')`, **4 Mo max** — limite du corps de requête d'une fonction Vercel ; un fichier de cohorte fait quelques dizaines de Ko —, types csv/xlsx, clé `corelab/<studyId>/cohort/<ts>-<nom>`), renvoie `{ key }`.
 
 Actions (`admin/actions-cohort.ts`, `corelabAdminAction`) : `previewCohortImportAction({ studyId, fileKey })`, `commitCohortImportAction({ studyId, fileKey, fileName })`.
 
