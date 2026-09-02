@@ -1,9 +1,9 @@
 import { addDays, endOfDay, endOfMonth, startOfDay, startOfMonth, startOfWeek } from 'date-fns'
 import { countWorkingDays } from './french-holidays'
 import { prisma } from '@/lib/prisma'
-import { LeaveRequestStatus } from '@/app/generated/prisma'
+import { LeaveRequestStatus, type Application, type Role } from '@/app/generated/prisma'
 import { fetchFrenchHolidays } from './french-holidays'
-import { filterActiveAppAdmins } from '@/lib/permissions'
+import { canAdminApp, filterActiveAppAdmins, type AccessPeriodSummary } from '@/lib/permissions'
 
 export type DateRange = { start: Date; end: Date }
 export type RecapPeriod = 'weekly' | 'monthly'
@@ -172,9 +172,35 @@ export function mergeRecapRecipients(
   return [...byEmail.values()]
 }
 
+type PortalRecipientAccount = {
+  email: string
+  role: Role
+  adminApplications: Application[]
+  accessPeriods: AccessPeriodSummary[]
+}
+
+export function filterAlwaysNotifiedRecipients(
+  recipients: RecapRecipient[],
+  portalAccounts: PortalRecipientAccount[],
+  now: Date = new Date(),
+): RecapRecipient[] {
+  const portalAccountByEmail = new Map(
+    portalAccounts.map((account) => [account.email.trim().toLowerCase(), account]),
+  )
+  return recipients.filter((recipient) => {
+    const portalAccount = portalAccountByEmail.get(recipient.email.trim().toLowerCase())
+    return !portalAccount || canAdminApp(portalAccount, 'CONGES', now)
+  })
+}
+
 export async function getCongesAdminRecipients(): Promise<RecapRecipient[]> {
   const admins = await prisma.user.findMany({
-    where: { adminApplications: { has: 'CONGES' } },
+    where: {
+      OR: [
+        { adminApplications: { has: 'CONGES' } },
+        { email: { in: ALWAYS_NOTIFIED_RECIPIENTS.map((recipient) => recipient.email) } },
+      ],
+    },
     select: {
       email: true,
       language: true,
@@ -187,5 +213,6 @@ export async function getCongesAdminRecipients(): Promise<RecapRecipient[]> {
     email: admin.email,
     language: admin.language,
   }))
-  return mergeRecapRecipients(fromDatabase, ALWAYS_NOTIFIED_RECIPIENTS)
+  const activeAlwaysNotified = filterAlwaysNotifiedRecipients(ALWAYS_NOTIFIED_RECIPIENTS, admins)
+  return mergeRecapRecipients(fromDatabase, activeAlwaysNotified)
 }

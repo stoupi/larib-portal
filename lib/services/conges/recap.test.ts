@@ -8,6 +8,7 @@ import {
   isAuthorizedCron,
   groupEmailsByLanguage,
   mergeRecapRecipients,
+  filterAlwaysNotifiedRecipients,
   ALWAYS_NOTIFIED_RECIPIENTS,
 } from './recap'
 
@@ -117,6 +118,44 @@ describe('mergeRecapRecipients', () => {
       'theo.pezelccf@gmail.com',
       'solenn.toupin@gmail.com',
     ])
+  })
+})
+
+describe('filterAlwaysNotifiedRecipients', () => {
+  it('keeps external recipients but applies access windows to matching portal accounts', () => {
+    const alwaysNotified = [
+      { email: 'external@example.test', language: 'FR' as const },
+      { email: 'active@example.test', language: 'FR' as const },
+      { email: 'expired@example.test', language: 'EN' as const },
+    ]
+    const portalAccounts = [
+      {
+        email: 'active@example.test',
+        role: 'USER' as const,
+        adminApplications: ['CONGES' as const],
+        accessPeriods: [],
+      },
+      {
+        email: 'expired@example.test',
+        role: 'USER' as const,
+        adminApplications: ['CONGES' as const],
+        accessPeriods: [
+          {
+            application: 'CONGES' as const,
+            startsAt: null,
+            endsAt: new Date('2026-01-31T23:59:59.999Z'),
+          },
+        ],
+      },
+    ]
+
+    expect(
+      filterAlwaysNotifiedRecipients(
+        alwaysNotified,
+        portalAccounts,
+        new Date('2026-09-02T10:00:00.000Z'),
+      ).map((recipient) => recipient.email),
+    ).toEqual(['external@example.test', 'active@example.test'])
   })
 })
 
