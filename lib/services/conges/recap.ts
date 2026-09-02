@@ -3,6 +3,7 @@ import { countWorkingDays } from './french-holidays'
 import { prisma } from '@/lib/prisma'
 import { LeaveRequestStatus } from '@/app/generated/prisma'
 import { fetchFrenchHolidays } from './french-holidays'
+import { filterActiveAppAdmins } from '@/lib/permissions'
 
 export type DateRange = { start: Date; end: Date }
 export type RecapPeriod = 'weekly' | 'monthly'
@@ -174,8 +175,17 @@ export function mergeRecapRecipients(
 export async function getCongesAdminRecipients(): Promise<RecapRecipient[]> {
   const admins = await prisma.user.findMany({
     where: { adminApplications: { has: 'CONGES' } },
-    select: { email: true, language: true },
+    select: {
+      email: true,
+      language: true,
+      role: true,
+      adminApplications: true,
+      accessPeriods: { select: { application: true, startsAt: true, endsAt: true } },
+    },
   })
-  const fromDatabase = admins.map((admin) => ({ email: admin.email, language: admin.language }))
+  const fromDatabase = filterActiveAppAdmins(admins, 'CONGES').map((admin) => ({
+    email: admin.email,
+    language: admin.language,
+  }))
   return mergeRecapRecipients(fromDatabase, ALWAYS_NOTIFIED_RECIPIENTS)
 }

@@ -1,18 +1,27 @@
 import type { ArticleStatusValue } from '@/lib/services/publications/articles'
+import type { Application } from '@/app/generated/prisma'
+import { filterActiveAppAdmins, type AccessPeriodSummary } from '@/lib/permissions'
 
 export function isDraftDeletable(title: string, status: ArticleStatusValue): boolean {
   return title.trim() === '' && status === 'IN_PREPARATION'
 }
 
-type RecipientCandidate = { email: string; role: 'ADMIN' | 'USER'; adminApplications: string[] }
+type RecipientCandidate = {
+  email: string
+  role: 'ADMIN' | 'USER'
+  adminApplications: Application[]
+  accessPeriods: AccessPeriodSummary[]
+}
 
 // Author-list request emails go to super-admins and PUBLICATIONS app-admins only.
-export function pickAuthorRequestRecipients(candidates: RecipientCandidate[]): string[] {
+export function pickAuthorRequestRecipients(
+  candidates: RecipientCandidate[],
+  now: Date = new Date(),
+): string[] {
   const seen = new Set<string>()
   const result: string[] = []
-  for (const candidate of candidates) {
-    const isAdmin = candidate.role === 'ADMIN' || candidate.adminApplications.includes('PUBLICATIONS')
-    if (!isAdmin || seen.has(candidate.email)) continue
+  for (const candidate of filterActiveAppAdmins(candidates, 'PUBLICATIONS', now)) {
+    if (seen.has(candidate.email)) continue
     seen.add(candidate.email)
     result.push(candidate.email)
   }

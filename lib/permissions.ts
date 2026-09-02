@@ -21,6 +21,11 @@ type WithRole = { role?: Role | null }
 type WithPeriods = { accessPeriods?: AccessPeriodSummary[] | null }
 type WithAdminApps = WithRole & WithPeriods & { adminApplications?: Application[] | null }
 type WithAllApps = WithAdminApps & { applications?: Application[] | null }
+type HydratedWithAdminApps = WithRole & {
+  adminApplications?: Application[] | null
+  accessPeriods: AccessPeriodSummary[]
+}
+type HydratedWithAllApps = HydratedWithAdminApps & { applications?: Application[] | null }
 
 export function isSuperAdmin(user: WithRole): boolean {
   return user.role === 'ADMIN'
@@ -47,6 +52,22 @@ export function canAccessApp(user: WithAllApps, app: Application, now: Date = ne
   if (isSuperAdmin(user)) return true
   const granted = (user.applications ?? []).includes(app) || (user.adminApplications ?? []).includes(app)
   return granted && accessWindowOpen(user.accessPeriods, app, now)
+}
+
+export function filterActiveAppAdmins<Candidate extends HydratedWithAdminApps>(
+  candidates: Candidate[],
+  app: Application,
+  now: Date = new Date(),
+): Candidate[] {
+  return candidates.filter((candidate) => canAdminApp(candidate, app, now))
+}
+
+export function filterActiveAppMembers<Candidate extends HydratedWithAllApps>(
+  candidates: Candidate[],
+  app: Application,
+  now: Date = new Date(),
+): Candidate[] {
+  return candidates.filter((candidate) => canAccessApp(candidate, app, now))
 }
 
 export function effectiveApplications(

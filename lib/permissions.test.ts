@@ -5,6 +5,8 @@ import {
   canAccessApp,
   canAdminApp,
   effectiveApplications,
+  filterActiveAppAdmins,
+  filterActiveAppMembers,
 } from './permissions'
 
 const NOW = new Date('2026-09-02T10:00:00.000Z')
@@ -60,5 +62,50 @@ describe('accessibleApplications / effectiveApplications', () => {
     }
     expect(accessibleApplications(user, NOW)).toEqual(['CONGES', 'PUBLICATIONS'])
     expect(effectiveApplications(user, NOW)).toEqual({ applications: ['CONGES'], adminApplications: ['PUBLICATIONS'] })
+  })
+})
+
+describe('active application candidates', () => {
+  const expired = {
+    application: 'PUBLICATIONS' as const,
+    startsAt: null,
+    endsAt: new Date('2026-01-31T23:59:59.999Z'),
+  }
+  const future = {
+    application: 'PUBLICATIONS' as const,
+    startsAt: new Date('2026-10-01T00:00:00.000Z'),
+    endsAt: null,
+  }
+
+  it('keeps permanent and open members while excluding expired and future members', () => {
+    const candidates = [
+      { email: 'permanent@example.test', applications: ['PUBLICATIONS' as const], adminApplications: [], accessPeriods: [] },
+      {
+        email: 'open@example.test',
+        applications: ['PUBLICATIONS' as const],
+        adminApplications: [],
+        accessPeriods: [{ application: 'PUBLICATIONS' as const, startsAt: null, endsAt: new Date('2026-12-31T23:59:59.999Z') }],
+      },
+      { email: 'expired@example.test', applications: ['PUBLICATIONS' as const], adminApplications: [], accessPeriods: [expired] },
+      { email: 'future@example.test', applications: ['PUBLICATIONS' as const], adminApplications: [], accessPeriods: [future] },
+    ]
+
+    expect(filterActiveAppMembers(candidates, 'PUBLICATIONS', NOW).map((candidate) => candidate.email)).toEqual([
+      'permanent@example.test',
+      'open@example.test',
+    ])
+  })
+
+  it('keeps permanent app admins and super-admins while excluding an expired app admin', () => {
+    const candidates = [
+      { email: 'permanent@example.test', role: 'USER' as const, adminApplications: ['PUBLICATIONS' as const], accessPeriods: [] },
+      { email: 'expired@example.test', role: 'USER' as const, adminApplications: ['PUBLICATIONS' as const], accessPeriods: [expired] },
+      { email: 'super@example.test', role: 'ADMIN' as const, adminApplications: [], accessPeriods: [expired] },
+    ]
+
+    expect(filterActiveAppAdmins(candidates, 'PUBLICATIONS', NOW).map((candidate) => candidate.email)).toEqual([
+      'permanent@example.test',
+      'super@example.test',
+    ])
   })
 })

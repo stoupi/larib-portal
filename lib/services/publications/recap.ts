@@ -1,4 +1,5 @@
 import { prisma } from '@/lib/prisma'
+import { filterActiveAppMembers } from '@/lib/permissions'
 
 export type PublicationsRecapRecipient = {
   id: string
@@ -8,11 +9,26 @@ export type PublicationsRecapRecipient = {
 }
 
 export async function getPublicationsRecapRecipients(): Promise<PublicationsRecapRecipient[]> {
-  return prisma.user.findMany({
+  const candidates = await prisma.user.findMany({
     where: {
       applications: { has: 'PUBLICATIONS' },
       publicationsEmailOptOut: false,
     },
-    select: { id: true, email: true, firstName: true, language: true },
+    select: {
+      id: true,
+      email: true,
+      firstName: true,
+      language: true,
+      role: true,
+      applications: true,
+      adminApplications: true,
+      accessPeriods: { select: { application: true, startsAt: true, endsAt: true } },
+    },
   })
+  return filterActiveAppMembers(candidates, 'PUBLICATIONS').map((candidate) => ({
+    id: candidate.id,
+    email: candidate.email,
+    firstName: candidate.firstName,
+    language: candidate.language,
+  }))
 }

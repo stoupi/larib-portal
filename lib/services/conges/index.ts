@@ -13,6 +13,7 @@ import {
   subMonths,
 } from 'date-fns'
 import { countWorkingDays } from './french-holidays'
+import { filterActiveAppAdmins } from '@/lib/permissions'
 export {
   fetchFrenchHolidays,
   countWorkingDays,
@@ -498,9 +499,14 @@ export async function countPendingLeaveRequests(): Promise<number> {
 export async function getAdminEmails(): Promise<string[]> {
   const admins = await prisma.user.findMany({
     where: { OR: [{ role: 'ADMIN' }, { adminApplications: { has: 'CONGES' } }] },
-    select: { email: true },
+    select: {
+      email: true,
+      role: true,
+      adminApplications: true,
+      accessPeriods: { select: { application: true, startsAt: true, endsAt: true } },
+    },
   })
-  return admins.map((admin) => admin.email)
+  return filterActiveAppAdmins(admins, 'CONGES').map((admin) => admin.email)
 }
 
 export async function createLeaveRequest(

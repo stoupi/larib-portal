@@ -113,15 +113,14 @@ export async function resolveAuthorRequest(
 async function publicationsAdminEmails(): Promise<string[]> {
   const candidates = await prisma.user.findMany({
     where: { OR: [{ role: 'ADMIN' }, { adminApplications: { has: 'PUBLICATIONS' } }] },
-    select: { email: true, role: true, adminApplications: true },
+    select: {
+      email: true,
+      role: true,
+      adminApplications: true,
+      accessPeriods: { select: { application: true, startsAt: true, endsAt: true } },
+    },
   })
-  return pickAuthorRequestRecipients(
-    candidates.map((candidate) => ({
-      email: candidate.email,
-      role: candidate.role,
-      adminApplications: candidate.adminApplications as string[],
-    })),
-  )
+  return pickAuthorRequestRecipients(candidates)
 }
 
 export async function reportPublicationIssue(
