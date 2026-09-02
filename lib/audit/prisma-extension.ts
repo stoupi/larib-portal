@@ -21,9 +21,25 @@ function delegateName(model: string): string {
   return model.charAt(0).toLowerCase() + model.slice(1)
 }
 
+// upsert and update address a row by its compound unique — `articleId_authorId: {…}` —
+// which findMany rejects. The parts are spread back out so the before-read can run.
+export function expandCompoundUnique(where: unknown): unknown {
+  if (!where || typeof where !== 'object' || Array.isArray(where)) return where
+  const entries = Object.entries(where as Record<string, unknown>)
+  const compound = entries.find(([key, value]) => {
+    if (!key.includes('_') || value === null || typeof value !== 'object' || Array.isArray(value)) return false
+    const parts = key.split('_')
+    const inner = Object.keys(value as Record<string, unknown>)
+    return inner.length === parts.length && parts.every((part) => inner.includes(part))
+  })
+  if (!compound) return where
+  const rest = Object.fromEntries(entries.filter(([key]) => key !== compound[0]))
+  return { ...rest, ...(compound[1] as Record<string, unknown>) }
+}
+
 function whereOf(args: unknown): unknown {
   if (args && typeof args === 'object' && 'where' in args) {
-    return (args as { where?: unknown }).where
+    return expandCompoundUnique((args as { where?: unknown }).where)
   }
   return undefined
 }
