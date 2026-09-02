@@ -63,6 +63,7 @@ model User {
   authoredBy             Author[]
   studiesCreated         Study[]              @relation("StudyCreatedBy")
   articlesCreated        Article[]            @relation("ArticleCreatedBy")
+  publicationEmailsSent  PublicationEmail[]   @relation("PublicationEmailSentBy")
   authorRequestsMade     PublicationRequest[] @relation("PublicationRequestedBy")
   authorRequestsResolved PublicationRequest[] @relation("PublicationRequestResolvedBy")
 
@@ -606,6 +607,7 @@ model Article {
   pdfUrl              String?
   pdfKey              String?
   carouselEmailSentAt DateTime?
+  emailsSent          PublicationEmail[]
   linkedinPostUrl     String?
   linkedinPostedAt    DateTime?
   statisticianId      String?
@@ -626,6 +628,40 @@ model Article {
 enum PublicationRequestKind {
   AUTHOR_LIST
   ERROR_REPORT
+}
+
+enum PublicationEmailKind {
+  CAROUSEL_REQUEST
+  AUTHOR_LIST_REQUEST
+  MONTHLY_RECAP
+  ISSUE_REPORT
+}
+
+enum PublicationEmailStatus {
+  SENT
+  FAILED
+}
+
+model PublicationEmail {
+  id         String                 @id @default(cuid())
+  kind       PublicationEmailKind
+  articleId  String?
+  article    Article?               @relation(fields: [articleId], references: [id], onDelete: SetNull)
+  toEmails   String[]
+  ccEmails   String[]               @default([])
+  subject    String
+  bodyText   String
+  bodyHtml   String?
+  status     PublicationEmailStatus @default(SENT)
+  error      String?
+  providerId String?
+  sentById   String?
+  sentBy     User?                  @relation("PublicationEmailSentBy", fields: [sentById], references: [id], onDelete: SetNull)
+  sentAt     DateTime               @default(now())
+
+  @@index([kind, sentAt])
+  @@index([articleId])
+  @@map("PublicationEmail")
 }
 
 model PublicationRequest {

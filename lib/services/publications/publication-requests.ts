@@ -3,6 +3,8 @@ import { resolveAppBaseUrl } from '@/lib/app-url'
 import { publicationsPaths, PUBLICATIONS_ADMIN_BASE } from '@/lib/publications/base-path'
 import { pickAuthorRequestRecipients, pickIssueRecipients } from '@/lib/publications/editor-logic'
 import { sendAuthorListRequestEmail, sendPublicationIssueEmail } from '@/lib/services/email'
+import { renderPublicationRequestEmail } from '@/lib/email/publication-request-template'
+import { recordPublicationEmail } from './email-log'
 
 export const PUBLICATIONS_REQUESTS_TAG = 'publications:requests'
 
@@ -39,17 +41,38 @@ export async function createAuthorListRequest(
   const requester = request.requestedBy
   const requesterName =
     [requester.firstName, requester.lastName].filter(Boolean).join(' ') || requester.email
+  const rendered = renderPublicationRequestEmail({
+    kind: 'AUTHOR_LIST',
+    articleTitle: request.article.title,
+    requesterName,
+    body: note,
+    articleUrl: adminArticleUrl(articleId, 'edit'),
+  })
+  let failure: string | null = null
   try {
-    await sendAuthorListRequestEmail({
+    const sent = await sendAuthorListRequestEmail({
       recipients,
       articleTitle: request.article.title,
       requesterName,
       note,
       articleUrl: adminArticleUrl(articleId, 'edit'),
     })
+    if (!sent.ok) failure = 'RESEND_REQUEST_FAILED'
   } catch (error) {
+    failure = error instanceof Error ? error.message : 'UNKNOWN'
     console.error('sendAuthorListRequestEmail failed', error)
   }
+  await recordPublicationEmail({
+    kind: 'AUTHOR_LIST_REQUEST',
+    articleId,
+    to: recipients,
+    subject: rendered.subject,
+    bodyText: rendered.text,
+    bodyHtml: rendered.html,
+    status: failure ? 'FAILED' : 'SENT',
+    error: failure,
+    sentById: userId,
+  })
   return { id: request.id }
 }
 
@@ -151,8 +174,16 @@ export async function reportPublicationIssue(
   })
   const reporter = request.requestedBy
   const reporterName = [reporter.firstName, reporter.lastName].filter(Boolean).join(' ') || reporter.email
+  const rendered = renderPublicationRequestEmail({
+    kind: 'ERROR_REPORT',
+    articleTitle: request.article.title,
+    requesterName: reporterName,
+    body: message,
+    articleUrl: adminArticleUrl(articleId, 'read'),
+  })
+  let failure: string | null = null
   try {
-    await sendPublicationIssueEmail({
+    const sent = await sendPublicationIssueEmail({
       to: recipients.to,
       cc: recipients.cc,
       articleTitle: request.article.title,
@@ -160,8 +191,22 @@ export async function reportPublicationIssue(
       message,
       articleUrl: adminArticleUrl(articleId, 'read'),
     })
+    if (!sent.ok) failure = 'RESEND_REQUEST_FAILED'
   } catch (error) {
+    failure = error instanceof Error ? error.message : 'UNKNOWN'
     console.error('sendPublicationIssueEmail failed', error)
   }
+  await recordPublicationEmail({
+    kind: 'ISSUE_REPORT',
+    articleId,
+    to: recipients.to,
+    cc: recipients.cc,
+    subject: rendered.subject,
+    bodyText: rendered.text,
+    bodyHtml: rendered.html,
+    status: failure ? 'FAILED' : 'SENT',
+    error: failure,
+    sentById: userId,
+  })
   return { id: request.id, firstAuthorReached: recipients.firstAuthorReached }
 }

@@ -145,6 +145,7 @@ export function CarouselEmailDialog({ controller }: { controller: CarouselEmailC
                 <TabsContent value="preview">
                   <iframe
                     title={t('tabPreview')}
+                    sandbox=""
                     srcDoc={renderCarouselRequestEmailHtml(draft.body, draft.subject)}
                     className="h-[420px] w-full rounded-lg border border-line bg-white"
                   />

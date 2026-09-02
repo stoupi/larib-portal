@@ -1894,7 +1894,8 @@
       "backToDashboard": "Tableau de bord",
       "communicationTitle": "Communication",
       "communicationDescription": "Mails carrousel LinkedIn à envoyer",
-      "logbookDescription": "Qui a modifié quoi, et quand"
+      "logbookDescription": "Qui a modifié quoi, et quand",
+      "emailsDescription": "Tous les messages partis depuis Publications."
     },
     "communication": {
       "title": "Communication",
@@ -1930,6 +1931,25 @@
       "colAcceptedAt": "Date d’acceptation",
       "colEmail": "Mail carrousel",
       "colAction": "Action"
+    },
+    "emails": {
+    	"title": "Emails envoyés",
+    	"subtitle": "Tous les messages partis depuis Publications, avec leur destinataire et leur issue.",
+    	"empty": "Aucun email envoyé pour le moment.",
+    	"colKind": "Type",
+    	"colSubject": "Objet",
+    	"colTo": "Destinataires",
+    	"colSentBy": "Envoyé par",
+    	"colSentAt": "Date",
+    	"colStatus": "Issue",
+    	"statusSENT": "Envoyé",
+    	"statusFAILED": "Échec",
+    	"kindCAROUSEL_REQUEST": "Mail carrousel",
+    	"kindAUTHOR_LIST_REQUEST": "Demande de liste d'auteurs",
+    	"kindISSUE_REPORT": "Signalement d'erreur",
+    	"kindMONTHLY_RECAP": "Récapitulatif mensuel",
+    	"ccLabel": "En copie",
+    	"systemSender": "Automatique"
     },
     "logbook": {
       "title": "Logbook",

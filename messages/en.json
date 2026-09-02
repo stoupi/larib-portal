@@ -1896,7 +1896,8 @@
       "backToDashboard": "Publications dashboard",
       "communicationTitle": "Communication",
       "communicationDescription": "LinkedIn carousel emails to send",
-      "logbookDescription": "Who changed what, and when"
+      "logbookDescription": "Who changed what, and when",
+      "emailsDescription": "Every message Publications has sent."
     },
     "communication": {
       "title": "Communication",
@@ -1932,6 +1933,25 @@
       "colAcceptedAt": "Acceptance date",
       "colEmail": "Carousel email",
       "colAction": "Action"
+    },
+    "emails": {
+    	"title": "Sent emails",
+    	"subtitle": "Every message Publications has sent, with its recipients and its outcome.",
+    	"empty": "No email sent yet.",
+    	"colKind": "Kind",
+    	"colSubject": "Subject",
+    	"colTo": "Recipients",
+    	"colSentBy": "Sent by",
+    	"colSentAt": "Date",
+    	"colStatus": "Outcome",
+    	"statusSENT": "Sent",
+    	"statusFAILED": "Failed",
+    	"kindCAROUSEL_REQUEST": "Carousel email",
+    	"kindAUTHOR_LIST_REQUEST": "Author list request",
+    	"kindISSUE_REPORT": "Error report",
+    	"kindMONTHLY_RECAP": "Monthly recap",
+    	"ccLabel": "In copy",
+    	"systemSender": "Automatic"
     },
     "logbook": {
       "title": "Logbook",

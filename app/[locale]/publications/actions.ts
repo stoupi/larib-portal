@@ -17,6 +17,8 @@ import {
   resolveAllAuthorRequests,
   PUBLICATIONS_REQUESTS_TAG,
 } from '@/lib/services/publications/publication-requests'
+import { recordPublicationEmail, PUBLICATIONS_EMAILS_TAG } from '@/lib/services/publications/email-log'
+import { renderCarouselRequestEmailHtml } from '@/lib/email/carousel-template'
 import { searchByAuthor, fetchByPmids } from '@/lib/services/publications/pubmed'
 import {
   importRecords,
@@ -871,7 +873,7 @@ export const sendCarouselEmailAction = appAdminAction('PUBLICATIONS')
       body: z.string().min(1),
     }),
   )
-  .action(async ({ parsedInput }) => {
+  .action(async ({ parsedInput, ctx }) => {
     const result = await sendCarouselRequestEmail({
       to: parsedInput.to,
       cc: [...CAROUSEL_CC_RECIPIENTS],
@@ -879,7 +881,22 @@ export const sendCarouselEmailAction = appAdminAction('PUBLICATIONS')
       subject: parsedInput.subject,
       body: parsedInput.body,
     })
-    if ('error' in result) throw new Error(result.error)
+    const failed = 'error' in result
+    await recordPublicationEmail({
+      kind: 'CAROUSEL_REQUEST',
+      articleId: parsedInput.articleId,
+      to: [parsedInput.to],
+      cc: [...CAROUSEL_CC_RECIPIENTS],
+      subject: parsedInput.subject,
+      bodyText: parsedInput.body,
+      bodyHtml: renderCarouselRequestEmailHtml(parsedInput.body, parsedInput.subject),
+      status: failed ? 'FAILED' : 'SENT',
+      error: failed ? result.error : null,
+      providerId: failed ? null : result.id,
+      sentById: ctx.userId,
+    })
+    revalidateTag(PUBLICATIONS_EMAILS_TAG)
+    if (failed) throw new Error(result.error)
     const sentAt = new Date()
     await markCarouselEmailSent(parsedInput.articleId, sentAt)
     revalidateTag(PUBLICATIONS_ARTICLES_TAG)

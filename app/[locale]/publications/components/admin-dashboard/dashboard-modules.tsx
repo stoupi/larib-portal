@@ -1,7 +1,7 @@
 'use client'
 
 import { useTranslations } from 'next-intl'
-import { Download, Users, Building2, BookOpen, FlaskConical, Megaphone, History } from 'lucide-react'
+import { Download, Users, Building2, BookOpen, FlaskConical, Megaphone, History, Mail } from 'lucide-react'
 import type { ComponentType } from 'react'
 import { Link } from '@/app/i18n/navigation'
 
@@ -12,6 +12,7 @@ export type ModuleCounts = {
   journals: number
   studies: number
   pendingCommunications: number
+  emails: number
 }
 
 function ModuleCard({
@@ -99,6 +100,13 @@ export function DashboardModules({ counts }: { counts: ModuleCounts }) {
           title={t('studies.title')}
           description={t('adminHome.studiesDescription')}
           count={counts.studies}
+        />
+        <ModuleCard
+          href="/publications/admin/emails"
+          icon={Mail}
+          title={t('emails.title')}
+          description={t('adminHome.emailsDescription')}
+          count={counts.emails}
         />
         <ModuleCard
           href="/publications/admin/logbook"
