@@ -910,6 +910,7 @@ sans vérifier leur période.
 | `b442068` | Filtrage des destinataires actifs Congés et Publications |
 | `34a2536` | Création atomique du compte invité et de ses périodes |
 | `1a50f13` | Résolution de la revue : destinataires obligatoires et preuve réelle des rollbacks |
+| `fc2a5ce` | Documentation de clôture validée et publiée sur `origin/main` |
 
 Les fichiers de conception et d'exécution détaillés sont :
 
@@ -922,8 +923,10 @@ Les fichiers de conception et d'exécution détaillés sont :
 - `npm run test:unit` : 71 fichiers, 508 tests verts, dont deux tests PostgreSQL de rollback sur la base de test.
 - `PLAYWRIGHT_PORT=3100 npx playwright test tests/e2e/corelab-access.spec.ts tests/e2e/rbac.spec.ts tests/e2e/admin-users.spec.ts` : 12 tests verts.
 - Relecture indépendante : deux remarques reçues et résolues dans `1a50f13` ; aucun autre problème important signalé.
-- Validation complète de push : obligatoire avant de commencer le lot 2 ; son résultat
-  final est enregistré par le hook de validation et le push vers `origin/main`.
+- `FULL_PUSH_VALIDATION=1 git push origin corelab:main` sur `fc2a5ce` : vert le
+  2 septembre 2026. Le hook a rejoué 71 fichiers / 508 tests unitaires, le build de
+  production et 64 scénarios E2E : 63 sont passés au premier essai et le scénario
+  Publications « My affiliations » est passé au retry après une inversion d'ordre
+  transitoire dans le dialogue. Le push vers `origin/main` a réussi.
 
-Le lot 1 est considéré clos lorsque le push complet contenant ces correctifs et cette
-documentation a réussi. Le prochain travail fonctionnel est le lot 2 (`03-lot2-noyau.md`).
+Le lot 1 est clos. Le prochain travail fonctionnel est le lot 2 (`03-lot2-noyau.md`).

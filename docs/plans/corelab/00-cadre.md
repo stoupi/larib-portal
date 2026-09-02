@@ -19,9 +19,9 @@
 | 2 | Prochain lot à exécuter | `03-lot2-noyau.md` |
 | 3 à 9 | Non commencés | Plans correspondants dans ce dossier |
 
-Un nouvel agent commence par vérifier que `origin/main` contient les commits de clôture
-du lot 1 listés dans `02-lot1-droits-dates.md`. Il ne commence pas le lot 2 si la
-validation complète du lot 1 n'est pas documentée comme verte.
+La clôture fonctionnelle `fc2a5ce` a été publiée sur `origin/main` le 2 septembre 2026
+après une validation complète verte. Un nouvel agent peut commencer le lot 2 après
+avoir vérifié que son checkout contient cette clôture et le présent relevé de validation.
 
 ---
 

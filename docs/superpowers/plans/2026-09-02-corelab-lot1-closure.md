@@ -52,4 +52,4 @@
 - [x] Request an independent code review and resolve all important findings.
 - [x] Run `npm run typecheck`, `npm run test:unit`, and the targeted CoreLab/RBAC/admin-user Playwright suite.
 - [x] Commit documentation as `docs(corelab): close lot 1 after review`.
-- [ ] Rebase `corelab` on the latest `origin/main`, then run `FULL_PUSH_VALIDATION=1 git push origin corelab:main`; Lot 1 is closed only if the command exits successfully.
+- [x] Rebase `corelab` on the latest `origin/main`, then run `FULL_PUSH_VALIDATION=1 git push origin corelab:main`; completed successfully on `fc2a5ce` on 2026-09-02 (508 unit tests, production build, 64 E2E with one passing retry).
