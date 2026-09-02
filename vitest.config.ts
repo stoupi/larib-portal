@@ -10,6 +10,9 @@ export default defineConfig({
   },
   test: {
     include: ['lib/**/*.test.ts'],
+    exclude: process.env.CORELAB_INTEGRATION === '1'
+      ? ['**/node_modules/**']
+      : ['**/node_modules/**', '**/*.integration.test.ts'],
     environment: 'node',
   },
 })

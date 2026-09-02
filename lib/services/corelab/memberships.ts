@@ -88,10 +88,19 @@ export async function addMember(input: AddMemberInput): Promise<{ id: string }> 
     ...certification,
   }
 
-  return prisma.corelabStudyMembership.upsert({
-    where: { studyId_userId: { studyId: input.studyId, userId: input.userId } },
-    create: { studyId: input.studyId, userId: input.userId, ...data },
-    update: { ...data, removedAt: null, joinedAt: new Date() },
+  const removed = await prisma.corelabStudyMembership.findFirst({
+    where: { studyId: input.studyId, userId: input.userId },
+    select: { id: true },
+  })
+  if (removed) {
+    return prisma.corelabStudyMembership.update({
+      where: { id: removed.id },
+      data: { ...data, removedAt: null, joinedAt: new Date() },
+      select: { id: true },
+    })
+  }
+  return prisma.corelabStudyMembership.create({
+    data: { studyId: input.studyId, userId: input.userId, ...data },
     select: { id: true },
   })
 }

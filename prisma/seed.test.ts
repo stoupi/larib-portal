@@ -10,6 +10,8 @@ import path from 'path';
 dotenv.config({ path: path.resolve(__dirname, '..', '.env.test'), override: true });
 
 import { auth } from '../lib/auth';
+import { MIR_DIJON_CRF_V1 } from '../lib/corelab/crf/mir-dijon-v1';
+import { toJsonValue } from '../lib/corelab/crf/json';
 
 const prisma = new PrismaClient();
 
@@ -315,7 +317,47 @@ async function main() {
 			accounts: { create: { id: randomUUID(), providerId: 'credential', accountId: 'corelab-expired@larib-portal.test', password: await ctx.password.hash('ristifou') } },
 		},
 	});
-	console.log('✅ Created CoreLab users:', corelabAdminUser.email, corelabMemberUser.email, corelabExpiredUser.email);
+	const corelabPiUser = await prisma.user.create({
+		data: {
+			id: randomUUID(), name: 'CoreLab PI', firstName: 'CoreLab', lastName: 'Investigator',
+			email: 'corelab-pi@larib-portal.test', emailVerified: true, role: 'USER',
+			applications: ['CORELAB'],
+			accounts: { create: { id: randomUUID(), providerId: 'credential', accountId: 'corelab-pi@larib-portal.test', password: await ctx.password.hash('ristifou') } },
+		},
+	});
+	const corelabReader2User = await prisma.user.create({
+		data: {
+			id: randomUUID(), name: 'CoreLab Reader Two', firstName: 'Reader', lastName: 'Two',
+			email: 'corelab-reader-2@larib-portal.test', emailVerified: true, role: 'USER',
+			applications: ['CORELAB'],
+			accounts: { create: { id: randomUUID(), providerId: 'credential', accountId: 'corelab-reader-2@larib-portal.test', password: await ctx.password.hash('ristifou') } },
+		},
+	});
+	const corelabReaderNewUser = await prisma.user.create({
+		data: {
+			id: randomUUID(), name: 'CoreLab Reader New', firstName: 'Reader', lastName: 'New',
+			email: 'corelab-reader-new@larib-portal.test', emailVerified: true, role: 'USER',
+			applications: ['CORELAB'],
+			accounts: { create: { id: randomUUID(), providerId: 'credential', accountId: 'corelab-reader-new@larib-portal.test', password: await ctx.password.hash('ristifou') } },
+		},
+	});
+	console.log('✅ Created CoreLab users:', corelabAdminUser.email, corelabMemberUser.email, corelabExpiredUser.email, corelabPiUser.email, corelabReader2User.email, corelabReaderNewUser.email);
+
+	const mirStudy = await prisma.corelabStudy.create({
+		data: {
+			code: 'MIR-DJ-TEST', name: 'MIR-Dijon test study', modalities: ['CMR'], phase: 'PRODUCTION',
+			maxExamsPerPatient: 3, startedAt: new Date('2026-03-01T00:00:00.000Z'),
+			documentSlots: toJsonValue(MIR_DIJON_CRF_V1.documentSlots), createdById: corelabAdminUser.id,
+			crfVersions: { create: { number: 1, definition: toJsonValue(MIR_DIJON_CRF_V1.sequences), discordanceThresholds: toJsonValue(MIR_DIJON_CRF_V1.discordanceThresholds), publishedById: corelabAdminUser.id } },
+			sites: { create: [{ code: 'CHU-DIJ-1', name: 'CHU Dijon' }] },
+			memberships: { create: [
+				{ userId: corelabPiUser.id, role: 'PI', certificationPhase: 'PRODUCTION', calibrationStatus: 'CERTIFIED', addedById: corelabAdminUser.id },
+				{ userId: corelabMemberUser.id, role: 'READER', canReview: true, certificationPhase: 'PRODUCTION', calibrationStatus: 'CERTIFIED', addedById: corelabAdminUser.id },
+				{ userId: corelabReader2User.id, role: 'READER', certificationPhase: 'PRODUCTION', calibrationStatus: 'CERTIFIED', addedById: corelabAdminUser.id },
+			] },
+		},
+	});
+	console.log('✅ Created CoreLab study:', mirStudy.code);
 
 	// Minimal publications sample dataset (article where publicationsUser is first author)
 	const publicationsJournal = await prisma.journal.create({
