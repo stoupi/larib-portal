@@ -1,0 +1,4 @@
+patient_id,centre,modality,exam_date,exam_index,time_label
+P-201,CHU-DIJ-1,CMR,2026-05-01,1,Baseline
+P-201,CHU-DIJ-1,CMR,2026-11-01,2,FU1
+P-202,CHU-DIJ-1,CMR,2026-05-04,1,Baseline
