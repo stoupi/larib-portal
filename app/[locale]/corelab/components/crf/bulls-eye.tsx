@@ -4,7 +4,6 @@ import { useMemo, useRef, useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { bullsEyeShapes } from '@/lib/corelab/crf/bullseye-geometry'
 import { segmentColour } from '@/lib/corelab/crf/segment-colours'
-import { Button } from '@/components/ui/button'
 import type { FieldDefinition } from '@/lib/corelab/crf/schema'
 import type { SegmentValues } from '@/types/corelab'
 
@@ -21,8 +20,8 @@ export function BullsEye({ field, value, onChange, readOnly }: BullsEyeProps) {
   const segmentCount = field.segmentCount === 16 ? 16 : 17
   const shapes = useMemo(() => bullsEyeShapes(segmentCount, 316), [segmentCount])
 
-  const [mode, setMode] = useState<'brush' | 'cycle'>('brush')
-  const [brushOption, setBrushOption] = useState(options[0] ?? '')
+  const [brushOption, setBrushOption] = useState<string | null>(null)
+  const mode = brushOption === null ? 'cycle' : 'brush'
   const painting = useRef(false)
   const draftRef = useRef<SegmentValues | null>(null)
   const [draft, setDraft] = useState<SegmentValues | null>(null)
@@ -30,7 +29,7 @@ export function BullsEye({ field, value, onChange, readOnly }: BullsEyeProps) {
   const segments = draft ?? value ?? {}
 
   function valueForSegment(segment: number, current: SegmentValues): unknown {
-    if (mode === 'brush') return brushOption
+    if (brushOption !== null) return brushOption
     const currentValue = current[String(segment)]
     const index = options.indexOf(typeof currentValue === 'string' ? currentValue : '')
     return options[(index + 1) % Math.max(options.length, 1)] ?? null
@@ -104,26 +103,18 @@ export function BullsEye({ field, value, onChange, readOnly }: BullsEyeProps) {
       </svg>
 
       <div className="space-y-4">
-        <div className="flex gap-2">
-          <Button type="button" size="sm" variant={mode === 'brush' ? 'default' : 'outline'} onClick={() => setMode('brush')}>
-            {t('brush')}
-          </Button>
-          <Button type="button" size="sm" variant={mode === 'cycle' ? 'default' : 'outline'} onClick={() => setMode('cycle')}>
-            {t('cycle')}
-          </Button>
-        </div>
         <p className="max-w-xs text-xs text-text-secondary">{mode === 'brush' ? t('brushHelp') : t('cycleHelp')}</p>
         <div className="flex flex-col gap-1">
           {options.map((option, index) => {
             const colour = segmentColour(index)
-            const selected = mode === 'brush' && option === brushOption
+            const selected = option === brushOption
             return (
               <button
                 key={option}
                 type="button"
                 disabled={readOnly}
                 aria-pressed={selected}
-                onClick={() => setBrushOption(option)}
+                onClick={() => setBrushOption((current) => (current === option ? null : option))}
                 className={`flex items-center gap-2 rounded-lg border px-3 py-1.5 text-left text-sm ${selected ? 'border-coral-500' : 'border-border'}`}
               >
                 <span

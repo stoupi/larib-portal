@@ -44,7 +44,16 @@ test('the form engine drives bounds, conditional fields, the bull\'s eye and fla
   await expect(page.getByLabel('LVEF', { exact: true })).toBeVisible()
 
   const bullsEye = page.getByRole('group', { name: 'Wall Motion Segments' })
-  await page.getByRole('button', { name: 'Akinetic' }).click()
+  const akinetic = page.getByRole('button', { name: 'Akinetic' })
+  const segmentOne = bullsEye.getByRole('button', { name: 'Segment 1', exact: true })
+
+  await segmentOne.click()
+  await expect(segmentOne).toHaveAttribute('fill', '#FEFCE8')
+  await segmentOne.click()
+  await expect(segmentOne).toHaveAttribute('fill', '#FFF3E9')
+
+  await akinetic.click()
+  await expect(akinetic).toHaveAttribute('aria-pressed', 'true')
   const before = await changeCount(page)
   for (const segment of [8, 9, 14]) {
     await bullsEye.getByRole('button', { name: `Segment ${segment}` }).click()
@@ -53,10 +62,10 @@ test('the form engine drives bounds, conditional fields, the bull\'s eye and fla
   expect(Number(after.replace(/\D/g, '')) - Number(before.replace(/\D/g, ''))).toBe(3)
   await expect(bullsEye.getByRole('button', { name: 'Segment 8' })).toHaveAttribute('fill', '#FFF3E9')
 
-  await page.getByRole('button', { name: 'Cycle', exact: true }).click()
-  await bullsEye.getByRole('button', { name: 'Segment 1', exact: true }).click()
-  await bullsEye.getByRole('button', { name: 'Segment 1', exact: true }).click()
-  await expect(bullsEye.getByRole('button', { name: 'Segment 1', exact: true })).toHaveAttribute('fill', '#FFF3E9')
+  await akinetic.click()
+  await expect(akinetic).toHaveAttribute('aria-pressed', 'false')
+  await bullsEye.getByRole('button', { name: 'Segment 2', exact: true }).click()
+  await expect(bullsEye.getByRole('button', { name: 'Segment 2', exact: true })).toHaveAttribute('fill', '#FEFCE8')
 
   await page.getByRole('button', { name: 'Flag this value' }).first().click()
   await page.getByRole('button', { name: 'Image quality' }).click()
@@ -68,8 +77,7 @@ test('the form preview speaks French while the CRF field names stay in English',
   await login(page, 'corelab-admin@larib-portal.test', 'fr')
   await openPreview(page, 'fr')
 
-  await expect(page.getByRole('button', { name: 'Pinceau' })).toBeVisible()
-  await expect(page.getByRole('button', { name: 'Défilement' })).toBeVisible()
+  await expect(page.getByText(/Aucune valeur sélectionnée/)).toBeVisible()
   await expect(page.getByText('LV Measurable')).toBeVisible()
   await expect(page.getByText(/Modifications émises/)).toBeVisible()
 })
