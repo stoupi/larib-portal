@@ -2,6 +2,7 @@ import { prisma } from '@/lib/prisma'
 import { Prisma } from '@/app/generated/prisma'
 import type { InvitationStatus } from './invitations'
 import { accountsAreActivated } from '@/lib/account-status'
+import type { ActiveApplication } from '@/lib/permissions'
 
 export type UserWithAdminFields = Prisma.UserGetPayload<{
   select: {
@@ -48,6 +49,7 @@ export async function listUsers(): Promise<UserWithAdminFields[]> {
       profilePhoto: true,
       applications: true,
       adminApplications: true,
+      accessPeriods: { select: { application: true, startsAt: true, endsAt: true } },
       createdAt: true,
       updatedAt: true,
     },
@@ -83,8 +85,8 @@ export type UpdateUserInput = {
   profilePhotoKey?: string | null
   congesTotalDays?: number
   publicationsEmailOptOut?: boolean
-  applications?: Array<'BESTOF_LARIB' | 'CONGES' | 'PUBLICATIONS'>
-  adminApplications?: Array<'BESTOF_LARIB' | 'CONGES' | 'PUBLICATIONS'>
+  applications?: ActiveApplication[]
+  adminApplications?: ActiveApplication[]
 }
 
 export async function updateUser(data: UpdateUserInput): Promise<UserWithAdminFields> {
@@ -112,6 +114,7 @@ export async function updateUser(data: UpdateUserInput): Promise<UserWithAdminFi
       profilePhoto: true,
       applications: true,
       adminApplications: true,
+      accessPeriods: { select: { application: true, startsAt: true, endsAt: true } },
       createdAt: true,
       updatedAt: true,
     },
@@ -125,8 +128,8 @@ export type CreatePlaceholderUserInput = {
   lastName?: string | null
   language?: 'EN' | 'FR'
   position?: string | null
-  applications?: Array<'BESTOF_LARIB' | 'CONGES' | 'PUBLICATIONS'>
-  adminApplications?: Array<'BESTOF_LARIB' | 'CONGES' | 'PUBLICATIONS'>
+  applications?: ActiveApplication[]
+  adminApplications?: ActiveApplication[]
   arrivalDate?: Date | null
   departureDate?: Date | null
   congesTotalDays?: number
@@ -169,6 +172,7 @@ export async function createPlaceholderUser(data: CreatePlaceholderUserInput): P
       profilePhoto: true,
       applications: true,
       adminApplications: true,
+      accessPeriods: { select: { application: true, startsAt: true, endsAt: true } },
       createdAt: true,
       updatedAt: true,
     },
@@ -202,6 +206,7 @@ export async function listUsersWithOnboardingStatus(): Promise<UserWithOnboardin
       profilePhoto: true,
       applications: true,
       adminApplications: true,
+      accessPeriods: { select: { application: true, startsAt: true, endsAt: true } },
       createdAt: true,
       updatedAt: true,
       accounts: {

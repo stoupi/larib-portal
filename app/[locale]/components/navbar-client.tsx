@@ -18,7 +18,7 @@ import { Badge } from '@/components/ui/badge';
 import { LogOut } from 'lucide-react';
 import { authClient } from '@/lib/auth-client';
 import { applicationLink } from '@/lib/application-link';
-import { isSuperAdmin, accessibleApplications } from '@/lib/permissions';
+import { isSuperAdmin, accessibleApplications, type ActiveApplication } from '@/lib/permissions';
 import Image from 'next/image';
 
 type NavbarUser = {
@@ -31,8 +31,8 @@ type NavbarUser = {
     role?: 'ADMIN' | 'USER';
     firstName?: string | null;
     lastName?: string | null;
-    applications?: Array<'BESTOF_LARIB' | 'CONGES' | 'PUBLICATIONS'> | null;
-    adminApplications?: Array<'BESTOF_LARIB' | 'CONGES' | 'PUBLICATIONS'> | null;
+    applications?: ActiveApplication[] | null;
+    adminApplications?: ActiveApplication[] | null;
 };
 
 export function NavbarClient({ user }: { user?: NavbarUser | null }) {
@@ -187,6 +187,8 @@ export function NavbarClient({ user }: { user?: NavbarUser | null }) {
 												const slug =
 													app === 'BESTOF_LARIB'
 														? '/bestof-larib'
+														: app === 'CORELAB'
+														? '/corelab'
 														: app === 'PUBLICATIONS'
 															? '/publications'
 															: '/conges';

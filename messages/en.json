@@ -136,7 +136,8 @@
     ],
     "btnUserAccess": "User access",
     "btnAdmin": "Admin",
-    "pendingLeaveRequests": "{count, plural, one {# pending request} other {# pending requests}}"
+    "pendingLeaveRequests": "{count, plural, one {# pending request} other {# pending requests}}",
+    "appDesc_CORELAB": "Read the exams assigned to you and fill in the CRFs of centralised studies."
   },
   "metadata": {
     "title": "Larib Portal",
@@ -248,7 +249,15 @@
     "invitationResent": "Invitation resent",
     "leaveDaysLabel": "Number of leave days",
     "colApplicationsAccess": "Applications & access",
-    "usersSectionLabel": "Users"
+    "usersSectionLabel": "Users",
+    "app_CORELAB": "Core Lab",
+    "accessPeriodsTitle": "Validity period per application",
+    "accessPeriodsHelp": "Leave empty for unlimited access. The end date is inclusive.",
+    "accessFrom": "From",
+    "accessUntil": "Until",
+    "accessExpired": "expired on {date}",
+    "accessUntilShort": "until {date}",
+    "accessFromShort": "from {date}"
   },
   "upload": {
     "selectFile": "Select image",

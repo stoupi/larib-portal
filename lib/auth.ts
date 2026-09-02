@@ -38,6 +38,10 @@ export const auth = betterAuth({
 			});
 		},
 	},
+	session: {
+		expiresIn: 60 * 60 * 12,
+		updateAge: 60 * 60,
+	},
 	secret: process.env.BETTER_AUTH_SECRET!,
 	baseURL: resolveAppBaseUrl(),
 	trustedOrigins: buildTrustedOrigins(),

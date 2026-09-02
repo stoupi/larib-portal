@@ -30,6 +30,9 @@ export const getTypedSession = cache(async (): Promise<BetterAuthSession | null>
 					phoneNumber: true,
 					profilePhoto: true,
 					country: true,
+					accessPeriods: {
+						select: { application: true, startsAt: true, endsAt: true },
+					},
 				},
 			});
 			const base = session as unknown as BetterAuthSession;

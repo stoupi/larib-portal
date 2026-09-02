@@ -46,6 +46,7 @@ model User {
   leaveRequests  LeaveRequest[]
   leaveApprovals LeaveRequest[] @relation("LeaveRequestApprover")
   leavePeriods   LeavePeriod[]
+  accessPeriods  ApplicationAccessPeriod[]
 
   //related to bestof larib
   ClinicalCase     ClinicalCase[]
@@ -78,6 +79,7 @@ enum Application {
   CONGES
   CARDIOLARIB
   PUBLICATIONS
+  CORELAB
 }
 
 enum AuthorType {
@@ -764,4 +766,20 @@ model AuditChange {
   @@index([eventId])
   @@index([field])
   @@map("AuditChange")
+}
+
+// ── CoreLab ──
+
+model ApplicationAccessPeriod {
+  id          String      @id @default(cuid())
+  userId      String
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  application Application
+  startsAt    DateTime?
+  endsAt      DateTime?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@unique([userId, application])
+  @@map("ApplicationAccessPeriod")
 }

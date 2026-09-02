@@ -9,6 +9,24 @@ import { resolveAppBaseUrl } from '@/lib/app-url'
 import { superAdminAction } from "@/actions/safe-action"
 import { Prisma } from "@/app/generated/prisma"
 import { prisma } from "@/lib/prisma"
+import { replaceAccessPeriods, startOfDayUtc, endOfDayUtc } from '@/lib/services/access-periods'
+import { ACTIVE_APPLICATIONS, toActiveApplications } from '@/lib/permissions'
+
+const ApplicationEnum = z.enum(ACTIVE_APPLICATIONS)
+
+const AccessPeriodSchema = z.object({
+  application: ApplicationEnum,
+  startsAt: z.string().optional().nullable(),
+  endsAt: z.string().optional().nullable(),
+})
+
+function toAccessPeriodInputs(periods: z.infer<typeof AccessPeriodSchema>[] | undefined) {
+  return (periods ?? []).map((period) => ({
+    application: period.application,
+    startsAt: period.startsAt ? startOfDayUtc(period.startsAt) : null,
+    endsAt: period.endsAt ? endOfDayUtc(period.endsAt) : null,
+  }))
+}
 
 const UpdateUserSchema = z.object({
   id: z.string().min(1),
@@ -23,9 +41,9 @@ const UpdateUserSchema = z.object({
   position: z.string().trim().optional().nullable(),
   arrivalDate: z.string().optional().nullable(),
   departureDate: z.string().optional().nullable(),
-  applications: z.array(z.enum(["BESTOF_LARIB", "CONGES", "PUBLICATIONS"]))
-    .default([]),
-  adminApplications: z.array(z.enum(["BESTOF_LARIB", "CONGES", "PUBLICATIONS"])).optional(),
+  applications: z.array(ApplicationEnum).default([]),
+  adminApplications: z.array(ApplicationEnum).optional(),
+  accessPeriods: z.array(AccessPeriodSchema).optional(),
   locale: z.enum(["en", "fr"]).optional(),
   congesTotalDays: z.number().int().min(0).max(365).optional(),
   profilePhoto: z.string().url().or(z.literal('')).optional().nullable(),
@@ -58,6 +76,7 @@ export const updateUserAction = superAdminAction
       congesTotalDays: parsedInput.congesTotalDays,
       profilePhoto: parsedInput.profilePhoto || null,
     })
+    await replaceAccessPeriods(parsedInput.id, toAccessPeriodInputs(parsedInput.accessPeriods))
     revalidatePath('/admin/users')
     return updated
   })
@@ -94,9 +113,8 @@ const CreateInviteSchema = z.object({
   firstName: z.string().trim().optional().nullable(),
   lastName: z.string().trim().optional().nullable(),
   position: z.string().trim().optional().nullable(),
-  applications: z.array(z.enum(["BESTOF_LARIB", "CONGES", "PUBLICATIONS"]))
-    .default([]),
-  adminApplications: z.array(z.enum(["BESTOF_LARIB", "CONGES", "PUBLICATIONS"])).optional(),
+  applications: z.array(ApplicationEnum).default([]),
+  adminApplications: z.array(ApplicationEnum).optional(),
   arrivalDate: z.string().min(1), // ISO date
   departureDate: z.string().min(1), // ISO date
   locale: z.enum(["en","fr"]),
@@ -119,7 +137,7 @@ export const createUserInviteAction = superAdminAction
     }
 
     // Create a placeholder user so the admin can see it immediately
-    await createPlaceholderUser({
+    const placeholder = await createPlaceholderUser({
       email: parsedInput.email,
       role: parsedInput.role,
       firstName: parsedInput.firstName ?? null,
@@ -133,6 +151,12 @@ export const createUserInviteAction = superAdminAction
       congesTotalDays: parsedInput.congesTotalDays,
       profilePhoto: parsedInput.profilePhoto || null,
     })
+
+    const grantedApplications = Array.from(new Set([...parsedInput.applications, ...adminApplications]))
+    await replaceAccessPeriods(
+      placeholder.id,
+      grantedApplications.map((application) => ({ application, startsAt: null, endsAt: departureDate })),
+    )
 
     // Create invitation token
     const { token, expiresAt } = await createInvitation({
@@ -246,8 +270,8 @@ export const resendInvitationAction = superAdminAction
       lastName: user.lastName ?? undefined,
       role: user.role as 'ADMIN' | 'USER',
       position: user.position,
-      applications: user.applications as Array<'BESTOF_LARIB' | 'CONGES' | 'PUBLICATIONS'>,
-      adminApplications: user.adminApplications as Array<'BESTOF_LARIB' | 'CONGES' | 'PUBLICATIONS'>,
+      applications: toActiveApplications(user.applications),
+      adminApplications: toActiveApplications(user.adminApplications),
       arrivalDate: user.arrivalDate,
       departureDate: user.departureDate,
       congesTotalDays: user.congesTotalDays,

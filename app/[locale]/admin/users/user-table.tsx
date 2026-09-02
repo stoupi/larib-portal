@@ -22,9 +22,10 @@ import {
 import { toast } from 'sonner'
 import type { InvitationStatus } from '@/lib/services/invitations'
 import { Mail, Shield, Trash2, UserIcon } from 'lucide-react'
-import { accessibleApplications, canAdminApp, toActiveApplications, type ActiveApplication } from '@/lib/permissions'
+import { accessibleApplications, canAdminApp, toActiveApplications, type AccessPeriodSummary, type ActiveApplication } from '@/lib/permissions'
 
-export type UserRow = UserFormValues & {
+export type UserRow = Omit<UserFormValues, 'accessPeriods'> & {
+  accessPeriods?: AccessPeriodSummary[]
   name?: string | null
   createdAt?: string
   onboardingStatus?: InvitationStatus
@@ -35,6 +36,7 @@ const APP_DOT: Record<string, string> = {
   BESTOF_LARIB: '#ec3b68',
   CONGES: '#6366f1',
   PUBLICATIONS: '#0d9488',
+  CORELAB: '#122f54',
 }
 
 const AVATAR_TINTS = [
@@ -150,6 +152,16 @@ export function UserTable({ users, positions, locale }: { users: UserRow[]; posi
     return user.onboardingStatus !== 'ACTIVE'
   }
 
+  function accessLabel(periods: UserRow['accessPeriods'], app: ActiveApplication): string | null {
+    const period = (periods ?? []).find((candidate) => candidate.application === app)
+    if (!period) return null
+    const format = (date: Date) => new Date(date).toLocaleDateString(locale === 'fr' ? 'fr-FR' : 'en-GB')
+    if (period.endsAt && new Date(period.endsAt) < new Date()) return t('accessExpired', { date: format(period.endsAt) })
+    if (period.startsAt && new Date(period.startsAt) > new Date()) return t('accessFromShort', { date: format(period.startsAt) })
+    if (period.endsAt) return t('accessUntilShort', { date: format(period.endsAt) })
+    return null
+  }
+
   return (
     <div className="space-y-4">
       <StatusLegend />
@@ -220,6 +232,9 @@ export function UserTable({ users, positions, locale }: { users: UserRow[]; posi
                                   {t('appColUser')}
                                 </span>
                               )}
+                              {accessLabel(user.accessPeriods, app) && (
+                                <span className="text-[10px] text-text-secondary">{accessLabel(user.accessPeriods, app)}</span>
+                              )}
                               {canAdminApp(user, app) && (
                                 <span className="inline-flex items-center gap-0.5 rounded-full bg-navy-800 px-1.5 py-0.5 text-[10px] font-semibold uppercase text-white">
                                   <Shield className="h-2.5 w-2.5" />
@@ -260,6 +275,11 @@ export function UserTable({ users, positions, locale }: { users: UserRow[]; posi
                             position: user.position ?? undefined,
                             arrivalDate: user.arrivalDate ? new Date(user.arrivalDate as unknown as string).toISOString().slice(0,10) : undefined,
                             departureDate: user.departureDate ? new Date(user.departureDate as unknown as string).toISOString().slice(0,10) : undefined,
+                            accessPeriods: (user.accessPeriods ?? []).map((period) => ({
+                              application: period.application as ActiveApplication,
+                              startsAt: period.startsAt ? new Date(period.startsAt).toISOString().slice(0, 10) : '',
+                              endsAt: period.endsAt ? new Date(period.endsAt).toISOString().slice(0, 10) : '',
+                            })),
                             applications: (user.applications ?? []) as UserFormValues['applications'],
                             adminApplications: (user.adminApplications ?? []) as UserFormValues['adminApplications'],
                             congesTotalDays: user.congesTotalDays ?? undefined,

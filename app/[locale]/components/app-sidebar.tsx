@@ -21,7 +21,7 @@ import {
   type LucideIcon,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { isSuperAdmin, accessibleApplications, canAdminApp } from '@/lib/permissions'
+import { isSuperAdmin, accessibleApplications, canAdminApp, type ActiveApplication } from '@/lib/permissions'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
   DropdownMenu,
@@ -43,8 +43,8 @@ type SidebarUser = {
   image?: string | null
   position?: string | null
   role?: 'ADMIN' | 'USER'
-  applications?: Array<'BESTOF_LARIB' | 'CONGES' | 'PUBLICATIONS'> | null
-  adminApplications?: Array<'BESTOF_LARIB' | 'CONGES' | 'PUBLICATIONS'> | null
+  applications?: ActiveApplication[] | null
+  adminApplications?: ActiveApplication[] | null
 }
 
 type SidebarItem = {

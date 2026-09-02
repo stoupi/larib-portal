@@ -23,14 +23,14 @@ import { toast } from 'sonner';
 import { Check, Pencil, Save, UserCog } from 'lucide-react';
 import DeletableSelectManager from '@/app/[locale]/bestof-larib/components/deletable-select-manager';
 import { FileUpload } from '@/components/ui/file-upload';
-
-const AVAILABLE_APPLICATIONS = ['BESTOF_LARIB', 'CONGES', 'PUBLICATIONS'] as const;
-type AvailableApplication = (typeof AVAILABLE_APPLICATIONS)[number];
+import { ACTIVE_APPLICATIONS as AVAILABLE_APPLICATIONS, type ActiveApplication as AvailableApplication } from '@/lib/permissions';
+import { AccessPeriodFields } from './access-period-fields';
 
 const APP_DOT: Record<AvailableApplication, string> = {
 	BESTOF_LARIB: '#ec3b68',
 	CONGES: '#6366f1',
 	PUBLICATIONS: '#0d9488',
+	CORELAB: '#122f54',
 };
 
 const FormSchema = z.object({
@@ -46,8 +46,13 @@ const FormSchema = z.object({
 	position: z.string().optional(),
 	arrivalDate: z.string().optional(),
 	departureDate: z.string().optional(),
-	applications: z.array(z.enum(['BESTOF_LARIB', 'CONGES', 'PUBLICATIONS'])),
-	adminApplications: z.array(z.enum(['BESTOF_LARIB', 'CONGES', 'PUBLICATIONS'])),
+	applications: z.array(z.enum(AVAILABLE_APPLICATIONS)),
+	adminApplications: z.array(z.enum(AVAILABLE_APPLICATIONS)),
+	accessPeriods: z.array(z.object({
+		application: z.enum(AVAILABLE_APPLICATIONS),
+		startsAt: z.string().optional().nullable(),
+		endsAt: z.string().optional().nullable(),
+	})),
 	congesTotalDays: z.number().int().min(0).max(365).optional(),
 	profilePhoto: z.string().url().or(z.literal('')).optional().nullable(),
 });
@@ -403,6 +408,12 @@ export function UserEditDialog({
 								</div>
 							)}
 						</section>
+
+						<AccessPeriodFields
+							applications={Array.from(new Set([...apps, ...adminApps]))}
+							value={watch('accessPeriods')}
+							onChange={(next) => setValue('accessPeriods', next)}
+						/>
 					</div>
 
 					<div className='flex items-center justify-end gap-3 border-t border-line bg-bg-surface px-6 py-4'>

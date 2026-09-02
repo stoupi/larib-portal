@@ -1,6 +1,8 @@
 import { prisma } from '@/lib/prisma'
 
-type ApplicationName = 'BESTOF_LARIB' | 'CONGES' | 'PUBLICATIONS'
+import type { ActiveApplication } from '@/lib/permissions'
+
+type ApplicationName = ActiveApplication
 
 export type InvitationPayload = {
   email: string

@@ -16,7 +16,7 @@ import { FileUpload } from "@/components/ui/file-upload"
 import { Switch } from "@/components/ui/switch"
 import { InputDialog } from "@/components/ui/input-dialog"
 import { Save, Shield } from "lucide-react"
-import { accessibleApplications, canAdminApp } from "@/lib/permissions"
+import { ACTIVE_APPLICATIONS, accessibleApplications, canAdminApp } from "@/lib/permissions"
 import type { Application } from "@/app/generated/prisma"
 
 const Schema = z.object({
@@ -29,8 +29,7 @@ const Schema = z.object({
   country: z.string().optional().nullable(),
   profilePhoto: z.string().url().or(z.literal('')).optional().nullable(),
   role: z.enum(["ADMIN","USER"]).optional(),
-  applications: z.array(z.enum(["BESTOF_LARIB","CONGES","PUBLICATIONS"]))
-    .optional(),
+  applications: z.array(z.enum(ACTIVE_APPLICATIONS)).optional(),
   publicationsEmailOptOut: z.boolean().optional(),
 })
 
@@ -40,6 +39,7 @@ const APP_DOT: Record<string, string> = {
   BESTOF_LARIB: '#ec3b68',
   CONGES: '#6366f1',
   PUBLICATIONS: '#0d9488',
+  CORELAB: '#122f54',
 }
 
 type Props = {
