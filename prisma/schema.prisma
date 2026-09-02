@@ -41,17 +41,19 @@ model User {
   updatedAt               DateTime      @updatedAt
   image                   String?
 
-  sessions                    Session[]
-  accounts                    Account[]
-  leaveRequests               LeaveRequest[]
-  leaveApprovals              LeaveRequest[]            @relation("LeaveRequestApprover")
-  leavePeriods                LeavePeriod[]
-  accessPeriods               ApplicationAccessPeriod[]
-  corelabStudiesCreated       CorelabStudy[]            @relation("CorelabStudyCreatedBy")
-  corelabMemberships          CorelabStudyMembership[]  @relation("CorelabMembershipUser")
-  corelabMembershipsAdded     CorelabStudyMembership[]  @relation("CorelabMembershipAddedBy")
-  corelabCrfVersionsPublished CorelabCrfVersion[]       @relation("CorelabCrfPublishedBy")
-  corelabSignatures           CorelabSignature[]        @relation("CorelabSignatureUser")
+  sessions                      Session[]
+  accounts                      Account[]
+  leaveRequests                 LeaveRequest[]
+  leaveApprovals                LeaveRequest[]                 @relation("LeaveRequestApprover")
+  leavePeriods                  LeavePeriod[]
+  accessPeriods                 ApplicationAccessPeriod[]
+  corelabStudiesCreated         CorelabStudy[]                 @relation("CorelabStudyCreatedBy")
+  corelabMemberships            CorelabStudyMembership[]       @relation("CorelabMembershipUser")
+  corelabMembershipsAdded       CorelabStudyMembership[]       @relation("CorelabMembershipAddedBy")
+  corelabCrfVersionsPublished   CorelabCrfVersion[]            @relation("CorelabCrfPublishedBy")
+  corelabSignatures             CorelabSignature[]             @relation("CorelabSignatureUser")
+  corelabTrainingCompletions    CorelabTrainingCompletion[]    @relation("CorelabTrainingCompletionUser")
+  corelabCalibrationAssignments CorelabCalibrationAssignment[] @relation("CorelabCalibrationAssignmentUser")
 
   //related to bestof larib
   ClinicalCase     ClinicalCase[]
@@ -787,6 +789,11 @@ enum AuditEntity {
   CORELAB_MEMBERSHIP
   CORELAB_CRF_VERSION
   CORELAB_SIGNATURE
+  CORELAB_TRAINING_MODULE
+  CORELAB_TRAINING_COMPLETION
+  CORELAB_CALIBRATION_CASE
+  CORELAB_CALIBRATION_ASSIGNMENT
+  CORELAB_CALIBRATION_REVIEW
 }
 
 model AuditEvent {
@@ -904,9 +911,13 @@ model CorelabStudy {
   createdAt          DateTime          @default(now())
   updatedAt          DateTime          @updatedAt
 
-  sites       CorelabSite[]
-  memberships CorelabStudyMembership[]
-  crfVersions CorelabCrfVersion[]
+  sites                CorelabSite[]
+  memberships          CorelabStudyMembership[]
+  crfVersions          CorelabCrfVersion[]
+  trainingModules      CorelabTrainingModule[]
+  trainingRequirements CorelabStudyTrainingRequirement[]
+  calibrationCases     CorelabCalibrationCase[]
+  calibrationReviews   CorelabCalibrationReview[]
 
   @@map("CorelabStudy")
 }
@@ -979,4 +990,130 @@ model CorelabSignature {
   @@index([entityType, entityId])
   @@index([studyId, signedAt])
   @@map("CorelabSignature")
+}
+
+enum CorelabTrainingScope {
+  CORE
+  SOFTWARE
+  STUDY
+}
+
+enum CorelabTrainingModuleType {
+  VIDEO
+  QUIZ
+}
+
+enum CorelabCalibrationAssignmentStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  SUBMITTED
+  REVIEWED
+}
+
+enum CorelabCalibrationDecision {
+  CERTIFY
+  ADDITIONAL_CASES
+  FAIL
+}
+
+model CorelabTrainingModule {
+  id              String                    @id @default(cuid())
+  scope           CorelabTrainingScope
+  softwareName    String?
+  studyId         String?
+  study           CorelabStudy?             @relation(fields: [studyId], references: [id], onDelete: Cascade)
+  order           Int                       @default(0)
+  title           String
+  description     String                    @default("")
+  type            CorelabTrainingModuleType
+  durationMinutes Int                       @default(0)
+  videoKey        String?
+  videoMimeType   String?
+  videoSize       Int?
+  quiz            Json?
+  passThreshold   Int?
+  version         Int                       @default(1)
+  archivedAt      DateTime?
+  createdAt       DateTime                  @default(now())
+  updatedAt       DateTime                  @updatedAt
+
+  requirements CorelabStudyTrainingRequirement[]
+  completions  CorelabTrainingCompletion[]
+
+  @@map("CorelabTrainingModule")
+}
+
+model CorelabStudyTrainingRequirement {
+  id       String                @id @default(cuid())
+  studyId  String
+  study    CorelabStudy          @relation(fields: [studyId], references: [id], onDelete: Cascade)
+  moduleId String
+  module   CorelabTrainingModule @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  order    Int                   @default(0)
+
+  @@unique([studyId, moduleId])
+  @@map("CorelabStudyTrainingRequirement")
+}
+
+model CorelabTrainingCompletion {
+  id            String                @id @default(cuid())
+  userId        String
+  user          User                  @relation("CorelabTrainingCompletionUser", fields: [userId], references: [id], onDelete: Restrict)
+  moduleId      String
+  module        CorelabTrainingModule @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  moduleVersion Int
+  score         Int?
+  completedAt   DateTime              @default(now())
+
+  @@unique([userId, moduleId])
+  @@map("CorelabTrainingCompletion")
+}
+
+model CorelabCalibrationCase {
+  id                      String       @id @default(cuid())
+  studyId                 String
+  study                   CorelabStudy @relation(fields: [studyId], references: [id], onDelete: Cascade)
+  code                    String
+  exams                   Json
+  goldStandard            Json         @default("{}")
+  goldStandardSignatureId String?
+  createdAt               DateTime     @default(now())
+  updatedAt               DateTime     @updatedAt
+
+  assignments CorelabCalibrationAssignment[]
+
+  @@unique([studyId, code])
+  @@map("CorelabCalibrationCase")
+}
+
+model CorelabCalibrationAssignment {
+  id          String                             @id @default(cuid())
+  caseId      String
+  case        CorelabCalibrationCase             @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  userId      String
+  user        User                               @relation("CorelabCalibrationAssignmentUser", fields: [userId], references: [id], onDelete: Restrict)
+  status      CorelabCalibrationAssignmentStatus @default(NOT_STARTED)
+  values      Json                               @default("{}")
+  submittedAt DateTime?
+  signatureId String?
+  createdAt   DateTime                           @default(now())
+  updatedAt   DateTime                           @updatedAt
+
+  @@unique([caseId, userId])
+  @@map("CorelabCalibrationAssignment")
+}
+
+model CorelabCalibrationReview {
+  id          String                     @id @default(cuid())
+  studyId     String
+  study       CorelabStudy               @relation(fields: [studyId], references: [id], onDelete: Cascade)
+  userId      String
+  reviewerId  String
+  decision    CorelabCalibrationDecision
+  comments    Json                       @default("{}")
+  signatureId String
+  createdAt   DateTime                   @default(now())
+
+  @@index([studyId, userId])
+  @@map("CorelabCalibrationReview")
 }
