@@ -4,8 +4,10 @@ import { requireAuth } from '@/lib/auth-guard'
 import { applicationLink } from '@/lib/application-link'
 import { canAdminApp } from '@/lib/permissions'
 import { listPublicationEmails } from '@/lib/services/publications/email-log'
+import { listRecapAudience, listRecapCopyRecipients } from '@/lib/services/publications/recap'
 import { BackToDashboard } from '@/app/[locale]/publications/components/back-to-dashboard'
 import { EmailLogTable } from '@/app/[locale]/publications/components/emails/email-log-table'
+import { RecapAudience } from '@/app/[locale]/publications/components/emails/recap-audience'
 
 type PageParams = { params: Promise<{ locale: 'en' | 'fr' }> }
 
@@ -14,9 +16,11 @@ export default async function PublicationsEmailsPage({ params }: PageParams) {
   const session = await requireAuth()
   if (!canAdminApp(session.user, 'PUBLICATIONS')) redirect(applicationLink(locale, '/publications'))
 
-  const [t, entries] = await Promise.all([
+  const [t, entries, audience, copyRecipients] = await Promise.all([
     getTranslations({ locale, namespace: 'publications.emails' }),
     listPublicationEmails(),
+    listRecapAudience(),
+    listRecapCopyRecipients(),
   ])
 
   return (
@@ -30,6 +34,7 @@ export default async function PublicationsEmailsPage({ params }: PageParams) {
             <p className="mt-1.5 max-w-xl text-sm leading-relaxed text-text-secondary">{t('subtitle')}</p>
           </div>
         </header>
+        <RecapAudience members={audience} copyRecipients={copyRecipients} />
         <EmailLogTable entries={entries} />
       </div>
     </div>

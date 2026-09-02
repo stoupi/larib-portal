@@ -860,10 +860,16 @@ export function renderPublicationsRecapEmail({
   return { subject, text: textLines.join('\n'), html: emailLayout(body, subject, words.footer) }
 }
 
-export async function sendPublicationsRecapEmail(
-  params: PublicationsRecapEmailParams & { to: string },
-): Promise<{ id: string } | { error: string }> {
-  const { subject, text, html } = renderPublicationsRecapEmail(params)
+// Takes the rendered message rather than the ingredients, so the preview an admin
+// approved and the message that leaves are the same bytes.
+export async function sendPublicationsRecapEmail(params: {
+  to: string
+  cc?: string[]
+  subject: string
+  text: string
+  html: string
+}): Promise<{ id: string } | { error: string }> {
+  const { subject, text, html } = params
   const apiKey = process.env.RESEND_API_KEY
   if (!apiKey) return { error: 'RESEND_API_KEY missing' }
   const fromEmail = process.env.RESEND_FROM || 'noreply@your-domain.com'
@@ -871,7 +877,14 @@ export async function sendPublicationsRecapEmail(
   const res = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ from, to: [params.to], subject, text, html }),
+    body: JSON.stringify({
+      from,
+      to: [params.to],
+      cc: params.cc && params.cc.length > 0 ? params.cc : undefined,
+      subject,
+      text,
+      html,
+    }),
   })
   if (!res.ok) {
     return { error: `RESEND_REQUEST_FAILED_${res.status}` }

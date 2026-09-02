@@ -18,6 +18,12 @@ import {
   PUBLICATIONS_REQUESTS_TAG,
 } from '@/lib/services/publications/publication-requests'
 import { recordPublicationEmail, PUBLICATIONS_EMAILS_TAG } from '@/lib/services/publications/email-log'
+import { buildRecapForMember, sendRecapToMember } from '@/lib/services/publications/recap-send'
+import {
+  listRecapCopyRecipients,
+  setPublicationsRecapOptOut,
+  setRecapCopyRecipients,
+} from '@/lib/services/publications/recap'
 import { renderCarouselRequestEmailHtml } from '@/lib/email/carousel-template'
 import { searchByAuthor, fetchByPmids } from '@/lib/services/publications/pubmed'
 import {
@@ -267,6 +273,39 @@ export const updateArticleScopeAction = authenticatedAction
     const updated = await updateArticleScope(parsedInput.id, parsedInput.scope)
     revalidateTag(PUBLICATIONS_ARTICLES_TAG)
     return updated
+  })
+
+export const previewRecapAction = appAdminAction('PUBLICATIONS')
+  .inputSchema(z.object({ userId: z.string().min(1) }))
+  .action(async ({ parsedInput }) => {
+    const recap = await buildRecapForMember(parsedInput.userId)
+    return recap ?? { nothingToSay: true as const }
+  })
+
+export const sendRecapAction = appAdminAction('PUBLICATIONS')
+  .inputSchema(z.object({ userId: z.string().min(1) }))
+  .action(async ({ parsedInput, ctx }) => {
+    const cc = await listRecapCopyRecipients()
+    const result = await sendRecapToMember({ userId: parsedInput.userId, cc, sentById: ctx.userId })
+    if (result.outcome === 'failed') throw new Error(result.error ?? 'SEND_FAILED')
+    revalidateTag(PUBLICATIONS_EMAILS_TAG)
+    return { outcome: result.outcome }
+  })
+
+export const setRecapOptOutAction = appAdminAction('PUBLICATIONS')
+  .inputSchema(z.object({ userId: z.string().min(1), optedOut: z.boolean() }))
+  .action(async ({ parsedInput }) => {
+    await setPublicationsRecapOptOut(parsedInput.userId, parsedInput.optedOut)
+    revalidateTag(PUBLICATIONS_EMAILS_TAG)
+    return { optedOut: parsedInput.optedOut }
+  })
+
+export const setRecapCopyRecipientsAction = appAdminAction('PUBLICATIONS')
+  .inputSchema(z.object({ emails: z.array(z.string().trim().email()) }))
+  .action(async ({ parsedInput }) => {
+    const saved = await setRecapCopyRecipients(parsedInput.emails)
+    revalidateTag(PUBLICATIONS_EMAILS_TAG)
+    return { emails: saved }
   })
 
 export const setLinkedinPostAction = appAdminAction('PUBLICATIONS')

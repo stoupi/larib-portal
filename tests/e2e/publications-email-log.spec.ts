@@ -44,3 +44,36 @@ test('every mail Publications sends lands in the admin email log', async ({ page
   await page.goto('/en/publications/admin', { timeout: 60000 })
   await expect(page.getByRole('link', { name: /Sent emails/ })).toBeVisible({ timeout: 20000 })
 })
+
+test('an admin previews the monthly recap, sends it by hand and suspends someone', async ({ page }) => {
+  await login(page, 'publications-admin@larib-portal.test')
+  await page.goto('/en/publications/admin/emails', { timeout: 60000 })
+  await expect(page.getByRole('heading', { name: 'Monthly recap' })).toBeVisible({ timeout: 20000 })
+
+  const audience = page.getByRole('region', { name: 'Monthly recap' })
+  const row = audience.getByRole('row').filter({ hasText: 'publications-user@larib-portal.test' })
+  await expect(row).toBeVisible({ timeout: 20000 })
+
+  // The preview shows the very message, built from today's data
+  await row.getByRole('button', { name: 'Preview and send' }).click()
+  const dialog = page.getByRole('dialog')
+  await expect(dialog).toBeVisible({ timeout: 20000 })
+  const frame = dialog.locator('iframe')
+  await expect(frame).toBeVisible({ timeout: 20000 })
+  await expect(frame.contentFrame().getByRole('link', { name: 'Open my publications' })).toBeVisible({
+    timeout: 20000,
+  })
+
+  await dialog.getByRole('button', { name: 'Send now' }).click()
+  await expect(dialog).toBeHidden({ timeout: 30000 })
+
+  // …and the send lands in the log below
+  const logged = page.getByRole('row').filter({ hasText: /in-progress publication/ })
+  await expect(logged.first()).toBeVisible({ timeout: 20000 })
+
+  // Suspending someone is one click, and it shows
+  await row.getByRole('button', { name: 'Suspend sending' }).click()
+  await expect(row.getByText('Suspended')).toBeVisible({ timeout: 20000 })
+  await row.getByRole('button', { name: 'Resume sending' }).click()
+  await expect(row.getByText('Active')).toBeVisible({ timeout: 20000 })
+})

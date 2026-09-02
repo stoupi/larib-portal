@@ -642,6 +642,15 @@ enum PublicationEmailStatus {
   FAILED
 }
 
+// One row, holding the settings the Publications admins share.
+model PublicationSettings {
+  id             String   @id @default("singleton")
+  recapCcEmails  String[] @default([])
+  updatedAt      DateTime @updatedAt
+
+  @@map("PublicationSettings")
+}
+
 model PublicationEmail {
   id         String                 @id @default(cuid())
   kind       PublicationEmailKind
