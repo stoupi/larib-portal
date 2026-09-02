@@ -8,6 +8,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Input } from '@/components/ui/input'
 import {
   matchesAuthorQuery,
+  partitionStatisticianCandidates,
   sortAuthors,
   truncateAuthors,
   type PickerAuthor,
@@ -20,16 +21,54 @@ export function statisticianName(statistician: { firstName: string; lastName: st
   return `${statistician.firstName} ${statistician.lastName.toUpperCase()}`.trim()
 }
 
+function CandidateRow({
+  author,
+  selected,
+  onChoose,
+}: {
+  author: PickerAuthor
+  selected: boolean
+  onChoose: () => void
+}) {
+  return (
+    <li>
+      <button
+        type="button"
+        onClick={onChoose}
+        className={cn(
+          'flex w-full items-center gap-3 rounded-xl border px-3 py-2 text-left transition hover:border-coral-300 hover:bg-coral-50/40 dark:hover:bg-white/5',
+          selected
+            ? 'border-coral-300 bg-coral-50 dark:border-coral-500/40 dark:bg-coral-500/10'
+            : 'border-line bg-bg-surface',
+        )}
+      >
+        <span className="min-w-0 flex-1">
+          <span className="block truncate text-sm font-bold text-text-primary">
+            {author.firstName} {author.lastName.toUpperCase()}
+            {author.degrees && <span className="ml-1.5 font-normal text-text-muted">{author.degrees}</span>}
+          </span>
+          {author.centreName && (
+            <span className="block truncate text-xs text-text-secondary">{author.centreName}</span>
+          )}
+        </span>
+        {author.isOurTeam && <OurTeamDot />}
+      </button>
+    </li>
+  )
+}
+
 export function StatisticianPicker({
   current,
   bank,
   onSelect,
   editable,
+  articleAuthorIds,
 }: {
   current: { id: string; firstName: string; lastName: string; degrees: string | null } | null
   bank: { authors: PickerAuthor[]; centres: PickerCentre[] }
   onSelect: (statisticianId: string | null) => void
   editable: boolean
+  articleAuthorIds: string[]
 }) {
   const t = useTranslations('publications.editor')
   const [open, setOpen] = useState(false)
@@ -37,7 +76,8 @@ export function StatisticianPicker({
 
   const currentName = statisticianName(current)
   const matching = bank.authors.filter((author) => matchesAuthorQuery(author, query))
-  const { visible, hiddenCount } = truncateAuthors(sortAuthors(matching, 'frequent'))
+  const { signatories, others } = partitionStatisticianCandidates(matching, articleAuthorIds)
+  const { visible, hiddenCount } = truncateAuthors(sortAuthors(others, 'frequent'))
 
   function choose(statisticianId: string | null) {
     onSelect(statisticianId)
@@ -93,38 +133,50 @@ export function StatisticianPicker({
           </div>
 
           <div className="min-h-0 flex-1 space-y-3 overflow-y-auto pr-1">
-            {visible.length === 0 ? (
+            {signatories.length === 0 && visible.length === 0 ? (
               <p className="rounded-xl border border-dashed border-line px-4 py-8 text-center text-sm text-text-muted">
                 {t('picker.empty')}
               </p>
             ) : (
-              <ul className="space-y-1.5">
-                {visible.map((author) => (
-                  <li key={author.id}>
-                    <button
-                      type="button"
-                      onClick={() => choose(author.id)}
-                      className={cn(
-                        'flex w-full items-center gap-3 rounded-xl border px-3 py-2 text-left transition hover:border-coral-300 hover:bg-coral-50/40 dark:hover:bg-white/5',
-                        author.id === current?.id
-                          ? 'border-coral-300 bg-coral-50 dark:border-coral-500/40 dark:bg-coral-500/10'
-                          : 'border-line bg-bg-surface',
-                      )}
-                    >
-                      <span className="min-w-0 flex-1">
-                        <span className="block truncate text-sm font-bold text-text-primary">
-                          {author.firstName} {author.lastName.toUpperCase()}
-                          {author.degrees && <span className="ml-1.5 font-normal text-text-muted">{author.degrees}</span>}
-                        </span>
-                        {author.centreName && (
-                          <span className="block truncate text-xs text-text-secondary">{author.centreName}</span>
-                        )}
-                      </span>
-                      {author.isOurTeam && <OurTeamDot />}
-                    </button>
-                  </li>
-                ))}
-              </ul>
+              <>
+                {signatories.length > 0 && (
+                  <div className="space-y-1.5">
+                    <p className="text-[11px] font-extrabold uppercase tracking-[0.14em] text-text-muted">
+                      {t('statistician.amongAuthors')}
+                    </p>
+                    <ul className="space-y-1.5">
+                      {signatories.map((author) => (
+                        <CandidateRow
+                          key={author.id}
+                          author={author}
+                          selected={author.id === current?.id}
+                          onChoose={() => choose(author.id)}
+                        />
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {visible.length > 0 && (
+                  <div className="space-y-1.5">
+                    {signatories.length > 0 && (
+                      <p className="text-[11px] font-extrabold uppercase tracking-[0.14em] text-text-muted">
+                        {t('statistician.restOfBank')}
+                      </p>
+                    )}
+                    <ul className="space-y-1.5">
+                      {visible.map((author) => (
+                        <CandidateRow
+                          key={author.id}
+                          author={author}
+                          selected={author.id === current?.id}
+                          onChoose={() => choose(author.id)}
+                        />
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </>
             )}
 
             {hiddenCount > 0 && (

@@ -1,7 +1,15 @@
 import type { ArticleStatusValue } from '@/lib/services/publications/articles'
 import { normalizeArticleType, type ArticleTypeValue } from './article-type'
 import type { MyPublicationSubmission } from '@/lib/services/publications/my-publications'
-import { ARTICLE_STATUS_VALUES, POSITION_BUCKETS, authorPositionBucket, type PositionBucket } from './status-display'
+import {
+  ARTICLE_STATUS_VALUES,
+  AUTHOR_ROLES,
+  POSITION_BUCKETS,
+  STATISTICIAN_ROLE,
+  authorPositionBucket,
+  type AuthorRole,
+  type PositionBucket,
+} from './status-display'
 import { matchesArticleQuery } from './article-search'
 import { ARTICLE_SCOPES, type ArticleScopeValue } from './article-scope'
 import { ALL_YEARS, matchesYearRange } from './year-range'
@@ -27,6 +35,7 @@ export type DashboardArticleItem = {
   acceptedAt: string | null
   pendingDays: number | null
   carouselEmailSentAt: string | null
+  statisticianId: string | null
   submissions: MyPublicationSubmission[]
 }
 
@@ -128,9 +137,13 @@ export function filterDashboardArticles(
     if (!matchesYearRange(filters, article.year)) return false
     if (filters.author !== ALL_FILTER && !article.authors.some((author) => author.id === filters.author)) return false
     if (filters.authorPosition !== ALL_FILTER && filters.author !== ALL_FILTER) {
-      const index = article.authors.findIndex((author) => author.id === filters.author)
-      if (index < 0) return false
-      if (authorPositionBucket(index + 1, article.authors.length) !== filters.authorPosition) return false
+      if (filters.authorPosition === STATISTICIAN_ROLE) {
+        if (article.statisticianId !== filters.author) return false
+      } else {
+        const index = article.authors.findIndex((author) => author.id === filters.author)
+        if (index < 0) return false
+        if (authorPositionBucket(index + 1, article.authors.length) !== filters.authorPosition) return false
+      }
     }
     return matchesArticleQuery(article, filters.query)
   })
@@ -150,7 +163,7 @@ export function filterCoAuthors(coAuthors: CoAuthorCount[], scope: CoAuthorScope
   })
 }
 
-export type AuthorPositionCount = { bucket: PositionBucket; count: number }
+export type AuthorPositionCount = { bucket: AuthorRole; count: number }
 export type AuthorFocus = { id: string; name: string; total: number; positions: AuthorPositionCount[] }
 
 export function resolveFocusedAuthor(coAuthors: CoAuthorCount[], filters: DashboardFilters): string | null {
@@ -166,14 +179,14 @@ export function resolveFocusedAuthor(coAuthors: CoAuthorCount[], filters: Dashbo
 export function authorPositionPatch(
   filters: DashboardFilters,
   authorId: string,
-  bucket: PositionBucket,
+  bucket: AuthorRole,
 ): Partial<DashboardFilters> {
   const alreadyActive = filters.author === authorId && filters.authorPosition === bucket
   return { author: authorId, authorPosition: alreadyActive ? ALL_FILTER : bucket }
 }
 
 export function authorFocus(articles: DashboardArticleItem[], authorId: string): AuthorFocus | null {
-  const counts = new Map<PositionBucket, number>()
+  const counts = new Map<AuthorRole, number>()
   let name = ''
   let total = 0
 
@@ -184,6 +197,9 @@ export function authorFocus(articles: DashboardArticleItem[], authorId: string):
     total += 1
     const bucket = authorPositionBucket(index + 1, article.authors.length)
     counts.set(bucket, (counts.get(bucket) ?? 0) + 1)
+    if (article.statisticianId === authorId) {
+      counts.set(STATISTICIAN_ROLE, (counts.get(STATISTICIAN_ROLE) ?? 0) + 1)
+    }
   }
 
   if (total === 0) return null
@@ -191,7 +207,7 @@ export function authorFocus(articles: DashboardArticleItem[], authorId: string):
     id: authorId,
     name,
     total,
-    positions: POSITION_BUCKETS.filter((bucket) => (counts.get(bucket) ?? 0) > 0).map((bucket) => ({
+    positions: AUTHOR_ROLES.filter((bucket) => (counts.get(bucket) ?? 0) > 0).map((bucket) => ({
       bucket,
       count: counts.get(bucket) ?? 0,
     })),

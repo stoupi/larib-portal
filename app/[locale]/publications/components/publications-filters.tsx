@@ -3,7 +3,7 @@
 import { useTranslations } from 'next-intl'
 import { ChevronDown, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { ARTICLE_STATUS_VALUES, POSITION_BUCKETS } from '@/lib/publications/status-display'
+import { ARTICLE_STATUS_VALUES, AUTHOR_ROLES } from '@/lib/publications/status-display'
 import { ARTICLE_TYPE_VALUES } from '@/lib/publications/article-type'
 import { ALL_YEARS, hasYearRange, type YearRange } from '@/lib/publications/year-range'
 
@@ -44,6 +44,7 @@ function FilterSelect({
       <div className="relative">
         <select
           value={value}
+          aria-label={label}
           onChange={(event) => onChange(event.target.value)}
           className={cn(
             'h-7 max-w-[104px] cursor-pointer appearance-none truncate rounded-full pl-2.5 pr-6 text-[12px] font-bold outline-none transition',
@@ -90,7 +91,7 @@ export function PublicationsFilters({
         onChange={(role) => onChange({ role })}
       >
         <option value="all">{t('myPub.filters.allRoles')}</option>
-        {POSITION_BUCKETS.map((bucket) => (
+        {AUTHOR_ROLES.map((bucket) => (
           <option key={bucket} value={bucket}>
             {t(`myPub.position.${bucket}`)}
           </option>

@@ -245,6 +245,7 @@ export function ArticlePage({
                 current: article.statistician,
                 authors: pickerAuthors,
                 centres,
+                articleAuthorIds: article.authorships.map((authorship) => authorship.author.id),
               }}
               editable={visibility.cardsEditable}
             />

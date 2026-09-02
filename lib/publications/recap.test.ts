@@ -19,6 +19,7 @@ function publicationItem(overrides: Partial<MyPublicationItem>): MyPublicationIt
     totalAuthors: 5,
     positionBucket: 'middle',
     isFirst: false,
+    isStatistician: false,
     canDelete: false,
     authors: [],
     lastSubmissionAt: null,

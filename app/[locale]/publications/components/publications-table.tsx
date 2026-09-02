@@ -1,7 +1,7 @@
 'use client'
 
 import { useTranslations } from 'next-intl'
-import { ChevronRight, ChevronsUpDown, ArrowUp, ArrowDown, Star, Pencil, Eye, FileText, ExternalLink } from 'lucide-react'
+import { ChevronRight, ChevronsUpDown, ArrowUp, ArrowDown, Star, Pencil, Eye, FileText, ExternalLink, Sigma } from 'lucide-react'
 import { Link } from '@/app/i18n/navigation'
 import { cn } from '@/lib/utils'
 import { doiUrl } from '@/lib/publications/doi'
@@ -157,7 +157,7 @@ function PublicationRow({
           <ArticleScopeSwitch articleId={item.id} articleTitle={item.title} scope={item.scope} />
         </div>
 
-        <div>
+        <div className="flex flex-wrap items-center gap-1.5">
           {item.isFirst ? (
             <span className="inline-flex items-center gap-1.5 rounded-full border border-coral-100 bg-coral-50 px-2.5 py-0.5 text-[11.5px] font-bold text-coral-600 dark:border-coral-500/30 dark:bg-coral-500/15 dark:text-coral-300">
               <Star className="h-3 w-3 fill-current" strokeWidth={0} />
@@ -166,6 +166,15 @@ function PublicationRow({
           ) : (
             <span className="inline-flex items-center rounded-full border border-gray-200 bg-gray-100 px-2.5 py-0.5 text-[11.5px] font-bold text-text-secondary dark:border-white/10 dark:bg-white/10">
               {t(`myPub.position.${item.positionBucket}`)}
+            </span>
+          )}
+          {item.isStatistician && (
+            <span
+              aria-label={`${t('myPub.position.statistician')}: ${item.title || t('myPub.untitled')}`}
+              className="inline-flex items-center gap-1 rounded-full border border-[#C7D2FE] bg-[#EEF2FF] px-2.5 py-0.5 text-[11.5px] font-bold text-[#4338CA] dark:border-[rgba(99,102,241,0.35)] dark:bg-[rgba(99,102,241,0.16)] dark:text-[#A5B4FC]"
+            >
+              <Sigma className="h-3 w-3" strokeWidth={2.4} />
+              {t('myPub.position.statistician')}
             </span>
           )}
         </div>

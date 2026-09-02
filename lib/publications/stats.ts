@@ -1,18 +1,19 @@
 import type { ArticleStatusValue } from '@/lib/services/publications/articles'
-import { POSITION_BUCKETS, type PositionBucket } from './status-display'
+import { AUTHOR_ROLES, STATISTICIAN_ROLE, type AuthorRole, type PositionBucket } from './status-display'
 import { ARTICLE_TYPE_VALUES, type ArticleTypeValue } from './article-type'
 
 export type StatItem = {
   year: number | null
   status: ArticleStatusValue
   positionBucket: PositionBucket
+  isStatistician: boolean
   journal: string | null
   type: ArticleTypeValue
 }
 
 export type YearCount = { year: number; count: number }
 export type StatusCount = { status: ArticleStatusValue; count: number }
-export type PositionCount = { bucket: PositionBucket; count: number }
+export type PositionCount = { bucket: AuthorRole; count: number }
 export type JournalCount = { journal: string; count: number }
 export type TypeCount = { type: ArticleTypeValue; count: number }
 
@@ -59,9 +60,16 @@ export function computePublicationStats(items: StatItem[]): PublicationStats {
     (status) => ({ status, count: statusCounts.get(status) ?? 0 }),
   )
 
-  const positionCounts = new Map<PositionBucket, number>()
-  for (const item of items) positionCounts.set(item.positionBucket, (positionCounts.get(item.positionBucket) ?? 0) + 1)
-  const byPosition: PositionCount[] = POSITION_BUCKETS.map((bucket) => ({
+  // The statistician role is counted alongside the positions, not instead of one:
+  // the same paper appears under its author position and under the role.
+  const positionCounts = new Map<AuthorRole, number>()
+  for (const item of items) {
+    positionCounts.set(item.positionBucket, (positionCounts.get(item.positionBucket) ?? 0) + 1)
+    if (item.isStatistician) {
+      positionCounts.set(STATISTICIAN_ROLE, (positionCounts.get(STATISTICIAN_ROLE) ?? 0) + 1)
+    }
+  }
+  const byPosition: PositionCount[] = AUTHOR_ROLES.map((bucket) => ({
     bucket,
     count: positionCounts.get(bucket) ?? 0,
   }))

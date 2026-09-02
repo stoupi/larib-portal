@@ -916,7 +916,8 @@
         "third": "3e auteur",
         "middle": "Co-auteur",
         "second_last": "Avant-dernier",
-        "last": "Dernier auteur"
+        "last": "Dernier auteur",
+        "statistician": "Statisticien"
       },
       "col": {
         "title": "Titre",
@@ -1126,6 +1127,8 @@
       "markCorresponding": "Désigner comme correspondant",
       "authorsSaved": "Liste d'auteurs mise à jour",
       "statistician": {
+        "amongAuthors": "Auteurs de cette publication",
+        "restOfBank": "Reste de la banque d'auteurs",
         "label": "Statisticien",
         "add": "Choisir un statisticien",
         "clear": "Retirer le statisticien",

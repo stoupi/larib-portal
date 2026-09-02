@@ -84,3 +84,39 @@ test('the first author picks the publication statistician from the author bank',
   await expect(page.getByText('Changes saved')).toBeVisible({ timeout: 15000 })
   await expect(page.getByRole('button', { name: /pick a statistician/i })).toBeVisible({ timeout: 15000 })
 })
+
+test('being the statistician shows up as a role of its own in the member space', async ({ page }) => {
+  await login(page, 'publications-user@larib-portal.test')
+  await page.goto('/en/publications', { timeout: 60000 })
+  await page.getByRole('button', { name: /new publication/i }).click()
+  await page.waitForURL(/\/en\/publications\/articles\/[^/]+\?mode=edit/, { timeout: 60000 })
+
+  const title = `Analysed by its own signer ${Date.now()}`
+  await page.getByPlaceholder('Publication title').fill(title)
+  await page.getByRole('button', { name: 'Save changes' }).click()
+  await expect(page.getByText('Changes saved')).toBeVisible({ timeout: 15000 })
+
+  // The picker offers the people who sign this publication before the rest of the bank
+  await page.getByRole('button', { name: /pick a statistician/i }).click()
+  const dialog = page.getByRole('dialog')
+  await expect(dialog.getByText('Authors of this publication')).toBeVisible({ timeout: 15000 })
+  const signers = dialog.getByText('Authors of this publication').locator('..').getByRole('listitem')
+  await expect(signers).toHaveCount(1)
+  await signers.first().getByRole('button').click()
+  // The toast reads the same as the title save, so wait for the pick itself to show
+  await expect(dialog).toBeHidden({ timeout: 15000 })
+  await expect(page.getByRole('button', { name: /Publications USER/i })).toBeVisible({ timeout: 20000 })
+
+  // Back in the list, the role filter narrows the table down to that paper alone,
+  // and the row carries the role badge beside the author position.
+  await page.goto('/en/publications', { timeout: 60000 })
+  await expect(page.getByRole('link', { name: title })).toBeVisible({ timeout: 20000 })
+
+  await page.getByLabel('Role', { exact: true }).selectOption('statistician')
+  await expect(page.getByRole('link', { name: title })).toBeVisible({ timeout: 20000 })
+  await expect(page.getByLabel(`Statistician: ${title}`)).toBeVisible()
+
+  // A role the member does not hold on this paper empties the table
+  await page.getByLabel('Role', { exact: true }).selectOption('last')
+  await expect(page.getByRole('link', { name: title })).toHaveCount(0, { timeout: 20000 })
+})

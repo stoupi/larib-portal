@@ -4,7 +4,7 @@ import { useTranslations } from 'next-intl'
 import { X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { AuthorFocus } from '@/lib/publications/admin-dashboard'
-import type { PositionBucket } from '@/lib/publications/status-display'
+import type { AuthorRole } from '@/lib/publications/status-display'
 
 export function DashboardAuthorFocus({
   focus,
@@ -14,7 +14,7 @@ export function DashboardAuthorFocus({
 }: {
   focus: AuthorFocus
   activePosition: string
-  onSelectPosition: (bucket: PositionBucket) => void
+  onSelectPosition: (bucket: AuthorRole) => void
   onClear: (() => void) | null
 }) {
   const t = useTranslations('publications.adminHome.authorFocus')

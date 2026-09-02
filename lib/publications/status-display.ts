@@ -79,6 +79,18 @@ export const POSITION_BUCKETS: PositionBucket[] = [
   'last',
 ]
 
+// The statistician signs the publication like everyone else, so the role sits beside
+// the positions rather than replacing one: a third author can also be the statistician.
+export const STATISTICIAN_ROLE = 'statistician'
+
+export type AuthorRole = PositionBucket | typeof STATISTICIAN_ROLE
+
+export const AUTHOR_ROLES: AuthorRole[] = [...POSITION_BUCKETS, STATISTICIAN_ROLE]
+
+export function isStatisticianRole(role: string): role is typeof STATISTICIAN_ROLE {
+  return role === STATISTICIAN_ROLE
+}
+
 // Which slot an author occupies among `total` signers. `last` and `second_last`
 // take precedence over `second`/`third` so a short author list never double-labels.
 export function authorPositionBucket(order: number, total: number): PositionBucket {

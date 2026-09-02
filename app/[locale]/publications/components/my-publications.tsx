@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { cn } from '@/lib/utils'
 import { computePublicationStats } from '@/lib/publications/stats'
-import { articleGroup, POSITION_BUCKETS, type ArticleGroup } from '@/lib/publications/status-display'
+import { articleGroup, POSITION_BUCKETS, STATISTICIAN_ROLE, type ArticleGroup } from '@/lib/publications/status-display'
 import type { ArticleStatusValue } from '@/lib/services/publications/articles'
 import type { MyPublicationItem } from '@/lib/services/publications/my-publications'
 import { PublicationsStats } from './publications-stats'
@@ -74,6 +74,7 @@ export function MyPublications({
           year: item.year,
           status: item.status,
           positionBucket: item.positionBucket,
+          isStatistician: item.isStatistician,
           journal: item.currentJournal,
           type: item.type,
         })),
@@ -90,7 +91,11 @@ export function MyPublications({
   const rows = useMemo(() => {
     const filtered = items.filter((item) => {
       if (filter !== 'all' && articleGroup(item.status) !== filter) return false
-      if (filters.role !== 'all' && item.positionBucket !== filters.role) return false
+      if (filters.role !== 'all') {
+        const matchesRole =
+          filters.role === STATISTICIAN_ROLE ? item.isStatistician : item.positionBucket === filters.role
+        if (!matchesRole) return false
+      }
       if (filters.status !== 'all' && item.status !== filters.status) return false
       if (filters.type !== 'all' && item.type !== filters.type) return false
       if (filters.journal !== 'all' && item.currentJournal !== filters.journal) return false

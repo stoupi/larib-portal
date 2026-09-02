@@ -1,10 +1,12 @@
 import { describe, it, expect } from 'vitest'
 import { computePublicationStats, type StatItem } from './stats'
+import { AUTHOR_ROLES } from './status-display'
 
 const item = (over: Partial<StatItem>): StatItem => ({
   year: 2024,
   status: 'PUBLISHED',
   positionBucket: 'first',
+  isStatistician: false,
   journal: 'Eur Heart J',
   type: 'ORIGINAL',
   ...over,
@@ -30,7 +32,7 @@ describe('computePublicationStats', () => {
     const last = stats.byPosition.find((p) => p.bucket === 'last')
     expect(first?.count).toBe(2)
     expect(last?.count).toBe(1)
-    expect(stats.byPosition).toHaveLength(6)
+    expect(stats.byPosition.map((entry) => entry.bucket)).toEqual(AUTHOR_ROLES)
   })
 
   it('fills gap years with zero within the range', () => {
@@ -78,5 +80,20 @@ describe('computePublicationStats', () => {
       { type: 'CASE_REPORT', count: 0 },
       { type: 'EDITORIAL', count: 0 },
     ])
+  })
+})
+
+describe('the statistician role in the counts', () => {
+  it('counts a paper under its author position and under the role', () => {
+    const stats = computePublicationStats([item({ positionBucket: 'third', isStatistician: true })])
+    const count = (bucket: string) => stats.byPosition.find((entry) => entry.bucket === bucket)?.count
+    expect(count('third')).toBe(1)
+    expect(count('statistician')).toBe(1)
+    expect(stats.total).toBe(1)
+  })
+
+  it('leaves the role at zero for someone who only signs', () => {
+    const stats = computePublicationStats([item({ positionBucket: 'last', isStatistician: false })])
+    expect(stats.byPosition.find((entry) => entry.bucket === 'statistician')?.count).toBe(0)
   })
 })

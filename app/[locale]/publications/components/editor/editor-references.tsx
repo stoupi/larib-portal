@@ -19,6 +19,7 @@ export type StatisticianSlot = {
   current: { id: string; firstName: string; lastName: string; degrees: string | null } | null
   authors: PickerAuthor[]
   centres: PickerCentre[]
+  articleAuthorIds: string[]
 }
 
 export function EditorReferences({
@@ -102,6 +103,7 @@ export function EditorReferences({
           <StatisticianPicker
             current={statistician.current}
             bank={{ authors: statistician.authors, centres: statistician.centres }}
+            articleAuthorIds={statistician.articleAuthorIds}
             editable={editable}
             onSelect={(statisticianId) =>
               saveStatistician.execute({ articleId: statistician.articleId, statisticianId })

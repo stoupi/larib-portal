@@ -39,6 +39,7 @@ function article(overrides: Partial<DashboardArticleItem> & { id: string }): Das
     acceptedAt: null,
     pendingDays: null,
     carouselEmailSentAt: null,
+    statisticianId: null,
     submissions: [],
     ...overrides,
   }
@@ -50,6 +51,57 @@ const articles: DashboardArticleItem[] = [
   article({ id: '3', year: 2022, status: 'IN_PREPARATION', authors: [{ id: 'b', name: 'Camille Dubois', team: false }] }),
   article({ id: '4', year: null, status: 'ABANDONED', journal: null, authors: [] }),
 ]
+
+const withStatistician: DashboardArticleItem[] = [
+  article({
+    id: 's1',
+    authors: [{ id: 'a', name: 'Pierre Lefèvre', team: true }, { id: 'b', name: 'Camille Dubois', team: false }],
+    statisticianId: 'b',
+  }),
+  article({
+    id: 's2',
+    authors: [{ id: 'b', name: 'Camille Dubois', team: false }, { id: 'a', name: 'Pierre Lefèvre', team: true }],
+    statisticianId: null,
+  }),
+]
+
+describe('the statistician role', () => {
+  it('narrows to the papers an author analysed, not the ones they merely signed', () => {
+    const filtered = filterDashboardArticles(withStatistician, {
+      ...DEFAULT_DASHBOARD_FILTERS,
+      author: 'b',
+      authorPosition: 'statistician',
+    })
+    expect(filtered.map((paper) => paper.id)).toEqual(['s1'])
+  })
+
+  it('returns nothing for an author who analysed none of them', () => {
+    expect(
+      filterDashboardArticles(withStatistician, {
+        ...DEFAULT_DASHBOARD_FILTERS,
+        author: 'a',
+        authorPosition: 'statistician',
+      }),
+    ).toHaveLength(0)
+  })
+
+  it('counts the role beside the positions, since one paper carries both', () => {
+    const focus = authorFocus(withStatistician, 'b')
+    expect(focus?.total).toBe(2)
+    expect(focus?.positions).toEqual(
+      expect.arrayContaining([
+        { bucket: 'last', count: 1 },
+        { bucket: 'first', count: 1 },
+        { bucket: 'statistician', count: 1 },
+      ]),
+    )
+  })
+
+  it('leaves an author with no analysis without the role tile', () => {
+    const focus = authorFocus(withStatistician, 'a')
+    expect(focus?.positions.some((position) => position.bucket === 'statistician')).toBe(false)
+  })
+})
 
 describe('filterDashboardArticles', () => {
   it('keeps every article when all filters are open', () => {

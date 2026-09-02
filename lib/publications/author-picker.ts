@@ -55,3 +55,18 @@ export function truncateAuthors(authors: PickerAuthor[]): { visible: PickerAutho
     hiddenCount: Math.max(0, authors.length - AUTHOR_PICKER_LIMIT),
   }
 }
+
+export type StatisticianCandidates = { signatories: PickerAuthor[]; others: PickerAuthor[] }
+
+// The statistician nearly always signs the publication, so those authors come first
+// and in signing order. The rest of the bank stays reachable underneath.
+export function partitionStatisticianCandidates(
+  authors: PickerAuthor[],
+  articleAuthorIds: string[],
+): StatisticianCandidates {
+  const rank = new Map(articleAuthorIds.map((authorId, index) => [authorId, index]))
+  const signatories = authors
+    .filter((author) => rank.has(author.id))
+    .sort((first, second) => (rank.get(first.id) ?? 0) - (rank.get(second.id) ?? 0))
+  return { signatories, others: authors.filter((author) => !rank.has(author.id)) }
+}
