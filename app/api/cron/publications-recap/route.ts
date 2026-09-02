@@ -3,7 +3,8 @@ import { isAuthorizedCron } from '@/lib/cron-auth'
 import { getPublicationsRecapRecipients } from '@/lib/services/publications/recap'
 import { listMyPublications } from '@/lib/services/publications/my-publications'
 import { selectRecapArticles } from '@/lib/publications/recap'
-import { sendPublicationsRecapEmail } from '@/lib/services/email'
+import { sendPublicationsRecapEmail, renderPublicationsRecapEmail } from '@/lib/services/email'
+import { recordPublicationEmail } from '@/lib/services/publications/email-log'
 import { resolveAppBaseUrl } from '@/lib/app-url'
 
 export const runtime = 'nodejs'
@@ -31,14 +32,26 @@ export async function GET(request: NextRequest) {
       skipped += 1
       continue
     }
-    const result = await sendPublicationsRecapEmail({
-      to: recipient.email,
-      locale: recipient.language === 'FR' ? 'fr' : 'en',
+    const params = {
+      locale: (recipient.language === 'FR' ? 'fr' : 'en') as 'fr' | 'en',
       firstName: recipient.firstName,
       articles,
       appUrl,
+    }
+    const result = await sendPublicationsRecapEmail({ to: recipient.email, ...params })
+    const failed = 'error' in result
+    const rendered = renderPublicationsRecapEmail(params)
+    await recordPublicationEmail({
+      kind: 'MONTHLY_RECAP',
+      to: [recipient.email],
+      subject: rendered.subject,
+      bodyText: rendered.text,
+      bodyHtml: rendered.html,
+      status: failed ? 'FAILED' : 'SENT',
+      error: failed ? result.error : null,
+      providerId: failed ? null : result.id,
     })
-    if ('error' in result) {
+    if (failed) {
       failures += 1
       console.error(`[publications-recap] send failed (${recipient.email}): ${result.error}`)
     } else {
