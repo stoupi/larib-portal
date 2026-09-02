@@ -368,6 +368,14 @@ export function AuthorsManager({ authors, users, centres, basePath }: { authors:
                           <span className="font-medium text-text-primary">{authorLabel(author)}</span>
                           {author.degrees && <span className="text-xs text-text-muted">{author.degrees}</span>}
                         </div>
+                        {author.email && (
+                          <a
+                            href={`mailto:${author.email}`}
+                            className="block truncate text-xs text-text-secondary hover:text-coral-600 hover:underline"
+                          >
+                            {author.email}
+                          </a>
+                        )}
                         {author.orcid && (
                           <span className="flex items-center gap-1.5 text-xs text-text-secondary">
                             <span className="flex h-3.5 w-3.5 items-center justify-center rounded-full bg-[#A6CE39] text-[7px] font-bold text-white">iD</span>

@@ -31,12 +31,22 @@ export default async function AuthorsPage({ params }: PageParams) {
       ) : (
         <ul className="divide-y rounded-lg border">
           {authors.map((author) => (
-            <li key={author.id} className="flex items-center justify-between px-4 py-3">
-              <span>
-                {author.firstName} <strong>{author.lastName}</strong>
-                {author.degrees ? `, ${author.degrees}` : ''}
+            <li key={author.id} className="flex items-center justify-between gap-4 px-4 py-3">
+              <span className="min-w-0">
+                <span className="block">
+                  {author.firstName} <strong>{author.lastName}</strong>
+                  {author.degrees ? `, ${author.degrees}` : ''}
+                </span>
+                {author.email && (
+                  <a
+                    href={`mailto:${author.email}`}
+                    className="block truncate text-sm text-text-secondary hover:text-coral-600 hover:underline"
+                  >
+                    {author.email}
+                  </a>
+                )}
               </span>
-              <span className="text-sm text-text-secondary">{author.centre?.name ?? ''}</span>
+              <span className="shrink-0 text-sm text-text-secondary">{author.centre?.name ?? ''}</span>
             </li>
           ))}
         </ul>
