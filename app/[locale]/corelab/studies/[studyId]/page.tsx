@@ -45,6 +45,18 @@ export default async function ReaderStudyPage({ params }: PageParams) {
 
         <PhaseTrack phase={membership.role === 'PI' ? null : membership.certificationPhase} />
 
+        {membership.certificationPhase !== 'TRAINING' && membership.role === 'READER' ? (
+          <section className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border bg-white p-6">
+            <div>
+              <h2 className="text-base font-semibold text-text-primary">{t('calibration.reader_.title')}</h2>
+              <p className="mt-0.5 text-sm text-text-secondary">{t('calibration.reader_.subtitle')}</p>
+            </div>
+            <Button asChild variant="outline">
+              <Link href={`/corelab/studies/${studyId}/calibration`}>{t('calibration.title')}</Link>
+            </Button>
+          </section>
+        ) : null}
+
         {training && training.modules.length > 0 ? (
           <section className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border bg-white p-6">
             <div>

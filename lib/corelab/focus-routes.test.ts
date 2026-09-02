@@ -13,7 +13,12 @@ describe('isFocusRoute', () => {
     expect(isFocusRoute('/corelab/admin/studies/abc/crf-preview')).toBe(true)
   })
 
+  it('takes over the frame on the PI calibration review', () => {
+    expect(isFocusRoute('/corelab/studies/abc/calibration/review/user-1')).toBe(true)
+  })
+
   it('leaves the portal frame on every other screen', () => {
+    expect(isFocusRoute('/corelab/studies/abc/calibration')).toBe(false)
     expect(isFocusRoute('/corelab')).toBe(false)
     expect(isFocusRoute('/corelab/admin/studies/abc')).toBe(false)
     expect(isFocusRoute('/corelab/admin/studies/abc/team')).toBe(false)

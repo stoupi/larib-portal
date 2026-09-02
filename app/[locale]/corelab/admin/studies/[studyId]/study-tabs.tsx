@@ -12,7 +12,7 @@ export function StudyTabs({ studyId }: { studyId: string }) {
     { key: 'config', href: base, enabled: true },
     { key: 'team', href: `${base}/team`, enabled: true },
     { key: 'trainingTab', href: `${base}/training`, enabled: true },
-    { key: 'calibration', href: `${base}/calibration`, enabled: false },
+    { key: 'calibration', href: `${base}/calibration`, enabled: true },
     { key: 'patients', href: `${base}/patients`, enabled: false },
     { key: 'discordance', href: `${base}/discordance`, enabled: false },
     { key: 'export', href: `${base}/export`, enabled: false },
