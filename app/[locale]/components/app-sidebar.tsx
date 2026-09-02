@@ -33,6 +33,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { authClient } from '@/lib/auth-client'
 import { applicationLink } from '@/lib/application-link'
+import { isFocusRoute } from '@/lib/corelab/focus-routes'
 import { PendingCountBadge } from '@/components/ui/pending-count-badge'
 
 type SidebarUser = {
@@ -166,6 +167,8 @@ export function AppSidebar({
     .flatMap((section) => section.items.map((item) => item.href))
     .filter((href) => pathname === href || pathname.startsWith(`${href}/`))
     .sort((left, right) => right.length - left.length)[0]
+
+  if (isFocusRoute(pathname)) return null
 
   return (
     <aside
