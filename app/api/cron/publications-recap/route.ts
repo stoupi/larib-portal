@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { isAuthorizedCron } from '@/lib/cron-auth'
 import { getPublicationsRecapRecipients } from '@/lib/services/publications/recap'
 import { listMyPublications } from '@/lib/services/publications/my-publications'
-import { selectRecapArticles } from '@/lib/publications/recap'
+import { previousMonthStart, selectRecapArticles, selectRecapCelebrations } from '@/lib/publications/recap'
 import { sendPublicationsRecapEmail, renderPublicationsRecapEmail } from '@/lib/services/email'
 import { recordPublicationEmail } from '@/lib/services/publications/email-log'
 import { resolveAppBaseUrl } from '@/lib/app-url'
@@ -20,6 +20,7 @@ export async function GET(request: NextRequest) {
 
   const appUrl = resolveAppBaseUrl()
 
+  const since = previousMonthStart()
   const recipients = await getPublicationsRecapRecipients()
   let sent = 0
   let skipped = 0
@@ -28,7 +29,9 @@ export async function GET(request: NextRequest) {
   for (const recipient of recipients) {
     const publications = await listMyPublications(recipient.id)
     const articles = selectRecapArticles(publications)
-    if (articles.length === 0) {
+    const celebrations = selectRecapCelebrations(publications, since)
+    // Nothing in progress and nothing to celebrate means nothing worth writing.
+    if (articles.length === 0 && celebrations.length === 0) {
       skipped += 1
       continue
     }
@@ -36,6 +39,7 @@ export async function GET(request: NextRequest) {
       locale: (recipient.language === 'FR' ? 'fr' : 'en') as 'fr' | 'en',
       firstName: recipient.firstName,
       articles,
+      celebrations,
       appUrl,
     }
     const result = await sendPublicationsRecapEmail({ to: recipient.email, ...params })

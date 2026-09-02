@@ -40,9 +40,9 @@ describe('renderLeaveRecapEmail', () => {
 
 describe('renderPublicationsRecapEmail', () => {
   const articles: RecapArticle[] = [
-    { id: '1', title: 'AI in cardiac MRI', status: 'UNDER_REVIEW', journalName: 'JACC', order: 1, totalAuthors: 6 },
-    { id: '2', title: 'Valve outcomes', status: 'IN_PREPARATION', journalName: null, order: 3, totalAuthors: 4 },
-    { id: '3', title: 'Strain analysis', status: 'TO_RESUBMIT', journalName: 'EHJ', order: 2, totalAuthors: 3 },
+    { id: '1', title: 'AI in cardiac MRI', status: 'UNDER_REVIEW', journalName: 'JACC', order: 1, totalAuthors: 6, isFirstAuthor: true, since: '2026-07-02T00:00:00.000Z', waitingDays: 62 },
+    { id: '2', title: 'Valve outcomes', status: 'IN_PREPARATION', journalName: null, order: 3, totalAuthors: 4, isFirstAuthor: false, since: null, waitingDays: null },
+    { id: '3', title: 'Strain analysis', status: 'TO_RESUBMIT', journalName: 'EHJ', order: 2, totalAuthors: 3, isFirstAuthor: false, since: '2026-03-04T00:00:00.000Z', waitingDays: 182 },
   ]
 
   it('renders French subject, statuses, journal fallback and app link', () => {
@@ -61,7 +61,7 @@ describe('renderPublicationsRecapEmail', () => {
     expect(text).toContain('aucun journal visé')
     expect(html).toContain('https://portal.test/fr/publications')
     expect(html).toContain('Marie')
-    expect(html).toContain('1/6')
+    expect(html).toContain('1er auteur sur 6')
   })
 
   it('renders English labels for EN users without a first name', () => {
@@ -92,6 +92,9 @@ describe('renderPublicationsRecapEmail', () => {
           journalName: 'Heart & Vessels <Suppl>',
           order: 1,
           totalAuthors: 2,
+          isFirstAuthor: true,
+          since: '2026-08-01T00:00:00.000Z',
+          waitingDays: 32,
         },
       ],
       appUrl: 'https://portal.test',
@@ -166,5 +169,81 @@ describe('renderCarouselRequestEmailHtml', () => {
   it('leaves a body without quotes untouched', () => {
     const html = renderCarouselRequestEmailHtml('Bonjour Alice,\n\nFélicitations !')
     expect(html).not.toContain('<strong>')
+  })
+})
+
+describe('the recap that chases what stalls', () => {
+  const stalled: RecapArticle[] = [
+    {
+      id: 'r',
+      title: 'Rejected and never sent back',
+      status: 'TO_RESUBMIT',
+      journalName: 'EHJ',
+      order: 1,
+      totalAuthors: 3,
+      isFirstAuthor: true,
+      since: '2026-03-04T00:00:00.000Z',
+      waitingDays: 182,
+    },
+  ]
+
+  it('counts the publications in the subject', () => {
+    const { subject } = renderPublicationsRecapEmail({
+      locale: 'fr',
+      firstName: 'Marie',
+      articles: stalled,
+      appUrl: 'https://portal.test',
+    })
+    expect(subject).toBe('Vos 1 publication en cours — récap mensuel')
+  })
+
+  it('gives the papers to resubmit their own block, dated and aged', () => {
+    const { html } = renderPublicationsRecapEmail({
+      locale: 'fr',
+      firstName: null,
+      articles: stalled,
+      appUrl: 'https://portal.test',
+    })
+    expect(html).toContain('À resoumettre')
+    expect(html).toContain('04 mars 2026')
+    expect(html).toContain('en attente depuis 182 jours')
+  })
+
+  it('opens on the acceptances, with the confetti', () => {
+    const { html, text } = renderPublicationsRecapEmail({
+      locale: 'fr',
+      firstName: 'Marie',
+      articles: [],
+      celebrations: [
+        { id: 'c', title: 'Accepted at last', journalName: 'JACC', acceptedAt: '2026-08-20T00:00:00.000Z', isFirstAuthor: true },
+      ],
+      appUrl: 'https://portal.test',
+    })
+    expect(html).toContain('🎉')
+    expect(html).toContain('Félicitations')
+    expect(html).toContain('Accepted at last')
+    expect(text).toContain('Accepted at last')
+  })
+
+  it('says nothing about acceptances when there are none', () => {
+    const { html } = renderPublicationsRecapEmail({
+      locale: 'fr',
+      firstName: 'Marie',
+      articles: stalled,
+      appUrl: 'https://portal.test',
+    })
+    expect(html).not.toContain('🎉')
+  })
+
+  it('asks for a correction and offers a reply address', () => {
+    const { html } = renderPublicationsRecapEmail({
+      locale: 'fr',
+      firstName: 'Marie',
+      articles: stalled,
+      appUrl: 'https://portal.test',
+      contactEmail: 'publications@larib.test',
+    })
+    expect(html).toContain('suivi du service')
+    expect(html).toContain('mailto:publications@larib.test')
   })
 })

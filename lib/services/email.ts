@@ -8,7 +8,13 @@ export { renderCarouselRequestEmailHtml }
 import { eachDayOfInterval, endOfDay, endOfWeek, format, isWithinInterval, startOfDay, startOfWeek } from 'date-fns'
 import { fr, enUS } from 'date-fns/locale'
 import type { RecapPeriod, RecapRow, RecapStatus } from '@/lib/services/conges/recap'
-import type { RecapArticle, RecapStatusValue } from '@/lib/publications/recap'
+import {
+  selectOngoingArticles,
+  selectStalledArticles,
+  type RecapArticle,
+  type RecapCelebration,
+  type RecapStatusValue,
+} from '@/lib/publications/recap'
 
 export async function sendWelcomeEmail(params: WelcomeEmailParams): Promise<{ id: string } | { error: string }>
 {
@@ -635,7 +641,9 @@ export type PublicationsRecapEmailParams = {
   locale: 'en' | 'fr'
   firstName: string | null
   articles: RecapArticle[]
+  celebrations?: RecapCelebration[]
   appUrl: string
+  contactEmail?: string | null
 }
 
 const PUBLICATION_STATUS_STYLE: Record<
@@ -648,64 +656,211 @@ const PUBLICATION_STATUS_STYLE: Record<
   TO_RESUBMIT: { bgColor: '#ea580c', label: { fr: 'À resoumettre', en: 'To resubmit' } },
 }
 
+const RECAP_WORDS = {
+  fr: {
+    subject: (count: number) => `Vos ${count} publication${count > 1 ? 's' : ''} en cours — récap mensuel`,
+    subjectNone: 'Votre récap mensuel de publications',
+    eyebrow: 'Récap mensuel',
+    hello: (name: string | null) => (name ? `Bonjour ${name},` : 'Bonjour,'),
+    congrats: 'Félicitations !',
+    congratsLead: (count: number) =>
+      count > 1
+        ? `${count} de vos publications ont été acceptées depuis le dernier récap.`
+        : 'Une de vos publications a été acceptée depuis le dernier récap.',
+    heading: (count: number) =>
+      count === 0
+        ? 'Aucune publication en cours pour le moment.'
+        : `Vous avez ${count} publication${count > 1 ? 's' : ''} en cours.`,
+    stalledTitle: 'À resoumettre',
+    stalledLead:
+      'Ces publications ont été refusées et n’ont pas encore été renvoyées ailleurs. Ce sont celles qui risquent le plus de rester en suspens.',
+    ongoingTitle: 'En cours',
+    colTitle: 'Publication',
+    colStatus: 'Statut',
+    colJournal: 'Journal',
+    colSince: 'Depuis le',
+    waiting: (days: number) => `en attente depuis ${days} jour${days > 1 ? 's' : ''}`,
+    noJournal: 'aucun journal visé',
+    notSubmitted: 'pas encore soumise',
+    position: (order: number, total: number) => `${order}${order === 1 ? 'er' : 'e'} auteur sur ${total}`,
+    askTitle: 'Ces données servent au suivi du service',
+    askBody:
+      'Un statut à jour nous permet de suivre précisément l’activité de l’équipe et de ne laisser aucun travail s’enliser. Si une information n’est plus exacte, corrigez-la directement depuis votre espace : cela prend quelques secondes.',
+    askReply:
+      'Vous pouvez aussi répondre à ce message, et n’hésitez pas à nous dire si vous êtes bloqué sur une publication : on est là pour aider.',
+    button: 'Ouvrir mes publications',
+    footer: 'Ceci est un email automatique envoyé depuis Larib Portal.',
+  },
+  en: {
+    subject: (count: number) => `Your ${count} in-progress publication${count > 1 ? 's' : ''} — monthly recap`,
+    subjectNone: 'Your monthly publications recap',
+    eyebrow: 'Monthly recap',
+    hello: (name: string | null) => (name ? `Hello ${name},` : 'Hello,'),
+    congrats: 'Congratulations!',
+    congratsLead: (count: number) =>
+      count > 1
+        ? `${count} of your publications were accepted since the last recap.`
+        : 'One of your publications was accepted since the last recap.',
+    heading: (count: number) =>
+      count === 0
+        ? 'No publication in progress at the moment.'
+        : `You have ${count} publication${count > 1 ? 's' : ''} in progress.`,
+    stalledTitle: 'To resubmit',
+    stalledLead:
+      'These publications were turned down and have not been sent anywhere since. They are the ones most likely to stall.',
+    ongoingTitle: 'In progress',
+    colTitle: 'Publication',
+    colStatus: 'Status',
+    colJournal: 'Journal',
+    colSince: 'Since',
+    waiting: (days: number) => `waiting for ${days} day${days > 1 ? 's' : ''}`,
+    noJournal: 'no target journal',
+    notSubmitted: 'not submitted yet',
+    position: (order: number, total: number) => `author ${order} of ${total}`,
+    askTitle: 'These records drive the department’s follow-up',
+    askBody:
+      'An up-to-date status lets us follow the team’s activity precisely and keeps work from stalling. If anything is no longer accurate, correct it from your own space — it takes seconds.',
+    askReply:
+      'You can also simply reply to this message, and do tell us if you are stuck on a publication: we are here to help.',
+    button: 'Open my publications',
+    footer: 'This is an automatic email sent from Larib Portal.',
+  },
+}
+
+function recapDate(iso: string | null, locale: 'fr' | 'en'): string {
+  if (!iso) return '—'
+  return new Intl.DateTimeFormat(locale === 'fr' ? 'fr-FR' : 'en-GB', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+  }).format(new Date(iso))
+}
+
 export function renderPublicationsRecapEmail({
   locale,
   firstName,
   articles,
+  celebrations = [],
   appUrl,
+  contactEmail,
 }: PublicationsRecapEmailParams): { subject: string; text: string; html: string } {
-  const subject =
-    locale === 'fr'
-      ? 'Vos publications en cours — récap mensuel'
-      : 'Your in-progress publications — monthly recap'
-  const greetingWithoutName = locale === 'fr' ? 'Bonjour,' : 'Hello,'
-  const greeting = firstName
-    ? locale === 'fr'
-      ? `Bonjour ${firstName},`
-      : `Hello ${firstName},`
-    : greetingWithoutName
-  const intro =
-    locale === 'fr'
-      ? 'Voici l’état de vos publications en cours dans le portail :'
-      : 'Here is the current state of your in-progress publications in the portal:'
-  const callToAction =
-    locale === 'fr'
-      ? 'Si un statut ou une information n’est plus exact, merci de le mettre à jour dans l’app.'
-      : 'If a status or any detail is no longer accurate, please update it in the app.'
-  const buttonLabel = locale === 'fr' ? 'Ouvrir mes publications' : 'Open my publications'
+  const words = RECAP_WORDS[locale]
+  const stalled = selectStalledArticles(articles)
+  const ongoing = selectOngoingArticles(articles)
+  const subject = articles.length === 0 ? words.subjectNone : words.subject(articles.length)
   const publicationsLink = `${appUrl}/${locale}/publications`
-  const noJournalLabel = locale === 'fr' ? 'aucun journal visé' : 'no target journal'
-  const positionLabel = locale === 'fr' ? 'position auteur' : 'author position'
 
-  const textLines = articles.map((article) => {
-    const statusLabel = PUBLICATION_STATUS_STYLE[article.status].label[locale]
-    const journalLabel = article.journalName ?? noJournalLabel
-    return `- ${article.title} [${statusLabel}] — ${journalLabel} — ${positionLabel} ${article.order}/${article.totalAuthors}`
-  })
-  const text = `${greeting}\n\n${intro}\n\n${textLines.join('\n')}\n\n${callToAction}\n${publicationsLink}`
+  const textLines = [
+    words.hello(firstName),
+    '',
+    ...(celebrations.length > 0
+      ? [
+          `${words.congrats} ${words.congratsLead(celebrations.length)}`,
+          ...celebrations.map(
+            (celebration) =>
+              `- ${celebration.title}${celebration.journalName ? ` — ${celebration.journalName}` : ''} (${recapDate(celebration.acceptedAt, locale)})`,
+          ),
+          '',
+        ]
+      : []),
+    words.heading(articles.length),
+    '',
+    ...articles.map((article) => {
+      const status = PUBLICATION_STATUS_STYLE[article.status].label[locale]
+      const journal = article.journalName ?? words.noJournal
+      const since = article.since ? recapDate(article.since, locale) : words.notSubmitted
+      const waiting = article.waitingDays === null ? '' : ` (${words.waiting(article.waitingDays)})`
+      return `- [${status}] ${article.title} — ${journal} — ${since}${waiting}`
+    }),
+    '',
+    words.askBody,
+    words.askReply,
+    publicationsLink,
+  ]
 
-  const articleRows = articles
-    .map((article) => {
-      const style = PUBLICATION_STATUS_STYLE[article.status]
-      const journalLabel = escapeHtml(article.journalName ?? noJournalLabel)
-      return `<tr>
-      <td style="padding:10px 12px;border-bottom:1px solid ${COLORS.border};font-family:${FONT_SANS};font-size:14px;color:${COLORS.foreground};">${escapeHtml(article.title)}<br /><span style="font-size:12px;color:${COLORS.mutedForeground};">${journalLabel} · ${article.order}/${article.totalAuthors}</span></td>
-      <td style="padding:10px 12px;border-bottom:1px solid ${COLORS.border};text-align:right;white-space:nowrap;"><span style="background-color:${style.bgColor};border-radius:4px;padding:3px 8px;font-family:${FONT_SANS};font-size:11px;color:#ffffff;">${style.label[locale]}</span></td>
-    </tr>`
-    })
-    .join('')
+  function tableRows(rows: RecapArticle[]): string {
+    return rows
+      .map((article) => {
+        const style = PUBLICATION_STATUS_STYLE[article.status]
+        const journal = escapeHtml(article.journalName ?? words.noJournal)
+        const since = article.since ? recapDate(article.since, locale) : words.notSubmitted
+        const waiting =
+          article.waitingDays === null
+            ? ''
+            : `<br /><span style="font-size:11px;color:${COLORS.mutedForeground};">${escapeHtml(words.waiting(article.waitingDays))}</span>`
+        return `<tr>
+        <td style="padding:10px 12px;border-bottom:1px solid ${COLORS.border};font-family:${FONT_SANS};font-size:13px;line-height:19px;color:${COLORS.foreground};">${escapeHtml(article.title)}<br /><span style="font-size:11px;color:${COLORS.mutedForeground};">${escapeHtml(words.position(article.order, article.totalAuthors))}</span></td>
+        <td style="padding:10px 12px;border-bottom:1px solid ${COLORS.border};white-space:nowrap;vertical-align:top;"><span style="background-color:${style.bgColor};border-radius:4px;padding:3px 8px;font-family:${FONT_SANS};font-size:11px;color:#ffffff;white-space:nowrap;">${style.label[locale]}</span></td>
+        <td style="padding:10px 12px;border-bottom:1px solid ${COLORS.border};font-family:${FONT_SANS};font-size:12px;color:${COLORS.mutedForeground};vertical-align:top;">${journal}</td>
+        <td style="padding:10px 12px;border-bottom:1px solid ${COLORS.border};font-family:${FONT_SANS};font-size:12px;color:${COLORS.foreground};white-space:nowrap;vertical-align:top;">${escapeHtml(since)}${waiting}</td>
+      </tr>`
+      })
+      .join('')
+  }
 
-  const body = `<p style="margin:0 0 16px 0;font-family:${FONT_SANS};font-size:15px;color:${COLORS.foreground};">${greeting}</p>
-    <p style="margin:0 0 16px 0;font-family:${FONT_SANS};font-size:14px;color:${COLORS.foreground};">${intro}</p>
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">${articleRows}</table>
-    <p style="margin:20px 0 16px 0;font-family:${FONT_SANS};font-size:14px;color:${COLORS.foreground};">${callToAction}</p>
+  function tableHead(): string {
+    const cell = (label: string) =>
+      `<th align="left" style="padding:8px 12px;border-bottom:2px solid ${COLORS.border};font-family:${FONT_SANS};font-size:10px;font-weight:700;letter-spacing:0.6px;text-transform:uppercase;color:${COLORS.mutedForeground};">${escapeHtml(label)}</th>`
+    return `<tr>${cell(words.colTitle)}${cell(words.colStatus)}${cell(words.colJournal)}${cell(words.colSince)}</tr>`
+  }
+
+  const celebrationBlock =
+    celebrations.length === 0
+      ? ''
+      : `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 26px 0;">
+      <tr>
+        <td style="background-color:#F0FDF4;border-left:4px solid #10B981;border-radius:6px;padding:18px 20px;">
+          <p style="margin:0 0 6px 0;font-family:${FONT_SERIF};font-size:20px;line-height:26px;font-weight:700;color:#047857;">🎉 ${escapeHtml(words.congrats)}</p>
+          <p style="margin:0 0 12px 0;font-family:${FONT_SANS};font-size:14px;line-height:21px;color:#065F46;">${escapeHtml(words.congratsLead(celebrations.length))}</p>
+          ${celebrations
+            .map(
+              (celebration) =>
+                `<p style="margin:0 0 8px 0;font-family:${FONT_SANS};font-size:13px;line-height:19px;color:${COLORS.foreground};"><strong>${escapeHtml(celebration.title)}</strong><br /><span style="color:${COLORS.mutedForeground};">${escapeHtml(celebration.journalName ?? words.noJournal)} · ${escapeHtml(recapDate(celebration.acceptedAt, locale))}</span></p>`,
+            )
+            .join('')}
+        </td>
+      </tr>
+    </table>`
+
+  const stalledBlock =
+    stalled.length === 0
+      ? ''
+      : `<p style="margin:0 0 6px 0;font-family:${FONT_SANS};font-size:12px;font-weight:700;letter-spacing:0.6px;text-transform:uppercase;color:#EA580C;">${escapeHtml(words.stalledTitle)}</p>
+    <p style="margin:0 0 12px 0;font-family:${FONT_SANS};font-size:13px;line-height:20px;color:${COLORS.foreground};">${escapeHtml(words.stalledLead)}</p>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#FFF3E9;border-radius:6px;margin:0 0 26px 0;">${tableHead()}${tableRows(stalled)}</table>`
+
+  const ongoingBlock =
+    ongoing.length === 0
+      ? ''
+      : `${stalled.length > 0 ? `<p style="margin:0 0 10px 0;font-family:${FONT_SANS};font-size:12px;font-weight:700;letter-spacing:0.6px;text-transform:uppercase;color:${COLORS.mutedForeground};">${escapeHtml(words.ongoingTitle)}</p>` : ''}
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 26px 0;">${tableHead()}${tableRows(ongoing)}</table>`
+
+  const contactLine = contactEmail
+    ? `<br /><a href="mailto:${escapeHtml(contactEmail)}" style="color:${COLORS.primary};">${escapeHtml(contactEmail)}</a>`
+    : ''
+
+  const body = `<p style="margin:0 0 8px 0;font-family:${FONT_SANS};font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:${COLORS.accent};">${escapeHtml(words.eyebrow)}</p>
+    <p style="margin:0 0 20px 0;font-family:${FONT_SANS};font-size:15px;line-height:23px;color:${COLORS.foreground};">${escapeHtml(words.hello(firstName))}</p>
+    ${celebrationBlock}
+    <p style="margin:0 0 18px 0;font-family:${FONT_SERIF};font-size:22px;line-height:29px;font-weight:700;color:${COLORS.primary};">${escapeHtml(words.heading(articles.length))}</p>
+    ${stalledBlock}
+    ${ongoingBlock}
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 22px 0;">
+      <tr>
+        <td style="background-color:${COLORS.secondary};border-radius:8px;padding:18px 20px;">
+          <p style="margin:0 0 8px 0;font-family:${FONT_SANS};font-size:13px;font-weight:700;color:${COLORS.primary};">${escapeHtml(words.askTitle)}</p>
+          <p style="margin:0 0 10px 0;font-family:${FONT_SANS};font-size:13px;line-height:20px;color:${COLORS.foreground};">${escapeHtml(words.askBody)}</p>
+          <p style="margin:0;font-family:${FONT_SANS};font-size:13px;line-height:20px;color:${COLORS.foreground};">${escapeHtml(words.askReply)}${contactLine}</p>
+        </td>
+      </tr>
+    </table>
     <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:0 auto;"><tr>
-      <td style="background-color:${COLORS.primary};border-radius:8px;">
-        <a href="${publicationsLink}" target="_blank" style="display:inline-block;padding:12px 28px;font-family:${FONT_SANS};font-size:14px;font-weight:600;color:${COLORS.primaryForeground};text-decoration:none;">${buttonLabel}</a>
+      <td align="center" style="background-color:${COLORS.accent};border-radius:8px;">
+        <a href="${publicationsLink}" target="_blank" style="display:inline-block;padding:14px 34px;font-family:${FONT_SANS};font-size:15px;font-weight:600;color:#ffffff;text-decoration:none;">${escapeHtml(words.button)}</a>
       </td>
     </tr></table>`
 
-  return { subject, text, html: emailLayout(body, subject) }
+  return { subject, text: textLines.join('\n'), html: emailLayout(body, subject, words.footer) }
 }
 
 export async function sendPublicationsRecapEmail(
