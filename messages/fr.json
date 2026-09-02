@@ -1990,5 +1990,17 @@
         "empty": "Aucune modification enregistrée pour cette publication."
       }
     }
+  },
+  "corelab": {
+    "title": "Core Lab",
+    "home": {
+      "subtitle": "Les études centralisées sur lesquelles vous êtes lecteur ou relecteur.",
+      "empty": "Aucune étude ne vous est encore attribuée. Le data manager vous ajoutera à l'équipe d'une étude."
+    },
+    "admin": {
+      "title": "Administration Core Lab",
+      "subtitle": "Études, équipes, cohortes, calibration et export.",
+      "empty": "Aucune étude pour l'instant."
+    }
   }
 }

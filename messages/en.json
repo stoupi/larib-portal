@@ -1992,5 +1992,17 @@
         "empty": "No change recorded for this publication yet."
       }
     }
+  },
+  "corelab": {
+    "title": "Core Lab",
+    "home": {
+      "subtitle": "The centralised studies you read or review for.",
+      "empty": "No study is assigned to you yet. The data manager will add you to a study team."
+    },
+    "admin": {
+      "title": "Core Lab administration",
+      "subtitle": "Studies, teams, cohorts, calibration and export.",
+      "empty": "No study yet."
+    }
   }
 }
