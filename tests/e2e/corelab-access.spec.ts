@@ -33,7 +33,8 @@ test('an expired window hides the card and redirects the member', async ({ page 
 test('the CoreLab admin reaches the admin page and the user list shows the expiry', async ({ page }) => {
   await login(page, 'corelab-admin@larib-portal.test')
   await page.goto('/en/corelab/admin', { timeout: 60000 })
-  await expect(page.getByRole('heading', { name: /core lab administration/i })).toBeVisible()
+  await expect(page).toHaveURL(/\/en\/corelab\/admin\/studies/)
+  await expect(page.getByRole('heading', { name: /^studies$/i })).toBeVisible()
   await page.context().clearCookies()
 
   await login(page, 'test-admin@larib-portal.test')
