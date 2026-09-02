@@ -83,6 +83,14 @@ describe('defaultSequenceValues', () => {
   })
 })
 
+describe('defaultSequenceValues with a ready-made segment map', () => {
+  it('keeps a default that is already keyed by segment', () => {
+    const withMap: FieldDefinition = { ...segmentField, defaultValue: { '1': 'akinetic', '2': 'normal' } }
+    const sequence: SequenceDefinition = { id: 'cine', name: 'Cine', sections: [{ id: 's', name: 'S', fields: [withMap] }] }
+    expect(defaultSequenceValues(sequence).wall_motion.value).toEqual({ '1': 'akinetic', '2': 'normal' })
+  })
+})
+
 describe('nextSource', () => {
   it('marks an imported value as modified, and leaves a manual one alone', () => {
     expect(nextSource('IMPORTED')).toBe('MODIFIED')

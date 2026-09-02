@@ -2263,6 +2263,43 @@
     },
     "study": {
       "comingSoon": "This study has no content available for you yet."
+    },
+    "form": {
+      "yes": "Yes",
+      "no": "No",
+      "choose": "Choose",
+      "toFill": "To fill",
+      "completion": "{filled} of {required} required variables",
+      "sequences": "Sequences",
+      "outOfBounds": "Value outside the expected bounds ({min} – {max})",
+      "segment": "Segment {number}",
+      "brush": "Brush",
+      "cycle": "Cycle",
+      "brushHelp": "Pick a value in the legend, then paint the segments. A drag counts as a single change.",
+      "cycleHelp": "Each click on a segment moves to the next value of the set.",
+      "flag": "Flag this value",
+      "flagNote": "Note",
+      "clearFlag": "Clear the flag",
+      "flags": {
+        "UNCERTAIN_VALUE": "Uncertain value",
+        "POOR_IMAGE_QUALITY": "Image quality",
+        "MEASUREMENT_DIFFICULT": "Difficult measurement",
+        "OTHER": "Other"
+      },
+      "source": {
+        "MANUAL": "Entered",
+        "IMPORTED": "Imported",
+        "MODIFIED": "Modified"
+      },
+      "preview": {
+        "title": "Form preview",
+        "subtitle": "Test bench: values entered here are stored nowhere.",
+        "back": "Back to the study",
+        "open": "Form preview",
+        "reset": "Reset",
+        "changes": "Changes emitted: {count}",
+        "noCrf": "This study has no published CRF yet."
+      }
     }
   }
 }

@@ -1,4 +1,6 @@
 import { getTranslations } from 'next-intl/server'
+import { Link } from '@/app/i18n/navigation'
+import { Button } from '@/components/ui/button'
 import { notFound } from 'next/navigation'
 import { getStudy, getCurrentCrfVersion } from '@/lib/services/corelab/studies'
 import { allowedNextPhases } from '@/lib/corelab/study-phase'
@@ -18,6 +20,7 @@ function formatDate(locale: string, value: Date | null): string | null {
 export default async function StudyConfigPage({ params }: PageParams) {
   const { locale, studyId } = await params
   const t = await getTranslations({ locale, namespace: 'corelab.config' })
+  const tForm = await getTranslations({ locale, namespace: 'corelab.form.preview' })
 
   const study = await getStudy(studyId)
   if (!study) notFound()
@@ -63,7 +66,14 @@ export default async function StudyConfigPage({ params }: PageParams) {
       />
 
       <section className="rounded-2xl border border-border bg-white p-6">
-        <h2 className="text-lg font-semibold text-text-primary">{t('crfTitle')}</h2>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h2 className="text-lg font-semibold text-text-primary">{t('crfTitle')}</h2>
+          {crfVersion ? (
+            <Button asChild variant="outline" size="sm">
+              <Link href={`/corelab/admin/studies/${study.id}/crf-preview`}>{tForm('open')}</Link>
+            </Button>
+          ) : null}
+        </div>
         {crfVersion ? (
           <>
             <p className="mt-1 text-sm text-text-secondary">

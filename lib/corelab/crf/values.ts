@@ -59,7 +59,9 @@ export function defaultSequenceValues(sequence: SequenceDefinition): SequenceVal
     .flatMap((section) => section.fields)
     .filter((field) => field.defaultValue !== undefined)
     .map((field): [string, FieldValue] => {
-      if (field.type === 'segment_categorical' || field.type === 'segment_numeric') {
+      const alreadyASegmentMap =
+        typeof field.defaultValue === 'object' && field.defaultValue !== null && !Array.isArray(field.defaultValue)
+      if ((field.type === 'segment_categorical' || field.type === 'segment_numeric') && !alreadyASegmentMap) {
         const segmentCount = field.segmentCount ?? 17
         const segments = Object.fromEntries(
           Array.from({ length: segmentCount }, (unused, index) => [String(index + 1), field.defaultValue]),

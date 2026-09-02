@@ -2261,6 +2261,43 @@
     },
     "study": {
       "comingSoon": "Cette étude n'a pas encore de contenu disponible pour vous."
+    },
+    "form": {
+      "yes": "Oui",
+      "no": "Non",
+      "choose": "Choisir",
+      "toFill": "À saisir",
+      "completion": "{filled} sur {required} variables requises",
+      "sequences": "Séquences",
+      "outOfBounds": "Valeur hors des bornes attendues ({min} – {max})",
+      "segment": "Segment {number}",
+      "brush": "Pinceau",
+      "cycle": "Défilement",
+      "brushHelp": "Choisissez une valeur dans la légende, puis peignez les segments. Un glissement compte pour une seule modification.",
+      "cycleHelp": "Chaque clic sur un segment passe à la valeur suivante du jeu.",
+      "flag": "Signaler la valeur",
+      "flagNote": "Précision",
+      "clearFlag": "Retirer le signalement",
+      "flags": {
+        "UNCERTAIN_VALUE": "Valeur incertaine",
+        "POOR_IMAGE_QUALITY": "Qualité d'image",
+        "MEASUREMENT_DIFFICULT": "Mesure difficile",
+        "OTHER": "Autre"
+      },
+      "source": {
+        "MANUAL": "Saisi",
+        "IMPORTED": "Importé",
+        "MODIFIED": "Modifié"
+      },
+      "preview": {
+        "title": "Aperçu du formulaire",
+        "subtitle": "Banc d'essai : les valeurs saisies ici ne sont enregistrées nulle part.",
+        "back": "Retour à l'étude",
+        "open": "Aperçu du formulaire",
+        "reset": "Réinitialiser",
+        "changes": "Modifications émises : {count}",
+        "noCrf": "Cette étude n'a pas encore de CRF publié."
+      }
     }
   }
 }
