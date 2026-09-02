@@ -55,6 +55,7 @@ model User {
   corelabTrainingCompletions    CorelabTrainingCompletion[]    @relation("CorelabTrainingCompletionUser")
   corelabCalibrationAssignments CorelabCalibrationAssignment[] @relation("CorelabCalibrationAssignmentUser")
   corelabGoldStandards          CorelabCalibrationCase[]       @relation("CorelabGoldStandardUser")
+  corelabReadingAssignments     CorelabReadingAssignment[]     @relation("CorelabReadingAssignmentUser")
 
   //related to bestof larib
   ClinicalCase     ClinicalCase[]
@@ -795,6 +796,11 @@ enum AuditEntity {
   CORELAB_CALIBRATION_CASE
   CORELAB_CALIBRATION_ASSIGNMENT
   CORELAB_CALIBRATION_REVIEW
+  CORELAB_PATIENT
+  CORELAB_EXAM
+  CORELAB_COHORT_IMPORT
+  CORELAB_ASSIGNMENT
+  CORELAB_ASSIGNMENT_BATCH
 }
 
 model AuditEvent {
@@ -916,17 +922,21 @@ model CorelabStudy {
   trainingRequirements CorelabStudyTrainingRequirement[]
   calibrationCases     CorelabCalibrationCase[]
   calibrationReviews   CorelabCalibrationReview[]
+  patients             CorelabPatient[]
+  cohortImports        CorelabCohortImport[]
+  assignmentBatches    CorelabAssignmentBatch[]
 
   @@map("CorelabStudy")
 }
 
 model CorelabSite {
-  id        String       @id @default(cuid())
+  id        String           @id @default(cuid())
   studyId   String
-  study     CorelabStudy @relation(fields: [studyId], references: [id], onDelete: Cascade)
+  study     CorelabStudy     @relation(fields: [studyId], references: [id], onDelete: Cascade)
   code      String
-  name      String       @default("")
-  createdAt DateTime     @default(now())
+  name      String           @default("")
+  createdAt DateTime         @default(now())
+  patients  CorelabPatient[]
 
   @@unique([studyId, code])
   @@map("CorelabSite")
@@ -1118,4 +1128,116 @@ model CorelabCalibrationReview {
 
   @@index([studyId, userId])
   @@map("CorelabCalibrationReview")
+}
+
+enum CorelabPatientStatus {
+  UNASSIGNED
+  AWAITING_READING
+  IN_PROGRESS
+  UNDER_REVIEW
+  RETURNED_FOR_DOCUMENTS
+  COMPLETED
+  FORCE_CLOSED
+}
+
+enum CorelabReadingMode {
+  SINGLE
+  DOUBLE
+}
+
+enum CorelabAssignmentRole {
+  READER_1
+  READER_2
+  REVIEWER
+}
+
+enum CorelabAssignmentStatus {
+  DRAFT
+  ASSIGNED
+  IN_PROGRESS
+  READY_TO_SIGN
+  SUBMITTED
+  RETURNED
+  REVIEWED
+}
+
+model CorelabPatient {
+  id          String               @id @default(cuid())
+  studyId     String
+  study       CorelabStudy         @relation(fields: [studyId], references: [id], onDelete: Cascade)
+  siteId      String
+  site        CorelabSite          @relation(fields: [siteId], references: [id], onDelete: Restrict)
+  code        String
+  status      CorelabPatientStatus @default(UNASSIGNED)
+  readingMode CorelabReadingMode?
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
+
+  exams       CorelabExam[]
+  assignments CorelabReadingAssignment[]
+
+  @@unique([studyId, code])
+  @@map("CorelabPatient")
+}
+
+model CorelabExam {
+  id        String          @id @default(cuid())
+  patientId String
+  patient   CorelabPatient  @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  index     Int
+  modality  CorelabModality
+  examDate  DateTime
+  timeLabel String
+  createdAt DateTime        @default(now())
+
+  @@unique([patientId, index])
+  @@map("CorelabExam")
+}
+
+model CorelabCohortImport {
+  id           String       @id @default(cuid())
+  studyId      String
+  study        CorelabStudy @relation(fields: [studyId], references: [id], onDelete: Cascade)
+  fileName     String
+  fileKey      String
+  report       Json
+  importedRows Int
+  importedById String
+  createdAt    DateTime     @default(now())
+
+  @@map("CorelabCohortImport")
+}
+
+model CorelabReadingAssignment {
+  id         String                  @id @default(cuid())
+  patientId  String
+  patient    CorelabPatient          @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  userId     String
+  user       User                    @relation("CorelabReadingAssignmentUser", fields: [userId], references: [id], onDelete: Restrict)
+  role       CorelabAssignmentRole
+  status     CorelabAssignmentStatus @default(DRAFT)
+  dueDate    DateTime?
+  batchId    String?
+  assignedAt DateTime?
+  createdAt  DateTime                @default(now())
+  updatedAt  DateTime                @updatedAt
+
+  @@unique([patientId, role])
+  @@index([userId, status])
+  @@map("CorelabReadingAssignment")
+}
+
+model CorelabAssignmentBatch {
+  id         String       @id @default(cuid())
+  studyId    String
+  study      CorelabStudy @relation(fields: [studyId], references: [id], onDelete: Cascade)
+  userId     String
+  patientIds String[]
+  dueDate    DateTime
+  paceAmount Int?
+  paceUnit   String?
+  sentAt     DateTime?
+  createdAt  DateTime     @default(now())
+
+  @@map("CorelabAssignmentBatch")
 }
