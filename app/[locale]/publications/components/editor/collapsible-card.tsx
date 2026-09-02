@@ -8,14 +8,21 @@ export function CollapsibleCard({
   title,
   actions,
   children,
+  label,
 }: {
   title: React.ReactNode
   actions?: React.ReactNode
   children: React.ReactNode
+  // Names the card as a landmark, for a screen reader and for anything looking it up.
+  label?: string
 }) {
   const [open, setOpen] = useState(true)
+  const Wrapper = label ? 'section' : 'div'
   return (
-    <div className="rounded-2xl border border-line bg-bg-surface p-5 shadow-elevation-xs">
+    <Wrapper
+      aria-label={label}
+      className="rounded-2xl border border-line bg-bg-surface p-5 shadow-elevation-xs"
+    >
       <div className="flex items-center justify-between gap-3">
         <div className="flex min-w-0 items-center gap-2.5">{title}</div>
         <div className="flex shrink-0 items-center gap-2">
@@ -32,6 +39,6 @@ export function CollapsibleCard({
         </div>
       </div>
       {open && <div className="mt-3">{children}</div>}
-    </div>
+    </Wrapper>
   )
 }

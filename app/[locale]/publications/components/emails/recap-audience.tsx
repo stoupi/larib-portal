@@ -1,11 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useTranslations, useLocale } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import { useAction } from 'next-safe-action/hooks'
 import { toast } from 'sonner'
-import { BellOff, BellRing, Eye, Save, Send } from 'lucide-react'
+import { BellOff, BellRing, Eye, Send } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { TagInput } from '@/components/ui/tag-input'
 import { TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table'
@@ -40,13 +40,35 @@ export function RecapAudience({
   const [copies, setCopies] = useState(copyRecipients)
   const [preview, setPreview] = useState<Preview | null>(null)
 
+  // Saved as they are edited: a Save button beside a list that already shows the new
+  // address reads as done, and one forgotten click loses the lot without a word.
+  const queuedCopies = useRef<string[] | null>(null)
+
   const saveCopies = useAction(setRecapCopyRecipientsAction, {
     onSuccess() {
+      const queued = queuedCopies.current
+      if (queued) {
+        queuedCopies.current = null
+        saveCopies.execute({ emails: queued })
+        return
+      }
       toast.success(t('ccSaved'))
       router.refresh()
     },
-    onError: () => toast.error(t('actionError')),
+    onError: () => {
+      queuedCopies.current = null
+      toast.error(t('actionError'))
+    },
   })
+
+  function persistCopies(next: string[]) {
+    setCopies(next)
+    if (saveCopies.isExecuting) {
+      queuedCopies.current = next
+      return
+    }
+    saveCopies.execute({ emails: next })
+  }
 
   const toggleOptOut = useAction(setRecapOptOutAction, {
     onSuccess() {
@@ -91,19 +113,8 @@ export function RecapAudience({
       <div className="rounded-2xl border border-line bg-bg-surface p-5">
         <p className="text-sm font-semibold text-text-primary">{t('ccTitle')}</p>
         <p className="mt-0.5 text-xs text-text-muted">{t('ccHint')}</p>
-        <div className="mt-3 flex flex-wrap items-end gap-2">
-          <div className="min-w-[280px] flex-1">
-            <TagInput value={copies} onChange={setCopies} placeholder="nom@hopital.fr" />
-          </div>
-          <Button
-            type="button"
-            className="gap-2"
-            disabled={saveCopies.isExecuting}
-            onClick={() => saveCopies.execute({ emails: copies })}
-          >
-            <Save className="size-4" strokeWidth={2.2} />
-            {t('ccSave')}
-          </Button>
+        <div className="mt-3">
+          <TagInput value={copies} onChange={persistCopies} placeholder="nom@hopital.fr" />
         </div>
       </div>
 

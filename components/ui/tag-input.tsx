@@ -68,6 +68,7 @@ export function TagInput({ value, onChange, placeholder, disabled, max = 10 }: P
           value={text}
           onChange={onChangeText}
           onKeyDown={onKeyDown}
+          onBlur={() => addTag(text)}
           placeholder={placeholder}
           disabled={disabled}
         />
