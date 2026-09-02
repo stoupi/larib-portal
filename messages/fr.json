@@ -1896,7 +1896,6 @@
       "tagPending": "Mail à envoyer",
       "tagSent": "Envoyé le {date}",
       "rowSent": "Mail com envoyé le {date}",
-      "rowPending": "Mail com à envoyer",
       "sendEmail": "Envoyer le mail",
       "resendEmail": "Renvoyer le mail",
       "cardTitle": "Communication",

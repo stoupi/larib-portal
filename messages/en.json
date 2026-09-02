@@ -1898,7 +1898,6 @@
       "tagPending": "Email to send",
       "tagSent": "Sent on {date}",
       "rowSent": "Communication email sent on {date}",
-      "rowPending": "Communication email to send",
       "sendEmail": "Send email",
       "resendEmail": "Send again",
       "cardTitle": "Communication",
