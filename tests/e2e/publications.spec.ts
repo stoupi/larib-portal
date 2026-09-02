@@ -129,12 +129,17 @@ test('My affiliations: the member reads their own affiliations and rewrites the 
   }
   await expect(dialog.getByRole('listitem')).toHaveText([`1${first}`, `2${second}`])
 
-  // The order is the member's to decide: the rows are dragged, and it is what gets saved
+  // The order is the member's to decide: the rows are dragged, and it is what gets saved.
+  // Each keystroke waits for the drag to acknowledge the previous one — pressing them
+  // back to back races the sortable sensor and the row never moves.
+  const rows = dialog.getByRole('listitem')
   await dialog.getByRole('button', { name: `Reorder ${second}` }).focus()
   await page.keyboard.press('Space')
+  await expect(rows.nth(1)).toHaveClass(/shadow-lg/)
   await page.keyboard.press('ArrowUp')
+  await expect(rows.nth(1)).toHaveAttribute('style', /translate3d\(0px, (?!0px)/)
   await page.keyboard.press('Space')
-  await expect(dialog.getByRole('listitem')).toHaveText([`1${second}`, `2${first}`])
+  await expect(rows).toHaveText([`1${second}`, `2${first}`])
   await dialog.getByRole('button', { name: 'Save' }).click()
   await expect(dialog).toHaveCount(0, { timeout: 30000 })
 
