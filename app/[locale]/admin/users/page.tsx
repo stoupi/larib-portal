@@ -5,7 +5,7 @@ import { isSuperAdmin } from "@/lib/permissions"
 import { listUsersWithOnboardingStatus } from "@/lib/services/users"
 import { listPositions } from "@/lib/services/positions"
 import { PageHeader } from "@/app/[locale]/components/page-header"
-import { UserTable, type UserRow } from "./user-table"
+import { UserTable } from "./user-table"
 
 export default async function AdminUsersPage({
   params,
@@ -27,7 +27,7 @@ export default async function AdminUsersPage({
     <div className="min-h-full app-gradient -mx-8 -my-6 px-8 py-6">
       <div className="space-y-4 max-w-7xl mx-auto">
         <PageHeader title={t('usersTitle')} subtitle={t('usersSubtitle')} />
-        <UserTable users={users as unknown as UserRow[]} positions={positions} locale={locale} />
+        <UserTable users={users} positions={positions} locale={locale} />
       </div>
     </div>
   )

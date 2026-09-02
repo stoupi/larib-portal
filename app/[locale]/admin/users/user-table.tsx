@@ -3,7 +3,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { useTranslations } from "next-intl"
-import { UserEditDialog, type UserFormValues } from "./user-edit-dialog"
+import { UserEditDialog } from "./user-edit-dialog"
 import { AddUserDialog } from './user-add-dialog'
 import { deleteUserAction, resendInvitationAction } from "./actions"
 import { useState } from "react"
@@ -22,15 +22,10 @@ import {
 import { toast } from 'sonner'
 import type { InvitationStatus } from '@/lib/services/invitations'
 import { Mail, Shield, Trash2, UserIcon } from 'lucide-react'
-import { toActiveApplications, type AccessPeriodSummary, type ActiveApplication } from '@/lib/permissions'
+import { toActiveApplications, type ActiveApplication } from '@/lib/permissions'
+import type { UserWithOnboardingStatus } from '@/lib/services/users'
 
-export type UserRow = Omit<UserFormValues, 'accessPeriods'> & {
-  accessPeriods?: AccessPeriodSummary[]
-  name?: string | null
-  createdAt?: string
-  onboardingStatus?: InvitationStatus
-  invitationExpiresAt?: Date | string
-}
+export type UserRow = UserWithOnboardingStatus
 
 const APP_DOT: Record<string, string> = {
   BESTOF_LARIB: '#ec3b68',
@@ -280,8 +275,8 @@ export function UserTable({ users, positions, locale }: { users: UserRow[]; posi
                               startsAt: period.startsAt ? new Date(period.startsAt).toISOString().slice(0, 10) : '',
                               endsAt: period.endsAt ? new Date(period.endsAt).toISOString().slice(0, 10) : '',
                             })),
-                            applications: (user.applications ?? []) as UserFormValues['applications'],
-                            adminApplications: (user.adminApplications ?? []) as UserFormValues['adminApplications'],
+                            applications: toActiveApplications(user.applications),
+                            adminApplications: toActiveApplications(user.adminApplications),
                             congesTotalDays: user.congesTotalDays ?? undefined,
                             profilePhoto: user.profilePhoto ?? undefined,
                           }}

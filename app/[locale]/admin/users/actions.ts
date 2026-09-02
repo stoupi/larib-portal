@@ -1,7 +1,7 @@
 "use server"
 import { z } from "zod"
 import { revalidatePath } from "next/cache"
-import { deleteUserById, updateUser, createPlaceholderUser } from "@/lib/services/users"
+import { deleteUserById, updateUserWithAccessPeriods, createPlaceholderUser } from "@/lib/services/users"
 import { listPositions, ensurePosition, updatePosition, deletePositions } from '@/lib/services/positions'
 import { createInvitation, deleteInvitationByEmail, consumeInvitation, getInvitationByEmail } from '@/lib/services/invitations'
 import { sendWelcomeEmail } from '@/lib/services/email'
@@ -9,7 +9,7 @@ import { resolveAppBaseUrl } from '@/lib/app-url'
 import { superAdminAction } from "@/actions/safe-action"
 import { Prisma } from "@/app/generated/prisma"
 import { prisma } from "@/lib/prisma"
-import { replaceAccessPeriods, startOfDayUtc, endOfDayUtc } from '@/lib/services/access-periods'
+import { accessPeriodsEndingOnDay, replaceAccessPeriods, startOfDayUtc, endOfDayUtc } from '@/lib/services/access-periods'
 import { ACTIVE_APPLICATIONS, toActiveApplications } from '@/lib/permissions'
 
 const ApplicationEnum = z.enum(ACTIVE_APPLICATIONS)
@@ -58,25 +58,27 @@ export const updateUserAction = superAdminAction
     const language = parsedInput.language ?? (parsedInput.locale === 'fr' ? 'FR' : 'EN')
     const adminApplications = parsedInput.adminApplications ?? []
 
-    const updated = await updateUser({
-      id: parsedInput.id,
-      email: parsedInput.email,
-      firstName: parsedInput.firstName ?? null,
-      lastName: parsedInput.lastName ?? null,
-      phoneNumber: parsedInput.phoneNumber ?? null,
-      role: parsedInput.role,
-      country: parsedInput.country ?? null,
-      birthDate,
-      language,
-      position: parsedInput.position ?? null,
-      arrivalDate,
-      departureDate,
-      applications: parsedInput.applications,
-      adminApplications,
-      congesTotalDays: parsedInput.congesTotalDays,
-      profilePhoto: parsedInput.profilePhoto || null,
-    })
-    await replaceAccessPeriods(parsedInput.id, toAccessPeriodInputs(parsedInput.accessPeriods))
+    const updated = await updateUserWithAccessPeriods(
+      {
+        id: parsedInput.id,
+        email: parsedInput.email,
+        firstName: parsedInput.firstName ?? null,
+        lastName: parsedInput.lastName ?? null,
+        phoneNumber: parsedInput.phoneNumber ?? null,
+        role: parsedInput.role,
+        country: parsedInput.country ?? null,
+        birthDate,
+        language,
+        position: parsedInput.position ?? null,
+        arrivalDate,
+        departureDate,
+        applications: parsedInput.applications,
+        adminApplications,
+        congesTotalDays: parsedInput.congesTotalDays,
+        profilePhoto: parsedInput.profilePhoto || null,
+      },
+      toAccessPeriodInputs(parsedInput.accessPeriods),
+    )
     revalidatePath('/admin/users')
     return updated
   })
@@ -155,7 +157,7 @@ export const createUserInviteAction = superAdminAction
     const grantedApplications = Array.from(new Set([...parsedInput.applications, ...adminApplications]))
     await replaceAccessPeriods(
       placeholder.id,
-      grantedApplications.map((application) => ({ application, startsAt: null, endsAt: departureDate })),
+      accessPeriodsEndingOnDay(grantedApplications, parsedInput.departureDate),
     )
 
     // Create invitation token

@@ -3,56 +3,37 @@ import { Prisma } from '@/app/generated/prisma'
 import type { InvitationStatus } from './invitations'
 import { accountsAreActivated } from '@/lib/account-status'
 import type { ActiveApplication } from '@/lib/permissions'
+import { replaceAccessPeriodsWithClient, type AccessPeriodInput } from './access-periods'
 
-export type UserWithAdminFields = Prisma.UserGetPayload<{
-  select: {
-    id: true
-    email: true
-    name: true
-    firstName: true
-    lastName: true
-    phoneNumber: true
-    role: true
-    country: true
-    birthDate: true
-    language: true
-    position: true
-    arrivalDate: true
-    departureDate: true
-    congesTotalDays: true
-    profilePhoto: true
-    applications: true
-    adminApplications: true
-    createdAt: true
-    updatedAt: true
-  }
-}>
+const userWithAdminFieldsSelect = {
+  id: true,
+  email: true,
+  name: true,
+  firstName: true,
+  lastName: true,
+  phoneNumber: true,
+  role: true,
+  country: true,
+  birthDate: true,
+  language: true,
+  position: true,
+  arrivalDate: true,
+  departureDate: true,
+  congesTotalDays: true,
+  profilePhoto: true,
+  applications: true,
+  adminApplications: true,
+  accessPeriods: { select: { application: true, startsAt: true, endsAt: true } },
+  createdAt: true,
+  updatedAt: true,
+} satisfies Prisma.UserSelect
+
+export type UserWithAdminFields = Prisma.UserGetPayload<{ select: typeof userWithAdminFieldsSelect }>
 
 export async function listUsers(): Promise<UserWithAdminFields[]> {
   return prisma.user.findMany({
     orderBy: { createdAt: 'desc' },
-    select: {
-      id: true,
-      email: true,
-      name: true,
-      firstName: true,
-      lastName: true,
-      phoneNumber: true,
-      role: true,
-      country: true,
-      birthDate: true,
-      language: true,
-      position: true,
-      arrivalDate: true,
-      departureDate: true,
-      congesTotalDays: true,
-      profilePhoto: true,
-      applications: true,
-      adminApplications: true,
-      accessPeriods: { select: { application: true, startsAt: true, endsAt: true } },
-      createdAt: true,
-      updatedAt: true,
-    },
+    select: userWithAdminFieldsSelect,
   })
 }
 
@@ -93,31 +74,23 @@ export async function updateUser(data: UpdateUserInput): Promise<UserWithAdminFi
   const { id, ...rest } = data
   return prisma.user.update({
     where: { id },
-    data: {
-      ...rest,
-    },
-    select: {
-      id: true,
-      email: true,
-      name: true,
-      firstName: true,
-      lastName: true,
-      phoneNumber: true,
-      role: true,
-      country: true,
-      birthDate: true,
-      language: true,
-      position: true,
-      arrivalDate: true,
-      departureDate: true,
-      congesTotalDays: true,
-      profilePhoto: true,
-      applications: true,
-      adminApplications: true,
-      accessPeriods: { select: { application: true, startsAt: true, endsAt: true } },
-      createdAt: true,
-      updatedAt: true,
-    },
+    data: rest,
+    select: userWithAdminFieldsSelect,
+  })
+}
+
+export async function updateUserWithAccessPeriods(
+  data: UpdateUserInput,
+  periods: AccessPeriodInput[],
+): Promise<UserWithAdminFields> {
+  const { id, ...rest } = data
+  return prisma.$transaction(async (transaction) => {
+    await transaction.user.update({ where: { id }, data: rest })
+    await replaceAccessPeriodsWithClient(transaction, id, periods)
+    return transaction.user.findUniqueOrThrow({
+      where: { id },
+      select: userWithAdminFieldsSelect,
+    })
   })
 }
 
@@ -154,28 +127,7 @@ export async function createPlaceholderUser(data: CreatePlaceholderUserInput): P
       departureDate: data.departureDate ?? null,
       profilePhoto: data.profilePhoto ?? null,
     },
-    select: {
-      id: true,
-      email: true,
-      name: true,
-      firstName: true,
-      lastName: true,
-      phoneNumber: true,
-      role: true,
-      country: true,
-      birthDate: true,
-      language: true,
-      position: true,
-      arrivalDate: true,
-      departureDate: true,
-      congesTotalDays: true,
-      profilePhoto: true,
-      applications: true,
-      adminApplications: true,
-      accessPeriods: { select: { application: true, startsAt: true, endsAt: true } },
-      createdAt: true,
-      updatedAt: true,
-    },
+    select: userWithAdminFieldsSelect,
   })
   return created
 }
@@ -189,26 +141,7 @@ export async function listUsersWithOnboardingStatus(): Promise<UserWithOnboardin
   const users = await prisma.user.findMany({
     orderBy: { createdAt: 'desc' },
     select: {
-      id: true,
-      email: true,
-      name: true,
-      firstName: true,
-      lastName: true,
-      phoneNumber: true,
-      role: true,
-      country: true,
-      birthDate: true,
-      language: true,
-      position: true,
-      arrivalDate: true,
-      departureDate: true,
-      congesTotalDays: true,
-      profilePhoto: true,
-      applications: true,
-      adminApplications: true,
-      accessPeriods: { select: { application: true, startsAt: true, endsAt: true } },
-      createdAt: true,
-      updatedAt: true,
+      ...userWithAdminFieldsSelect,
       accounts: {
         select: {
           providerId: true,
