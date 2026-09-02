@@ -1810,6 +1810,8 @@
       "ccLabel": "En copie",
       "subjectLabel": "Objet",
       "bodyLabel": "Message",
+      "tabEdit": "Rédiger",
+      "tabPreview": "Aperçu du mail",
       "missingEmail": "Aucune adresse connue pour le 1er auteur — saisis-la manuellement.",
       "send": "Envoyer",
       "sentToast": "Mail carrousel envoyé",

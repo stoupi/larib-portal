@@ -1812,6 +1812,8 @@
       "ccLabel": "Cc",
       "subjectLabel": "Subject",
       "bodyLabel": "Message",
+      "tabEdit": "Write",
+      "tabPreview": "Email preview",
       "missingEmail": "No known address for the first author — type it manually.",
       "send": "Send",
       "sentToast": "Carousel email sent",

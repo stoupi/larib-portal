@@ -148,6 +148,32 @@ test('an admin accepts an article, defers the carousel email and sends it from t
   await expect(communicationRow(page, COMMUNICATED_ARTICLE).getByText(/Envoyé le/)).toBeVisible({ timeout: 20000 })
 })
 
+test('the dialog previews the very email that will be sent', async ({ page }) => {
+  await login(page, 'publications-admin@larib-portal.test')
+  await page.goto('/en/publications/admin/communication', { timeout: 60000 })
+
+  const row = communicationRow(page, CAROUSEL_ARTICLE)
+  await row.getByRole('button', { name: 'Send email' }).click()
+  const dialog = page.getByRole('dialog')
+  await expect(dialog).toBeVisible({ timeout: 20000 })
+
+  // Editing the text and switching tabs shows the rendered email, not the raw text
+  const body = dialog.getByLabel('Message')
+  const marker = `Relecture par le senior ${Date.now()}`
+  await body.fill(`Bonjour Nina,\n\n${marker}`)
+
+  await dialog.getByRole('tab', { name: 'Email preview' }).click()
+  const preview = dialog.locator('iframe')
+  await expect(preview).toBeVisible()
+  await expect(preview.contentFrame().getByRole('paragraph').filter({ hasText: marker })).toBeVisible({
+    timeout: 20000,
+  })
+  await expect(preview.contentFrame().getByText('Nouvelle publication')).toBeVisible()
+
+  await page.keyboard.press('Escape')
+  await expect(dialog).toBeHidden({ timeout: 15000 })
+})
+
 test('the publications list marks a communication email that has gone out, and nothing else', async ({ page }) => {
   await login(page, 'publications-admin@larib-portal.test')
   await page.goto('/en/publications/admin', { timeout: 60000 })

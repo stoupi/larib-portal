@@ -103,6 +103,13 @@ describe('renderPublicationsRecapEmail', () => {
 })
 
 describe('portal branding', () => {
+  it('shows the kind as a filled badge, not faint small caps', () => {
+    const html = renderCarouselRequestEmailHtml('Bonjour Jeremy,\n\nFélicitations !')
+    expect(html).toContain('border-radius:20px')
+    expect(html).toContain('Nouvelle publication')
+    expect(html).not.toContain('text-transform:uppercase;color:#ff5c82')
+  })
+
   it('never signs an email as Cardio Larib', () => {
     const html = renderCarouselRequestEmailHtml('Bonjour Alice,\n\nFélicitations !')
     expect(html).not.toContain('Cardio Larib')

@@ -11,6 +11,8 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { renderCarouselRequestEmailHtml } from '@/lib/email/carousel-template'
 import { prepareCarouselEmailAction, sendCarouselEmailAction } from '../../actions'
 
 const CORAL_BUTTON =
@@ -127,12 +129,27 @@ export function CarouselEmailDialog({ controller }: { controller: CarouselEmailC
 
             <div className="space-y-1.5">
               <Label htmlFor="carousel-email-body">{t('bodyLabel')}</Label>
-              <Textarea
-                id="carousel-email-body"
-                rows={18}
-                value={draft.body}
-                onChange={(event) => updateDraft({ body: event.target.value })}
-              />
+              <Tabs defaultValue="edit">
+                <TabsList>
+                  <TabsTrigger value="edit">{t('tabEdit')}</TabsTrigger>
+                  <TabsTrigger value="preview">{t('tabPreview')}</TabsTrigger>
+                </TabsList>
+                <TabsContent value="edit">
+                  <Textarea
+                    id="carousel-email-body"
+                    rows={18}
+                    value={draft.body}
+                    onChange={(event) => updateDraft({ body: event.target.value })}
+                  />
+                </TabsContent>
+                <TabsContent value="preview">
+                  <iframe
+                    title={t('tabPreview')}
+                    srcDoc={renderCarouselRequestEmailHtml(draft.body, draft.subject)}
+                    className="h-[420px] w-full rounded-lg border border-line bg-white"
+                  />
+                </TabsContent>
+              </Tabs>
             </div>
           </div>
         )}
