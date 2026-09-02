@@ -41,12 +41,17 @@ model User {
   updatedAt               DateTime      @updatedAt
   image                   String?
 
-  sessions       Session[]
-  accounts       Account[]
-  leaveRequests  LeaveRequest[]
-  leaveApprovals LeaveRequest[] @relation("LeaveRequestApprover")
-  leavePeriods   LeavePeriod[]
-  accessPeriods  ApplicationAccessPeriod[]
+  sessions                    Session[]
+  accounts                    Account[]
+  leaveRequests               LeaveRequest[]
+  leaveApprovals              LeaveRequest[]            @relation("LeaveRequestApprover")
+  leavePeriods                LeavePeriod[]
+  accessPeriods               ApplicationAccessPeriod[]
+  corelabStudiesCreated       CorelabStudy[]            @relation("CorelabStudyCreatedBy")
+  corelabMemberships          CorelabStudyMembership[]  @relation("CorelabMembershipUser")
+  corelabMembershipsAdded     CorelabStudyMembership[]  @relation("CorelabMembershipAddedBy")
+  corelabCrfVersionsPublished CorelabCrfVersion[]       @relation("CorelabCrfPublishedBy")
+  corelabSignatures           CorelabSignature[]        @relation("CorelabSignatureUser")
 
   //related to bestof larib
   ClinicalCase     ClinicalCase[]
@@ -56,8 +61,8 @@ model User {
 
   //related to publications
   authoredBy             Author[]
-  studiesCreated         Study[]             @relation("StudyCreatedBy")
-  articlesCreated        Article[]           @relation("ArticleCreatedBy")
+  studiesCreated         Study[]              @relation("StudyCreatedBy")
+  articlesCreated        Article[]            @relation("ArticleCreatedBy")
   authorRequestsMade     PublicationRequest[] @relation("PublicationRequestedBy")
   authorRequestsResolved PublicationRequest[] @relation("PublicationRequestResolvedBy")
 
@@ -407,22 +412,22 @@ enum StudyRole {
 }
 
 model Study {
-  id          String      @id @default(cuid())
-  title       String
-  nctId       String?     @unique
-  acronym     String?
-  description String?
-  domain      String?
-  funding     String?
-  enrollment  Int?
-  status      StudyStatus @default(PLANNED)
-  startDate   DateTime?
-  endDate     DateTime?
+  id           String      @id @default(cuid())
+  title        String
+  nctId        String?     @unique
+  acronym      String?
+  description  String?
+  domain       String?
+  funding      String?
+  enrollment   Int?
+  status       StudyStatus @default(PLANNED)
+  startDate    DateTime?
+  endDate      DateTime?
   lastSyncedAt DateTime?
-  createdById String
-  createdBy   User        @relation("StudyCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+  createdById  String
+  createdBy    User        @relation("StudyCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
 
   articles      Article[]
   investigators StudyInvestigator[]
@@ -445,8 +450,8 @@ model StudyInvestigator {
 }
 
 model Journal {
-  id           String   @id @default(cuid())
-  name         String   @unique
+  id           String  @id @default(cuid())
+  name         String  @unique
   abbreviation String?
   issn         String?
   publisher    String?
@@ -461,8 +466,8 @@ model Journal {
   openAccess       Boolean @default(false)
   typicalDelayDays Int?
 
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   submissions       Submission[]
   targets           JournalTarget[]
@@ -728,6 +733,11 @@ enum AuditEntity {
   STUDY
   STUDY_INVESTIGATOR
   PUBLICATION_REQUEST
+  CORELAB_STUDY
+  CORELAB_SITE
+  CORELAB_MEMBERSHIP
+  CORELAB_CRF_VERSION
+  CORELAB_SIGNATURE
 }
 
 model AuditEvent {
@@ -737,6 +747,8 @@ model AuditEvent {
   entityId    String
   entityLabel String
   articleId   String?
+  studyId     String?
+  ipAddress   String?
   action      AuditAction
   actorId     String?
   actorLabel  String?
@@ -747,6 +759,7 @@ model AuditEvent {
 
   @@index([createdAt])
   @@index([articleId, createdAt])
+  @@index([studyId, createdAt])
   @@index([entity, entityId, createdAt])
   @@index([actorId, createdAt])
   @@index([operationId])
@@ -782,4 +795,139 @@ model ApplicationAccessPeriod {
 
   @@unique([userId, application])
   @@map("ApplicationAccessPeriod")
+}
+
+enum CorelabModality {
+  CMR
+  CT
+  PET
+  ECHO
+}
+
+enum CorelabStudyPhase {
+  DRAFT
+  RUN_IN
+  PRODUCTION
+  CLOSED
+}
+
+enum CorelabStudyRole {
+  READER
+  PI
+}
+
+enum CorelabCertificationPhase {
+  TRAINING
+  CALIBRATION
+  PRODUCTION
+}
+
+enum CorelabCalibrationStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  AWAITING_REVIEW
+  ADDITIONAL_CASES
+  CERTIFIED
+  FAILED
+}
+
+enum CorelabSignatureRole {
+  READER
+  REVIEWER
+  PI
+  DATA_MANAGER
+}
+
+model CorelabStudy {
+  id                 String            @id @default(cuid())
+  code               String            @unique
+  name               String
+  description        String            @default("")
+  phase              CorelabStudyPhase @default(DRAFT)
+  modalities         CorelabModality[]
+  maxExamsPerPatient Int               @default(2)
+  reviewDeadlineDays Int               @default(14)
+  documentSlots      Json              @default("[]")
+  startedAt          DateTime?
+  closedAt           DateTime?
+  createdById        String
+  createdBy          User              @relation("CorelabStudyCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+
+  sites       CorelabSite[]
+  memberships CorelabStudyMembership[]
+  crfVersions CorelabCrfVersion[]
+
+  @@map("CorelabStudy")
+}
+
+model CorelabSite {
+  id        String       @id @default(cuid())
+  studyId   String
+  study     CorelabStudy @relation(fields: [studyId], references: [id], onDelete: Cascade)
+  code      String
+  name      String       @default("")
+  createdAt DateTime     @default(now())
+
+  @@unique([studyId, code])
+  @@map("CorelabSite")
+}
+
+model CorelabStudyMembership {
+  id                 String                    @id @default(cuid())
+  studyId            String
+  study              CorelabStudy              @relation(fields: [studyId], references: [id], onDelete: Cascade)
+  userId             String
+  user               User                      @relation("CorelabMembershipUser", fields: [userId], references: [id], onDelete: Restrict)
+  role               CorelabStudyRole
+  canReview          Boolean                   @default(false)
+  certificationPhase CorelabCertificationPhase @default(TRAINING)
+  calibrationStatus  CorelabCalibrationStatus  @default(NOT_STARTED)
+  trainingDueAt      DateTime?
+  calibrationDueAt   DateTime?
+  addedById          String
+  addedBy            User                      @relation("CorelabMembershipAddedBy", fields: [addedById], references: [id], onDelete: Restrict)
+  joinedAt           DateTime                  @default(now())
+  removedAt          DateTime?
+  createdAt          DateTime                  @default(now())
+  updatedAt          DateTime                  @updatedAt
+
+  @@unique([studyId, userId])
+  @@index([userId])
+  @@map("CorelabStudyMembership")
+}
+
+model CorelabCrfVersion {
+  id                    String       @id @default(cuid())
+  studyId               String
+  study                 CorelabStudy @relation(fields: [studyId], references: [id], onDelete: Cascade)
+  number                Int
+  definition            Json
+  discordanceThresholds Json         @default("[]")
+  publishedAt           DateTime     @default(now())
+  publishedById         String
+  publishedBy           User         @relation("CorelabCrfPublishedBy", fields: [publishedById], references: [id], onDelete: Restrict)
+
+  @@unique([studyId, number])
+  @@map("CorelabCrfVersion")
+}
+
+model CorelabSignature {
+  id           String               @id @default(cuid())
+  userId       String
+  user         User                 @relation("CorelabSignatureUser", fields: [userId], references: [id], onDelete: Restrict)
+  role         CorelabSignatureRole
+  reason       String
+  entityType   String
+  entityId     String
+  studyId      String?
+  crfVersionId String?
+  snapshotHash String?
+  ipAddress    String?
+  signedAt     DateTime             @default(now())
+
+  @@index([entityType, entityId])
+  @@index([studyId, signedAt])
+  @@map("CorelabSignature")
 }

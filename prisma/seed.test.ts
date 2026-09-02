@@ -38,6 +38,16 @@ async function main() {
 	await prisma.affiliation.deleteMany();
 	await prisma.centre.deleteMany();
 	await prisma.journal.deleteMany();
+	const immutableTables = ['AuditChange', 'AuditEvent', 'CorelabSignature'];
+	for (const table of immutableTables) await prisma.$executeRawUnsafe(`ALTER TABLE "${table}" DISABLE TRIGGER USER`);
+	await prisma.auditChange.deleteMany();
+	await prisma.auditEvent.deleteMany();
+	await prisma.corelabSignature.deleteMany();
+	for (const table of immutableTables) await prisma.$executeRawUnsafe(`ALTER TABLE "${table}" ENABLE TRIGGER USER`);
+	await prisma.corelabCrfVersion.deleteMany();
+	await prisma.corelabStudyMembership.deleteMany();
+	await prisma.corelabSite.deleteMany();
+	await prisma.corelabStudy.deleteMany();
 	await prisma.applicationAccessPeriod.deleteMany();
 	await prisma.user.deleteMany();
 
