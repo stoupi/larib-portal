@@ -32,6 +32,10 @@ Operational notifications must not be sent after an application right starts in 
 future or expires. Recipient queries for Conges and Publications therefore load the
 relevant periods and filter candidates through the shared permission functions.
 
+The pre-existing Conges mandatory-recipient list remains available for addresses that
+do not belong to a portal account. When one of those addresses matches a portal user,
+that user's Conges administration right and access window take precedence.
+
 Historical queries remain unchanged. Past leave requests, calendars, statistics,
 training attempts, authors, and publications must continue to show the people who
 created them even after their application access expires.
@@ -47,7 +51,9 @@ Regression tests cover:
 
 - inclusive invitation end dates;
 - atomic rollback when period replacement fails;
+- atomic rollback of invited placeholder creation;
 - expired and future members excluded from operational recipient lists;
+- mandatory external recipients retained while matching expired portal users are excluded;
 - permanent accounts without periods still included;
 - the existing CoreLab page, RBAC, admin-user, and full unit suites.
 

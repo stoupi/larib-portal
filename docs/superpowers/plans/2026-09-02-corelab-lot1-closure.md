@@ -19,12 +19,12 @@
 - Modify: `app/[locale]/admin/users/actions.ts`
 - Test: `lib/services/users-access-periods.test.ts`
 
-- [ ] Add failing tests proving that departure dates become end-of-day access bounds and that a failed period write rolls back application grants.
-- [ ] Run the focused Vitest files and confirm the new assertions fail for the expected reasons.
-- [ ] Add a transaction-aware period replacement helper and a service operation that updates the user and periods in one Prisma transaction.
-- [ ] Make invitation access periods use `endOfDayUtc(parsedInput.departureDate)`.
-- [ ] Add `accessPeriods` to `UserWithAdminFields` and remove the unsafe page cast.
-- [ ] Run focused tests and typecheck, then commit as `fix(portal): make dated application access consistent`.
+- [x] Add failing tests proving that departure dates become end-of-day access bounds and that a failed period write rolls back application grants.
+- [x] Run the focused Vitest files and confirm the new assertions fail for the expected reasons.
+- [x] Add a transaction-aware period replacement helper and a service operation that updates the user and periods in one Prisma transaction.
+- [x] Make invitation access periods use `endOfDayUtc(parsedInput.departureDate)`.
+- [x] Add `accessPeriods` to `UserWithAdminFields` and remove the unsafe page cast.
+- [x] Run focused tests and typecheck, then commit as `fix(portal): make dated application access consistent`.
 
 ### Task 2: Active notification recipients
 
@@ -35,11 +35,11 @@
 - Modify: `lib/services/publications/recap.ts`
 - Modify: the corresponding existing `*.test.ts` files
 
-- [ ] Add failing tests for expired, future, open, and no-period notification candidates.
-- [ ] Run focused tests and confirm the failures are caused by unfiltered candidates.
-- [ ] Select access periods in recipient queries and filter Conges admins with `canAdminApp`, Publications admins with `canAdminApp`, and Publications members with `canAccessApp`.
-- [ ] Leave calendar, recap history, statistics, Bestof attempts, authors, and publication history queries unchanged.
-- [ ] Run focused tests and the complete unit suite, then commit as `fix(portal): exclude expired app notification recipients`.
+- [x] Add failing tests for expired, future, open, and no-period notification candidates.
+- [x] Run focused tests and confirm the failures are caused by unfiltered candidates.
+- [x] Select access periods in recipient queries and filter Conges admins with `canAdminApp`, Publications admins with `canAdminApp`, and Publications members with `canAccessApp`.
+- [x] Leave calendar, recap history, statistics, Bestof attempts, authors, and publication history queries unchanged.
+- [x] Run focused tests and the complete unit suite, then commit as `fix(portal): exclude expired app notification recipients`.
 
 ### Task 3: Closure documentation and delivery
 
@@ -47,9 +47,9 @@
 - Modify: `docs/plans/corelab/00-cadre.md`
 - Modify: `docs/plans/corelab/02-lot1-droits-dates.md`
 
-- [ ] Record the closing review, decisions, corrected files, test evidence, and commit identifiers in the Lot 1 plan.
-- [ ] Add a compact lot status table to the project framework identifying Lot 2 as the next task.
-- [ ] Request an independent code review and resolve all important findings.
-- [ ] Run `npm run typecheck`, `npm run test:unit`, and the targeted CoreLab/RBAC/admin-user Playwright suite.
-- [ ] Commit documentation as `docs(corelab): close lot 1 after review`.
-- [ ] Run `FULL_PUSH_VALIDATION=1 git push -u origin corelab`; Lot 1 is closed only if the command exits successfully.
+- [x] Record the closing review, decisions, corrected files, test evidence, and commit identifiers in the Lot 1 plan.
+- [x] Add a compact lot status table to the project framework identifying Lot 2 as the next task.
+- [x] Request an independent code review and resolve all important findings.
+- [x] Run `npm run typecheck`, `npm run test:unit`, and the targeted CoreLab/RBAC/admin-user Playwright suite.
+- [x] Commit documentation as `docs(corelab): close lot 1 after review`.
+- [ ] Rebase `corelab` on the latest `origin/main`, then run `FULL_PUSH_VALIDATION=1 git push origin corelab:main`; Lot 1 is closed only if the command exits successfully.

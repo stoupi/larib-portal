@@ -10,6 +10,21 @@
 
 ---
 
+## État d'avancement au 2 septembre 2026
+
+| Lot | État | Référence |
+|---|---|---|
+| 0 | Clos | `01-lot0-securiser.md` |
+| 1 | Clos après revue de cohérence Portal | `02-lot1-droits-dates.md` et `docs/superpowers/specs/2026-09-02-corelab-lot1-closure-design.md` |
+| 2 | Prochain lot à exécuter | `03-lot2-noyau.md` |
+| 3 à 9 | Non commencés | Plans correspondants dans ce dossier |
+
+Un nouvel agent commence par vérifier que `origin/main` contient les commits de clôture
+du lot 1 listés dans `02-lot1-droits-dates.md`. Il ne commence pas le lot 2 si la
+validation complète du lot 1 n'est pas documentée comme verte.
+
+---
+
 ## 1. Décisions prises (ne pas rouvrir)
 
 | # | Décision | Réponse de l'utilisateur (2 sept. 2026) |
@@ -58,7 +73,7 @@ Parce que l'utilisateur mène plusieurs sessions en parallèle sur `larib-portal
 ## 3. Règles d'exécution (obligatoires)
 
 ### Avant chaque session
-1. `git branch --show-current` doit afficher `main`. Sinon, le signaler à l'utilisateur et ne rien committer.
+1. Dans le worktree `larib-portal-corelab`, `git branch --show-current` doit afficher `corelab`. Dans le dossier principal `larib-portal`, il doit afficher `main`. Sinon, le signaler à l'utilisateur et ne rien committer.
 2. `pgrep -fl verify:push` : si une validation tourne, attendre qu'elle finisse.
 3. `npm run typecheck` doit être vert avant de commencer. Sinon, corriger d'abord ou signaler.
 4. Ne jamais lancer `prisma migrate reset`. Ne jamais lancer `pkill -f "next dev"`.

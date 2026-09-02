@@ -876,3 +876,54 @@ Puis proposer à l'utilisateur : `FULL_PUSH_VALIDATION=1 git push`.
 - `CARDIOLARIB` reste dans l'enum (valeur morte, ne pas la supprimer : une suppression d'enum PostgreSQL n'est pas triviale).
 - Le super-admin ne voit la carte CoreLab que s'il a `CORELAB` dans ses propres tableaux : l'accorder via `/admin/users`.
 - Les dates saisies sont interprétées en UTC (début 00:00:00, fin 23:59:59.999). Ne pas « corriger » avec le fuseau local.
+
+---
+
+## Revue et clôture du lot 1 — 2 septembre 2026
+
+### Pourquoi une passe de clôture a été nécessaire
+
+La première implémentation respectait les gardes de pages et les fenêtres dans la
+session, mais la revue finale a trouvé trois incohérences transversales : les droits et
+leurs périodes étaient écrits séparément, les invitations expiraient au début du jour
+de départ, et certaines listes de diffusion utilisaient encore les tableaux de droits
+sans vérifier leur période.
+
+### Décisions de compatibilité Portal
+
+- Un compte sans `ApplicationAccessPeriod` garde un accès permanent, comme avant le lot 1.
+- Les droits et leurs périodes sont mis à jour dans une seule transaction Prisma.
+- La date de fin est inclusive jusqu'à `23:59:59.999Z`, en édition comme à l'invitation.
+- Les notifications opérationnelles Congés et Publications excluent les membres et
+  administrateurs dont la fenêtre est future ou expirée.
+- Les historiques restent inchangés : congés passés, calendriers, statistiques Bestof,
+  auteurs et publications continuent d'afficher les utilisateurs après leur départ.
+- Les super-admins conservent leur accès global conformément au comportement Portal
+  antérieur et aux tests du lot 1.
+
+### Correctifs de clôture
+
+| Commit | Contenu |
+|---|---|
+| `0e3c66d` | Conception et plan de clôture pour les agents suivants |
+| `aec596e` | Écriture atomique des droits/périodes, fin inclusive, types Prisma partagés |
+| `b442068` | Filtrage des destinataires actifs Congés et Publications |
+| `34a2536` | Création atomique du compte invité et de ses périodes |
+| `1a50f13` | Résolution de la revue : destinataires obligatoires et preuve réelle des rollbacks |
+
+Les fichiers de conception et d'exécution détaillés sont :
+
+- `docs/superpowers/specs/2026-09-02-corelab-lot1-closure-design.md`
+- `docs/superpowers/plans/2026-09-02-corelab-lot1-closure.md`
+
+### Vérifications de clôture
+
+- `npm run typecheck` : vert.
+- `npm run test:unit` : 71 fichiers, 508 tests verts, dont deux tests PostgreSQL de rollback sur la base de test.
+- `PLAYWRIGHT_PORT=3100 npx playwright test tests/e2e/corelab-access.spec.ts tests/e2e/rbac.spec.ts tests/e2e/admin-users.spec.ts` : 12 tests verts.
+- Relecture indépendante : deux remarques reçues et résolues dans `1a50f13` ; aucun autre problème important signalé.
+- Validation complète de push : obligatoire avant de commencer le lot 2 ; son résultat
+  final est enregistré par le hook de validation et le push vers `origin/main`.
+
+Le lot 1 est considéré clos lorsque le push complet contenant ces correctifs et cette
+documentation a réussi. Le prochain travail fonctionnel est le lot 2 (`03-lot2-noyau.md`).
