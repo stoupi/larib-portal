@@ -15,15 +15,18 @@ export default async function GoldStandardPage({ params }: PageParams) {
 
   const calibrationCase = await prisma.corelabCalibrationCase.findUnique({
     where: { id: caseId },
-    select: { id: true, code: true, studyId: true, exams: true, goldStandard: true, goldStandardSignatureId: true },
+    select: { id: true, code: true, studyId: true, exams: true, goldStandard: true, goldStandardUserId: true, goldStandardSignatureId: true },
   })
   if (!calibrationCase) notFound()
 
+  let access
   try {
-    await resolveStudyAccess(session.user, calibrationCase.studyId, ['PI', 'DATA_MANAGER'])
+    access = await resolveStudyAccess(session.user, calibrationCase.studyId, ['AUTHOR_REFERENCE'])
   } catch {
     redirect(applicationLink(locale, '/corelab'))
   }
+  const designated = access.isDataManager || calibrationCase.goldStandardUserId === session.user.id
+  if (!designated) redirect(applicationLink(locale, '/corelab'))
 
   const crfVersion = await getCurrentCrfVersion(calibrationCase.studyId)
   if (!crfVersion) notFound()

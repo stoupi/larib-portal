@@ -9,7 +9,7 @@ function userName(user: CorelabUser): string {
 
 export function CorelabUsersTable({ users, now }: { users: CorelabUser[]; now: Date }) {
   const t = useTranslations('corelab.users')
-  const tRole = useTranslations('corelab.role')
+  const tCapability = useTranslations('corelab.capability')
   const format = useFormatter()
 
   if (users.length === 0) {
@@ -58,7 +58,7 @@ export function CorelabUsersTable({ users, now }: { users: CorelabUser[]; now: D
                       >
                         <span className="font-medium text-text-primary">{membership.study.code}</span>
                         <span>·</span>
-                        <span>{tRole(membership.role)}</span>
+                        <span>{membership.canRead ? tCapability('canRead') : tCapability('canCertify')}</span>
                       </span>
                     ))}
                   </div>

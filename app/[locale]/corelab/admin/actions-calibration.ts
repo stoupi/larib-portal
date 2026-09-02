@@ -4,7 +4,7 @@ import { z } from 'zod'
 import { revalidatePath } from 'next/cache'
 import { corelabStudyAction } from '@/lib/corelab/guards'
 import { parseCalibrationCasesCsv } from '@/lib/corelab/calibration/cases-csv'
-import { assignCases, createCase, importCases } from '@/lib/services/corelab/calibration'
+import { assignCases, createCase, importCases, setReferenceAuthor } from '@/lib/services/corelab/calibration'
 
 async function revalidateCalibration(studyId: string) {
   const paths = [
@@ -24,7 +24,7 @@ const ExamSchema = z.object({
   timeLabel: z.string().trim(),
 })
 
-export const createCaseAction = corelabStudyAction(['DATA_MANAGER', 'PI'])
+export const createCaseAction = corelabStudyAction(['AUTHOR_REFERENCE', 'CERTIFY'])
   .inputSchema(z.object({ studyId: z.string(), code: z.string().trim().optional().nullable(), exams: z.array(ExamSchema).min(1) }))
   .action(async ({ parsedInput }) => {
     const created = await createCase(parsedInput.studyId, { code: parsedInput.code, exams: parsedInput.exams })
@@ -32,7 +32,7 @@ export const createCaseAction = corelabStudyAction(['DATA_MANAGER', 'PI'])
     return created
   })
 
-export const importCasesAction = corelabStudyAction(['DATA_MANAGER', 'PI'])
+export const importCasesAction = corelabStudyAction(['AUTHOR_REFERENCE', 'CERTIFY'])
   .inputSchema(z.object({ studyId: z.string(), content: z.string().min(1) }))
   .action(async ({ parsedInput }) => {
     const parsed = parseCalibrationCasesCsv(parsedInput.content)
@@ -42,10 +42,18 @@ export const importCasesAction = corelabStudyAction(['DATA_MANAGER', 'PI'])
     return { ok: true as const, created: result.created }
   })
 
-export const assignCasesAction = corelabStudyAction(['DATA_MANAGER', 'PI'])
+export const assignCasesAction = corelabStudyAction(['AUTHOR_REFERENCE', 'CERTIFY'])
   .inputSchema(z.object({ studyId: z.string(), caseIds: z.array(z.string()).min(1), userIds: z.array(z.string()).min(1) }))
   .action(async ({ parsedInput }) => {
     const result = await assignCases(parsedInput.studyId, parsedInput.caseIds, parsedInput.userIds)
     await revalidateCalibration(parsedInput.studyId)
     return result
+  })
+
+export const setReferenceAuthorAction = corelabStudyAction(['AUTHOR_REFERENCE', 'CERTIFY'])
+  .inputSchema(z.object({ studyId: z.string(), caseId: z.string(), userId: z.string().nullable() }))
+  .action(async ({ parsedInput }) => {
+    await setReferenceAuthor(parsedInput.caseId, parsedInput.userId)
+    await revalidateCalibration(parsedInput.studyId)
+    return { ok: true }
   })

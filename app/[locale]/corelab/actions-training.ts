@@ -13,7 +13,7 @@ async function revalidateReaderTraining(studyId: string) {
   }
 }
 
-export const completeVideoAction = corelabStudyAction(['READER', 'PI'])
+export const completeVideoAction = corelabStudyAction([])
   .inputSchema(z.object({ studyId: z.string(), moduleId: z.string() }))
   .action(async ({ parsedInput, ctx }) => {
     await completeVideoModule(ctx.userId, parsedInput.moduleId)
@@ -22,7 +22,7 @@ export const completeVideoAction = corelabStudyAction(['READER', 'PI'])
     return { unlocked }
   })
 
-export const submitQuizAction = corelabStudyAction(['READER', 'PI'])
+export const submitQuizAction = corelabStudyAction([])
   .inputSchema(z.object({ studyId: z.string(), moduleId: z.string(), answers: z.record(z.string(), z.string()) }))
   .action(async ({ parsedInput, ctx }) => {
     const result = await submitQuiz(ctx.userId, parsedInput.moduleId, parsedInput.answers)

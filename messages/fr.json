@@ -2109,12 +2109,6 @@
       "PRODUCTION": "Production",
       "noCertification": "sans certification"
     },
-    "role": {
-      "READER": "Lecteur",
-      "PI": "Investigateur",
-      "REVIEWER": "Relecteur",
-      "DATA_MANAGER": "Data manager"
-    },
     "studies": {
       "title": "Études",
       "subtitle": "Chaque étude à sa phase. Ouvrez-en une pour la configurer et constituer son équipe.",
@@ -2205,8 +2199,6 @@
       "person": "Personne",
       "personPlaceholder": "Choisir un compte Core Lab",
       "noCandidates": "Aucun compte Core Lab disponible.",
-      "role": "Rôle dans l'étude",
-      "canReview": "Peut adjudiquer",
       "trainingDue": "Échéance de formation",
       "calibrationDue": "Échéance de calibration",
       "add": "Ajouter à l'étude",
@@ -2214,7 +2206,6 @@
       "productionNotice": "L'étude est en production, le lecteur commencera quand même par la formation",
       "productionNoticeDetail": "La phase de l'étude et celle du lecteur sont deux choses distinctes : le nouveau lecteur suivra la formation, passera les cas de calibration, et n'accédera aux patients qu'une fois certifié.",
       "member": "Membre",
-      "adjudication": "Adjudication",
       "track": "Parcours du lecteur",
       "joinedOn": "Rejoint le",
       "remove": "Retirer",
@@ -2229,7 +2220,8 @@
         "PI_ALREADY_SET": "Cette étude a déjà un investigateur principal.",
         "ALREADY_MEMBER": "Cette personne est déjà membre de l'étude.",
         "generic": "L'opération a échoué."
-      }
+      },
+      "capabilities": "Capacités"
     },
     "users": {
       "title": "Utilisateurs",
@@ -2493,6 +2485,16 @@
       "decided": "Décision enregistrée.",
       "noSubmission": "Ce lecteur n'a encore rien soumis.",
       "error": "L'opération a échoué."
+    },
+    "capability": {
+      "canRead": "Lire",
+      "canAdjudicate": "Arbitrer",
+      "canAuthorReference": "Produire la référence",
+      "canCertify": "Certifier",
+      "help": "Un membre qui lit suit la formation puis la calibration. Les autres capacités n'imposent aucun parcours.",
+      "none": "Aucune capacité",
+      "reference": "Référence produite par",
+      "unassigned": "Personne désignée"
     }
   }
 }

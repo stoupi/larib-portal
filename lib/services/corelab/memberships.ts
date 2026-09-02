@@ -1,11 +1,13 @@
 import { prisma } from '@/lib/prisma'
 import { accessWindowOpen } from '@/lib/permissions'
-import type { CorelabStudyRole, Prisma } from '@/app/generated/prisma'
+import type { Prisma } from '@/app/generated/prisma'
 
 const MEMBER_SELECT = {
   id: true,
-  role: true,
-  canReview: true,
+  canRead: true,
+  canAdjudicate: true,
+  canAuthorReference: true,
+  canCertify: true,
   certificationPhase: true,
   calibrationStatus: true,
   trainingDueAt: true,
@@ -51,11 +53,16 @@ export async function listCandidates(studyId: string): Promise<MemberCandidate[]
     .map(({ id, firstName, lastName, email }) => ({ id, firstName, lastName, email }))
 }
 
-export type AddMemberInput = {
+export type MemberCapabilities = {
+  canRead: boolean
+  canAdjudicate: boolean
+  canAuthorReference: boolean
+  canCertify: boolean
+}
+
+export type AddMemberInput = MemberCapabilities & {
   studyId: string
   userId: string
-  role: CorelabStudyRole
-  canReview: boolean
   addedById: string
   trainingDueAt?: Date | null
   calibrationDueAt?: Date | null
@@ -67,21 +74,16 @@ export async function addMember(input: AddMemberInput): Promise<{ id: string }> 
     select: { id: true },
   })
   if (active) throw new Error('ALREADY_MEMBER')
-  if (input.role === 'PI') {
-    const existingPi = await prisma.corelabStudyMembership.findFirst({
-      where: { studyId: input.studyId, role: 'PI', removedAt: null },
-      select: { id: true },
-    })
-    if (existingPi) throw new Error('PI_ALREADY_SET')
-  }
-  const certification =
-    input.role === 'PI'
-      ? { certificationPhase: 'PRODUCTION' as const, calibrationStatus: 'CERTIFIED' as const }
-      : { certificationPhase: 'TRAINING' as const, calibrationStatus: 'NOT_STARTED' as const }
+
+  const certification = input.canRead
+    ? { certificationPhase: 'TRAINING' as const, calibrationStatus: 'NOT_STARTED' as const }
+    : { certificationPhase: 'PRODUCTION' as const, calibrationStatus: 'CERTIFIED' as const }
 
   const data = {
-    role: input.role,
-    canReview: input.canReview,
+    canRead: input.canRead,
+    canAdjudicate: input.canAdjudicate,
+    canAuthorReference: input.canAuthorReference,
+    canCertify: input.canCertify,
     addedById: input.addedById,
     trainingDueAt: input.trainingDueAt ?? null,
     calibrationDueAt: input.calibrationDueAt ?? null,
@@ -106,7 +108,10 @@ export async function addMember(input: AddMemberInput): Promise<{ id: string }> 
 }
 
 export type UpdateMemberInput = {
-  canReview?: boolean
+  canRead?: boolean
+  canAdjudicate?: boolean
+  canAuthorReference?: boolean
+  canCertify?: boolean
   trainingDueAt?: Date | null
   calibrationDueAt?: Date | null
 }

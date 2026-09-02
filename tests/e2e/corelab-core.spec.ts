@@ -44,20 +44,23 @@ test('the data manager creates a study, signs its phase change and builds its te
 
   await page.getByText(/pick a core lab account/i).click()
   await page.getByRole('option', { name: /corelab-reader-new@/ }).click()
-  await page.getByLabel(/can adjudicate/i).click()
+  await page.getByLabel('Adjudicate', { exact: true }).click()
   await page.getByRole('button', { name: /add to study/i }).click()
   const newReaderRow = page.locator('tr', { hasText: 'corelab-reader-new@larib-portal.test' })
   await expect(newReaderRow).toBeVisible()
   await expect(newReaderRow.getByText('Training')).toBeVisible()
+  await expect(newReaderRow.getByText('Adjudicate', { exact: true })).toBeVisible()
 
   await page.getByText(/pick a core lab account/i).click()
   await page.getByRole('option', { name: /corelab-pi@/ }).click()
-  await page.getByRole('combobox').nth(1).click()
-  await page.getByRole('option', { name: /principal investigator/i }).click()
+  await page.getByLabel('Read', { exact: true }).click()
+  await page.getByLabel('Author the reference', { exact: true }).click()
+  await page.getByLabel('Certify', { exact: true }).click()
   await page.getByRole('button', { name: /add to study/i }).click()
   const piRow = page.locator('tr', { hasText: 'corelab-pi@larib-portal.test' })
   await expect(piRow).toBeVisible()
   await expect(piRow.getByText(/no certification/i)).toBeVisible()
+  await expect(piRow.getByText('Author the reference', { exact: true })).toBeVisible()
 
   await newReaderRow.getByRole('button', { name: /^remove$/i }).click()
   await page.getByRole('button', { name: /^remove$/i }).last().click()
@@ -68,7 +71,7 @@ test('the data manager creates a study, signs its phase change and builds its te
   await expect(expiredRow.getByText(/expired on/i)).toBeVisible()
   const readerRow = page.locator('tr', { hasText: 'corelab-reader-1@larib-portal.test' })
   await expect(readerRow.getByText('MIR-DJ-TEST')).toBeVisible()
-  await expect(readerRow.getByText('Reader', { exact: true })).toBeVisible()
+  await expect(readerRow.getByText('Read', { exact: true })).toBeVisible()
 })
 
 test('a reader sees their study, and non-members never reach CoreLab administration', async ({ page }) => {

@@ -40,6 +40,7 @@ avoir vérifié que son checkout contient cette clôture et le présent relevé 
 | 6 | Maquetter l'arbitrage du relecteur et la revue du PI avant de les coder | oui |
 | 7 | Droit expiré avec des patients non lus : alerte au data manager, jamais de réassignation automatique | oui |
 | 8 | Valeur retirée d'un jeu : interdite si utilisée dans une lecture signée, dépréciée sinon (lot 9, hors périmètre MIR) | oui |
+| 9 | Gold standard et certification ouverts à n'importe quel membre actif, désigné par le data manager : le gold standard cas par cas, le certificateur au niveau de l'étude. Remplace la réservation au PI (2 sept. 2026) | oui |
 | — | Périmètre immédiat : IRM, MIR‑Dijon. Pas de date butoir, mais du code propre plutôt que rapide | oui |
 
 ## 2. Périmètre MIR‑Dijon et ordre des lots
@@ -114,7 +115,9 @@ Parce que l'utilisateur mène plusieurs sessions en parallèle sur `larib-portal
 | Data manager | Admin de l'application CoreLab dans le portail (`adminApplications ∋ CORELAB`). Gère études, cohortes, assignations, exports, journal. Aucun rôle clinique. |
 | Lecteur (READER) | Membre d'une étude. Formation → calibration → production. |
 | Relecteur | Lecteur avec `canReview = true`, certifié. Arbitre les doubles lectures des autres. |
-| PI | Membre d'une étude avec `role = PI`. Un seul par étude. Pas de formation ni de calibration. Gold standard, revue de calibration, arbitrage. |
+| PI | Membre d'une étude avec `role = PI`. Un seul par étude. Pas de formation ni de calibration. Arbitrage. Le gold standard et la certification ne lui sont plus réservés (décision 9). |
+| Auteur du gold standard | Membre actif désigné par le data manager **sur un cas de calibration donné** (`CorelabCalibrationCase.goldStandardUserId`). N'importe quel rôle, n'importe quelle phase. |
+| Certificateur | Membre actif désigné par le data manager **au niveau de l'étude** (`CorelabStudy.certifierId`). Décide de la certification des lecteurs. À défaut, seul le data manager décide. |
 | Phase de l'étude | `DRAFT`, `RUN_IN`, `PRODUCTION`, `CLOSED`. Changée par le data manager, avec signature. |
 | Phase de certification | `TRAINING`, `CALIBRATION`, `PRODUCTION`, par membre et par étude. Jamais dérivée de la phase de l'étude. |
 | Signature | Re-saisie du mot de passe du portail + ligne `CorelabSignature`. Verrouille l'objet signé. |

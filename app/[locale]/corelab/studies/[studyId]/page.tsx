@@ -22,14 +22,17 @@ export default async function ReaderStudyPage({ params }: PageParams) {
   const membership = await prisma.corelabStudyMembership.findFirst({
     where: { studyId, userId: session.user.id, removedAt: null },
     select: {
-      role: true,
+      canRead: true,
+      canAdjudicate: true,
+      canAuthorReference: true,
+      canCertify: true,
       certificationPhase: true,
       study: { select: { name: true, code: true, phase: true, modalities: true } },
     },
   })
   if (!membership) notFound()
 
-  const training = membership.role === 'READER' ? await getStudyTraining(studyId, session.user.id) : null
+  const training = membership.canRead ? await getStudyTraining(studyId, session.user.id) : null
   const filled = training?.modules.filter((module) => module.completed).length ?? 0
 
   return (
@@ -43,9 +46,9 @@ export default async function ReaderStudyPage({ params }: PageParams) {
           <StudyPhaseBadge phase={membership.study.phase} />
         </div>
 
-        <PhaseTrack phase={membership.role === 'PI' ? null : membership.certificationPhase} />
+        <PhaseTrack phase={membership.canRead ? membership.certificationPhase : null} />
 
-        {membership.certificationPhase !== 'TRAINING' && membership.role === 'READER' ? (
+        {membership.certificationPhase !== 'TRAINING' && membership.canRead ? (
           <section className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border bg-white p-6">
             <div>
               <h2 className="text-base font-semibold text-text-primary">{t('calibration.reader_.title')}</h2>

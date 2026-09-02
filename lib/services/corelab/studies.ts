@@ -24,8 +24,10 @@ export async function listStudies(): Promise<StudySummary[]> {
 
 const MEMBER_STUDY_SELECT = {
   id: true,
-  role: true,
-  canReview: true,
+  canRead: true,
+  canAdjudicate: true,
+  canAuthorReference: true,
+  canCertify: true,
   certificationPhase: true,
   calibrationStatus: true,
   study: {

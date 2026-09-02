@@ -17,7 +17,7 @@ export default async function CorelabStudiesPage({ params }: PageParams) {
     _max: { number: true },
   })
   const latestVersion = new Map(crfVersions.map((version) => [version.studyId, version._max.number]))
-  const activeReaders = await prisma.corelabStudyMembership.count({ where: { removedAt: null, role: 'READER' } })
+  const activeReaders = await prisma.corelabStudyMembership.count({ where: { removedAt: null, canRead: true } })
 
   return (
     <>

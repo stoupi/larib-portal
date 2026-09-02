@@ -271,7 +271,7 @@ export const AUDITED_MODELS: Readonly<Record<string, AuditedModelConfig>> = {
   },
   CorelabStudyMembership: {
     entity: 'CORELAB_MEMBERSHIP',
-    auditedFields: ['studyId', 'userId', 'role', 'canReview', 'certificationPhase', 'calibrationStatus', 'trainingDueAt', 'calibrationDueAt', 'removedAt'],
+    auditedFields: ['studyId', 'userId', 'canRead', 'canAdjudicate', 'canAuthorReference', 'canCertify', 'certificationPhase', 'calibrationStatus', 'trainingDueAt', 'calibrationDueAt', 'removedAt'],
     labelFields: ['userId'],
     buildLabel: (record) => joinLabel([text(record, 'userId')]),
     articleIdField: null,
@@ -331,7 +331,7 @@ export const AUDITED_MODELS: Readonly<Record<string, AuditedModelConfig>> = {
   },
   CorelabCalibrationCase: {
     entity: 'CORELAB_CALIBRATION_CASE',
-    auditedFields: ['studyId', 'code', 'goldStandardSignatureId'],
+    auditedFields: ['studyId', 'code', 'goldStandardUserId', 'goldStandardSignatureId'],
     labelFields: ['code'],
     buildLabel: (record) => joinLabel([text(record, 'code')]),
     articleIdField: null,

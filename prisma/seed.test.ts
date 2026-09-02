@@ -357,9 +357,9 @@ async function main() {
 			crfVersions: { create: { number: 1, definition: toJsonValue(MIR_DIJON_CRF_V1.sequences), discordanceThresholds: toJsonValue(MIR_DIJON_CRF_V1.discordanceThresholds), publishedById: corelabAdminUser.id } },
 			sites: { create: [{ code: 'CHU-DIJ-1', name: 'CHU Dijon' }] },
 			memberships: { create: [
-				{ userId: corelabPiUser.id, role: 'PI', certificationPhase: 'PRODUCTION', calibrationStatus: 'CERTIFIED', addedById: corelabAdminUser.id },
-				{ userId: corelabMemberUser.id, role: 'READER', canReview: true, certificationPhase: 'PRODUCTION', calibrationStatus: 'CERTIFIED', addedById: corelabAdminUser.id },
-				{ userId: corelabReader2User.id, role: 'READER', certificationPhase: 'PRODUCTION', calibrationStatus: 'CERTIFIED', addedById: corelabAdminUser.id },
+				{ userId: corelabPiUser.id, canRead: false, canAuthorReference: true, canCertify: true, certificationPhase: 'PRODUCTION', calibrationStatus: 'CERTIFIED', addedById: corelabAdminUser.id },
+				{ userId: corelabMemberUser.id, canRead: true, canAdjudicate: true, certificationPhase: 'PRODUCTION', calibrationStatus: 'CERTIFIED', addedById: corelabAdminUser.id },
+				{ userId: corelabReader2User.id, canRead: true, certificationPhase: 'PRODUCTION', calibrationStatus: 'CERTIFIED', addedById: corelabAdminUser.id },
 			] },
 		},
 	});

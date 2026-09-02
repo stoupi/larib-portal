@@ -11,7 +11,8 @@ import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
-import { PhaseTrack } from '../../../../components/phase-track'
+import { PhaseTrack } from '@/app/[locale]/corelab/components/phase-track'
+import { CapabilityBadges } from '@/app/[locale]/corelab/components/capability-badges'
 import { removeMemberAction } from '../../../actions'
 import type { StudyMember } from '@/lib/services/corelab/memberships'
 
@@ -22,7 +23,6 @@ function memberName(member: StudyMember): string {
 
 export function TeamTable({ studyId, members }: { studyId: string; members: StudyMember[] }) {
   const t = useTranslations('corelab.team')
-  const tRole = useTranslations('corelab.role')
   const format = useFormatter()
   const router = useRouter()
   const [pendingRemoval, setPendingRemoval] = useState<StudyMember | null>(null)
@@ -47,8 +47,7 @@ export function TeamTable({ studyId, members }: { studyId: string; members: Stud
           <TableHeader>
             <TableRow>
               <TableHead>{t('member')}</TableHead>
-              <TableHead>{t('role')}</TableHead>
-              <TableHead>{t('adjudication')}</TableHead>
+              <TableHead>{t('capabilities')}</TableHead>
               <TableHead>{t('track')}</TableHead>
               <TableHead>{t('joinedOn')}</TableHead>
               <TableHead />
@@ -61,10 +60,11 @@ export function TeamTable({ studyId, members }: { studyId: string; members: Stud
                   <div className="font-medium text-text-primary">{memberName(member)}</div>
                   <div className="text-xs text-text-secondary">{member.user.email}</div>
                 </TableCell>
-                <TableCell className="text-text-secondary">{tRole(member.role)}</TableCell>
-                <TableCell className="text-text-secondary">{member.canReview ? tRole('REVIEWER') : '—'}</TableCell>
                 <TableCell>
-                  <PhaseTrack phase={member.role === 'PI' ? null : member.certificationPhase} />
+                  <CapabilityBadges capabilities={member} />
+                </TableCell>
+                <TableCell>
+                  <PhaseTrack phase={member.canRead ? member.certificationPhase : null} />
                 </TableCell>
                 <TableCell className="text-text-secondary">
                   {format.dateTime(member.joinedAt, { dateStyle: 'long', timeZone: 'UTC' })}

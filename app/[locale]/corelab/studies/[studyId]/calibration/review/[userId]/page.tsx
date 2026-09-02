@@ -13,7 +13,7 @@ export default async function CalibrationReviewPage({ params }: PageParams) {
   const { locale, studyId, userId } = await params
   const session = await requireAuth()
   try {
-    await resolveStudyAccess(session.user, studyId, ['PI', 'DATA_MANAGER'])
+    await resolveStudyAccess(session.user, studyId, ['CERTIFY'])
   } catch {
     redirect(applicationLink(locale, '/corelab'))
   }

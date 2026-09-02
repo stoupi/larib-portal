@@ -3,6 +3,7 @@ import { ArrowRight } from 'lucide-react'
 import { Link } from '@/app/i18n/navigation'
 import { StudyPhaseBadge } from './study-phase-badge'
 import { PhaseTrack } from './phase-track'
+import { CapabilityBadges } from './capability-badges'
 import type { MemberStudy } from '@/lib/services/corelab/studies'
 
 export function StudyCards({ memberships }: { memberships: MemberStudy[] }) {
@@ -27,13 +28,11 @@ export function StudyCards({ memberships }: { memberships: MemberStudy[] }) {
 
             <div className="flex flex-wrap items-center gap-3">
               <span className="text-xs text-text-secondary">{t('home.yourRole')}</span>
-              <span className="text-sm font-medium text-text-primary">
-                {membership.canReview ? `${t('role.READER')} · ${t('role.REVIEWER')}` : t(`role.${membership.role}`)}
-              </span>
+              <CapabilityBadges capabilities={membership} />
             </div>
 
             <div className="mt-3">
-              <PhaseTrack phase={membership.role === 'PI' ? null : membership.certificationPhase} />
+              <PhaseTrack phase={membership.canRead ? membership.certificationPhase : null} />
             </div>
           </div>
           <div className="px-6 pb-5">

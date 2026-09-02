@@ -12,7 +12,10 @@ const CORELAB_USER_SELECT = {
   corelabMemberships: {
     where: { removedAt: null },
     select: {
-      role: true,
+      canRead: true,
+      canAdjudicate: true,
+      canAuthorReference: true,
+      canCertify: true,
       certificationPhase: true,
       study: { select: { id: true, code: true } },
     },

@@ -27,9 +27,19 @@ async function revalidateCalibration(studyId: string) {
 
 const ValuesSchema = z.record(z.string(), z.record(z.string(), z.unknown()))
 
-export const saveGoldStandardAction = corelabStudyAction(['PI', 'DATA_MANAGER'])
+async function assertDesignatedAuthor(caseId: string, userId: string, isDataManager: boolean) {
+  const calibrationCase = await prisma.corelabCalibrationCase.findUniqueOrThrow({
+    where: { id: caseId },
+    select: { goldStandardUserId: true },
+  })
+  if (isDataManager) return
+  if (calibrationCase.goldStandardUserId !== userId) throw new Error('NOT_THE_REFERENCE_AUTHOR')
+}
+
+export const saveGoldStandardAction = corelabStudyAction(['AUTHOR_REFERENCE'])
   .inputSchema(z.object({ studyId: z.string(), caseId: z.string(), examId: z.string(), values: ValuesSchema }))
-  .action(async ({ parsedInput }) => {
+  .action(async ({ parsedInput, ctx }) => {
+    await assertDesignatedAuthor(parsedInput.caseId, ctx.userId, ctx.studyAccess.isDataManager)
     const calibrationCase = await prisma.corelabCalibrationCase.findUniqueOrThrow({
       where: { id: parsedInput.caseId },
       select: { goldStandard: true },
@@ -42,9 +52,10 @@ export const saveGoldStandardAction = corelabStudyAction(['PI', 'DATA_MANAGER'])
     return { ok: true }
   })
 
-export const signGoldStandardAction = corelabStudyAction(['PI', 'DATA_MANAGER'])
+export const signGoldStandardAction = corelabStudyAction(['AUTHOR_REFERENCE'])
   .inputSchema(z.object({ studyId: z.string(), caseId: z.string(), password: z.string().min(1), reason: z.string().trim().min(3) }))
   .action(async ({ parsedInput, ctx }) => {
+    await assertDesignatedAuthor(parsedInput.caseId, ctx.userId, ctx.studyAccess.isDataManager)
     const calibrationCase = await prisma.corelabCalibrationCase.findUniqueOrThrow({
       where: { id: parsedInput.caseId },
       select: { goldStandard: true, goldStandardSignatureId: true },
@@ -57,7 +68,7 @@ export const signGoldStandardAction = corelabStudyAction(['PI', 'DATA_MANAGER'])
         ctx.session,
         parsedInput,
         {
-          role: ctx.studyAccess.role === 'PI' ? 'PI' : 'DATA_MANAGER',
+          role: ctx.studyAccess.isDataManager ? 'DATA_MANAGER' : 'REFERENCE_AUTHOR',
           entityType: 'gold_standard',
           entityId: parsedInput.caseId,
           studyId: parsedInput.studyId,
@@ -72,14 +83,14 @@ export const signGoldStandardAction = corelabStudyAction(['PI', 'DATA_MANAGER'])
     return { ok: true }
   })
 
-export const saveCalibrationValuesAction = corelabStudyAction(['READER'])
+export const saveCalibrationValuesAction = corelabStudyAction(['READ'])
   .inputSchema(z.object({ studyId: z.string(), assignmentId: z.string(), examId: z.string(), values: ValuesSchema }))
   .action(async ({ parsedInput, ctx }) => {
     await saveCalibrationValues(parsedInput.assignmentId, ctx.userId, parsedInput.values as ExamValues, parsedInput.examId)
     return { ok: true }
   })
 
-export const submitCalibrationCaseAction = corelabStudyAction(['READER'])
+export const submitCalibrationCaseAction = corelabStudyAction(['READ'])
   .inputSchema(z.object({ studyId: z.string(), assignmentId: z.string(), password: z.string().min(1), reason: z.string().trim().min(3) }))
   .action(async ({ parsedInput, ctx }) => {
     const assignment = await prisma.corelabCalibrationAssignment.findUniqueOrThrow({
@@ -109,7 +120,7 @@ export const submitCalibrationCaseAction = corelabStudyAction(['READER'])
     return { ok: true }
   })
 
-export const decideCalibrationAction = corelabStudyAction(['PI'])
+export const decideCalibrationAction = corelabStudyAction(['CERTIFY'])
   .inputSchema(z.object({
     studyId: z.string(),
     userId: z.string(),
@@ -124,7 +135,7 @@ export const decideCalibrationAction = corelabStudyAction(['PI'])
         ctx.session,
         parsedInput,
         {
-          role: 'PI',
+          role: ctx.studyAccess.isDataManager ? 'DATA_MANAGER' : 'CERTIFIER',
           entityType: 'calibration_review',
           entityId: parsedInput.userId,
           studyId: parsedInput.studyId,

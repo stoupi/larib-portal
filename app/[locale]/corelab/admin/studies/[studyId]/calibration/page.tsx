@@ -7,9 +7,10 @@ import { Link } from '@/app/i18n/navigation'
 import { Button } from '@/components/ui/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { getCurrentCrfVersion, getStudy } from '@/lib/services/corelab/studies'
-import { listCases, piCalibrationOverview, readCaseExams, readValues } from '@/lib/services/corelab/calibration'
+import { listCases, listReferenceAuthors, piCalibrationOverview, readCaseExams, readValues } from '@/lib/services/corelab/calibration'
 import { getStudyTraining } from '@/lib/services/corelab/training'
 import { CaseDialogs } from './case-dialogs'
+import { ReferenceAuthorSelect } from './reference-author-select'
 
 type PageParams = { params: Promise<{ locale: 'en' | 'fr'; studyId: string }> }
 
@@ -22,20 +23,26 @@ export default async function StudyCalibrationPage({ params }: PageParams) {
   const { locale, studyId } = await params
   const session = await requireAuth()
   try {
-    await resolveStudyAccess(session.user, studyId, ['DATA_MANAGER', 'PI'])
+    await resolveStudyAccess(session.user, studyId, ['AUTHOR_REFERENCE', 'CERTIFY'])
   } catch {
     redirect(applicationLink(locale, '/corelab'))
   }
 
   const t = await getTranslations({ locale, namespace: 'corelab.calibration' })
+  const tCapability = await getTranslations({ locale, namespace: 'corelab.capability' })
   const study = await getStudy(studyId)
   if (!study) notFound()
 
-  const [cases, readers, crfVersion] = await Promise.all([
+  const [cases, readers, crfVersion, authors] = await Promise.all([
     listCases(studyId),
     piCalibrationOverview(studyId),
     getCurrentCrfVersion(studyId),
+    listReferenceAuthors(studyId),
   ])
+  const authorOptions = authors.map((author) => ({
+    value: author.userId,
+    label: readerName(author.user),
+  }))
   const sequenceCount = crfVersion?.definition.length ?? 0
   const eligibleReaders = readers.filter((reader) => reader.certificationPhase === 'CALIBRATION')
   const trainings = await Promise.all(readers.map((reader) => getStudyTraining(studyId, reader.userId)))
@@ -78,6 +85,7 @@ export default async function StudyCalibrationPage({ params }: PageParams) {
                   <TableHead>{t('case')}</TableHead>
                   <TableHead>{t('exams')}</TableHead>
                   <TableHead>{t('goldStandard')}</TableHead>
+                  <TableHead>{tCapability('reference')}</TableHead>
                   <TableHead>{t('assignedTo')}</TableHead>
                   <TableHead />
                 </TableRow>
@@ -99,6 +107,15 @@ export default async function StudyCalibrationPage({ params }: PageParams) {
                           : filled === 0
                             ? t('goldNotStarted')
                             : t('goldStarted', { filled, total: sequenceCount })}
+                      </TableCell>
+                      <TableCell>
+                        <ReferenceAuthorSelect
+                          studyId={studyId}
+                          caseId={calibrationCase.id}
+                          value={calibrationCase.goldStandardUserId}
+                          authors={authorOptions}
+                          disabled={Boolean(calibrationCase.goldStandardSignatureId)}
+                        />
                       </TableCell>
                       <TableCell className="text-text-secondary">
                         {calibrationCase.assignments.length === 0 ? '—' : t('readersCount', { count: calibrationCase.assignments.length })}

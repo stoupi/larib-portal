@@ -12,6 +12,7 @@ const CASE_SELECT = {
   code: true,
   exams: true,
   goldStandard: true,
+  goldStandardUserId: true,
   goldStandardSignatureId: true,
   assignments: {
     select: {
@@ -79,6 +80,22 @@ export async function importCases(
     })
   }
   return { created: toCreate.length }
+}
+
+export async function setReferenceAuthor(caseId: string, userId: string | null): Promise<void> {
+  await prisma.corelabCalibrationCase.update({
+    where: { id: caseId },
+    data: { goldStandardUserId: userId },
+    select: { id: true },
+  })
+}
+
+export async function listReferenceAuthors(studyId: string) {
+  return prisma.corelabStudyMembership.findMany({
+    where: { studyId, removedAt: null, canAuthorReference: true },
+    select: { userId: true, user: { select: { firstName: true, lastName: true, email: true } } },
+    orderBy: { joinedAt: 'asc' },
+  })
 }
 
 export async function saveGoldStandardValues(caseId: string, values: ReadingValues): Promise<void> {
@@ -236,10 +253,11 @@ export async function readerCalibrationOverview(studyId: string, userId: string)
 
 export async function piCalibrationOverview(studyId: string) {
   const memberships = await prisma.corelabStudyMembership.findMany({
-    where: { studyId, removedAt: null, role: 'READER' },
+    where: { studyId, removedAt: null, canRead: true },
     select: {
       userId: true,
       certificationPhase: true,
+      canAdjudicate: true,
       calibrationStatus: true,
       user: { select: { id: true, firstName: true, lastName: true, email: true } },
     },

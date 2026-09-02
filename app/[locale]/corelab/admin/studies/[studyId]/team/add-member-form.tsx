@@ -11,6 +11,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
 import { SingleSelect } from '@/components/ui/single-select'
+import { CAPABILITY_KEYS, type Capabilities } from '@/app/[locale]/corelab/components/capability-badges'
 import { addMemberAction } from '../../../actions'
 import type { MemberCandidate } from '@/lib/services/corelab/memberships'
 
@@ -27,11 +28,15 @@ function candidateLabel(candidate: MemberCandidate): string {
 
 export function AddMemberForm({ studyId, candidates, showProductionNotice }: AddMemberFormProps) {
   const t = useTranslations('corelab.team')
-  const tRole = useTranslations('corelab.role')
+  const tCapability = useTranslations('corelab.capability')
   const router = useRouter()
   const [userId, setUserId] = useState('')
-  const [role, setRole] = useState<'READER' | 'PI'>('READER')
-  const [canReview, setCanReview] = useState(false)
+  const [capabilities, setCapabilities] = useState<Capabilities>({
+    canRead: true,
+    canAdjudicate: false,
+    canAuthorReference: false,
+    canCertify: false,
+  })
   const [trainingDueAt, setTrainingDueAt] = useState('')
   const [calibrationDueAt, setCalibrationDueAt] = useState('')
 
@@ -39,7 +44,7 @@ export function AddMemberForm({ studyId, candidates, showProductionNotice }: Add
     onSuccess: () => {
       toast.success(t('added'))
       setUserId('')
-      setCanReview(false)
+      setCapabilities({ canRead: true, canAdjudicate: false, canAuthorReference: false, canCertify: false })
       setTrainingDueAt('')
       setCalibrationDueAt('')
       router.refresh()
@@ -56,7 +61,7 @@ export function AddMemberForm({ studyId, candidates, showProductionNotice }: Add
       <h2 className="text-lg font-semibold text-text-primary">{t('addTitle')}</h2>
       <p className="mt-1 text-sm text-text-secondary">{t('addSubtitle')}</p>
 
-      {showProductionNotice && role === 'READER' ? (
+      {showProductionNotice && capabilities.canRead ? (
         <div className="mt-4 flex gap-3 rounded-xl border border-amber-200 bg-amber-50 p-3">
           <Info className="mt-0.5 h-4 w-4 flex-shrink-0 text-amber-600" />
           <div>
@@ -77,15 +82,20 @@ export function AddMemberForm({ studyId, candidates, showProductionNotice }: Add
           />
         </div>
         <div className="space-y-2">
-          <Label>{t('role')}</Label>
-          <SingleSelect
-            options={[
-              { value: 'READER', label: tRole('READER') },
-              { value: 'PI', label: tRole('PI') },
-            ]}
-            value={role}
-            onChange={(value) => setRole(value === 'PI' ? 'PI' : 'READER')}
-          />
+          <Label>{t('capabilities')}</Label>
+          <div className="flex flex-col gap-2">
+            {CAPABILITY_KEYS.map((key) => (
+              <div key={key} className="flex items-center gap-3">
+                <Switch
+                  id={`capability-${key}`}
+                  checked={capabilities[key]}
+                  onCheckedChange={(next) => setCapabilities((current) => ({ ...current, [key]: next }))}
+                />
+                <Label htmlFor={`capability-${key}`}>{tCapability(key)}</Label>
+              </div>
+            ))}
+          </div>
+          <p className="text-xs text-text-secondary">{tCapability('help')}</p>
         </div>
         <div className="space-y-2">
           <Label htmlFor="member-training-due">{t('trainingDue')}</Label>
@@ -95,21 +105,16 @@ export function AddMemberForm({ studyId, candidates, showProductionNotice }: Add
           <Label htmlFor="member-calibration-due">{t('calibrationDue')}</Label>
           <Input id="member-calibration-due" type="date" value={calibrationDueAt} onChange={(event) => setCalibrationDueAt(event.target.value)} />
         </div>
-        <div className="flex items-center gap-3">
-          <Switch id="member-can-review" checked={canReview} onCheckedChange={setCanReview} />
-          <Label htmlFor="member-can-review">{t('canReview')}</Label>
-        </div>
       </div>
 
       <Button
         className="mt-5"
-        disabled={userId.length === 0 || action.isPending}
+        disabled={userId.length === 0 || CAPABILITY_KEYS.every((key) => !capabilities[key]) || action.isPending}
         onClick={() =>
           action.execute({
             studyId,
             userId,
-            role,
-            canReview,
+            ...capabilities,
             trainingDueAt: trainingDueAt || null,
             calibrationDueAt: calibrationDueAt || null,
           })

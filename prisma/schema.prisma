@@ -54,6 +54,7 @@ model User {
   corelabSignatures             CorelabSignature[]             @relation("CorelabSignatureUser")
   corelabTrainingCompletions    CorelabTrainingCompletion[]    @relation("CorelabTrainingCompletionUser")
   corelabCalibrationAssignments CorelabCalibrationAssignment[] @relation("CorelabCalibrationAssignmentUser")
+  corelabGoldStandards          CorelabCalibrationCase[]       @relation("CorelabGoldStandardUser")
 
   //related to bestof larib
   ClinicalCase     ClinicalCase[]
@@ -867,11 +868,6 @@ enum CorelabStudyPhase {
   CLOSED
 }
 
-enum CorelabStudyRole {
-  READER
-  PI
-}
-
 enum CorelabCertificationPhase {
   TRAINING
   CALIBRATION
@@ -892,6 +888,8 @@ enum CorelabSignatureRole {
   REVIEWER
   PI
   DATA_MANAGER
+  REFERENCE_AUTHOR
+  CERTIFIER
 }
 
 model CorelabStudy {
@@ -940,8 +938,10 @@ model CorelabStudyMembership {
   study              CorelabStudy              @relation(fields: [studyId], references: [id], onDelete: Cascade)
   userId             String
   user               User                      @relation("CorelabMembershipUser", fields: [userId], references: [id], onDelete: Restrict)
-  role               CorelabStudyRole
-  canReview          Boolean                   @default(false)
+  canRead            Boolean                   @default(true)
+  canAdjudicate      Boolean                   @default(false)
+  canAuthorReference Boolean                   @default(false)
+  canCertify         Boolean                   @default(false)
   certificationPhase CorelabCertificationPhase @default(TRAINING)
   calibrationStatus  CorelabCalibrationStatus  @default(NOT_STARTED)
   trainingDueAt      DateTime?
@@ -1076,6 +1076,8 @@ model CorelabCalibrationCase {
   code                    String
   exams                   Json
   goldStandard            Json         @default("{}")
+  goldStandardUserId      String?
+  goldStandardUser        User?        @relation("CorelabGoldStandardUser", fields: [goldStandardUserId], references: [id], onDelete: SetNull)
   goldStandardSignatureId String?
   createdAt               DateTime     @default(now())
   updatedAt               DateTime     @updatedAt

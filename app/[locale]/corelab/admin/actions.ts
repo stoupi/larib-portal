@@ -98,8 +98,10 @@ export const addMemberAction = corelabAdminAction
   .inputSchema(z.object({
     studyId: z.string(),
     userId: z.string(),
-    role: z.enum(['READER', 'PI']),
-    canReview: z.boolean(),
+    canRead: z.boolean(),
+    canAdjudicate: z.boolean(),
+    canAuthorReference: z.boolean(),
+    canCertify: z.boolean(),
     trainingDueAt: z.string().optional().nullable(),
     calibrationDueAt: z.string().optional().nullable(),
   }))
@@ -107,8 +109,10 @@ export const addMemberAction = corelabAdminAction
     const membership = await addMember({
       studyId: parsedInput.studyId,
       userId: parsedInput.userId,
-      role: parsedInput.role,
-      canReview: parsedInput.canReview,
+      canRead: parsedInput.canRead,
+      canAdjudicate: parsedInput.canAdjudicate,
+      canAuthorReference: parsedInput.canAuthorReference,
+      canCertify: parsedInput.canCertify,
       addedById: ctx.userId,
       trainingDueAt: parseDueDate(parsedInput.trainingDueAt),
       calibrationDueAt: parseDueDate(parsedInput.calibrationDueAt),
@@ -121,13 +125,19 @@ export const updateMemberAction = corelabAdminAction
   .inputSchema(z.object({
     studyId: z.string(),
     membershipId: z.string(),
-    canReview: z.boolean().optional(),
+    canRead: z.boolean().optional(),
+    canAdjudicate: z.boolean().optional(),
+    canAuthorReference: z.boolean().optional(),
+    canCertify: z.boolean().optional(),
     trainingDueAt: z.string().optional().nullable(),
     calibrationDueAt: z.string().optional().nullable(),
   }))
   .action(async ({ parsedInput }) => {
     await updateMember(parsedInput.membershipId, {
-      canReview: parsedInput.canReview,
+      canRead: parsedInput.canRead,
+      canAdjudicate: parsedInput.canAdjudicate,
+      canAuthorReference: parsedInput.canAuthorReference,
+      canCertify: parsedInput.canCertify,
       trainingDueAt: parseDueDate(parsedInput.trainingDueAt),
       calibrationDueAt: parseDueDate(parsedInput.calibrationDueAt),
     })

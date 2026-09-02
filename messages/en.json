@@ -2111,12 +2111,6 @@
       "PRODUCTION": "Production",
       "noCertification": "no certification"
     },
-    "role": {
-      "READER": "Reader",
-      "PI": "Principal investigator",
-      "REVIEWER": "Reviewer",
-      "DATA_MANAGER": "Data manager"
-    },
     "studies": {
       "title": "Studies",
       "subtitle": "Every study at its own phase. Open one to configure it and build its team.",
@@ -2207,8 +2201,6 @@
       "person": "Person",
       "personPlaceholder": "Pick a Core Lab account",
       "noCandidates": "No Core Lab account available.",
-      "role": "Role in the study",
-      "canReview": "Can adjudicate",
       "trainingDue": "Training deadline",
       "calibrationDue": "Calibration deadline",
       "add": "Add to study",
@@ -2216,7 +2208,6 @@
       "productionNotice": "The study is in production, the reader still starts with training",
       "productionNoticeDetail": "The study phase and the reader phase are two different things: the new reader goes through training, then the calibration cases, and only reaches patients once certified.",
       "member": "Member",
-      "adjudication": "Adjudication",
       "track": "Reader track",
       "joinedOn": "Joined on",
       "remove": "Remove",
@@ -2231,7 +2222,8 @@
         "PI_ALREADY_SET": "This study already has a principal investigator.",
         "ALREADY_MEMBER": "This person already belongs to the study.",
         "generic": "The operation failed."
-      }
+      },
+      "capabilities": "Capabilities"
     },
     "users": {
       "title": "Users",
@@ -2495,6 +2487,16 @@
       "decided": "Decision recorded.",
       "noSubmission": "This reader has not submitted anything yet.",
       "error": "The operation failed."
+    },
+    "capability": {
+      "canRead": "Read",
+      "canAdjudicate": "Adjudicate",
+      "canAuthorReference": "Author the reference",
+      "canCertify": "Certify",
+      "help": "A member who reads goes through training then calibration. The other capabilities impose no track.",
+      "none": "No capability",
+      "reference": "Reference authored by",
+      "unassigned": "Nobody designated"
     }
   }
 }

@@ -1,7 +1,6 @@
 import { appAdminAction, appMemberAction, authenticatedAction } from '@/actions/safe-action'
 import { canAdminApp } from '@/lib/permissions'
 import { prisma } from '@/lib/prisma'
-import type { CorelabStudyRole } from '@/app/generated/prisma'
 import {
   createSignature,
   verifyUserPassword,
@@ -13,30 +12,54 @@ import type { BetterAuthSession } from '@/types/session'
 export const corelabMemberAction = appMemberAction('CORELAB')
 export const corelabAdminAction = appAdminAction('CORELAB')
 
-export type StudyRole = CorelabStudyRole | 'DATA_MANAGER'
-export type StudyAccess = { studyId: string; role: StudyRole; canReview: boolean }
+export type StudyCapability = 'READ' | 'ADJUDICATE' | 'AUTHOR_REFERENCE' | 'CERTIFY'
+export type StudyAccess = {
+  studyId: string
+  isDataManager: boolean
+  canRead: boolean
+  canAdjudicate: boolean
+  canAuthorReference: boolean
+  canCertify: boolean
+}
+
+const DATA_MANAGER_ACCESS = (studyId: string): StudyAccess => ({
+  studyId,
+  isDataManager: true,
+  canRead: true,
+  canAdjudicate: true,
+  canAuthorReference: true,
+  canCertify: true,
+})
 
 export async function resolveStudyAccess(
   user: BetterAuthSession['user'],
   studyId: string,
-  allowed: StudyRole[],
+  required: StudyCapability[],
 ): Promise<StudyAccess> {
-  if (allowed.includes('DATA_MANAGER') && canAdminApp(user, 'CORELAB')) {
-    return { studyId, role: 'DATA_MANAGER', canReview: false }
-  }
+  if (canAdminApp(user, 'CORELAB')) return DATA_MANAGER_ACCESS(studyId)
+
   const membership = await prisma.corelabStudyMembership.findFirst({
     where: { studyId, userId: user.id, removedAt: null },
-    select: { role: true, canReview: true },
+    select: { canRead: true, canAdjudicate: true, canAuthorReference: true, canCertify: true },
   })
-  if (!membership || !allowed.includes(membership.role)) throw new Error('Forbidden')
-  return { studyId, role: membership.role, canReview: membership.canReview }
+  if (!membership) throw new Error('Forbidden')
+
+  const access: StudyAccess = { studyId, isDataManager: false, ...membership }
+  const granted: Record<StudyCapability, boolean> = {
+    READ: access.canRead,
+    ADJUDICATE: access.canAdjudicate,
+    AUTHOR_REFERENCE: access.canAuthorReference,
+    CERTIFY: access.canCertify,
+  }
+  if (required.length > 0 && !required.some((capability) => granted[capability])) throw new Error('Forbidden')
+  return access
 }
 
-export const corelabStudyAction = (allowed: StudyRole[]) =>
+export const corelabStudyAction = (required: StudyCapability[]) =>
   authenticatedAction.use(async ({ next, ctx, clientInput }) => {
     const input = clientInput as { studyId?: string } | undefined
     if (!input?.studyId) throw new Error('studyId required')
-    const studyAccess = await resolveStudyAccess(ctx.user, input.studyId, allowed)
+    const studyAccess = await resolveStudyAccess(ctx.user, input.studyId, required)
     return next({ ctx: { ...ctx, studyAccess } })
   })
 
