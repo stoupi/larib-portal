@@ -1,7 +1,7 @@
 "use server"
 import { z } from "zod"
 import { revalidatePath } from "next/cache"
-import { deleteUserById, updateUserWithAccessPeriods, createPlaceholderUser } from "@/lib/services/users"
+import { deleteUserById, updateUserWithAccessPeriods, createPlaceholderUserWithAccessPeriods } from "@/lib/services/users"
 import { listPositions, ensurePosition, updatePosition, deletePositions } from '@/lib/services/positions'
 import { createInvitation, deleteInvitationByEmail, consumeInvitation, getInvitationByEmail } from '@/lib/services/invitations'
 import { sendWelcomeEmail } from '@/lib/services/email'
@@ -9,7 +9,7 @@ import { resolveAppBaseUrl } from '@/lib/app-url'
 import { superAdminAction } from "@/actions/safe-action"
 import { Prisma } from "@/app/generated/prisma"
 import { prisma } from "@/lib/prisma"
-import { accessPeriodsEndingOnDay, replaceAccessPeriods, startOfDayUtc, endOfDayUtc } from '@/lib/services/access-periods'
+import { accessPeriodsEndingOnDay, startOfDayUtc, endOfDayUtc } from '@/lib/services/access-periods'
 import { ACTIVE_APPLICATIONS, toActiveApplications } from '@/lib/permissions'
 
 const ApplicationEnum = z.enum(ACTIVE_APPLICATIONS)
@@ -139,24 +139,22 @@ export const createUserInviteAction = superAdminAction
     }
 
     // Create a placeholder user so the admin can see it immediately
-    const placeholder = await createPlaceholderUser({
-      email: parsedInput.email,
-      role: parsedInput.role,
-      firstName: parsedInput.firstName ?? null,
-      lastName: parsedInput.lastName ?? null,
-      language: parsedInput.locale === 'fr' ? 'FR' : 'EN',
-      position: positionName,
-      applications: parsedInput.applications,
-      adminApplications,
-      arrivalDate,
-      departureDate,
-      congesTotalDays: parsedInput.congesTotalDays,
-      profilePhoto: parsedInput.profilePhoto || null,
-    })
-
     const grantedApplications = Array.from(new Set([...parsedInput.applications, ...adminApplications]))
-    await replaceAccessPeriods(
-      placeholder.id,
+    const placeholder = await createPlaceholderUserWithAccessPeriods(
+      {
+        email: parsedInput.email,
+        role: parsedInput.role,
+        firstName: parsedInput.firstName ?? null,
+        lastName: parsedInput.lastName ?? null,
+        language: parsedInput.locale === 'fr' ? 'FR' : 'EN',
+        position: positionName,
+        applications: parsedInput.applications,
+        adminApplications,
+        arrivalDate,
+        departureDate,
+        congesTotalDays: parsedInput.congesTotalDays,
+        profilePhoto: parsedInput.profilePhoto || null,
+      },
       accessPeriodsEndingOnDay(grantedApplications, parsedInput.departureDate),
     )
 

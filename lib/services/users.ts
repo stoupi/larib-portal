@@ -109,27 +109,46 @@ export type CreatePlaceholderUserInput = {
   profilePhoto?: string | null
 }
 
+function placeholderUserData(id: string, data: CreatePlaceholderUserInput) {
+  return {
+    id,
+    email: data.email,
+    role: data.role,
+    firstName: data.firstName ?? null,
+    lastName: data.lastName ?? null,
+    language: data.language ?? 'EN' as const,
+    position: data.position ?? null,
+    congesTotalDays: data.congesTotalDays ?? 0,
+    applications: data.applications ?? [],
+    adminApplications: data.adminApplications ?? [],
+    arrivalDate: data.arrivalDate ?? null,
+    departureDate: data.departureDate ?? null,
+    profilePhoto: data.profilePhoto ?? null,
+  }
+}
+
 export async function createPlaceholderUser(data: CreatePlaceholderUserInput): Promise<UserWithAdminFields> {
   const id = crypto.randomUUID()
   const created = await prisma.user.create({
-    data: {
-      id,
-      email: data.email,
-      role: data.role,
-      firstName: data.firstName ?? null,
-      lastName: data.lastName ?? null,
-      language: data.language ?? 'EN',
-      position: data.position ?? null,
-      congesTotalDays: data.congesTotalDays ?? 0,
-      applications: data.applications ?? [],
-      adminApplications: data.adminApplications ?? [],
-      arrivalDate: data.arrivalDate ?? null,
-      departureDate: data.departureDate ?? null,
-      profilePhoto: data.profilePhoto ?? null,
-    },
+    data: placeholderUserData(id, data),
     select: userWithAdminFieldsSelect,
   })
   return created
+}
+
+export async function createPlaceholderUserWithAccessPeriods(
+  data: CreatePlaceholderUserInput,
+  periods: AccessPeriodInput[],
+): Promise<UserWithAdminFields> {
+  const id = crypto.randomUUID()
+  return prisma.$transaction(async (transaction) => {
+    await transaction.user.create({ data: placeholderUserData(id, data) })
+    await replaceAccessPeriodsWithClient(transaction, id, periods)
+    return transaction.user.findUniqueOrThrow({
+      where: { id },
+      select: userWithAdminFieldsSelect,
+    })
+  })
 }
 
 export type UserWithOnboardingStatus = UserWithAdminFields & {
