@@ -1,0 +1,98 @@
+import type { SequenceDefinition } from '../schema'
+
+export const t2MappingSequence: SequenceDefinition = {
+  id: "t2-mapping",
+  name: "T2 Mapping",
+  sections: [
+    {
+      id: "t2-map-availability",
+      name: "Availability & Artefacts",
+      fields: [
+        { id: "t2_available", name: "T2 Mapping Available", type: "boolean", required: true },
+        {
+          id: "basal_available",
+          name: "Basal Slice Available",
+          type: "boolean",
+          required: true,
+          conditionalOn: { fieldId: "t2_available", value: true },
+        },
+        {
+          id: "medial_available",
+          name: "Medial Slice Available",
+          type: "boolean",
+          required: true,
+          conditionalOn: { fieldId: "t2_available", value: true },
+        },
+        {
+          id: "apical_available",
+          name: "Apical Slice Available",
+          type: "boolean",
+          required: true,
+          conditionalOn: { fieldId: "t2_available", value: true },
+        },
+        {
+          id: "artefacts_grade",
+          name: "Artefacts Grade",
+          type: "categorical",
+          required: true,
+          options: ["0", "1", "2", "3", "4"],
+          conditionalOn: { fieldId: "t2_available", value: true },
+        },
+        {
+          id: "artefacts_type",
+          name: "Artefacts Type",
+          type: "categorical",
+          required: false,
+          options: ["Bad MOCO", "Wrapping", "Other"],
+          conditionalOn: { fieldId: "t2_available", value: true },
+        },
+      ],
+    },
+    {
+      id: "t2-map-values",
+      name: "T2 Values",
+      fields: [
+        {
+          id: "mid_ivs",
+          name: "Mid IVS T2",
+          type: "numeric",
+          required: true,
+          unit: "ms",
+          min: 30,
+          max: 100,
+          conditionalOn: { fieldId: "t2_available", value: true },
+          calibrationTolerance: { absolute: 5, relativePercent: 8 },
+        },
+        {
+          id: "presence_local_elevation",
+          name: "Presence of Local Elevation",
+          type: "boolean",
+          required: true,
+          conditionalOn: { fieldId: "t2_available", value: true },
+        },
+        {
+          id: "local_elevation",
+          name: "Local Elevation Value",
+          type: "numeric",
+          required: true,
+          unit: "ms",
+          min: 30,
+          max: 100,
+          conditionalOn: { fieldId: "presence_local_elevation", value: true },
+          calibrationTolerance: { absolute: 5, relativePercent: 8 },
+        },
+        {
+          id: "t2_segments",
+          name: "T2 Segment Values",
+          type: "segment_numeric",
+          required: false,
+          segmentCount: 16,
+          unit: "ms",
+          min: 0,
+          max: 100,
+          conditionalOn: { fieldId: "t2_available", value: true },
+        },
+      ],
+    },
+  ],
+}
