@@ -1,0 +1,359 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600;700;800&display=swap">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body { margin: 0; font-family: 'Inter Tight', ui-sans-serif, system-ui, sans-serif; -webkit-font-smoothing: antialiased; color: #141a22; }
+    a { color: #173d6e; text-decoration: none; }
+    a:hover { color: #0e2542; }
+  </style>
+</helmet>
+
+
+<div style="display: flex; width: 1440px; height: 1300px; background: #f5f7fa; overflow: hidden;">
+
+  <aside style="width: 256px; flex-shrink: 0; background: #122f54; color: #ffffff; display: flex; flex-direction: column;">
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 20px 24px; text-align: center;">
+      <div style="height: 36px; width: 72px; display: flex; align-items: flex-start; justify-content: center; overflow: hidden;">
+        <img src="logo.png" alt="Larib Portal" style="width: 72px; filter: brightness(0) invert(1);">
+      </div>
+      <span style="font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">Larib Portal</span>
+    </div>
+
+    <nav style="flex: 1; display: flex; flex-direction: column; gap: 24px; padding: 16px 12px; overflow-y: auto;">
+      <div>
+        <p style="margin: 0 0 8px; padding: 0 12px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #7197c2;">Vue d'ensemble</p>
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+          <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #ffffff;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>
+            <span>Tableau de bord</span>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <p style="margin: 0 0 8px; padding: 0 12px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #7197c2;">Applications</p>
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+          <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #ffffff;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10 12 5 2 10l10 5z"/><path d="M6 12v5c0 1 2.5 2.5 6 2.5s6-1.5 6-2.5v-5"/></svg>
+            <span>Training Best-of</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #ffffff;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4"/><path d="M16 3v4"/><path d="M3 10h18"/></svg>
+            <span>Gestion des congés</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #ffffff;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4h6a3 3 0 0 1 3 3v13a2.5 2.5 0 0 0-2.5-2.5H2z"/><path d="M22 4h-6a3 3 0 0 0-3 3v13a2.5 2.5 0 0 1 2.5-2.5H22z"/></svg>
+            <span>Publications</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #ffffff;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21a9 9 0 1 0-9-9"/><path d="M3 12h4"/><circle cx="12" cy="12" r="3"/><path d="m16 16 3 3"/></svg>
+            <span>Core Lab</span>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <p style="margin: 0 0 8px; padding: 0 12px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #7197c2;">Administration</p>
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+          <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #ffffff;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10 12 5 2 10l10 5z"/><path d="M6 12v5c0 1 2.5 2.5 6 2.5s6-1.5 6-2.5v-5"/></svg>
+            <span style="flex: 1;">Training Best-of</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ec3b68" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #ffffff;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4"/><path d="M16 3v4"/><path d="M3 10h18"/></svg>
+            <span style="flex: 1;">Gestion des congés</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ec3b68" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #ffffff;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4h6a3 3 0 0 1 3 3v13a2.5 2.5 0 0 0-2.5-2.5H2z"/><path d="M22 4h-6a3 3 0 0 0-3 3v13a2.5 2.5 0 0 1 2.5-2.5H22z"/></svg>
+            <span style="flex: 1;">Publications</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ec3b68" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <div style="position: relative; display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; background: #173d6e; color: #ffffff;">
+            <span style="position: absolute; left: -12px; top: 50%; height: 24px; width: 4px; transform: translateY(-50%); border-radius: 0 4px 4px 0; background: #ec3b68;"></span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f55c83" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21a9 9 0 1 0-9-9"/><path d="M3 12h4"/><circle cx="12" cy="12" r="3"/><path d="m16 16 3 3"/></svg>
+            <span style="flex: 1;">Core Lab</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ec3b68" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #ffffff;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/></svg>
+            <span>Gestion des utilisateurs</span>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <div style="border-top: 1px solid #173d6e; padding: 12px;">
+      <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; background: #173d6e;">
+        <span style="width: 32px; height: 32px; border-radius: 50%; background: #ec3b68; color: #ffffff; font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center;">PD</span>
+        <div style="min-width: 0; flex: 1;">
+          <div style="font-size: 14px; font-weight: 500; color: #ffffff;">P. Dupont</div>
+          <div style="font-size: 12px; color: #aac0dc;">Data manager</div>
+        </div>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+      </div>
+    </div>
+  </aside>
+
+  <main style="flex: 1; min-width: 0; display: flex; flex-direction: column; overflow: hidden;">
+    <div style="flex-shrink: 0; height: 56px; background: #ffffff; border-bottom: 1px solid #dde2e9; display: flex; align-items: center; gap: 24px; padding: 0 32px;">
+      <span style="display: inline-flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #9aa5b3;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ec3b68" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Administration
+      </span>
+      <span style="width: 1px; height: 22px; background: #dde2e9;"></span>
+      <nav style="display: flex; align-items: center; gap: 4px; height: 100%;">
+        <span style="display: inline-flex; align-items: center; height: 100%; padding: 0 14px; font-size: 14px; color: #6b7685;">Vue d'ensemble</span>
+        <span style="display: inline-flex; align-items: center; height: 100%; padding: 0 14px; font-size: 14px; color: #6b7685;">Études</span>
+        <span style="display: inline-flex; align-items: center; height: 100%; padding: 0 4px; font-size: 14px; font-weight: 600; color: #141a22; box-shadow: inset 0 -2px 0 #d61f55;">Bibliothèque</span>
+        <span style="display: inline-flex; align-items: center; height: 100%; padding: 0 14px; font-size: 14px; color: #6b7685;">Utilisateurs</span>
+        <span style="display: inline-flex; align-items: center; height: 100%; padding: 0 14px; font-size: 14px; color: #6b7685;">Journal d'audit</span>
+      </nav>
+    </div>
+
+    <div style="flex: 1; min-height: 0; overflow: hidden; background:
+      radial-gradient(58% 52% at 10% 4%, rgba(214, 31, 85, 0.10), transparent 60%),
+      radial-gradient(52% 48% at 92% 12%, rgba(236, 59, 104, 0.08), transparent 62%),
+      #f5f7fa;">
+      <div style="padding: 32px; display: flex; flex-direction: column; gap: 22px;">
+
+        <header style="display: flex; align-items: flex-start; justify-content: space-between; gap: 16px;">
+          <div style="display: flex; align-items: stretch; gap: 14px;">
+            <span style="width: 5px; flex-shrink: 0; border-radius: 4px; background: linear-gradient(to bottom, #ec3b68, #d61f55);"></span>
+            <div>
+              <h1 style="margin: 0; font-size: 30px; font-weight: 800; letter-spacing: -0.025em; color: #141a22;">Bibliothèque de CRF</h1>
+              <p style="margin: 6px 0 0; max-width: 720px; font-size: 14px; line-height: 1.625; color: #6b7685;">Les blocs dans lesquels les études viennent piocher. Chaque bloc est autonome : une séquence complète ou une section isolée, jamais l&#39;un dans l&#39;autre. Les modifier ici ne change aucune étude en cours : chacune possède sa copie.</p>
+            </div>
+          </div>
+          <span style="display: inline-flex; align-items: center; gap: 8px; height: 38px; padding: 0 16px; border-radius: 10px; background: linear-gradient(135deg, #122f54, #0a1b30); color: #ffffff; font-size: 14px; font-weight: 500; box-shadow: 0 1px 2px rgba(16,28,48,0.06); white-space: nowrap;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+            Nouveau bloc
+          </span>
+        </header>
+
+        <div style="display: flex; align-items: center; gap: 4px; padding: 4px; border-radius: 12px; border: 1px solid #dde2e9; background: #ffffff; width: fit-content; box-shadow: 0 1px 3px rgba(16,28,48,0.08), 0 1px 2px rgba(16,28,48,0.04);">
+          <span style="display: inline-flex; align-items: center; gap: 7px; height: 32px; padding: 0 14px; border-radius: 9px; background: #122f54; color: #ffffff; font-size: 13.5px; font-weight: 500;">
+            Blocs
+            <span style="border-radius: 7px; background: rgba(255,255,255,0.18); padding: 0 6px; font-size: 11.5px; font-variant-numeric: tabular-nums;">46</span>
+          </span>
+          <span id="tab-variables" style="display: inline-flex; align-items: center; gap: 7px; height: 32px; padding: 0 14px; border-radius: 9px; color: #4d5765; font-size: 13.5px; font-weight: 500;">
+            Variables
+            <span style="border-radius: 7px; background: #eceff3; color: #6b7685; padding: 0 6px; font-size: 11.5px; font-variant-numeric: tabular-nums;">218</span>
+          </span>
+          <span id="tab-valuesets" style="display: inline-flex; align-items: center; gap: 7px; height: 32px; padding: 0 14px; border-radius: 9px; color: #4d5765; font-size: 13.5px; font-weight: 500;">
+            Jeux de valeurs
+            <span style="border-radius: 7px; background: #eceff3; color: #6b7685; padding: 0 6px; font-size: 11.5px; font-variant-numeric: tabular-nums;">23</span>
+          </span>
+        </div>
+
+        <div style="display: flex; gap: 14px;">
+          <div style="flex: 1; min-width: 190px; border: 1px solid #dde2e9; background: #ffffff; border-radius: 16px; padding: 16px 18px; box-shadow: 0 1px 3px rgba(16,28,48,0.08), 0 1px 2px rgba(16,28,48,0.04);"><div style="font-size: 28px; font-weight: 300; line-height: 1; color: #141a22;">46</div><div style="font-size: 12.5px; color: #6b7685; margin-top: 7px; font-weight: 500;">blocs au catalogue</div><div style="font-size: 11.5px; color: #9aa5b3; margin-top: 2px;">18 séquences et 28 sections</div></div>
+          <div style="flex: 1; min-width: 190px; border: 1px solid #dde2e9; background: #ffffff; border-radius: 16px; padding: 16px 18px; box-shadow: 0 1px 3px rgba(16,28,48,0.08), 0 1px 2px rgba(16,28,48,0.04);"><div style="font-size: 28px; font-weight: 300; line-height: 1; color: #141a22;">4</div><div style="font-size: 12.5px; color: #6b7685; margin-top: 7px; font-weight: 500;">modalités couvertes</div><div style="font-size: 11.5px; color: #9aa5b3; margin-top: 2px;">IRM, scanner, PET, ETT</div></div>
+          <div style="flex: 1; min-width: 190px; border: 1px solid #dde2e9; background: #ffffff; border-radius: 16px; padding: 16px 18px; box-shadow: 0 1px 3px rgba(16,28,48,0.08), 0 1px 2px rgba(16,28,48,0.04);"><div style="font-size: 28px; font-weight: 300; line-height: 1; color: #141a22;">11</div><div style="font-size: 12.5px; color: #6b7685; margin-top: 7px; font-weight: 500;">études servies</div><div style="font-size: 11.5px; color: #9aa5b3; margin-top: 2px;">dont 4 en cours</div></div>
+          <div style="flex: 1; min-width: 190px; border: 1px solid #FDBA74; background: #FFF3E9; border-radius: 16px; padding: 16px 18px; box-shadow: 0 1px 3px rgba(16,28,48,0.08), 0 1px 2px rgba(16,28,48,0.04);"><div style="font-size: 28px; font-weight: 300; line-height: 1; color: #EA580C;">3</div><div style="font-size: 12.5px; color: #92400e; margin-top: 7px; font-weight: 500;">blocs jamais repris</div><div style="font-size: 11.5px; color: #9aa5b3; margin-top: 2px;">candidats au ménage</div></div>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+          <span style="display: inline-flex; align-items: center; gap: 7px; height: 32px; padding: 0 13px; border-radius: 10px; background: #122f54; color: #ffffff; font-size: 13px; font-weight: 500;">Toutes<span style="opacity: .7;">46</span></span>
+          <span style="display: inline-flex; align-items: center; gap: 7px; height: 32px; padding: 0 13px; border-radius: 10px; border: 1px solid #dde2e9; background: #ffffff; color: #4d5765; font-size: 13px; font-weight: 500;">IRM<span style="color: #9aa5b3;">16</span></span>
+          <span style="display: inline-flex; align-items: center; gap: 7px; height: 32px; padding: 0 13px; border-radius: 10px; border: 1px solid #dde2e9; background: #ffffff; color: #4d5765; font-size: 13px; font-weight: 500;">Scanner<span style="color: #9aa5b3;">9</span></span>
+          <span style="display: inline-flex; align-items: center; gap: 7px; height: 32px; padding: 0 13px; border-radius: 10px; border: 1px solid #dde2e9; background: #ffffff; color: #4d5765; font-size: 13px; font-weight: 500;">PET<span style="color: #9aa5b3;">11</span></span>
+          <span style="display: inline-flex; align-items: center; gap: 7px; height: 32px; padding: 0 13px; border-radius: 10px; border: 1px solid #dde2e9; background: #ffffff; color: #4d5765; font-size: 13px; font-weight: 500;">ETT<span style="color: #9aa5b3;">10</span></span>
+        </div>
+
+        <div style="background: #ffffff; border: 1px solid #dde2e9; border-radius: 16px; box-shadow: 0 1px 3px rgba(16,28,48,0.08), 0 1px 2px rgba(16,28,48,0.04); overflow: hidden;">
+          <table style="width: 100%;">
+            <thead>
+              <tr style="background: #fafbfc; border-bottom: 1px solid #dde2e9;">
+                <th style="height: 38px; padding: 0 20px; text-align: left; font-weight: 500; font-size: 12.5px; color: #6b7685;">Bloc</th>
+                <th style="height: 38px; padding: 0 12px; text-align: left; font-weight: 500; font-size: 12.5px; color: #6b7685;">Modalité</th>
+                <th style="height: 38px; padding: 0 12px; text-align: left; font-weight: 500; font-size: 12.5px; color: #6b7685;">Type</th>
+                <th style="height: 38px; padding: 0 12px; text-align: right; font-weight: 500; font-size: 12.5px; color: #6b7685;">Variables</th>
+                <th style="height: 38px; padding: 0 12px; text-align: right; font-weight: 500; font-size: 12.5px; color: #6b7685;">Repris par</th>
+                <th style="height: 38px; padding: 0 12px; text-align: left; font-weight: 500; font-size: 12.5px; color: #6b7685;">Dernière modification</th>
+                <th style="height: 38px; padding: 0 20px;"></th>
+              </tr>
+            </thead>
+            <tbody>
+            <tr style="border-bottom: 1px solid #dde2e9;">
+              <td style="padding: 12px 20px; font-size: 14px; font-weight: 600; color: #141a22;">Cine</td>
+              <td style="padding: 12px 12px; font-size: 13px; color: #4d5765;">IRM</td>
+              <td style="padding: 12px 12px;"><span style="display: inline-flex; align-items: center; border-radius: 9px; border: 1px solid #dde2e9; background: #eceff3; color: #4d5765; padding: 2px 8px; font-size: 11.5px; font-weight: 500;">Séquence</span></td>
+              <td style="padding: 12px 12px; text-align: right; font-size: 13px; color: #4d5765; font-variant-numeric: tabular-nums;">52</td>
+              <td style="padding: 12px 12px; text-align: right;"><span style="font-size: 13px; color: #4d5765; font-variant-numeric: tabular-nums;">7 études</span></td>
+              <td style="padding: 12px 12px; font-size: 12.5px; color: #9aa5b3;">12 mars 2026</td>
+              <td style="padding: 12px 20px; text-align: right;"><span style="display: inline-flex; align-items: center; height: 30px; padding: 0 12px; border-radius: 10px; border: 1px solid #dde2e9; background: #ffffff; color: #363f4c; font-size: 12.5px; font-weight: 500;">Modifier</span></td>
+            </tr>
+            <tr style="border-bottom: 1px solid #dde2e9;">
+              <td style="padding: 12px 20px; font-size: 14px; font-weight: 600; color: #141a22;">LGE</td>
+              <td style="padding: 12px 12px; font-size: 13px; color: #4d5765;">IRM</td>
+              <td style="padding: 12px 12px;"><span style="display: inline-flex; align-items: center; border-radius: 9px; border: 1px solid #dde2e9; background: #eceff3; color: #4d5765; padding: 2px 8px; font-size: 11.5px; font-weight: 500;">Séquence</span></td>
+              <td style="padding: 12px 12px; text-align: right; font-size: 13px; color: #4d5765; font-variant-numeric: tabular-nums;">41</td>
+              <td style="padding: 12px 12px; text-align: right;"><span style="font-size: 13px; color: #4d5765; font-variant-numeric: tabular-nums;">6 études</span></td>
+              <td style="padding: 12px 12px; font-size: 12.5px; color: #9aa5b3;">28 avril 2026</td>
+              <td style="padding: 12px 20px; text-align: right;"><span style="display: inline-flex; align-items: center; height: 30px; padding: 0 12px; border-radius: 10px; border: 1px solid #dde2e9; background: #ffffff; color: #363f4c; font-size: 12.5px; font-weight: 500;">Modifier</span></td>
+            </tr>
+            <tr style="border-bottom: 1px solid #dde2e9;">
+              <td style="padding: 12px 20px; font-size: 14px; font-weight: 600; color: #141a22;">T1 Mapping Pre</td>
+              <td style="padding: 12px 12px; font-size: 13px; color: #4d5765;">IRM</td>
+              <td style="padding: 12px 12px;"><span style="display: inline-flex; align-items: center; border-radius: 9px; border: 1px solid #dde2e9; background: #eceff3; color: #4d5765; padding: 2px 8px; font-size: 11.5px; font-weight: 500;">Séquence</span></td>
+              <td style="padding: 12px 12px; text-align: right; font-size: 13px; color: #4d5765; font-variant-numeric: tabular-nums;">20</td>
+              <td style="padding: 12px 12px; text-align: right;"><span style="font-size: 13px; color: #4d5765; font-variant-numeric: tabular-nums;">5 études</span></td>
+              <td style="padding: 12px 12px; font-size: 12.5px; color: #9aa5b3;">4 février 2026</td>
+              <td style="padding: 12px 20px; text-align: right;"><span style="display: inline-flex; align-items: center; height: 30px; padding: 0 12px; border-radius: 10px; border: 1px solid #dde2e9; background: #ffffff; color: #363f4c; font-size: 12.5px; font-weight: 500;">Modifier</span></td>
+            </tr>
+            <tr style="border-bottom: 1px solid #dde2e9;">
+              <td style="padding: 12px 20px; font-size: 14px; font-weight: 600; color: #141a22;">T2 Mapping</td>
+              <td style="padding: 12px 12px; font-size: 13px; color: #4d5765;">IRM</td>
+              <td style="padding: 12px 12px;"><span style="display: inline-flex; align-items: center; border-radius: 9px; border: 1px solid #dde2e9; background: #eceff3; color: #4d5765; padding: 2px 8px; font-size: 11.5px; font-weight: 500;">Séquence</span></td>
+              <td style="padding: 12px 12px; text-align: right; font-size: 13px; color: #4d5765; font-variant-numeric: tabular-nums;">20</td>
+              <td style="padding: 12px 12px; text-align: right;"><span style="font-size: 13px; color: #4d5765; font-variant-numeric: tabular-nums;">5 études</span></td>
+              <td style="padding: 12px 12px; font-size: 12.5px; color: #9aa5b3;">4 février 2026</td>
+              <td style="padding: 12px 20px; text-align: right;"><span style="display: inline-flex; align-items: center; height: 30px; padding: 0 12px; border-radius: 10px; border: 1px solid #dde2e9; background: #ffffff; color: #363f4c; font-size: 12.5px; font-weight: 500;">Modifier</span></td>
+            </tr>
+            <tr style="border-bottom: 1px solid #dde2e9;">
+              <td style="padding: 12px 20px; font-size: 14px; font-weight: 600; color: #141a22;">Perfusion de stress</td>
+              <td style="padding: 12px 12px; font-size: 13px; color: #4d5765;">IRM</td>
+              <td style="padding: 12px 12px;"><span style="display: inline-flex; align-items: center; border-radius: 9px; border: 1px solid #dde2e9; background: #eceff3; color: #4d5765; padding: 2px 8px; font-size: 11.5px; font-weight: 500;">Séquence</span></td>
+              <td style="padding: 12px 12px; text-align: right; font-size: 13px; color: #4d5765; font-variant-numeric: tabular-nums;">24</td>
+              <td style="padding: 12px 12px; text-align: right;"><span style="font-size: 13px; color: #4d5765; font-variant-numeric: tabular-nums;">3 études</span></td>
+              <td style="padding: 12px 12px; font-size: 12.5px; color: #9aa5b3;">14 février 2026</td>
+              <td style="padding: 12px 20px; text-align: right;"><span style="display: inline-flex; align-items: center; height: 30px; padding: 0 12px; border-radius: 10px; border: 1px solid #dde2e9; background: #ffffff; color: #363f4c; font-size: 12.5px; font-weight: 500;">Modifier</span></td>
+            </tr>
+            <tr style="border-bottom: 1px solid #dde2e9;">
+              <td style="padding: 12px 20px; font-size: 14px; font-weight: 600; color: #141a22;">Flux 4D</td>
+              <td style="padding: 12px 12px; font-size: 13px; color: #4d5765;">IRM</td>
+              <td style="padding: 12px 12px;"><span style="display: inline-flex; align-items: center; border-radius: 9px; border: 1px solid #dde2e9; background: #eceff3; color: #4d5765; padding: 2px 8px; font-size: 11.5px; font-weight: 500;">Séquence</span></td>
+              <td style="padding: 12px 12px; text-align: right; font-size: 13px; color: #4d5765; font-variant-numeric: tabular-nums;">18</td>
+              <td style="padding: 12px 12px; text-align: right;"><span style="font-size: 13px; color: #4d5765; font-variant-numeric: tabular-nums;">1 étude</span></td>
+              <td style="padding: 12px 12px; font-size: 12.5px; color: #9aa5b3;">3 juin 2026</td>
+              <td style="padding: 12px 20px; text-align: right;"><span style="display: inline-flex; align-items: center; height: 30px; padding: 0 12px; border-radius: 10px; border: 1px solid #dde2e9; background: #ffffff; color: #363f4c; font-size: 12.5px; font-weight: 500;">Modifier</span></td>
+            </tr>
+            <tr style="border-bottom: 1px solid #dde2e9; background: #FFFBF5;">
+              <td style="padding: 12px 20px; font-size: 14px; font-weight: 600; color: #141a22;">Angio-IRM</td>
+              <td style="padding: 12px 12px; font-size: 13px; color: #4d5765;">IRM</td>
+              <td style="padding: 12px 12px;"><span style="display: inline-flex; align-items: center; border-radius: 9px; border: 1px solid #dde2e9; background: #eceff3; color: #4d5765; padding: 2px 8px; font-size: 11.5px; font-weight: 500;">Séquence</span></td>
+              <td style="padding: 12px 12px; text-align: right; font-size: 13px; color: #4d5765; font-variant-numeric: tabular-nums;">12</td>
+              <td style="padding: 12px 12px; text-align: right;"><span style="font-size: 12.5px; color: #EA580C; font-weight: 500;">jamais repris</span></td>
+              <td style="padding: 12px 12px; font-size: 12.5px; color: #9aa5b3;">18 août 2026</td>
+              <td style="padding: 12px 20px; text-align: right;"><span style="display: inline-flex; align-items: center; height: 30px; padding: 0 12px; border-radius: 10px; border: 1px solid #dde2e9; background: #ffffff; color: #363f4c; font-size: 12.5px; font-weight: 500;">Modifier</span></td>
+            </tr>
+            <tr style="border-bottom: 1px solid #dde2e9;">
+              <td style="padding: 12px 20px; font-size: 14px; font-weight: 600; color: #141a22;">Ventricule gauche</td>
+              <td style="padding: 12px 12px; font-size: 13px; color: #4d5765;">IRM</td>
+              <td style="padding: 12px 12px;"><span style="display: inline-flex; align-items: center; border-radius: 9px; border: 1px solid #dde2e9; background: #ffffff; color: #6b7685; padding: 2px 8px; font-size: 11.5px; font-weight: 500;">Section</span></td>
+              <td style="padding: 12px 12px; text-align: right; font-size: 13px; color: #4d5765; font-variant-numeric: tabular-nums;">12</td>
+              <td style="padding: 12px 12px; text-align: right;"><span style="font-size: 13px; color: #4d5765; font-variant-numeric: tabular-nums;">7 études</span></td>
+              <td style="padding: 12px 12px; font-size: 12.5px; color: #9aa5b3;">22 mai 2026</td>
+              <td style="padding: 12px 20px; text-align: right;"><span style="display: inline-flex; align-items: center; height: 30px; padding: 0 12px; border-radius: 10px; border: 1px solid #dde2e9; background: #ffffff; color: #363f4c; font-size: 12.5px; font-weight: 500;">Modifier</span></td>
+            </tr>
+            <tr style="border-bottom: 1px solid #dde2e9;">
+              <td style="padding: 12px 20px; font-size: 14px; font-weight: 600; color: #141a22;">Ventricule droit</td>
+              <td style="padding: 12px 12px; font-size: 13px; color: #4d5765;">IRM</td>
+              <td style="padding: 12px 12px;"><span style="display: inline-flex; align-items: center; border-radius: 9px; border: 1px solid #dde2e9; background: #ffffff; color: #6b7685; padding: 2px 8px; font-size: 11.5px; font-weight: 500;">Section</span></td>
+              <td style="padding: 12px 12px; text-align: right; font-size: 13px; color: #4d5765; font-variant-numeric: tabular-nums;">9</td>
+              <td style="padding: 12px 12px; text-align: right;"><span style="font-size: 13px; color: #4d5765; font-variant-numeric: tabular-nums;">5 études</span></td>
+              <td style="padding: 12px 12px; font-size: 12.5px; color: #9aa5b3;">22 mai 2026</td>
+              <td style="padding: 12px 20px; text-align: right;"><span style="display: inline-flex; align-items: center; height: 30px; padding: 0 12px; border-radius: 10px; border: 1px solid #dde2e9; background: #ffffff; color: #363f4c; font-size: 12.5px; font-weight: 500;">Modifier</span></td>
+            </tr>
+            <tr style="border-bottom: 1px solid #dde2e9;">
+              <td style="padding: 12px 20px; font-size: 14px; font-weight: 600; color: #141a22;">Disponibilité et artéfacts IRM</td>
+              <td style="padding: 12px 12px; font-size: 13px; color: #4d5765;">IRM</td>
+              <td style="padding: 12px 12px;"><span style="display: inline-flex; align-items: center; border-radius: 9px; border: 1px solid #dde2e9; background: #ffffff; color: #6b7685; padding: 2px 8px; font-size: 11.5px; font-weight: 500;">Section</span></td>
+              <td style="padding: 12px 12px; text-align: right; font-size: 13px; color: #4d5765; font-variant-numeric: tabular-nums;">4</td>
+              <td style="padding: 12px 12px; text-align: right;"><span style="font-size: 13px; color: #4d5765; font-variant-numeric: tabular-nums;">9 études</span></td>
+              <td style="padding: 12px 12px; font-size: 12.5px; color: #9aa5b3;">9 janvier 2026</td>
+              <td style="padding: 12px 20px; text-align: right;"><span style="display: inline-flex; align-items: center; height: 30px; padding: 0 12px; border-radius: 10px; border: 1px solid #dde2e9; background: #ffffff; color: #363f4c; font-size: 12.5px; font-weight: 500;">Modifier</span></td>
+            </tr>
+            <tr style="border-bottom: 1px solid #dde2e9;">
+              <td style="padding: 12px 20px; font-size: 14px; font-weight: 600; color: #141a22;">Valves</td>
+              <td style="padding: 12px 12px; font-size: 13px; color: #4d5765;">IRM</td>
+              <td style="padding: 12px 12px;"><span style="display: inline-flex; align-items: center; border-radius: 9px; border: 1px solid #dde2e9; background: #ffffff; color: #6b7685; padding: 2px 8px; font-size: 11.5px; font-weight: 500;">Section</span></td>
+              <td style="padding: 12px 12px; text-align: right; font-size: 13px; color: #4d5765; font-variant-numeric: tabular-nums;">14</td>
+              <td style="padding: 12px 12px; text-align: right;"><span style="font-size: 13px; color: #4d5765; font-variant-numeric: tabular-nums;">2 études</span></td>
+              <td style="padding: 12px 12px; font-size: 12.5px; color: #9aa5b3;">20 juillet 2026</td>
+              <td style="padding: 12px 20px; text-align: right;"><span style="display: inline-flex; align-items: center; height: 30px; padding: 0 12px; border-radius: 10px; border: 1px solid #dde2e9; background: #ffffff; color: #363f4c; font-size: 12.5px; font-weight: 500;">Modifier</span></td>
+            </tr>
+            <tr style="border-bottom: 1px solid #dde2e9;">
+              <td style="padding: 12px 20px; font-size: 14px; font-weight: 600; color: #141a22;">Aorte thoracique</td>
+              <td style="padding: 12px 12px; font-size: 13px; color: #4d5765;">IRM</td>
+              <td style="padding: 12px 12px;"><span style="display: inline-flex; align-items: center; border-radius: 9px; border: 1px solid #dde2e9; background: #ffffff; color: #6b7685; padding: 2px 8px; font-size: 11.5px; font-weight: 500;">Section</span></td>
+              <td style="padding: 12px 12px; text-align: right; font-size: 13px; color: #4d5765; font-variant-numeric: tabular-nums;">6</td>
+              <td style="padding: 12px 12px; text-align: right;"><span style="font-size: 13px; color: #4d5765; font-variant-numeric: tabular-nums;">1 étude</span></td>
+              <td style="padding: 12px 12px; font-size: 12.5px; color: #9aa5b3;">20 juillet 2026</td>
+              <td style="padding: 12px 20px; text-align: right;"><span style="display: inline-flex; align-items: center; height: 30px; padding: 0 12px; border-radius: 10px; border: 1px solid #dde2e9; background: #ffffff; color: #363f4c; font-size: 12.5px; font-weight: 500;">Modifier</span></td>
+            </tr>
+            <tr style="border-bottom: 1px solid #dde2e9;">
+              <td style="padding: 12px 20px; font-size: 14px; font-weight: 600; color: #141a22;">Métabolisme myocardique</td>
+              <td style="padding: 12px 12px; font-size: 13px; color: #4d5765;">PET</td>
+              <td style="padding: 12px 12px;"><span style="display: inline-flex; align-items: center; border-radius: 9px; border: 1px solid #dde2e9; background: #eceff3; color: #4d5765; padding: 2px 8px; font-size: 11.5px; font-weight: 500;">Séquence</span></td>
+              <td style="padding: 12px 12px; text-align: right; font-size: 13px; color: #4d5765; font-variant-numeric: tabular-nums;">16</td>
+              <td style="padding: 12px 12px; text-align: right;"><span style="font-size: 13px; color: #4d5765; font-variant-numeric: tabular-nums;">2 études</span></td>
+              <td style="padding: 12px 12px; font-size: 12.5px; color: #9aa5b3;">6 juillet 2026</td>
+              <td style="padding: 12px 20px; text-align: right;"><span style="display: inline-flex; align-items: center; height: 30px; padding: 0 12px; border-radius: 10px; border: 1px solid #dde2e9; background: #ffffff; color: #363f4c; font-size: 12.5px; font-weight: 500;">Modifier</span></td>
+            </tr>
+            <tr style="border-bottom: 1px solid #dde2e9;">
+              <td style="padding: 12px 20px; font-size: 14px; font-weight: 600; color: #141a22;">Disponibilité et artéfacts PET</td>
+              <td style="padding: 12px 12px; font-size: 13px; color: #4d5765;">PET</td>
+              <td style="padding: 12px 12px;"><span style="display: inline-flex; align-items: center; border-radius: 9px; border: 1px solid #dde2e9; background: #ffffff; color: #6b7685; padding: 2px 8px; font-size: 11.5px; font-weight: 500;">Section</span></td>
+              <td style="padding: 12px 12px; text-align: right; font-size: 13px; color: #4d5765; font-variant-numeric: tabular-nums;">5</td>
+              <td style="padding: 12px 12px; text-align: right;"><span style="font-size: 13px; color: #4d5765; font-variant-numeric: tabular-nums;">2 études</span></td>
+              <td style="padding: 12px 12px; font-size: 12.5px; color: #9aa5b3;">6 juillet 2026</td>
+              <td style="padding: 12px 20px; text-align: right;"><span style="display: inline-flex; align-items: center; height: 30px; padding: 0 12px; border-radius: 10px; border: 1px solid #dde2e9; background: #ffffff; color: #363f4c; font-size: 12.5px; font-weight: 500;">Modifier</span></td>
+            </tr>
+            <tr style="border-bottom: 1px solid #dde2e9;">
+              <td style="padding: 12px 20px; font-size: 14px; font-weight: 600; color: #141a22;">Fonction ventriculaire ETT</td>
+              <td style="padding: 12px 12px; font-size: 13px; color: #4d5765;">ETT</td>
+              <td style="padding: 12px 12px;"><span style="display: inline-flex; align-items: center; border-radius: 9px; border: 1px solid #dde2e9; background: #eceff3; color: #4d5765; padding: 2px 8px; font-size: 11.5px; font-weight: 500;">Séquence</span></td>
+              <td style="padding: 12px 12px; text-align: right; font-size: 13px; color: #4d5765; font-variant-numeric: tabular-nums;">22</td>
+              <td style="padding: 12px 12px; text-align: right;"><span style="font-size: 13px; color: #4d5765; font-variant-numeric: tabular-nums;">3 études</span></td>
+              <td style="padding: 12px 12px; font-size: 12.5px; color: #9aa5b3;">20 juillet 2026</td>
+              <td style="padding: 12px 20px; text-align: right;"><span style="display: inline-flex; align-items: center; height: 30px; padding: 0 12px; border-radius: 10px; border: 1px solid #dde2e9; background: #ffffff; color: #363f4c; font-size: 12.5px; font-weight: 500;">Modifier</span></td>
+            </tr>
+            <tr style="border-bottom: 1px solid #dde2e9;">
+              <td style="padding: 12px 20px; font-size: 14px; font-weight: 600; color: #141a22;">Valve mitrale ETT</td>
+              <td style="padding: 12px 12px; font-size: 13px; color: #4d5765;">ETT</td>
+              <td style="padding: 12px 12px;"><span style="display: inline-flex; align-items: center; border-radius: 9px; border: 1px solid #dde2e9; background: #ffffff; color: #6b7685; padding: 2px 8px; font-size: 11.5px; font-weight: 500;">Section</span></td>
+              <td style="padding: 12px 12px; text-align: right; font-size: 13px; color: #4d5765; font-variant-numeric: tabular-nums;">18</td>
+              <td style="padding: 12px 12px; text-align: right;"><span style="font-size: 13px; color: #4d5765; font-variant-numeric: tabular-nums;">2 études</span></td>
+              <td style="padding: 12px 12px; font-size: 12.5px; color: #9aa5b3;">20 juillet 2026</td>
+              <td style="padding: 12px 20px; text-align: right;"><span style="display: inline-flex; align-items: center; height: 30px; padding: 0 12px; border-radius: 10px; border: 1px solid #dde2e9; background: #ffffff; color: #363f4c; font-size: 12.5px; font-weight: 500;">Modifier</span></td>
+            </tr>
+            <tr style="border-bottom: 1px solid #dde2e9;">
+              <td style="padding: 12px 20px; font-size: 14px; font-weight: 600; color: #141a22;">Calcifications coronaires</td>
+              <td style="padding: 12px 12px; font-size: 13px; color: #4d5765;">Scanner</td>
+              <td style="padding: 12px 12px;"><span style="display: inline-flex; align-items: center; border-radius: 9px; border: 1px solid #dde2e9; background: #eceff3; color: #4d5765; padding: 2px 8px; font-size: 11.5px; font-weight: 500;">Séquence</span></td>
+              <td style="padding: 12px 12px; text-align: right; font-size: 13px; color: #4d5765; font-variant-numeric: tabular-nums;">9</td>
+              <td style="padding: 12px 12px; text-align: right;"><span style="font-size: 13px; color: #4d5765; font-variant-numeric: tabular-nums;">1 étude</span></td>
+              <td style="padding: 12px 12px; font-size: 12.5px; color: #9aa5b3;">2 mai 2026</td>
+              <td style="padding: 12px 20px; text-align: right;"><span style="display: inline-flex; align-items: center; height: 30px; padding: 0 12px; border-radius: 10px; border: 1px solid #dde2e9; background: #ffffff; color: #363f4c; font-size: 12.5px; font-weight: 500;">Modifier</span></td>
+            </tr>
+            <tr style="">
+              <td style="padding: 12px 20px; font-size: 14px; font-weight: 600; color: #141a22;">Disponibilité et artéfacts scanner</td>
+              <td style="padding: 12px 12px; font-size: 13px; color: #4d5765;">Scanner</td>
+              <td style="padding: 12px 12px;"><span style="display: inline-flex; align-items: center; border-radius: 9px; border: 1px solid #dde2e9; background: #ffffff; color: #6b7685; padding: 2px 8px; font-size: 11.5px; font-weight: 500;">Section</span></td>
+              <td style="padding: 12px 12px; text-align: right; font-size: 13px; color: #4d5765; font-variant-numeric: tabular-nums;">4</td>
+              <td style="padding: 12px 12px; text-align: right;"><span style="font-size: 13px; color: #4d5765; font-variant-numeric: tabular-nums;">1 étude</span></td>
+              <td style="padding: 12px 12px; font-size: 12.5px; color: #9aa5b3;">2 mai 2026</td>
+              <td style="padding: 12px 20px; text-align: right;"><span style="display: inline-flex; align-items: center; height: 30px; padding: 0 12px; border-radius: 10px; border: 1px solid #dde2e9; background: #ffffff; color: #363f4c; font-size: 12.5px; font-weight: 500;">Modifier</span></td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+  </main>
+</div>
+</x-dc>
+</body>
+</html>

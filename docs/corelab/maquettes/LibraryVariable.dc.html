@@ -1,0 +1,314 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600;700;800&display=swap">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body { margin: 0; font-family: 'Inter Tight', ui-sans-serif, system-ui, sans-serif; -webkit-font-smoothing: antialiased; color: #141a22; }
+    a { color: #173d6e; text-decoration: none; }
+    a:hover { color: #0e2542; }
+  </style>
+</helmet>
+
+
+<div style="display: flex; width: 1440px; height: 1160px; background: #f5f7fa; overflow: hidden;">
+
+  <aside style="width: 256px; flex-shrink: 0; background: #122f54; color: #ffffff; display: flex; flex-direction: column;">
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 20px 24px; text-align: center;">
+      <div style="height: 36px; width: 72px; display: flex; align-items: flex-start; justify-content: center; overflow: hidden;">
+        <img src="logo.png" alt="Larib Portal" style="width: 72px; filter: brightness(0) invert(1);">
+      </div>
+      <span style="font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">Larib Portal</span>
+    </div>
+
+    <nav style="flex: 1; display: flex; flex-direction: column; gap: 24px; padding: 16px 12px; overflow-y: auto;">
+      <div>
+        <p style="margin: 0 0 8px; padding: 0 12px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #7197c2;">Vue d'ensemble</p>
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+          <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #ffffff;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>
+            <span>Tableau de bord</span>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <p style="margin: 0 0 8px; padding: 0 12px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #7197c2;">Applications</p>
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+          <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #ffffff;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10 12 5 2 10l10 5z"/><path d="M6 12v5c0 1 2.5 2.5 6 2.5s6-1.5 6-2.5v-5"/></svg>
+            <span>Training Best-of</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #ffffff;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4"/><path d="M16 3v4"/><path d="M3 10h18"/></svg>
+            <span>Gestion des congés</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #ffffff;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4h6a3 3 0 0 1 3 3v13a2.5 2.5 0 0 0-2.5-2.5H2z"/><path d="M22 4h-6a3 3 0 0 0-3 3v13a2.5 2.5 0 0 1 2.5-2.5H22z"/></svg>
+            <span>Publications</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #ffffff;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21a9 9 0 1 0-9-9"/><path d="M3 12h4"/><circle cx="12" cy="12" r="3"/><path d="m16 16 3 3"/></svg>
+            <span>Core Lab</span>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <p style="margin: 0 0 8px; padding: 0 12px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #7197c2;">Administration</p>
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+          <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #ffffff;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10 12 5 2 10l10 5z"/><path d="M6 12v5c0 1 2.5 2.5 6 2.5s6-1.5 6-2.5v-5"/></svg>
+            <span style="flex: 1;">Training Best-of</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ec3b68" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #ffffff;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4"/><path d="M16 3v4"/><path d="M3 10h18"/></svg>
+            <span style="flex: 1;">Gestion des congés</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ec3b68" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #ffffff;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4h6a3 3 0 0 1 3 3v13a2.5 2.5 0 0 0-2.5-2.5H2z"/><path d="M22 4h-6a3 3 0 0 0-3 3v13a2.5 2.5 0 0 1 2.5-2.5H22z"/></svg>
+            <span style="flex: 1;">Publications</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ec3b68" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <div style="position: relative; display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; background: #173d6e; color: #ffffff;">
+            <span style="position: absolute; left: -12px; top: 50%; height: 24px; width: 4px; transform: translateY(-50%); border-radius: 0 4px 4px 0; background: #ec3b68;"></span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f55c83" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21a9 9 0 1 0-9-9"/><path d="M3 12h4"/><circle cx="12" cy="12" r="3"/><path d="m16 16 3 3"/></svg>
+            <span style="flex: 1;">Core Lab</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ec3b68" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #ffffff;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/></svg>
+            <span>Gestion des utilisateurs</span>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <div style="border-top: 1px solid #173d6e; padding: 12px;">
+      <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; background: #173d6e;">
+        <span style="width: 32px; height: 32px; border-radius: 50%; background: #ec3b68; color: #ffffff; font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center;">PD</span>
+        <div style="min-width: 0; flex: 1;">
+          <div style="font-size: 14px; font-weight: 500; color: #ffffff;">P. Dupont</div>
+          <div style="font-size: 12px; color: #aac0dc;">Data manager</div>
+        </div>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+      </div>
+    </div>
+  </aside>
+
+  <main style="flex: 1; min-width: 0; display: flex; flex-direction: column; overflow: hidden;">
+    <div style="flex-shrink: 0; height: 56px; background: #ffffff; border-bottom: 1px solid #dde2e9; display: flex; align-items: center; gap: 24px; padding: 0 32px;">
+      <span style="display: inline-flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #9aa5b3;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ec3b68" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Administration
+      </span>
+      <span style="width: 1px; height: 22px; background: #dde2e9;"></span>
+      <nav style="display: flex; align-items: center; gap: 4px; height: 100%;">
+        <span style="display: inline-flex; align-items: center; height: 100%; padding: 0 14px; font-size: 14px; color: #6b7685;">Vue d'ensemble</span>
+        <span style="display: inline-flex; align-items: center; height: 100%; padding: 0 14px; font-size: 14px; color: #6b7685;">Études</span>
+        <span style="display: inline-flex; align-items: center; height: 100%; padding: 0 4px; font-size: 14px; font-weight: 600; color: #141a22; box-shadow: inset 0 -2px 0 #d61f55;">Bibliothèque</span>
+        <span style="display: inline-flex; align-items: center; height: 100%; padding: 0 14px; font-size: 14px; color: #6b7685;">Utilisateurs</span>
+        <span style="display: inline-flex; align-items: center; height: 100%; padding: 0 14px; font-size: 14px; color: #6b7685;">Journal d'audit</span>
+      </nav>
+    </div>
+    <div style="flex: 1; min-height: 0; display: flex; flex-direction: column; overflow: hidden; background: linear-gradient(to bottom, #ffffff 0px, #f5f7fa 200px);">
+
+      <div style="flex-shrink: 0; padding: 22px 28px 16px; border-bottom: 1px solid #dde2e9; background: #ffffff;">
+        <div style="display: flex; align-items: center; gap: 7px; font-size: 12.5px; color: #9aa5b3;">
+          <span id="crumb-library">Bibliothèque</span>
+          <span>›</span>
+          <span id="crumb-variables">Variables</span>
+          <span>›</span>
+          <span>IRM</span>
+          <span>›</span>
+          <span style="color: #4d5765;">Cinétique segmentaire</span>
+        </div>
+        <div style="margin-top: 9px; display: flex; align-items: flex-start; justify-content: space-between; gap: 16px;">
+          <div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <h1 style="margin: 0; font-size: 25px; font-weight: 700; letter-spacing: -0.02em; color: #141a22;">Cinétique segmentaire</h1>
+              <span style="display: inline-flex; align-items: center; border-radius: 9px; border: 1px solid #dde2e9; background: #d6e0ee; color: #173d6e; padding: 2px 9px; font-size: 11.5px; font-weight: 500;">Bull&#39;s eye 17</span>
+              <span style="display: inline-flex; align-items: center; border-radius: 9px; border: 1px solid #dde2e9; background: #eceff3; color: #4d5765; padding: 2px 9px; font-size: 11.5px; font-weight: 500;">IRM</span>
+            </div>
+            <p style="margin: 7px 0 0; font-size: 13px; color: #6b7685;">Identifiant <span style="font-family: ui-monospace, SFMono-Regular, Menlo, monospace;">wall_motion_17</span> · reprise par 7 blocs · dernière modification le 22 mai 2026 par Pr. Dubois</p>
+          </div>
+          <div style="display: flex; align-items: center; gap: 9px; flex-shrink: 0;">
+            <span style="display: inline-flex; align-items: center; gap: 7px; height: 36px; padding: 0 14px; border-radius: 10px; border: 1px solid #dde2e9; background: #ffffff; color: #363f4c; font-size: 13.5px; font-weight: 500;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6b7685" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+              Historique
+            </span>
+            <span style="display: inline-flex; align-items: center; gap: 8px; height: 36px; padding: 0 16px; border-radius: 10px; background: linear-gradient(135deg, #122f54, #0a1b30); color: #ffffff; font-size: 13.5px; font-weight: 500; box-shadow: 0 1px 2px rgba(16,28,48,0.06);">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8"/><path d="M7 3v5h8"/></svg>
+              Enregistrer la variable
+            </span>
+          </div>
+        </div>
+
+        <div style="margin-top: 14px; display: flex; align-items: flex-start; gap: 10px; border: 1px solid #BFDBFE; background: #EFF6FF; border-radius: 12px; padding: 11px 14px;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-top: 1px; flex-shrink: 0;"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+          <div>
+            <div style="font-size: 13px; font-weight: 600; color: #1e3a8a;">Un bull&#39;s eye est une catégorielle répétée sur chaque segment</div>
+            <div style="font-size: 12.5px; line-height: 1.5; color: #1e40af; margin-top: 2px;">Le type fixe le découpage, le jeu de valeurs fixe les réponses possibles. Une lecture produit donc 17 réponses catégorielles, comparées segment par segment. Changer le jeu de valeurs ici ne touche aucun bloc : chacun garde la copie prise à l&#39;import.</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="flex: 1; min-height: 0; display: flex; overflow: hidden;">
+
+        <div style="width: 300px; flex-shrink: 0; border-right: 1px solid #dde2e9; background: #fafbfc; display: flex; flex-direction: column;">
+          <div style="padding: 13px 16px 11px; border-bottom: 1px solid #dde2e9; background: #ffffff;">
+            <span style="font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #9aa5b3;">Type de variable</span>
+          </div>
+          <div style="padding: 8px; display: flex; flex-direction: column; gap: 2px;">
+            <div style="border-radius: 10px; padding: 8px 11px; border: 1px solid transparent; background: #ffffff;"><div style="font-size: 13.5px; font-weight: 500; color: #363f4c;">Numérique</div><div style="font-size: 11.5px; color: #9aa5b3; margin-top: 1px;">unité, bornes, décimales</div></div>
+            <div style="border-radius: 10px; padding: 8px 11px; border: 1px solid transparent; background: #ffffff;"><div style="font-size: 13.5px; font-weight: 500; color: #363f4c;">Booléenne</div><div style="font-size: 11.5px; color: #9aa5b3; margin-top: 1px;">libellés du oui et du non</div></div>
+            <div style="border-radius: 10px; padding: 8px 11px; border: 1px solid transparent; background: #ffffff;"><div style="font-size: 13.5px; font-weight: 500; color: #363f4c;">Catégorielle</div><div style="font-size: 11.5px; color: #9aa5b3; margin-top: 1px;">un jeu de valeurs, une réponse</div></div>
+            <div style="border-radius: 10px; padding: 8px 11px; border: 1px solid transparent; background: #ffffff;"><div style="font-size: 13.5px; font-weight: 500; color: #363f4c;">Échelle</div><div style="font-size: 11.5px; color: #9aa5b3; margin-top: 1px;">crans, rendu étoiles ou curseur</div></div>
+            <div style="border-radius: 10px; padding: 8px 11px; border: 1px solid #aac0dc; background: #f4f8fd; box-shadow: inset 2px 0 0 #173d6e;"><div style="font-size: 13.5px; font-weight: 500; color: #141a22;">Bull's eye</div><div style="font-size: 11.5px; color: #173d6e; margin-top: 1px;">un jeu de valeurs par segment</div></div>
+            <div style="border-radius: 10px; padding: 8px 11px; border: 1px solid transparent; background: #ffffff;"><div style="font-size: 13.5px; font-weight: 500; color: #363f4c;">Texte</div><div style="font-size: 11.5px; color: #9aa5b3; margin-top: 1px;">longueur maximale</div></div>
+          </div>
+          <div style="padding: 11px 16px 10px; border-top: 1px solid #dde2e9; border-bottom: 1px solid #dde2e9; background: #ffffff;">
+            <span style="font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #9aa5b3;">Paramètres du bull&#39;s eye</span>
+            <div style="font-size: 11.5px; color: #9aa5b3; margin-top: 2px;">Chaque type a les siens.</div>
+          </div>
+          <div style="flex: 1; overflow: hidden; padding: 14px 16px; display: flex; flex-direction: column; gap: 14px;">
+          <div style="display: flex; flex-direction: column; gap: 5px;"><span style="font-size: 12px; font-weight: 500; color: #6b7685;">Modèle de segmentation</span><div style="display: flex; gap: 3px; padding: 3px; border-radius: 11px; border: 1px solid #dde2e9; background: #ffffff;"><span style="flex: 1; text-align: center; height: 30px; line-height: 30px; border-radius: 8px; color: #4d5765; font-size: 12.5px; font-weight: 500;">16</span><span style="flex: 1; text-align: center; height: 30px; line-height: 30px; border-radius: 8px; background: #122f54; color: #ffffff; font-size: 12.5px; font-weight: 500;">17</span><span style="flex: 1; text-align: center; height: 30px; line-height: 30px; border-radius: 8px; color: #4d5765; font-size: 12.5px; font-weight: 500;">32</span></div></div>
+          <div style="display: flex; flex-direction: column; gap: 5px;"><span style="font-size: 12px; font-weight: 500; color: #6b7685;">Jeu de valeurs</span><div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; border-radius: 10px; border: 1px solid #aac0dc; background: #f4f8fd; padding: 9px 11px;"><div><div style="font-size: 13px; font-weight: 500; color: #141a22;">Cinétique segmentaire AHA</div><div style="font-size: 11.5px; color: #173d6e; margin-top: 1px;">5 valeurs · repris par 6 variables</div></div><span id="change-valueset" style="flex-shrink: 0; height: 28px; line-height: 26px; padding: 0 10px; border-radius: 9px; border: 1px solid #aac0dc; background: #ffffff; color: #173d6e; font-size: 12px; font-weight: 500;">Changer</span></div></div>
+          <div style="display: flex; flex-direction: column; gap: 5px;"><span style="font-size: 12px; font-weight: 500; color: #6b7685;">Valeur par défaut de chaque segment</span><div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; height: 34px; padding: 0 11px; border-radius: 10px; border: 1px solid #dde2e9; background: #ffffff; font-size: 13px; color: #141a22;"><span>Normal</span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9aa5b3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></div></div>
+          <div style="display: flex; flex-direction: column; gap: 5px;"><span style="font-size: 12px; font-weight: 500; color: #6b7685;">Mode de saisie du lecteur</span><div style="display: flex; gap: 3px; padding: 3px; border-radius: 11px; border: 1px solid #dde2e9; background: #ffffff;"><span style="flex: 1; text-align: center; height: 30px; line-height: 30px; border-radius: 8px; background: #122f54; color: #ffffff; font-size: 12.5px; font-weight: 500;">Pinceau</span><span style="flex: 1; text-align: center; height: 30px; line-height: 30px; border-radius: 8px; color: #4d5765; font-size: 12.5px; font-weight: 500;">Défilement</span></div><div style="font-size: 11.5px; line-height: 1.5; color: #9aa5b3; margin-top: 4px;">Pinceau : le lecteur choisit une valeur dans la légende puis peint les segments. Défilement : chaque clic sur un segment passe à la valeur suivante.</div></div>
+          </div>
+        </div>
+
+        <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; overflow: hidden;">
+          <div style="padding: 13px 20px 11px; border-bottom: 1px solid #dde2e9; background: #ffffff; display: flex; align-items: center; justify-content: space-between;">
+            <span style="font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #9aa5b3;">Aperçu de la saisie</span>
+            <span style="font-size: 11.5px; color: #9aa5b3;">Ce que le lecteur verra</span>
+          </div>
+          <div style="flex: 1; overflow: hidden; padding: 22px 20px; display: flex; flex-direction: column; align-items: center; gap: 16px;">
+            <div style="background: #ffffff; border: 1px solid #dde2e9; border-radius: 16px; padding: 14px; box-shadow: 0 1px 3px rgba(16,28,48,0.08), 0 1px 2px rgba(16,28,48,0.04);">
+              <svg width="316" height="316" viewBox="0 0 316 316">
+        <path d="M 92.00 43.68 A 132 132 0 0 1 224.00 43.68 L 208.00 71.40 A 100 100 0 0 0 108.00 71.40 Z" fill="#ECFDF5" stroke="#ffffff" stroke-width="2.5"/>
+        <text x="158.0" y="42.0" text-anchor="middle" dominant-baseline="central" font-size="12" font-weight="600" fill="#047857">N</text>
+        <path d="M 224.00 43.68 A 132 132 0 0 1 290.00 158.00 L 258.00 158.00 A 100 100 0 0 0 208.00 71.40 Z" fill="#ECFDF5" stroke="#ffffff" stroke-width="2.5"/>
+        <text x="258.5" y="100.0" text-anchor="middle" dominant-baseline="central" font-size="12" font-weight="600" fill="#047857">N</text>
+        <path d="M 290.00 158.00 A 132 132 0 0 1 224.00 272.32 L 208.00 244.60 A 100 100 0 0 0 258.00 158.00 Z" fill="#FEF2F2" stroke="#ffffff" stroke-width="2.5"/>
+        <text x="258.5" y="216.0" text-anchor="middle" dominant-baseline="central" font-size="12" font-weight="600" fill="#DC2626">A</text>
+        <path d="M 224.00 272.32 A 132 132 0 0 1 92.00 272.32 L 108.00 244.60 A 100 100 0 0 0 208.00 244.60 Z" fill="#FFF3E9" stroke="#ffffff" stroke-width="2.5"/>
+        <text x="158.0" y="274.0" text-anchor="middle" dominant-baseline="central" font-size="12" font-weight="600" fill="#EA580C">H</text>
+        <path d="M 92.00 272.32 A 132 132 0 0 1 26.00 158.00 L 58.00 158.00 A 100 100 0 0 0 108.00 244.60 Z" fill="#ECFDF5" stroke="#ffffff" stroke-width="2.5"/>
+        <text x="57.5" y="216.0" text-anchor="middle" dominant-baseline="central" font-size="12" font-weight="600" fill="#047857">N</text>
+        <path d="M 26.00 158.00 A 132 132 0 0 1 92.00 43.68 L 108.00 71.40 A 100 100 0 0 0 58.00 158.00 Z" fill="#ECFDF5" stroke="#ffffff" stroke-width="2.5"/>
+        <text x="57.5" y="100.0" text-anchor="middle" dominant-baseline="central" font-size="12" font-weight="600" fill="#047857">N</text>
+        <path d="M 108.00 71.40 A 100 100 0 0 1 208.00 71.40 L 192.00 99.11 A 68 68 0 0 0 124.00 99.11 Z" fill="#ECFDF5" stroke="#ffffff" stroke-width="2.5"/>
+        <text x="158.0" y="74.0" text-anchor="middle" dominant-baseline="central" font-size="12" font-weight="600" fill="#047857">N</text>
+        <path d="M 208.00 71.40 A 100 100 0 0 1 258.00 158.00 L 226.00 158.00 A 68 68 0 0 0 192.00 99.11 Z" fill="#ECFDF5" stroke="#ffffff" stroke-width="2.5"/>
+        <text x="230.7" y="116.0" text-anchor="middle" dominant-baseline="central" font-size="12" font-weight="600" fill="#047857">N</text>
+        <path d="M 258.00 158.00 A 100 100 0 0 1 208.00 244.60 L 192.00 216.89 A 68 68 0 0 0 226.00 158.00 Z" fill="#FEF2F2" stroke="#ffffff" stroke-width="2.5"/>
+        <text x="230.7" y="200.0" text-anchor="middle" dominant-baseline="central" font-size="12" font-weight="600" fill="#DC2626">A</text>
+        <path d="M 208.00 244.60 A 100 100 0 0 1 108.00 244.60 L 124.00 216.89 A 68 68 0 0 0 192.00 216.89 Z" fill="#FEF2F2" stroke="#ffffff" stroke-width="2.5"/>
+        <text x="158.0" y="242.0" text-anchor="middle" dominant-baseline="central" font-size="12" font-weight="600" fill="#DC2626">A</text>
+        <path d="M 108.00 244.60 A 100 100 0 0 1 58.00 158.00 L 90.00 158.00 A 68 68 0 0 0 124.00 216.89 Z" fill="#FFF3E9" stroke="#ffffff" stroke-width="2.5"/>
+        <text x="85.3" y="200.0" text-anchor="middle" dominant-baseline="central" font-size="12" font-weight="600" fill="#EA580C">H</text>
+        <path d="M 58.00 158.00 A 100 100 0 0 1 108.00 71.40 L 124.00 99.11 A 68 68 0 0 0 90.00 158.00 Z" fill="#ECFDF5" stroke="#ffffff" stroke-width="2.5"/>
+        <text x="85.3" y="116.0" text-anchor="middle" dominant-baseline="central" font-size="12" font-weight="600" fill="#047857">N</text>
+        <path d="M 109.92 109.92 A 68 68 0 0 1 206.08 109.92 L 182.04 133.96 A 34 34 0 0 0 133.96 133.96 Z" fill="#ECFDF5" stroke="#ffffff" stroke-width="2.5"/>
+        <text x="158.0" y="107.0" text-anchor="middle" dominant-baseline="central" font-size="12" font-weight="600" fill="#047857">N</text>
+        <path d="M 206.08 109.92 A 68 68 0 0 1 206.08 206.08 L 182.04 182.04 A 34 34 0 0 0 182.04 133.96 Z" fill="#ECFDF5" stroke="#ffffff" stroke-width="2.5"/>
+        <text x="209.0" y="158.0" text-anchor="middle" dominant-baseline="central" font-size="12" font-weight="600" fill="#047857">N</text>
+        <path d="M 206.08 206.08 A 68 68 0 0 1 109.92 206.08 L 133.96 182.04 A 34 34 0 0 0 182.04 182.04 Z" fill="#FFF3E9" stroke="#ffffff" stroke-width="2.5"/>
+        <text x="158.0" y="209.0" text-anchor="middle" dominant-baseline="central" font-size="12" font-weight="600" fill="#EA580C">H</text>
+        <path d="M 109.92 206.08 A 68 68 0 0 1 109.92 109.92 L 133.96 133.96 A 34 34 0 0 0 133.96 182.04 Z" fill="#ECFDF5" stroke="#ffffff" stroke-width="2.5"/>
+        <text x="107.0" y="158.0" text-anchor="middle" dominant-baseline="central" font-size="12" font-weight="600" fill="#047857">N</text>
+        <circle cx="158" cy="158" r="34" fill="#ECFDF5" stroke="#ffffff" stroke-width="2.5"/>
+        <text x="158" y="158" text-anchor="middle" dominant-baseline="central" font-size="12" font-weight="600" fill="#047857">N</text>
+        <circle cx="158" cy="158" r="132" fill="none" stroke="#dde2e9" stroke-width="1"/>
+              </svg>
+            </div>
+            <div style="display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; max-width: 420px;">
+            <span style="display: inline-flex; align-items: center; gap: 6px; border-radius: 9px; border: 1px solid #A7F3D0; background: #ECFDF5; padding: 3px 9px; font-size: 12px; color: #047857;"><span style="font-weight: 700;">N</span>Normal</span>
+            <span style="display: inline-flex; align-items: center; gap: 6px; border-radius: 9px; border: 1px solid #FDBA74; background: #FFF3E9; padding: 3px 9px; font-size: 12px; color: #EA580C;"><span style="font-weight: 700;">H</span>Hypokinétique</span>
+            <span style="display: inline-flex; align-items: center; gap: 6px; border-radius: 9px; border: 1px solid #FECACA; background: #FEF2F2; padding: 3px 9px; font-size: 12px; color: #DC2626;"><span style="font-weight: 700;">A</span>Akinétique</span>
+            <span style="display: inline-flex; align-items: center; gap: 6px; border-radius: 9px; border: 1px solid #FFB6C6; background: #FFE4EC; padding: 3px 9px; font-size: 12px; color: #b01547;"><span style="font-weight: 700;">D</span>Dyskinétique</span>
+            <span style="display: inline-flex; align-items: center; gap: 6px; border-radius: 9px; border: 1px solid #dde2e9; background: #eceff3; padding: 3px 9px; font-size: 12px; color: #6b7685;"><span style="font-weight: 700;">NA</span>Non analysable</span>
+            </div>
+            <p style="margin: 0; max-width: 400px; text-align: center; font-size: 12.5px; line-height: 1.6; color: #6b7685;">Le lecteur clique un segment pour faire défiler les valeurs du jeu. En calibration, chaque segment est comparé séparément à la référence.</p>
+          </div>
+        </div>
+
+        <div style="width: 380px; flex-shrink: 0; border-left: 1px solid #dde2e9; background: #ffffff; display: flex; flex-direction: column; overflow: hidden;">
+          <div style="padding: 13px 18px 11px; border-bottom: 1px solid #dde2e9; display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+            <span style="font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #9aa5b3;">Jeu de valeurs</span>
+            <span style="display: inline-flex; align-items: center; gap: 5px; height: 28px; padding: 0 10px; border-radius: 9px; border: 1px solid #dde2e9; background: #ffffff; color: #363f4c; font-size: 12.5px; font-weight: 500;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#6b7685" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+              Valeur
+            </span>
+          </div>
+          <div style="padding: 6px 18px 12px; border-bottom: 1px solid #dde2e9;">
+          <div style="display: flex; align-items: center; gap: 10px; padding: 9px 4px; border-bottom: 1px solid #eceff3;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#c4ccd6" stroke-width="2" stroke-linecap="round"><path d="M4 8h16"/><path d="M4 16h16"/></svg>
+            <span style="width: 26px; height: 22px; flex-shrink: 0; border-radius: 7px; border: 1px solid #A7F3D0; background: #ECFDF5; color: #047857; font-size: 11px; font-weight: 700; text-align: center; line-height: 20px;">N</span>
+            <span style="flex: 1; min-width: 0; font-size: 13px; color: #141a22; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Normal</span>
+            <span style="width: 18px; height: 18px; flex-shrink: 0; border-radius: 6px; border: 1px solid #A7F3D0; background: #ECFDF5;"></span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px; padding: 9px 4px; border-bottom: 1px solid #eceff3;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#c4ccd6" stroke-width="2" stroke-linecap="round"><path d="M4 8h16"/><path d="M4 16h16"/></svg>
+            <span style="width: 26px; height: 22px; flex-shrink: 0; border-radius: 7px; border: 1px solid #FDBA74; background: #FFF3E9; color: #EA580C; font-size: 11px; font-weight: 700; text-align: center; line-height: 20px;">H</span>
+            <span style="flex: 1; min-width: 0; font-size: 13px; color: #141a22; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Hypokinétique</span>
+            <span style="width: 18px; height: 18px; flex-shrink: 0; border-radius: 6px; border: 1px solid #FDBA74; background: #FFF3E9;"></span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px; padding: 9px 4px; border-bottom: 1px solid #eceff3;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#c4ccd6" stroke-width="2" stroke-linecap="round"><path d="M4 8h16"/><path d="M4 16h16"/></svg>
+            <span style="width: 26px; height: 22px; flex-shrink: 0; border-radius: 7px; border: 1px solid #FECACA; background: #FEF2F2; color: #DC2626; font-size: 11px; font-weight: 700; text-align: center; line-height: 20px;">A</span>
+            <span style="flex: 1; min-width: 0; font-size: 13px; color: #141a22; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Akinétique</span>
+            <span style="width: 18px; height: 18px; flex-shrink: 0; border-radius: 6px; border: 1px solid #FECACA; background: #FEF2F2;"></span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px; padding: 9px 4px; border-bottom: 1px solid #eceff3;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#c4ccd6" stroke-width="2" stroke-linecap="round"><path d="M4 8h16"/><path d="M4 16h16"/></svg>
+            <span style="width: 26px; height: 22px; flex-shrink: 0; border-radius: 7px; border: 1px solid #FFB6C6; background: #FFE4EC; color: #b01547; font-size: 11px; font-weight: 700; text-align: center; line-height: 20px;">D</span>
+            <span style="flex: 1; min-width: 0; font-size: 13px; color: #141a22; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Dyskinétique</span>
+            <span style="width: 18px; height: 18px; flex-shrink: 0; border-radius: 6px; border: 1px solid #FFB6C6; background: #FFE4EC;"></span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px; padding: 9px 4px; ">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#c4ccd6" stroke-width="2" stroke-linecap="round"><path d="M4 8h16"/><path d="M4 16h16"/></svg>
+            <span style="width: 26px; height: 22px; flex-shrink: 0; border-radius: 7px; border: 1px solid #dde2e9; background: #eceff3; color: #6b7685; font-size: 11px; font-weight: 700; text-align: center; line-height: 20px;">NA</span>
+            <span style="flex: 1; min-width: 0; font-size: 13px; color: #141a22; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Non analysable</span>
+            <span style="width: 18px; height: 18px; flex-shrink: 0; border-radius: 6px; border: 1px solid #dde2e9; background: #eceff3;"></span>
+          </div>
+            <div style="margin-top: 9px; font-size: 11.5px; line-height: 1.5; color: #9aa5b3;">L&#39;ordre fixe le défilement au clic et le tri des exports. Ce jeu est partagé : le modifier ici change ce que les prochaines variables importeront.</div>
+          </div>
+
+          <div style="padding: 13px 18px; border-bottom: 1px solid #dde2e9;">
+            <span style="font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #9aa5b3;">Comparaison en calibration</span>
+            <div style="margin-top: 10px; display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+              <span style="font-size: 13px; color: #363f4c;">Segments discordants tolérés</span>
+              <span style="display: inline-flex; align-items: center; justify-content: center; width: 64px; height: 32px; border-radius: 10px; border: 1px solid #dde2e9; background: #ffffff; font-size: 13px; color: #141a22; font-variant-numeric: tabular-nums;">1</span>
+            </div>
+            <div style="margin-top: 8px; font-size: 11.5px; line-height: 1.5; color: #9aa5b3;">Sur 17 segments comparés à la référence. Au-delà, la variable est comptée en écart.</div>
+          </div>
+
+          <div style="flex: 1; overflow: hidden; padding: 13px 18px;">
+            <span style="font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #9aa5b3;">Où cette variable est partie</span>
+            <div style="margin-top: 6px;">
+          <div style="display: flex; align-items: center; gap: 9px; padding: 8px 0; border-bottom: 1px solid #eceff3;"><span style="flex-shrink: 0; width: 30px; height: 24px; border-radius: 7px; background: #eceff3; color: #4d5765; font-size: 10px; font-weight: 700; text-align: center; line-height: 24px;">IRM</span><div style="min-width: 0;"><div style="font-size: 12.5px; font-weight: 500; color: #141a22;">Ciné</div><div style="font-size: 11.5px; color: #9aa5b3;">copie identique</div></div></div>
+          <div style="display: flex; align-items: center; gap: 9px; padding: 8px 0; border-bottom: 1px solid #eceff3;"><span style="flex-shrink: 0; width: 30px; height: 24px; border-radius: 7px; background: #eceff3; color: #4d5765; font-size: 10px; font-weight: 700; text-align: center; line-height: 24px;">IRM</span><div style="min-width: 0;"><div style="font-size: 12.5px; font-weight: 500; color: #141a22;">Ciné de stress</div><div style="font-size: 11.5px; color: #9aa5b3;">copie identique</div></div></div>
+          <div style="display: flex; align-items: center; gap: 9px; padding: 8px 0; border-bottom: 1px solid #eceff3;"><span style="flex-shrink: 0; width: 30px; height: 24px; border-radius: 7px; background: #eceff3; color: #4d5765; font-size: 10px; font-weight: 700; text-align: center; line-height: 24px;">IRM</span><div style="min-width: 0;"><div style="font-size: 12.5px; font-weight: 500; color: #141a22;">Ventricule gauche</div><div style="font-size: 11.5px; color: #9aa5b3;">copie identique</div></div></div>
+          <div style="display: flex; align-items: center; gap: 9px; padding: 8px 0; border-bottom: 1px solid #eceff3;"><span style="flex-shrink: 0; width: 30px; height: 24px; border-radius: 7px; background: #eceff3; color: #4d5765; font-size: 10px; font-weight: 700; text-align: center; line-height: 24px;">IRM</span><div style="min-width: 0;"><div style="font-size: 12.5px; font-weight: 500; color: #141a22;">Cinétique post-effort</div><div style="font-size: 11.5px; color: #9aa5b3;">jeu de valeurs réduit à 3 valeurs</div></div></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+</div>
+</x-dc>
+</body>
+</html>

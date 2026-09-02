@@ -1,0 +1,166 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600;700;800&display=swap">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body { margin: 0; font-family: 'Inter Tight', ui-sans-serif, system-ui, sans-serif; -webkit-font-smoothing: antialiased; color: #141a22; }
+    a { color: #173d6e; text-decoration: none; }
+    a:hover { color: #0e2542; }
+  </style>
+</helmet>
+
+<div style="display: flex; width: 1440px; height: 940px; background: #f5f7fa; overflow: hidden;">
+
+  <!-- Sidebar repliée -->
+  <aside style="width: 64px; flex-shrink: 0; background: #122f54; display: flex; flex-direction: column; align-items: center;">
+    <div style="padding: 20px 8px;"><img src="logo.png" alt="Larib Portal" style="width: 40px; filter: brightness(0) invert(1);"></div>
+    <nav style="flex: 1; display: flex; flex-direction: column; gap: 4px; padding: 16px 8px; width: 100%; align-items: center;">
+      <span style="display: flex; align-items: center; justify-content: center; width: 40px; height: 36px; border-radius: 12px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg></span>
+      <span style="display: flex; align-items: center; justify-content: center; width: 40px; height: 36px; border-radius: 12px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10 12 5 2 10l10 5z"/><path d="M6 12v5c0 1 2.5 2.5 6 2.5s6-1.5 6-2.5v-5"/></svg></span>
+      <span style="position: relative; display: flex; align-items: center; justify-content: center; width: 40px; height: 36px; border-radius: 12px; background: #173d6e;">
+        <span style="position: absolute; left: -8px; top: 50%; height: 24px; width: 4px; transform: translateY(-50%); border-radius: 0 4px 4px 0; background: #ec3b68;"></span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f55c83" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21a9 9 0 1 0-9-9"/><path d="M3 12h4"/><circle cx="12" cy="12" r="3"/><path d="m16 16 3 3"/></svg>
+      </span>
+    </nav>
+    <div style="border-top: 1px solid #173d6e; padding: 12px; width: 100%; display: flex; justify-content: center;">
+      <span style="width: 32px; height: 32px; border-radius: 50%; background: #ec3b68; color: #ffffff; font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center;">MC</span>
+    </div>
+  </aside>
+
+  <main style="flex: 1; min-width: 0; display: flex; flex-direction: column;">
+
+    <!-- Barre patient -->
+    <header style="background: #ffffff; border-bottom: 1px solid #dde2e9; padding: 14px 24px; display: flex; align-items: center; gap: 20px; flex-shrink: 0;">
+      <span style="display: inline-flex; align-items: center; gap: 8px; height: 32px; padding: 0 12px 0 8px; border-radius: 10px; border: 1px solid #dde2e9; font-size: 13px; font-weight: 500; color: #4d5765;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4d5765" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        Mes lectures
+      </span>
+      <div>
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <h1 style="margin: 0; font-size: 18px; font-weight: 700; letter-spacing: -0.015em; color: #141a22;">MIR-DJ-007</h1>
+          <span style="display: inline-flex; align-items: center; border-radius: 10px; border: 1px solid #FDBA74; background: #FFF3E9; color: #EA580C; padding: 2px 8px; font-size: 12px; font-weight: 500;">Renvoyée · pièce manquante</span>
+        </div>
+        <p style="margin: 2px 0 0; font-size: 12px; color: #6b7685;">MIR-Dijon · CMR · CHU Dijon</p>
+      </div>
+
+      <div style="margin-left: auto; display: flex; align-items: center; gap: 12px;">
+        <div style="text-align: right;">
+          <div style="font-size: 12px; color: #6b7685;">Pièces attendues</div>
+          <div style="font-size: 13px; font-weight: 600; color: #EA580C;">2 sur 4 à fournir</div>
+        </div>
+        <span style="display: inline-flex; align-items: center; gap: 8px; height: 36px; padding: 0 16px; border-radius: 10px; background: #eceff3; color: #9aa5b3; font-size: 14px; font-weight: 500;">
+          Renvoyer le dossier
+          <span style="display: inline-flex; align-items: center; justify-content: center; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px; background: #dde2e9; color: #6b7685; font-size: 11px; font-weight: 600;">2</span>
+        </span>
+      </div>
+    </header>
+
+    <!-- Bandeau du data manager -->
+    <div style="flex-shrink: 0; background: #FFF3E9; border-bottom: 1px solid #FDBA74; padding: 12px 24px; display: flex; align-items: flex-start; gap: 12px;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#EA580C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 1px;"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
+      <div>
+        <div style="font-size: 13px; font-weight: 600; color: #92400e;">Dossier renvoyé par P. Dupont, data manager, le 29 août à 09:40</div>
+        <div style="font-size: 13px; color: #b45309; margin-top: 1px;">« Le CRF Excel du second examen n'a pas été déposé et le masque LGE est dans un format que nous ne pouvons pas archiver. Vos valeurs sont conservées, il n'y a rien à ressaisir. »</div>
+      </div>
+    </div>
+
+    <div style="flex: 1; min-height: 0; overflow: hidden; background:
+      radial-gradient(58% 52% at 10% 4%, rgba(214, 31, 85, 0.08), transparent 60%),
+      radial-gradient(52% 48% at 92% 12%, rgba(236, 59, 104, 0.06), transparent 62%),
+      #f5f7fa;">
+      <div style="max-width: 940px; margin: 0 auto; padding: 28px 32px;">
+
+        <div style="display: flex; align-items: stretch; gap: 14px; margin-bottom: 22px;">
+          <span style="width: 5px; flex-shrink: 0; border-radius: 4px; background: linear-gradient(to bottom, #ec3b68, #d61f55);"></span>
+          <div>
+            <h2 style="margin: 0; font-size: 24px; font-weight: 800; letter-spacing: -0.02em; color: #141a22;">Pièces attendues</h2>
+            <p style="margin: 5px 0 0; font-size: 14px; line-height: 1.625; color: #6b7685;">Vos lectures restent enregistrées et signées. Il ne manque que les fichiers ci-dessous pour que le dossier reparte en relecture.</p>
+          </div>
+        </div>
+
+        <div style="background: #ffffff; border: 1px solid #dde2e9; border-radius: 16px; box-shadow: 0 1px 3px rgba(16,28,48,0.08), 0 1px 2px rgba(16,28,48,0.04); overflow: hidden;">
+
+          <!-- Fourni -->
+          <div style="display: flex; align-items: center; gap: 14px; padding: 16px 20px; border-bottom: 1px solid #dde2e9;">
+            <span style="width: 34px; height: 34px; border-radius: 10px; background: #ECFDF5; border: 1px solid #A7F3D0; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#047857" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+            </span>
+            <div style="flex: 1; min-width: 0;">
+              <div style="font-size: 14px; font-weight: 600; color: #141a22;">CRF Excel — Examen 1</div>
+              <div style="font-size: 12.5px; color: #6b7685; margin-top: 2px;">mir_dj_007_e1.xlsx · CVI42 v5.17.2 · déposé le 21 août</div>
+            </div>
+            <span style="display: inline-flex; align-items: center; border-radius: 10px; border: 1px solid #A7F3D0; background: #ECFDF5; color: #047857; padding: 2px 8px; font-size: 12px; font-weight: 500;">Conforme</span>
+          </div>
+
+          <!-- Manquant -->
+          <div style="padding: 16px 20px; border-bottom: 1px solid #dde2e9; background: #FFFBF5;">
+            <div style="display: flex; align-items: center; gap: 14px;">
+              <span style="width: 34px; height: 34px; border-radius: 10px; background: #FFF3E9; border: 1px solid #FDBA74; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#EA580C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+              </span>
+              <div style="flex: 1; min-width: 0;">
+                <div style="font-size: 14px; font-weight: 600; color: #141a22;">CRF Excel — Examen 2</div>
+                <div style="font-size: 12.5px; color: #92400e; margin-top: 2px;">Aucun fichier déposé. Obligatoire pour clore le dossier.</div>
+              </div>
+              <span style="display: inline-flex; align-items: center; border-radius: 10px; border: 1px solid #FDBA74; background: #FFF3E9; color: #EA580C; padding: 2px 8px; font-size: 12px; font-weight: 500;">Manquant</span>
+            </div>
+            <div style="margin-top: 12px; margin-left: 48px; border: 1.5px dashed #FDBA74; border-radius: 12px; background: #ffffff; padding: 18px; display: flex; align-items: center; justify-content: center; gap: 10px;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#EA580C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="m6 11 6-6 6 6"/><path d="M4 21h16"/></svg>
+              <span style="font-size: 13px; color: #92400e;">Déposez le fichier ou <span style="font-weight: 600; text-decoration: underline;">parcourez vos documents</span></span>
+            </div>
+          </div>
+
+          <!-- Format invalide -->
+          <div style="padding: 16px 20px; border-bottom: 1px solid #dde2e9; background: #FFFBF5;">
+            <div style="display: flex; align-items: center; gap: 14px;">
+              <span style="width: 34px; height: 34px; border-radius: 10px; background: #FFF3E9; border: 1px solid #FDBA74; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#EA580C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
+              </span>
+              <div style="flex: 1; min-width: 0;">
+                <div style="font-size: 14px; font-weight: 600; color: #141a22;">Masque de segmentation LGE</div>
+                <div style="font-size: 12.5px; color: #92400e; margin-top: 2px;">masque_lge_007.rar · format non archivable. Attendu : .zip, .nii ou .nrrd</div>
+              </div>
+              <span style="display: inline-flex; align-items: center; border-radius: 10px; border: 1px solid #FDBA74; background: #FFF3E9; color: #EA580C; padding: 2px 8px; font-size: 12px; font-weight: 500;">Format refusé</span>
+            </div>
+            <div style="margin-top: 12px; margin-left: 48px; border: 1.5px dashed #FDBA74; border-radius: 12px; background: #ffffff; padding: 18px; display: flex; align-items: center; justify-content: center; gap: 10px;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#EA580C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="m6 11 6-6 6 6"/><path d="M4 21h16"/></svg>
+              <span style="font-size: 13px; color: #92400e;">Remplacez par un <span style="font-weight: 600;">.zip</span>, <span style="font-weight: 600;">.nii</span> ou <span style="font-weight: 600;">.nrrd</span></span>
+            </div>
+          </div>
+
+          <!-- Facultatif -->
+          <div style="display: flex; align-items: center; gap: 14px; padding: 16px 20px;">
+            <span style="width: 34px; height: 34px; border-radius: 10px; background: #f5f7fa; border: 1px solid #dde2e9; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9aa5b3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-4.5-4.5L9 18"/></svg>
+            </span>
+            <div style="flex: 1; min-width: 0;">
+              <div style="font-size: 14px; font-weight: 600; color: #4d5765;">Capture de la bull's eye</div>
+              <div style="font-size: 12.5px; color: #9aa5b3; margin-top: 2px;">Facultative. N'empêche pas le renvoi du dossier.</div>
+            </div>
+            <span style="display: inline-flex; align-items: center; border-radius: 10px; border: 1px solid #dde2e9; background: #eceff3; color: #4d5765; padding: 2px 8px; font-size: 12px; font-weight: 500;">Non fournie</span>
+          </div>
+
+        </div>
+
+        <div style="margin-top: 18px; display: flex; align-items: center; justify-content: space-between; gap: 16px; border: 1px solid #dde2e9; border-radius: 16px; background: #ffffff; padding: 16px 20px;">
+          <div style="display: flex; align-items: center; gap: 11px;">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#6b7685" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;"><circle cx="12" cy="12" r="9"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>
+            <span style="font-size: 13px; color: #4d5765;">Le renvoi s'ouvrira dès que les deux pièces obligatoires seront conformes. Votre signature du 21 août reste valable.</span>
+          </div>
+          <span style="display: inline-flex; align-items: center; height: 38px; padding: 0 18px; border-radius: 10px; background: #eceff3; color: #9aa5b3; font-size: 14px; font-weight: 500; white-space: nowrap;">Renvoyer le dossier</span>
+        </div>
+
+      </div>
+    </div>
+  </main>
+</div>
+</x-dc>
+</body>
+</html>

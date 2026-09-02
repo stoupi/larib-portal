@@ -1,0 +1,281 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600;700;800&display=swap">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body { margin: 0; font-family: 'Inter Tight', ui-sans-serif, system-ui, sans-serif; -webkit-font-smoothing: antialiased; color: #141a22; }
+    a { color: #173d6e; text-decoration: none; }
+    a:hover { color: #0e2542; }
+  </style>
+</helmet>
+
+
+<div style="display: flex; width: 1440px; height: 1180px; background: #f5f7fa; overflow: hidden;">
+
+  <aside style="width: 256px; flex-shrink: 0; background: #122f54; color: #ffffff; display: flex; flex-direction: column;">
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 20px 24px; text-align: center;">
+      <div style="height: 36px; width: 72px; display: flex; align-items: flex-start; justify-content: center; overflow: hidden;">
+        <img src="logo.png" alt="Larib Portal" style="width: 72px; filter: brightness(0) invert(1);">
+      </div>
+      <span style="font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">Larib Portal</span>
+    </div>
+
+    <nav style="flex: 1; display: flex; flex-direction: column; gap: 24px; padding: 16px 12px; overflow-y: auto;">
+      <div>
+        <p style="margin: 0 0 8px; padding: 0 12px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #7197c2;">Vue d'ensemble</p>
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+          <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #ffffff;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>
+            <span>Tableau de bord</span>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <p style="margin: 0 0 8px; padding: 0 12px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #7197c2;">Applications</p>
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+          <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #ffffff;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10 12 5 2 10l10 5z"/><path d="M6 12v5c0 1 2.5 2.5 6 2.5s6-1.5 6-2.5v-5"/></svg>
+            <span>Training Best-of</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #ffffff;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4"/><path d="M16 3v4"/><path d="M3 10h18"/></svg>
+            <span>Gestion des congés</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #ffffff;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4h6a3 3 0 0 1 3 3v13a2.5 2.5 0 0 0-2.5-2.5H2z"/><path d="M22 4h-6a3 3 0 0 0-3 3v13a2.5 2.5 0 0 1 2.5-2.5H22z"/></svg>
+            <span>Publications</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #ffffff;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21a9 9 0 1 0-9-9"/><path d="M3 12h4"/><circle cx="12" cy="12" r="3"/><path d="m16 16 3 3"/></svg>
+            <span>Core Lab</span>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <p style="margin: 0 0 8px; padding: 0 12px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #7197c2;">Administration</p>
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+          <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #ffffff;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10 12 5 2 10l10 5z"/><path d="M6 12v5c0 1 2.5 2.5 6 2.5s6-1.5 6-2.5v-5"/></svg>
+            <span style="flex: 1;">Training Best-of</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ec3b68" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #ffffff;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4"/><path d="M16 3v4"/><path d="M3 10h18"/></svg>
+            <span style="flex: 1;">Gestion des congés</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ec3b68" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #ffffff;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4h6a3 3 0 0 1 3 3v13a2.5 2.5 0 0 0-2.5-2.5H2z"/><path d="M22 4h-6a3 3 0 0 0-3 3v13a2.5 2.5 0 0 1 2.5-2.5H22z"/></svg>
+            <span style="flex: 1;">Publications</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ec3b68" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <div style="position: relative; display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; background: #173d6e; color: #ffffff;">
+            <span style="position: absolute; left: -12px; top: 50%; height: 24px; width: 4px; transform: translateY(-50%); border-radius: 0 4px 4px 0; background: #ec3b68;"></span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f55c83" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21a9 9 0 1 0-9-9"/><path d="M3 12h4"/><circle cx="12" cy="12" r="3"/><path d="m16 16 3 3"/></svg>
+            <span style="flex: 1;">Core Lab</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ec3b68" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #ffffff;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/></svg>
+            <span>Gestion des utilisateurs</span>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <div style="border-top: 1px solid #173d6e; padding: 12px;">
+      <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; background: #173d6e;">
+        <span style="width: 32px; height: 32px; border-radius: 50%; background: #ec3b68; color: #ffffff; font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center;">PD</span>
+        <div style="min-width: 0; flex: 1;">
+          <div style="font-size: 14px; font-weight: 500; color: #ffffff;">P. Dupont</div>
+          <div style="font-size: 12px; color: #aac0dc;">Data manager</div>
+        </div>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+      </div>
+    </div>
+  </aside>
+
+  <main style="flex: 1; min-width: 0; display: flex; flex-direction: column; overflow: hidden;">
+    <div style="flex-shrink: 0; height: 56px; background: #ffffff; border-bottom: 1px solid #dde2e9; display: flex; align-items: center; gap: 24px; padding: 0 32px;">
+      <span style="display: inline-flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #9aa5b3;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ec3b68" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Administration
+      </span>
+      <span style="width: 1px; height: 22px; background: #dde2e9;"></span>
+      <nav style="display: flex; align-items: center; gap: 4px; height: 100%;">
+        <span style="display: inline-flex; align-items: center; height: 100%; padding: 0 14px; font-size: 14px; color: #6b7685;">Vue d'ensemble</span>
+        <span style="display: inline-flex; align-items: center; height: 100%; padding: 0 14px; font-size: 14px; color: #6b7685;">Études</span>
+        <span style="display: inline-flex; align-items: center; height: 100%; padding: 0 4px; font-size: 14px; font-weight: 600; color: #141a22; box-shadow: inset 0 -2px 0 #d61f55;">Bibliothèque</span>
+        <span style="display: inline-flex; align-items: center; height: 100%; padding: 0 14px; font-size: 14px; color: #6b7685;">Utilisateurs</span>
+        <span style="display: inline-flex; align-items: center; height: 100%; padding: 0 14px; font-size: 14px; color: #6b7685;">Journal d'audit</span>
+      </nav>
+    </div>
+    <div style="flex: 1; min-height: 0; display: flex; flex-direction: column; overflow: hidden; background: linear-gradient(to bottom, #ffffff 0px, #f5f7fa 200px);">
+
+      <div style="flex-shrink: 0; padding: 22px 28px 16px; border-bottom: 1px solid #dde2e9; background: #ffffff;">
+        <div style="display: flex; align-items: center; gap: 7px; font-size: 12.5px; color: #9aa5b3;">
+          <span id="crumb-library">Bibliothèque</span>
+          <span>›</span>
+          <span>IRM</span>
+          <span>›</span>
+          <span style="color: #4d5765;">LGE</span>
+        </div>
+        <div style="margin-top: 9px; display: flex; align-items: flex-start; justify-content: space-between; gap: 16px;">
+          <div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <h1 style="margin: 0; font-size: 25px; font-weight: 700; letter-spacing: -0.02em; color: #141a22;">LGE</h1>
+              <span style="display: inline-flex; align-items: center; border-radius: 9px; border: 1px solid #dde2e9; background: #eceff3; color: #4d5765; padding: 2px 9px; font-size: 11.5px; font-weight: 500;">Séquence</span>
+              <span style="display: inline-flex; align-items: center; border-radius: 9px; border: 1px solid #dde2e9; background: #eceff3; color: #4d5765; padding: 2px 9px; font-size: 11.5px; font-weight: 500;">IRM</span>
+            </div>
+            <p style="margin: 7px 0 0; font-size: 13px; color: #6b7685;">41 variables · reprise par 6 études · dernière modification le 28 avril 2026 par Pr. Dubois</p>
+          </div>
+          <div style="display: flex; align-items: center; gap: 9px; flex-shrink: 0;">
+            <span style="display: inline-flex; align-items: center; gap: 7px; height: 36px; padding: 0 14px; border-radius: 10px; border: 1px solid #dde2e9; background: #ffffff; color: #363f4c; font-size: 13.5px; font-weight: 500;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6b7685" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+              Historique
+            </span>
+            <span style="display: inline-flex; align-items: center; gap: 8px; height: 36px; padding: 0 16px; border-radius: 10px; background: linear-gradient(135deg, #122f54, #0a1b30); color: #ffffff; font-size: 13.5px; font-weight: 500; box-shadow: 0 1px 2px rgba(16,28,48,0.06);">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8"/><path d="M7 3v5h8"/></svg>
+              Enregistrer le bloc
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div style="flex: 1; min-height: 0; display: flex; overflow: hidden;">
+
+        <div style="width: 268px; flex-shrink: 0; border-right: 1px solid #dde2e9; background: #fafbfc; display: flex; flex-direction: column;">
+          <div style="padding: 13px 16px 11px; border-bottom: 1px solid #dde2e9; background: #ffffff; display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+            <span style="font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #9aa5b3;">Variables</span>
+            <span style="display: inline-flex; align-items: center; gap: 5px; height: 28px; padding: 0 10px; border-radius: 9px; border: 1px solid #aac0dc; background: #f4f8fd; color: #173d6e; font-size: 12.5px; font-weight: 500;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#173d6e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
+              Importer
+            </span>
+          </div>
+          <div style="flex: 1; overflow: hidden; padding: 8px;">
+            <div style="display: flex; flex-direction: column; gap: 1px;">
+            <div style="display: flex; align-items: center; gap: 7px; padding: 8px 10px 8px 12px; border-radius: 9px;  font-size: 13.5px; font-weight: 400; color: #363f4c;"><span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Séquence LGE réalisée</span><span style="width: 5px; height: 5px; border-radius: 50%; background: #ec3b68; flex-shrink: 0;" title="Obligatoire"></span><span title="Importée de la bibliothèque, identique" style="margin-left: auto; flex-shrink: 0; border-radius: 6px; background: #d6e0ee; color: #173d6e; padding: 1px 5px; font-size: 10px; font-weight: 600;">lib</span><span style="width: 52px; text-align: right; font-size: 11px; color: #9aa5b3; flex-shrink: 0;">bool</span></div>
+            <div style="display: flex; align-items: center; gap: 7px; padding: 8px 10px 8px 12px; border-radius: 9px;  font-size: 13.5px; font-weight: 400; color: #363f4c;"><span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Qualité d'image</span><span title="Importée de la bibliothèque, identique" style="margin-left: auto; flex-shrink: 0; border-radius: 6px; background: #d6e0ee; color: #173d6e; padding: 1px 5px; font-size: 10px; font-weight: 600;">lib</span><span style="width: 52px; text-align: right; font-size: 11px; color: #9aa5b3; flex-shrink: 0;">échelle</span></div>
+            <div style="display: flex; align-items: center; gap: 7px; padding: 8px 10px 8px 12px; border-radius: 9px;  font-size: 13.5px; font-weight: 400; color: #363f4c;"><span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Artéfacts</span><span title="Importée de la bibliothèque, identique" style="margin-left: auto; flex-shrink: 0; border-radius: 6px; background: #d6e0ee; color: #173d6e; padding: 1px 5px; font-size: 10px; font-weight: 600;">lib</span><span style="width: 52px; text-align: right; font-size: 11px; color: #9aa5b3; flex-shrink: 0;">cat</span></div>
+            <div style="display: flex; align-items: center; gap: 7px; padding: 8px 10px 8px 12px; border-radius: 9px;  font-size: 13.5px; font-weight: 400; color: #363f4c;"><span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">LGE présent</span><span style="width: 5px; height: 5px; border-radius: 50%; background: #ec3b68; flex-shrink: 0;" title="Obligatoire"></span><span title="Importée de la bibliothèque, identique" style="margin-left: auto; flex-shrink: 0; border-radius: 6px; background: #d6e0ee; color: #173d6e; padding: 1px 5px; font-size: 10px; font-weight: 600;">lib</span><span style="width: 52px; text-align: right; font-size: 11px; color: #9aa5b3; flex-shrink: 0;">bool</span></div>
+            <div style="display: flex; align-items: center; gap: 7px; padding: 8px 10px 8px 12px; border-radius: 9px; background: #ffffff; box-shadow: inset 2px 0 0 #d61f55; font-size: 13.5px; font-weight: 600; color: #141a22;"><span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">LGE segmentaire</span><span style="width: 5px; height: 5px; border-radius: 50%; background: #ec3b68; flex-shrink: 0;" title="Obligatoire"></span><span title="Importée de la bibliothèque, identique" style="margin-left: auto; flex-shrink: 0; border-radius: 6px; background: #d6e0ee; color: #173d6e; padding: 1px 5px; font-size: 10px; font-weight: 600;">lib</span><span style="width: 52px; text-align: right; font-size: 11px; color: #9aa5b3; flex-shrink: 0;">17 seg</span></div>
+            <div style="display: flex; align-items: center; gap: 7px; padding: 8px 10px 8px 12px; border-radius: 9px;  font-size: 13.5px; font-weight: 400; color: #363f4c;"><span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Masse de LGE</span><span title="Importée de la bibliothèque, identique" style="margin-left: auto; flex-shrink: 0; border-radius: 6px; background: #d6e0ee; color: #173d6e; padding: 1px 5px; font-size: 10px; font-weight: 600;">lib</span><span style="width: 52px; text-align: right; font-size: 11px; color: #9aa5b3; flex-shrink: 0;">num</span></div>
+            <div style="display: flex; align-items: center; gap: 7px; padding: 8px 10px 8px 12px; border-radius: 9px;  font-size: 13.5px; font-weight: 400; color: #363f4c;"><span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Pourcentage de LGE</span><span title="Importée de la bibliothèque, identique" style="margin-left: auto; flex-shrink: 0; border-radius: 6px; background: #d6e0ee; color: #173d6e; padding: 1px 5px; font-size: 10px; font-weight: 600;">lib</span><span style="width: 52px; text-align: right; font-size: 11px; color: #9aa5b3; flex-shrink: 0;">num</span></div>
+            <div style="display: flex; align-items: center; gap: 7px; padding: 8px 10px 8px 12px; border-radius: 9px;  font-size: 13.5px; font-weight: 400; color: #363f4c;"><span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Localisation dominante</span><span title="Importée de la bibliothèque, identique" style="margin-left: auto; flex-shrink: 0; border-radius: 6px; background: #d6e0ee; color: #173d6e; padding: 1px 5px; font-size: 10px; font-weight: 600;">lib</span><span style="width: 52px; text-align: right; font-size: 11px; color: #9aa5b3; flex-shrink: 0;">cat</span></div>
+            <div style="display: flex; align-items: center; gap: 7px; padding: 8px 10px 8px 12px; border-radius: 9px;  font-size: 13.5px; font-weight: 400; color: #363f4c;"><span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Aspect du rehaussement</span><span title="Importée de la bibliothèque, puis modifiée dans ce bloc" style="margin-left: auto; flex-shrink: 0; border-radius: 6px; background: #FFF3E9; color: #EA580C; padding: 1px 5px; font-size: 10px; font-weight: 600;">lib +</span><span style="width: 52px; text-align: right; font-size: 11px; color: #9aa5b3; flex-shrink: 0;">cat</span></div>
+            <div style="display: flex; align-items: center; gap: 7px; padding: 8px 10px 8px 12px; border-radius: 9px;  font-size: 13.5px; font-weight: 400; color: #363f4c;"><span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">LGE péricardique</span><span title="Importée de la bibliothèque, identique" style="margin-left: auto; flex-shrink: 0; border-radius: 6px; background: #d6e0ee; color: #173d6e; padding: 1px 5px; font-size: 10px; font-weight: 600;">lib</span><span style="width: 52px; text-align: right; font-size: 11px; color: #9aa5b3; flex-shrink: 0;">bool</span></div>
+            <div style="display: flex; align-items: center; gap: 7px; padding: 8px 10px 8px 12px; border-radius: 9px;  font-size: 13.5px; font-weight: 400; color: #363f4c;"><span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">LGE ventricule droit</span><span title="Importée de la bibliothèque, identique" style="margin-left: auto; flex-shrink: 0; border-radius: 6px; background: #d6e0ee; color: #173d6e; padding: 1px 5px; font-size: 10px; font-weight: 600;">lib</span><span style="width: 52px; text-align: right; font-size: 11px; color: #9aa5b3; flex-shrink: 0;">16 seg</span></div>
+            <div style="display: flex; align-items: center; gap: 7px; padding: 8px 10px 8px 12px; border-radius: 9px;  font-size: 13.5px; font-weight: 400; color: #363f4c;"><span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Thrombus intracavitaire</span><span title="Créée dans ce bloc, absente de la bibliothèque" style="margin-left: auto; flex-shrink: 0; border-radius: 6px; background: #eceff3; color: #6b7685; padding: 1px 5px; font-size: 10px; font-weight: 600;">local</span><span style="width: 52px; text-align: right; font-size: 11px; color: #9aa5b3; flex-shrink: 0;">bool</span></div>
+            <div style="display: flex; align-items: center; gap: 7px; padding: 8px 10px 8px 12px; border-radius: 9px;  font-size: 13.5px; font-weight: 400; color: #363f4c;"><span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Commentaire LGE</span><span title="Créée dans ce bloc, absente de la bibliothèque" style="margin-left: auto; flex-shrink: 0; border-radius: 6px; background: #eceff3; color: #6b7685; padding: 1px 5px; font-size: 10px; font-weight: 600;">local</span><span style="width: 52px; text-align: right; font-size: 11px; color: #9aa5b3; flex-shrink: 0;">texte</span></div>
+            </div>
+            <div style="padding: 10px 12px; font-size: 11.5px; color: #9aa5b3;">et 28 autres variables</div>
+          </div>
+        </div>
+
+        <div style="flex: 1; min-width: 0; border-right: 1px solid #dde2e9; background: #fafbfc; display: flex; flex-direction: column; overflow: hidden;">
+          <div style="padding: 15px 20px; border-bottom: 1px solid #dde2e9; background: #ffffff;">
+            <div style="font-size: 15px; font-weight: 600; color: #141a22;">LGE segmentaire</div>
+            <div style="font-size: 12px; color: #6b7685; margin-top: 1px;">Identifiant <span style="font-family: ui-monospace, SFMono-Regular, Menlo, monospace;">lge_seg_17</span> · bull&#39;s eye 17 segments</div>
+          </div>
+          <div style="flex-shrink: 0; padding: 8px 20px; border-bottom: 1px solid #dde2e9; background: #f4f8fd; display: flex; align-items: center; gap: 8px;">
+            <span style="border-radius: 6px; background: #d6e0ee; color: #173d6e; padding: 1px 5px; font-size: 10px; font-weight: 600; flex-shrink: 0;">lib</span>
+            <span style="font-size: 12px; color: #173d6e;">Importée de la bibliothèque de variables, identique à la référence.</span>
+            <span id="see-variable" style="margin-left: auto; font-size: 12px; color: #173d6e; font-weight: 500; text-decoration: underline; text-underline-offset: 2px; flex-shrink: 0;">Voir la référence</span>
+          </div>
+
+          <div style="flex: 1; overflow: hidden; padding: 16px 20px; display: flex; flex-direction: column; gap: 14px;">
+            <div style="display: flex; flex-direction: column; gap: 5px;"><span style="font-size: 12px; font-weight: 500; color: #6b7685;">Type</span><div style="display: flex; gap: 3px; padding: 3px; border-radius: 11px; border: 1px solid #dde2e9; background: #ffffff;"><span style="flex: 1; text-align: center; height: 30px; line-height: 30px; border-radius: 8px; font-size: 12.5px; font-weight: 500; background: #122f54; color: #ffffff;">Bull's eye</span><span style="flex: 1; text-align: center; height: 30px; line-height: 30px; border-radius: 8px; font-size: 12.5px; font-weight: 500; color: #4d5765;">Catégorielle</span><span style="flex: 1; text-align: center; height: 30px; line-height: 30px; border-radius: 8px; font-size: 12.5px; font-weight: 500; color: #4d5765;">Échelle</span></div></div>
+            <div style="display: flex; flex-direction: column; gap: 5px;"><span style="font-size: 12px; font-weight: 500; color: #6b7685;">Modèle de segmentation</span><div style="display: flex; gap: 3px; padding: 3px; border-radius: 11px; border: 1px solid #dde2e9; background: #ffffff;"><span style="flex: 1; text-align: center; height: 30px; line-height: 30px; border-radius: 8px; font-size: 12.5px; font-weight: 500; color: #4d5765;">16</span><span style="flex: 1; text-align: center; height: 30px; line-height: 30px; border-radius: 8px; font-size: 12.5px; font-weight: 500; background: #122f54; color: #ffffff;">17</span><span style="flex: 1; text-align: center; height: 30px; line-height: 30px; border-radius: 8px; font-size: 12.5px; font-weight: 500; color: #4d5765;">32</span></div></div>
+            <div style="display: flex; flex-direction: column; gap: 5px;"><span style="font-size: 12px; font-weight: 500; color: #6b7685;">Jeu de valeurs</span><div id="open-valueset" style="display: flex; align-items: center; justify-content: space-between; gap: 8px; border-radius: 10px; border: 1px solid #aac0dc; background: #f4f8fd; padding: 9px 11px;"><div><div style="font-size: 13px; font-weight: 500; color: #141a22;">Rehaussement tardif transmural</div><div style="font-size: 11.5px; color: #173d6e; margin-top: 1px;">5 valeurs, ordonné · copie prise le 9 janvier 2026</div></div><span style="flex-shrink: 0; font-size: 12px; color: #173d6e; font-weight: 500; text-decoration: underline; text-underline-offset: 2px;">Voir</span></div></div>
+            <div style="display: flex; flex-direction: column; gap: 5px;"><span style="font-size: 12px; font-weight: 500; color: #6b7685;">Segments discordants tolérés en calibration</span><div style="display: flex; align-items: center; gap: 9px;"><span style="display: inline-flex; align-items: center; justify-content: center; width: 62px; height: 32px; border-radius: 10px; border: 1px solid #dde2e9; background: #ffffff; font-size: 13px; color: #141a22; font-variant-numeric: tabular-nums;">1</span><span style="font-size: 12px; color: #9aa5b3;">sur 17 comparés à la référence</span></div></div>
+
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <span style="font-size: 12px; font-weight: 500; color: #6b7685;">Aperçu du découpage AHA</span>
+              <div style="background: #ffffff; border: 1px solid #dde2e9; border-radius: 16px; padding: 12px; display: flex; flex-direction: column; align-items: center; gap: 10px; box-shadow: 0 1px 3px rgba(16,28,48,0.08), 0 1px 2px rgba(16,28,48,0.04);">
+                <svg width="300" height="300" viewBox="0 0 300 300">
+              <path d="M 84.00 35.68 A 132 132 0 0 1 216.00 35.68 L 200.00 63.40 A 100 100 0 0 0 100.00 63.40 Z" fill="#ECFDF5" stroke="#ffffff" stroke-width="2.5"/>
+              <text x="150.0" y="34.0" text-anchor="middle" dominant-baseline="central" font-size="12.5" font-weight="700" fill="#047857">1</text>
+              <path d="M 216.00 35.68 A 132 132 0 0 1 282.00 150.00 L 250.00 150.00 A 100 100 0 0 0 200.00 63.40 Z" fill="#ECFDF5" stroke="#ffffff" stroke-width="2.5"/>
+              <text x="250.5" y="92.0" text-anchor="middle" dominant-baseline="central" font-size="12.5" font-weight="700" fill="#047857">6</text>
+              <path d="M 282.00 150.00 A 132 132 0 0 1 216.00 264.32 L 200.00 236.60 A 100 100 0 0 0 250.00 150.00 Z" fill="#FFE4EC" stroke="#ffffff" stroke-width="2.5"/>
+              <text x="250.5" y="208.0" text-anchor="middle" dominant-baseline="central" font-size="12.5" font-weight="700" fill="#b01547">5</text>
+              <path d="M 216.00 264.32 A 132 132 0 0 1 84.00 264.32 L 100.00 236.60 A 100 100 0 0 0 200.00 236.60 Z" fill="#FFF3E9" stroke="#ffffff" stroke-width="2.5"/>
+              <text x="150.0" y="266.0" text-anchor="middle" dominant-baseline="central" font-size="12.5" font-weight="700" fill="#EA580C">4</text>
+              <path d="M 84.00 264.32 A 132 132 0 0 1 18.00 150.00 L 50.00 150.00 A 100 100 0 0 0 100.00 236.60 Z" fill="#ECFDF5" stroke="#ffffff" stroke-width="2.5"/>
+              <text x="49.5" y="208.0" text-anchor="middle" dominant-baseline="central" font-size="12.5" font-weight="700" fill="#047857">3</text>
+              <path d="M 18.00 150.00 A 132 132 0 0 1 84.00 35.68 L 100.00 63.40 A 100 100 0 0 0 50.00 150.00 Z" fill="#ECFDF5" stroke="#ffffff" stroke-width="2.5"/>
+              <text x="49.5" y="92.0" text-anchor="middle" dominant-baseline="central" font-size="12.5" font-weight="700" fill="#047857">2</text>
+              <path d="M 100.00 63.40 A 100 100 0 0 1 200.00 63.40 L 184.00 91.11 A 68 68 0 0 0 116.00 91.11 Z" fill="#ECFDF5" stroke="#ffffff" stroke-width="2.5"/>
+              <text x="150.0" y="66.0" text-anchor="middle" dominant-baseline="central" font-size="12.5" font-weight="700" fill="#047857">7</text>
+              <path d="M 200.00 63.40 A 100 100 0 0 1 250.00 150.00 L 218.00 150.00 A 68 68 0 0 0 184.00 91.11 Z" fill="#ECFDF5" stroke="#ffffff" stroke-width="2.5"/>
+              <text x="222.7" y="108.0" text-anchor="middle" dominant-baseline="central" font-size="12.5" font-weight="700" fill="#047857">12</text>
+              <path d="M 250.00 150.00 A 100 100 0 0 1 200.00 236.60 L 184.00 208.89 A 68 68 0 0 0 218.00 150.00 Z" fill="#FFE4EC" stroke="#ffffff" stroke-width="2.5"/>
+              <text x="222.7" y="192.0" text-anchor="middle" dominant-baseline="central" font-size="12.5" font-weight="700" fill="#b01547">11</text>
+              <path d="M 200.00 236.60 A 100 100 0 0 1 100.00 236.60 L 116.00 208.89 A 68 68 0 0 0 184.00 208.89 Z" fill="#FEF2F2" stroke="#ffffff" stroke-width="2.5"/>
+              <text x="150.0" y="234.0" text-anchor="middle" dominant-baseline="central" font-size="12.5" font-weight="700" fill="#DC2626">10</text>
+              <path d="M 100.00 236.60 A 100 100 0 0 1 50.00 150.00 L 82.00 150.00 A 68 68 0 0 0 116.00 208.89 Z" fill="#FEFCE8" stroke="#ffffff" stroke-width="2.5"/>
+              <text x="77.3" y="192.0" text-anchor="middle" dominant-baseline="central" font-size="12.5" font-weight="700" fill="#A16207">9</text>
+              <path d="M 50.00 150.00 A 100 100 0 0 1 100.00 63.40 L 116.00 91.11 A 68 68 0 0 0 82.00 150.00 Z" fill="#ECFDF5" stroke="#ffffff" stroke-width="2.5"/>
+              <text x="77.3" y="108.0" text-anchor="middle" dominant-baseline="central" font-size="12.5" font-weight="700" fill="#047857">8</text>
+              <path d="M 101.92 101.92 A 68 68 0 0 1 198.08 101.92 L 174.04 125.96 A 34 34 0 0 0 125.96 125.96 Z" fill="#ECFDF5" stroke="#ffffff" stroke-width="2.5"/>
+              <text x="150.0" y="99.0" text-anchor="middle" dominant-baseline="central" font-size="12.5" font-weight="700" fill="#047857">13</text>
+              <path d="M 198.08 101.92 A 68 68 0 0 1 198.08 198.08 L 174.04 174.04 A 34 34 0 0 0 174.04 125.96 Z" fill="#FFF3E9" stroke="#ffffff" stroke-width="2.5"/>
+              <text x="201.0" y="150.0" text-anchor="middle" dominant-baseline="central" font-size="12.5" font-weight="700" fill="#EA580C">16</text>
+              <path d="M 198.08 198.08 A 68 68 0 0 1 101.92 198.08 L 125.96 174.04 A 34 34 0 0 0 174.04 174.04 Z" fill="#ECFDF5" stroke="#ffffff" stroke-width="2.5"/>
+              <text x="150.0" y="201.0" text-anchor="middle" dominant-baseline="central" font-size="12.5" font-weight="700" fill="#047857">15</text>
+              <path d="M 101.92 198.08 A 68 68 0 0 1 101.92 101.92 L 125.96 125.96 A 34 34 0 0 0 125.96 174.04 Z" fill="#ECFDF5" stroke="#ffffff" stroke-width="2.5"/>
+              <text x="99.0" y="150.0" text-anchor="middle" dominant-baseline="central" font-size="12.5" font-weight="700" fill="#047857">14</text>
+              <circle cx="150" cy="150" r="34" fill="#ECFDF5" stroke="#ffffff" stroke-width="2.5"/>
+              <text x="150" y="150" text-anchor="middle" dominant-baseline="central" font-size="12.5" font-weight="700" fill="#047857">17</text>
+              <circle cx="150" cy="150" r="132" fill="none" stroke="#dde2e9" stroke-width="1"/>
+              <text x="150" y="12" text-anchor="middle" font-size="10.5" fill="#9aa5b3">ANTÉRIEUR</text>
+              <text x="150" y="295" text-anchor="middle" font-size="10.5" fill="#9aa5b3">INFÉRIEUR</text>
+              <text x="8" y="154" font-size="10.5" fill="#9aa5b3">SEPTUM</text>
+              <text x="292" y="154" text-anchor="end" font-size="10.5" fill="#9aa5b3">LATÉRAL</text>
+                </svg>
+                <div style="display: flex; flex-wrap: wrap; gap: 5px; justify-content: center;"><span style="display: inline-flex; align-items: center; gap: 5px; border-radius: 9px; border: 1px solid #A7F3D0; background: #ECFDF5; color: #047857; padding: 3px 8px; font-size: 11.5px;"><span style="font-weight: 700;">0</span>Pas de rehaussement</span><span style="display: inline-flex; align-items: center; gap: 5px; border-radius: 9px; border: 1px solid #FDE68A; background: #FEFCE8; color: #A16207; padding: 3px 8px; font-size: 11.5px;"><span style="font-weight: 700;">1</span>Sous-endocardique</span><span style="display: inline-flex; align-items: center; gap: 5px; border-radius: 9px; border: 1px solid #FDBA74; background: #FFF3E9; color: #EA580C; padding: 3px 8px; font-size: 11.5px;"><span style="font-weight: 700;">2</span>Non transmural</span><span style="display: inline-flex; align-items: center; gap: 5px; border-radius: 9px; border: 1px solid #FECACA; background: #FEF2F2; color: #DC2626; padding: 3px 8px; font-size: 11.5px;"><span style="font-weight: 700;">3</span>Largement transmural</span><span style="display: inline-flex; align-items: center; gap: 5px; border-radius: 9px; border: 1px solid #FFB6C6; background: #FFE4EC; color: #b01547; padding: 3px 8px; font-size: 11.5px;"><span style="font-weight: 700;">4</span>Transmural complet</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="width: 340px; flex-shrink: 0; background: #ffffff; display: flex; flex-direction: column; overflow: hidden;">
+          <div style="padding: 13px 18px 11px; border-bottom: 1px solid #dde2e9;">
+            <span style="font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #9aa5b3;">Les 17 segments AHA</span>
+            <div style="font-size: 11.5px; color: #9aa5b3; margin-top: 2px;">Ordre des colonnes à l&#39;export.</div>
+          </div>
+          <div style="padding: 2px 18px 10px; border-bottom: 1px solid #dde2e9;">
+            <div style="padding: 9px 0; border-bottom: 1px solid #eceff3;"><div style="font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #9aa5b3; margin-bottom: 3px;">Basal</div><div style="display: flex; align-items: center; gap: 8px; padding: 4px 0;"><span style="width: 22px; height: 20px; flex-shrink: 0; border-radius: 6px; background: #eceff3; color: #4d5765; font-size: 10.5px; font-weight: 700; text-align: center; line-height: 20px; font-variant-numeric: tabular-nums;">1</span><span style="font-size: 12.5px; color: #363f4c;">Antérieur</span></div><div style="display: flex; align-items: center; gap: 8px; padding: 4px 0;"><span style="width: 22px; height: 20px; flex-shrink: 0; border-radius: 6px; background: #eceff3; color: #4d5765; font-size: 10.5px; font-weight: 700; text-align: center; line-height: 20px; font-variant-numeric: tabular-nums;">2</span><span style="font-size: 12.5px; color: #363f4c;">Antéro-septal</span></div><div style="display: flex; align-items: center; gap: 8px; padding: 4px 0;"><span style="width: 22px; height: 20px; flex-shrink: 0; border-radius: 6px; background: #eceff3; color: #4d5765; font-size: 10.5px; font-weight: 700; text-align: center; line-height: 20px; font-variant-numeric: tabular-nums;">3</span><span style="font-size: 12.5px; color: #363f4c;">Inféro-septal</span></div><div style="display: flex; align-items: center; gap: 8px; padding: 4px 0;"><span style="width: 22px; height: 20px; flex-shrink: 0; border-radius: 6px; background: #eceff3; color: #4d5765; font-size: 10.5px; font-weight: 700; text-align: center; line-height: 20px; font-variant-numeric: tabular-nums;">4</span><span style="font-size: 12.5px; color: #363f4c;">Inférieur</span></div><div style="display: flex; align-items: center; gap: 8px; padding: 4px 0;"><span style="width: 22px; height: 20px; flex-shrink: 0; border-radius: 6px; background: #eceff3; color: #4d5765; font-size: 10.5px; font-weight: 700; text-align: center; line-height: 20px; font-variant-numeric: tabular-nums;">5</span><span style="font-size: 12.5px; color: #363f4c;">Inféro-latéral</span></div><div style="display: flex; align-items: center; gap: 8px; padding: 4px 0;"><span style="width: 22px; height: 20px; flex-shrink: 0; border-radius: 6px; background: #eceff3; color: #4d5765; font-size: 10.5px; font-weight: 700; text-align: center; line-height: 20px; font-variant-numeric: tabular-nums;">6</span><span style="font-size: 12.5px; color: #363f4c;">Antéro-latéral</span></div></div>
+            <div style="padding: 9px 0; border-bottom: 1px solid #eceff3;"><div style="font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #9aa5b3; margin-bottom: 3px;">Médian</div><div style="display: flex; align-items: center; gap: 8px; padding: 4px 0;"><span style="width: 22px; height: 20px; flex-shrink: 0; border-radius: 6px; background: #eceff3; color: #4d5765; font-size: 10.5px; font-weight: 700; text-align: center; line-height: 20px; font-variant-numeric: tabular-nums;">7</span><span style="font-size: 12.5px; color: #363f4c;">Antérieur</span></div><div style="display: flex; align-items: center; gap: 8px; padding: 4px 0;"><span style="width: 22px; height: 20px; flex-shrink: 0; border-radius: 6px; background: #eceff3; color: #4d5765; font-size: 10.5px; font-weight: 700; text-align: center; line-height: 20px; font-variant-numeric: tabular-nums;">8</span><span style="font-size: 12.5px; color: #363f4c;">Antéro-septal</span></div><div style="display: flex; align-items: center; gap: 8px; padding: 4px 0;"><span style="width: 22px; height: 20px; flex-shrink: 0; border-radius: 6px; background: #eceff3; color: #4d5765; font-size: 10.5px; font-weight: 700; text-align: center; line-height: 20px; font-variant-numeric: tabular-nums;">9</span><span style="font-size: 12.5px; color: #363f4c;">Inféro-septal</span></div><div style="display: flex; align-items: center; gap: 8px; padding: 4px 0;"><span style="width: 22px; height: 20px; flex-shrink: 0; border-radius: 6px; background: #eceff3; color: #4d5765; font-size: 10.5px; font-weight: 700; text-align: center; line-height: 20px; font-variant-numeric: tabular-nums;">10</span><span style="font-size: 12.5px; color: #363f4c;">Inférieur</span></div><div style="display: flex; align-items: center; gap: 8px; padding: 4px 0;"><span style="width: 22px; height: 20px; flex-shrink: 0; border-radius: 6px; background: #eceff3; color: #4d5765; font-size: 10.5px; font-weight: 700; text-align: center; line-height: 20px; font-variant-numeric: tabular-nums;">11</span><span style="font-size: 12.5px; color: #363f4c;">Inféro-latéral</span></div><div style="display: flex; align-items: center; gap: 8px; padding: 4px 0;"><span style="width: 22px; height: 20px; flex-shrink: 0; border-radius: 6px; background: #eceff3; color: #4d5765; font-size: 10.5px; font-weight: 700; text-align: center; line-height: 20px; font-variant-numeric: tabular-nums;">12</span><span style="font-size: 12.5px; color: #363f4c;">Antéro-latéral</span></div></div>
+            <div style="padding: 9px 0; border-bottom: 1px solid #eceff3;"><div style="font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #9aa5b3; margin-bottom: 3px;">Apical</div><div style="display: flex; align-items: center; gap: 8px; padding: 4px 0;"><span style="width: 22px; height: 20px; flex-shrink: 0; border-radius: 6px; background: #eceff3; color: #4d5765; font-size: 10.5px; font-weight: 700; text-align: center; line-height: 20px; font-variant-numeric: tabular-nums;">13</span><span style="font-size: 12.5px; color: #363f4c;">Antérieur</span></div><div style="display: flex; align-items: center; gap: 8px; padding: 4px 0;"><span style="width: 22px; height: 20px; flex-shrink: 0; border-radius: 6px; background: #eceff3; color: #4d5765; font-size: 10.5px; font-weight: 700; text-align: center; line-height: 20px; font-variant-numeric: tabular-nums;">14</span><span style="font-size: 12.5px; color: #363f4c;">Septal</span></div><div style="display: flex; align-items: center; gap: 8px; padding: 4px 0;"><span style="width: 22px; height: 20px; flex-shrink: 0; border-radius: 6px; background: #eceff3; color: #4d5765; font-size: 10.5px; font-weight: 700; text-align: center; line-height: 20px; font-variant-numeric: tabular-nums;">15</span><span style="font-size: 12.5px; color: #363f4c;">Inférieur</span></div><div style="display: flex; align-items: center; gap: 8px; padding: 4px 0;"><span style="width: 22px; height: 20px; flex-shrink: 0; border-radius: 6px; background: #eceff3; color: #4d5765; font-size: 10.5px; font-weight: 700; text-align: center; line-height: 20px; font-variant-numeric: tabular-nums;">16</span><span style="font-size: 12.5px; color: #363f4c;">Latéral</span></div></div>
+            <div style="padding: 9px 0; border-bottom: 1px solid #eceff3;"><div style="font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #9aa5b3; margin-bottom: 3px;">Apex</div><div style="display: flex; align-items: center; gap: 8px; padding: 4px 0;"><span style="width: 22px; height: 20px; flex-shrink: 0; border-radius: 6px; background: #eceff3; color: #4d5765; font-size: 10.5px; font-weight: 700; text-align: center; line-height: 20px; font-variant-numeric: tabular-nums;">17</span><span style="font-size: 12.5px; color: #363f4c;">Apex</span></div></div>
+          </div>
+          <div style="padding: 12px 18px 8px;">
+            <span style="font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #9aa5b3;">Où ce bloc est parti</span>
+          </div>
+          <div style="flex: 1; overflow: hidden; padding: 0 18px 14px;">
+            <div style="padding: 9px 0; border-bottom: 1px solid #eceff3;"><div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;"><span style="font-size: 12.5px; font-weight: 500; color: #141a22; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">MIR-DIJON</span><span style="flex-shrink: 0; border-radius: 8px; border: 1px solid #dde2e9; background: #eceff3; color: #4d5765; padding: 1px 7px; font-size: 11px; font-weight: 500;">Gelée</span></div><div style="font-size: 11.5px; color: #9aa5b3; margin-top: 1px;">production, 19 patients signés</div></div>
+            <div style="padding: 9px 0; border-bottom: 1px solid #eceff3;"><div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;"><span style="font-size: 12.5px; font-weight: 500; color: #141a22; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">EACVI INFLAME</span><span style="flex-shrink: 0; border-radius: 8px; border: 1px solid #FDBA74; background: #FFF3E9; color: #EA580C; padding: 1px 7px; font-size: 11px; font-weight: 500;">Divergente</span></div><div style="font-size: 11.5px; color: #9aa5b3; margin-top: 1px;">segmentation ramenée à 16 segments</div></div>
+            <div style="padding: 9px 0; border-bottom: 1px solid #eceff3;"><div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;"><span style="font-size: 12.5px; font-weight: 500; color: #141a22; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">CARDIO-T1</span><span style="flex-shrink: 0; border-radius: 8px; border: 1px solid #A7F3D0; background: #ECFDF5; color: #047857; padding: 1px 7px; font-size: 11px; font-weight: 500;">Conforme</span></div><div style="font-size: 11.5px; color: #9aa5b3; margin-top: 1px;">copie identique au bloc</div></div>
+            <div style="padding: 9px 0; border-bottom: 1px solid #eceff3;"><div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;"><span style="font-size: 12.5px; font-weight: 500; color: #141a22; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">MYOCARDITE-2025</span><span style="flex-shrink: 0; border-radius: 8px; border: 1px solid #A7F3D0; background: #ECFDF5; color: #047857; padding: 1px 7px; font-size: 11px; font-weight: 500;">Conforme</span></div><div style="font-size: 11.5px; color: #9aa5b3; margin-top: 1px;">copie identique au bloc</div></div>
+            <div style="padding: 9px 0; border-bottom: 1px solid #eceff3;"><div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;"><span style="font-size: 12.5px; font-weight: 500; color: #141a22; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">SARCOÏDOSE-CMR</span><span style="flex-shrink: 0; border-radius: 8px; border: 1px solid #dde2e9; background: #eceff3; color: #4d5765; padding: 1px 7px; font-size: 11px; font-weight: 500;">Gelée</span></div><div style="font-size: 11.5px; color: #9aa5b3; margin-top: 1px;">production, 41 patients signés</div></div>
+            <div style="padding: 9px 0; border-bottom: 1px solid #eceff3;"><div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;"><span style="font-size: 12.5px; font-weight: 500; color: #141a22; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">AMYLOSE-FR</span><span style="flex-shrink: 0; border-radius: 8px; border: 1px solid #A7F3D0; background: #ECFDF5; color: #047857; padding: 1px 7px; font-size: 11px; font-weight: 500;">Conforme</span></div><div style="font-size: 11.5px; color: #9aa5b3; margin-top: 1px;">brouillon, copie identique</div></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+</div>
+</x-dc>
+</body>
+</html>

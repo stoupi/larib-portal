@@ -1,0 +1,211 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600;700;800&display=swap">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body { margin: 0; font-family: 'Inter Tight', ui-sans-serif, system-ui, sans-serif; -webkit-font-smoothing: antialiased; color: #141a22; }
+    a { color: #173d6e; text-decoration: none; }
+    a:hover { color: #0e2542; }
+  </style>
+</helmet>
+
+<div style="display: flex; width: 1440px; height: 1040px; background: #f5f7fa; overflow: hidden;">
+
+  <aside style="width: 64px; flex-shrink: 0; background: #122f54; display: flex; flex-direction: column; align-items: center;">
+    <div style="padding: 20px 8px;">
+      <img src="logo.png" alt="Larib Portal" style="width: 40px; filter: brightness(0) invert(1);">
+    </div>
+    <nav style="flex: 1; display: flex; flex-direction: column; gap: 4px; padding: 16px 8px; width: 100%; align-items: center;">
+      <span style="display: flex; align-items: center; justify-content: center; width: 40px; height: 36px; border-radius: 12px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg></span>
+      <span style="display: flex; align-items: center; justify-content: center; width: 40px; height: 36px; border-radius: 12px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></span>
+      <span style="position: relative; display: flex; align-items: center; justify-content: center; width: 40px; height: 36px; border-radius: 12px; background: #173d6e;">
+        <span style="position: absolute; left: -8px; top: 50%; height: 24px; width: 4px; transform: translateY(-50%); border-radius: 0 4px 4px 0; background: #ec3b68;"></span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f55c83" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21a9 9 0 1 0-9-9"/><path d="M3 12h4"/><circle cx="12" cy="12" r="3"/><path d="m16 16 3 3"/></svg>
+      </span>
+      <span style="display: flex; align-items: center; justify-content: center; width: 40px; height: 36px; border-radius: 12px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4"/><path d="M16 3v4"/><path d="M3 10h18"/></svg></span>
+    </nav>
+    <div style="border-top: 1px solid #173d6e; padding: 12px; width: 100%; display: flex; justify-content: center;">
+      <span style="width: 32px; height: 32px; border-radius: 50%; background: #ec3b68; color: #ffffff; font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center;">MC</span>
+    </div>
+  </aside>
+
+  <main style="flex: 1; min-width: 0; display: flex; flex-direction: column;">
+
+    <header style="background: #ffffff; border-bottom: 1px solid #dde2e9; padding: 14px 24px; display: flex; align-items: center; gap: 20px; flex-shrink: 0;">
+      <span style="display: inline-flex; align-items: center; gap: 8px; height: 32px; padding: 0 12px 0 8px; border-radius: 10px; border: 1px solid #dde2e9; font-size: 13px; font-weight: 500; color: #4d5765;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4d5765" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        Calibration
+      </span>
+      <div>
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <h1 style="margin: 0; font-size: 18px; font-weight: 700; letter-spacing: -0.015em; color: #141a22;">Calibration : CAL-INF-004</h1>
+          <span style="display: inline-flex; align-items: center; border-radius: 10px; border: 1px solid #FDBA74; background: #FFF3E9; color: #EA580C; padding: 2px 8px; font-size: 12px; font-weight: 500;">Cas de calibration</span>
+        </div>
+        <p style="margin: 2px 0 0; font-size: 12px; color: #6b7685;">EACVI-INFLAME · CMR · enregistré il y a 40 s</p>
+      </div>
+
+      <div style="margin-left: auto; display: flex; align-items: center; gap: 12px;">
+        <div style="text-align: right;">
+          <div style="font-size: 12px; color: #6b7685;">Progression</div>
+          <div style="font-size: 13px; font-weight: 600; color: #141a22;">27 champs sur 27</div>
+        </div>
+        <span style="display: inline-flex; align-items: center; gap: 6px; border-radius: 10px; border: 1px solid #FECACA; background: #FEF2F2; color: #DC2626; padding: 4px 10px; font-size: 12.5px; font-weight: 600;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#DC2626" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
+          1 valeur à corriger
+        </span>
+        <span style="display: inline-flex; align-items: center; height: 36px; padding: 0 16px; border-radius: 10px; border: 1px solid #dde2e9; background: #ffffff; color: #363f4c; font-size: 14px; font-weight: 500; box-shadow: 0 1px 2px rgba(16,28,48,0.06);">Enregistrer</span>
+        <span style="display: inline-flex; align-items: center; height: 36px; padding: 0 16px; border-radius: 10px; background: #eceff3; color: #9aa5b3; font-size: 14px; font-weight: 500;">Soumettre le cas</span>
+      </div>
+    </header>
+
+    <div style="flex: 1; display: flex; min-height: 0;">
+
+      <div style="width: 246px; flex-shrink: 0; border-right: 1px solid #dde2e9; background: #ffffff; padding: 20px 14px; display: flex; flex-direction: column; gap: 22px;">
+        <div>
+          <p style="margin: 0 0 10px; padding: 0 4px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #9aa5b3;">Séquences</p>
+          <div style="display: flex; flex-direction: column; gap: 2px;">
+          <div style="display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 12px; font-size: 14px; background: #eceff3; font-weight: 500; color: #141a22;"><span style="width: 7px; height: 7px; border-radius: 50%; background: #DC2626; flex-shrink: 0;"></span>Cine<span style="margin-left: auto; display: inline-flex; align-items: center; justify-content: center; min-width: 19px; height: 19px; padding: 0 6px; border-radius: 10px; background: #FEF2F2; border: 1px solid #FECACA; color: #DC2626; font-size: 11px; font-weight: 600;">1</span></div>
+          <div style="display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 12px; font-size: 14px; color: #4d5765;"><span style="width: 7px; height: 7px; border-radius: 50%; background: #047857; flex-shrink: 0;"></span>T2w<span style="margin-left: auto; font-size: 12px; color: #9aa5b3;">3/3</span></div>
+          <div style="display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 12px; font-size: 14px; color: #4d5765;"><span style="width: 7px; height: 7px; border-radius: 50%; background: #047857; flex-shrink: 0;"></span>T1 Mapping Pre<span style="margin-left: auto; font-size: 12px; color: #9aa5b3;">3/3</span></div>
+          <div style="display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 12px; font-size: 14px; color: #4d5765;"><span style="width: 7px; height: 7px; border-radius: 50%; background: #047857; flex-shrink: 0;"></span>T2 Mapping<span style="margin-left: auto; font-size: 12px; color: #9aa5b3;">3/3</span></div>
+          <div style="display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 12px; font-size: 14px; color: #4d5765;"><span style="width: 7px; height: 7px; border-radius: 50%; background: #047857; flex-shrink: 0;"></span>LGE<span style="margin-left: auto; font-size: 12px; color: #9aa5b3;">6/6</span></div>
+          </div>
+        </div>
+        <div style="margin-top: auto; border-radius: 12px; border: 1px solid #FECACA; background: #FEF2F2; padding: 11px 13px;">
+          <div style="font-size: 12px; font-weight: 600; color: #991b1b;">Soumission bloquée</div>
+          <div style="font-size: 11.5px; color: #DC2626; margin-top: 3px; line-height: 1.45;">Une valeur sort des bornes définies dans le CRF. Corrigez-la pour pouvoir signer.</div>
+        </div>
+      </div>
+
+      <div style="flex: 1; min-width: 0; overflow: hidden; padding: 22px 26px; display: flex; flex-direction: column; gap: 15px; background:
+          radial-gradient(58% 52% at 10% 4%, rgba(214, 31, 85, 0.08), transparent 60%),
+          radial-gradient(52% 48% at 92% 12%, rgba(236, 59, 104, 0.06), transparent 62%),
+          #f5f7fa;">
+
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px;">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <h2 style="margin: 0; font-size: 20px; font-weight: 700; letter-spacing: -0.02em; color: #141a22;">Cine</h2>
+            <span style="display: inline-flex; align-items: center; border-radius: 10px; border: 1px solid #FECACA; background: #FEF2F2; color: #DC2626; padding: 2px 8px; font-size: 12px; font-weight: 500;">1 valeur hors bornes</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 12px; border-radius: 10px; border: 1px solid #dde2e9; background: #ffffff; color: #363f4c; font-size: 13px; font-weight: 500;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6b7685" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><path d="M4 22v-7"/></svg>
+              Signaler un problème
+            </span>
+            <span style="display: inline-flex; align-items: center; gap: 7px; height: 32px; padding: 0 12px; border-radius: 10px; border: 1px solid #dde2e9; background: #ffffff; color: #aeb7c2; font-size: 13px; font-weight: 500;">
+              <span style="width: 15px; height: 15px; border-radius: 5px; border: 1.5px solid #c4ccd6;"></span>
+              Marquer la séquence comme terminée
+            </span>
+          </div>
+        </div>
+
+        <div>
+          <p style="margin: 2px 0 10px; font-size: 13px; font-weight: 600; color: #6b7685; padding-bottom: 8px; border-bottom: 1px solid #eceff3;">Disponibilité et artéfacts</p>
+          <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px;">
+            <div style="border: 1px solid #A7F3D0; background: #ffffff; border-radius: 12px; padding: 12px 14px;">
+              <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 7px;">
+                <span style="font-size: 12px; color: #6b7685;">Séquence disponible</span><span style="display: inline-flex; align-items: center; gap: 4px; border-radius: 10px; border: 1px solid #A7F3D0; background: #ECFDF5; color: #047857; padding: 1px 7px; font-size: 11px; font-weight: 500;">Saisi</span>
+              </div>
+              <div style="display: flex; gap: 6px;"><span style="display: inline-flex; align-items: center; justify-content: center; height: 34px; flex: 1; border-radius: 10px; font-size: 13px; font-weight: 500; background: #122f54; color: #ffffff; border: 1px solid #122f54;">Oui</span><span style="display: inline-flex; align-items: center; justify-content: center; height: 34px; flex: 1; border-radius: 10px; font-size: 13px; font-weight: 500; background: #ffffff; color: #4d5765; border: 1px solid #dde2e9;">Non</span></div>
+            </div>
+            <div style="border: 1px solid #A7F3D0; background: #ffffff; border-radius: 12px; padding: 12px 14px;">
+              <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 7px;">
+                <span style="font-size: 12px; color: #6b7685;">Grade d'artéfacts</span><span style="display: inline-flex; align-items: center; gap: 4px; border-radius: 10px; border: 1px solid #A7F3D0; background: #ECFDF5; color: #047857; padding: 1px 7px; font-size: 11px; font-weight: 500;">Saisi</span>
+              </div>
+              <div style="display: flex; align-items: center; justify-content: space-between; height: 34px; padding: 0 11px; border-radius: 10px; border: 1.5px solid #dde2e9; background: #fafbfc;">
+                <span style="font-size: 13px; color: #141a22;">Léger</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9aa5b3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+              </div>
+            </div>
+            <div style="border: 1px solid #A7F3D0; background: #ffffff; border-radius: 12px; padding: 12px 14px;">
+              <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 7px;">
+                <span style="font-size: 12px; color: #6b7685;">Type d'artéfacts</span><span style="display: inline-flex; align-items: center; gap: 4px; border-radius: 10px; border: 1px solid #A7F3D0; background: #ECFDF5; color: #047857; padding: 1px 7px; font-size: 11px; font-weight: 500;">Saisi</span>
+              </div>
+              <div style="display: flex; align-items: center; justify-content: space-between; height: 34px; padding: 0 11px; border-radius: 10px; border: 1.5px solid #dde2e9; background: #fafbfc;">
+                <span style="font-size: 13px; color: #141a22;">Respiration</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9aa5b3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <p style="margin: 4px 0 10px; font-size: 13px; font-weight: 600; color: #6b7685; padding-bottom: 8px; border-bottom: 1px solid #eceff3;">Ventricule gauche</p>
+          <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px;">
+            <div style="border: 1px solid #A7F3D0; background: #ffffff; border-radius: 12px; padding: 12px 14px;">
+              <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 7px;">
+                <span style="font-size: 12px; color: #6b7685;">FEVG visuelle</span><span style="display: inline-flex; align-items: center; gap: 4px; border-radius: 10px; border: 1px solid #A7F3D0; background: #ECFDF5; color: #047857; padding: 1px 7px; font-size: 11px; font-weight: 500;">Saisi</span>
+              </div>
+              <div style="display: flex; align-items: baseline; justify-content: space-between; height: 34px; padding: 0 11px; border-radius: 10px; border: 1.5px solid #dde2e9; background: #fafbfc;"><span style="font-size: 17px; font-weight: 400; color: #141a22;">46</span><span style="font-size: 12px; color: #9aa5b3;">%</span></div>
+              <div style="font-size: 11px; color: #9aa5b3; margin-top: 6px;">Entre 5 et 90 %</div>
+            </div>
+            <div style="border: 1px solid #A7F3D0; background: #ffffff; border-radius: 12px; padding: 12px 14px;">
+              <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 7px;">
+                <span style="font-size: 12px; color: #6b7685;">FEVG mesurable</span><span style="display: inline-flex; align-items: center; gap: 4px; border-radius: 10px; border: 1px solid #A7F3D0; background: #ECFDF5; color: #047857; padding: 1px 7px; font-size: 11px; font-weight: 500;">Saisi</span>
+              </div>
+              <div style="display: flex; gap: 6px;"><span style="display: inline-flex; align-items: center; justify-content: center; height: 34px; flex: 1; border-radius: 10px; font-size: 13px; font-weight: 500; background: #122f54; color: #ffffff; border: 1px solid #122f54;">Oui</span><span style="display: inline-flex; align-items: center; justify-content: center; height: 34px; flex: 1; border-radius: 10px; font-size: 13px; font-weight: 500; background: #ffffff; color: #4d5765; border: 1px solid #dde2e9;">Non</span></div>
+            </div>
+            <div style="border: 1px solid #A7F3D0; background: #ffffff; border-radius: 12px; padding: 12px 14px;">
+              <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 7px;">
+                <span style="font-size: 12px; color: #6b7685;">FEVG</span><span style="display: inline-flex; align-items: center; gap: 4px; border-radius: 10px; border: 1px solid #A7F3D0; background: #ECFDF5; color: #047857; padding: 1px 7px; font-size: 11px; font-weight: 500;">Saisi</span>
+              </div>
+              <div style="display: flex; align-items: baseline; justify-content: space-between; height: 34px; padding: 0 11px; border-radius: 10px; border: 1.5px solid #dde2e9; background: #fafbfc;"><span style="font-size: 17px; font-weight: 400; color: #141a22;">44</span><span style="font-size: 12px; color: #9aa5b3;">%</span></div>
+              <div style="font-size: 11px; color: #9aa5b3; margin-top: 6px;">Entre 5 et 90 %</div>
+            </div>
+            <div style="border: 1px solid #DC2626; background: #ffffff; border-radius: 12px; padding: 12px 14px;">
+              <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 7px;">
+                <span style="font-size: 12px; color: #6b7685;">VTD VG</span><span style="display: inline-flex; align-items: center; gap: 4px; border-radius: 10px; border: 1px solid #FECACA; background: #FEF2F2; color: #DC2626; padding: 1px 7px; font-size: 11px; font-weight: 500;"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#DC2626" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>Hors bornes</span>
+              </div>
+              <div style="display: flex; align-items: baseline; justify-content: space-between; height: 34px; padding: 0 11px; border-radius: 10px; border: 1.5px solid #DC2626; background: #FEF2F2;"><span style="font-size: 17px; font-weight: 400; color: #991b1b;">620</span><span style="font-size: 12px; color: #9aa5b3;">mL</span></div>
+              <div style="display: flex; align-items: flex-start; gap: 6px; margin-top: 7px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#DC2626" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-top: 1px; flex-shrink: 0;"><circle cx="12" cy="12" r="9"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg><span style="font-size: 11.5px; line-height: 1.4; color: #DC2626; font-weight: 500;">Valeur hors bornes. Attendu entre 40 et 400 mL — vérifiez la segmentation ou l'unité.</span></div>
+            </div>
+            <div style="border: 1px solid #A7F3D0; background: #ffffff; border-radius: 12px; padding: 12px 14px;">
+              <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 7px;">
+                <span style="font-size: 12px; color: #6b7685;">VTS VG</span><span style="display: inline-flex; align-items: center; gap: 4px; border-radius: 10px; border: 1px solid #A7F3D0; background: #ECFDF5; color: #047857; padding: 1px 7px; font-size: 11px; font-weight: 500;">Saisi</span>
+              </div>
+              <div style="display: flex; align-items: baseline; justify-content: space-between; height: 34px; padding: 0 11px; border-radius: 10px; border: 1.5px solid #dde2e9; background: #fafbfc;"><span style="font-size: 17px; font-weight: 400; color: #141a22;">96</span><span style="font-size: 12px; color: #9aa5b3;">mL</span></div>
+              <div style="font-size: 11px; color: #9aa5b3; margin-top: 6px;">Entre 10 et 300 mL</div>
+            </div>
+            <div style="border: 1px solid #A7F3D0; background: #ffffff; border-radius: 12px; padding: 12px 14px;">
+              <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 7px;">
+                <span style="font-size: 12px; color: #6b7685;">Masse VG</span><span style="display: inline-flex; align-items: center; gap: 4px; border-radius: 10px; border: 1px solid #A7F3D0; background: #ECFDF5; color: #047857; padding: 1px 7px; font-size: 11px; font-weight: 500;">Saisi</span>
+              </div>
+              <div style="display: flex; align-items: baseline; justify-content: space-between; height: 34px; padding: 0 11px; border-radius: 10px; border: 1.5px solid #dde2e9; background: #fafbfc;"><span style="font-size: 17px; font-weight: 400; color: #141a22;">138</span><span style="font-size: 12px; color: #9aa5b3;">g</span></div>
+              <div style="font-size: 11px; color: #9aa5b3; margin-top: 6px;">Entre 30 et 400 g</div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <p style="margin: 4px 0 10px; font-size: 13px; font-weight: 600; color: #6b7685; padding-bottom: 8px; border-bottom: 1px solid #eceff3;">Péricarde</p>
+          <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px;">
+            <div style="border: 1px solid #A7F3D0; background: #ffffff; border-radius: 12px; padding: 12px 14px;">
+              <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 7px;">
+                <span style="font-size: 12px; color: #6b7685;">Épanchement péricardique</span><span style="display: inline-flex; align-items: center; gap: 4px; border-radius: 10px; border: 1px solid #A7F3D0; background: #ECFDF5; color: #047857; padding: 1px 7px; font-size: 11px; font-weight: 500;">Saisi</span>
+              </div>
+              <div style="display: flex; gap: 6px;"><span style="display: inline-flex; align-items: center; justify-content: center; height: 34px; flex: 1; border-radius: 10px; font-size: 13px; font-weight: 500; background: #122f54; color: #ffffff; border: 1px solid #122f54;">Oui</span><span style="display: inline-flex; align-items: center; justify-content: center; height: 34px; flex: 1; border-radius: 10px; font-size: 13px; font-weight: 500; background: #ffffff; color: #4d5765; border: 1px solid #dde2e9;">Non</span></div>
+            </div>
+            <div style="border: 1px solid #A7F3D0; background: #ffffff; border-radius: 12px; padding: 12px 14px;">
+              <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 7px;">
+                <span style="font-size: 12px; color: #6b7685;">Épaisseur max</span><span style="display: inline-flex; align-items: center; gap: 4px; border-radius: 10px; border: 1px solid #A7F3D0; background: #ECFDF5; color: #047857; padding: 1px 7px; font-size: 11px; font-weight: 500;">Saisi</span>
+              </div>
+              <div style="display: flex; align-items: baseline; justify-content: space-between; height: 34px; padding: 0 11px; border-radius: 10px; border: 1.5px solid #dde2e9; background: #fafbfc;"><span style="font-size: 17px; font-weight: 400; color: #141a22;">7</span><span style="font-size: 12px; color: #9aa5b3;">mm</span></div>
+              <div style="font-size: 11px; color: #9aa5b3; margin-top: 6px;">Entre 1 et 60 mm</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+</div>
+</x-dc>
+</body>
+</html>

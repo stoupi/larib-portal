@@ -1,0 +1,346 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600;700;800&display=swap">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body { margin: 0; font-family: 'Inter Tight', ui-sans-serif, system-ui, sans-serif; -webkit-font-smoothing: antialiased; color: #141a22; }
+    a { color: #173d6e; text-decoration: none; }
+    a:hover { color: #0e2542; }
+  </style>
+</helmet>
+
+
+<div style="display: flex; width: 1440px; height: 1240px; background: #f5f7fa; overflow: hidden;">
+
+  <aside style="width: 256px; flex-shrink: 0; background: #122f54; color: #ffffff; display: flex; flex-direction: column;">
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 20px 24px; text-align: center;">
+      <div style="height: 36px; width: 72px; display: flex; align-items: flex-start; justify-content: center; overflow: hidden;">
+        <img src="logo.png" alt="Larib Portal" style="width: 72px; filter: brightness(0) invert(1);">
+      </div>
+      <span style="font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">Larib Portal</span>
+    </div>
+
+    <nav style="flex: 1; display: flex; flex-direction: column; gap: 24px; padding: 16px 12px; overflow-y: auto;">
+      <div>
+        <p style="margin: 0 0 8px; padding: 0 12px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #7197c2;">Vue d'ensemble</p>
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+          <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #ffffff;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>
+            <span>Tableau de bord</span>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <p style="margin: 0 0 8px; padding: 0 12px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #7197c2;">Applications</p>
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+          <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #ffffff;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10 12 5 2 10l10 5z"/><path d="M6 12v5c0 1 2.5 2.5 6 2.5s6-1.5 6-2.5v-5"/></svg>
+            <span>Training Best-of</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #ffffff;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4"/><path d="M16 3v4"/><path d="M3 10h18"/></svg>
+            <span>Gestion des congés</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #ffffff;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4h6a3 3 0 0 1 3 3v13a2.5 2.5 0 0 0-2.5-2.5H2z"/><path d="M22 4h-6a3 3 0 0 0-3 3v13a2.5 2.5 0 0 1 2.5-2.5H22z"/></svg>
+            <span>Publications</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #ffffff;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21a9 9 0 1 0-9-9"/><path d="M3 12h4"/><circle cx="12" cy="12" r="3"/><path d="m16 16 3 3"/></svg>
+            <span>Core Lab</span>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <p style="margin: 0 0 8px; padding: 0 12px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #7197c2;">Administration</p>
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+          <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #ffffff;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10 12 5 2 10l10 5z"/><path d="M6 12v5c0 1 2.5 2.5 6 2.5s6-1.5 6-2.5v-5"/></svg>
+            <span style="flex: 1;">Training Best-of</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ec3b68" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #ffffff;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4"/><path d="M16 3v4"/><path d="M3 10h18"/></svg>
+            <span style="flex: 1;">Gestion des congés</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ec3b68" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #ffffff;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4h6a3 3 0 0 1 3 3v13a2.5 2.5 0 0 0-2.5-2.5H2z"/><path d="M22 4h-6a3 3 0 0 0-3 3v13a2.5 2.5 0 0 1 2.5-2.5H22z"/></svg>
+            <span style="flex: 1;">Publications</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ec3b68" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <div style="position: relative; display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; background: #173d6e; color: #ffffff;">
+            <span style="position: absolute; left: -12px; top: 50%; height: 24px; width: 4px; transform: translateY(-50%); border-radius: 0 4px 4px 0; background: #ec3b68;"></span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f55c83" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21a9 9 0 1 0-9-9"/><path d="M3 12h4"/><circle cx="12" cy="12" r="3"/><path d="m16 16 3 3"/></svg>
+            <span style="flex: 1;">Core Lab</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ec3b68" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #ffffff;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/></svg>
+            <span>Gestion des utilisateurs</span>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <div style="border-top: 1px solid #173d6e; padding: 12px;">
+      <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; background: #173d6e;">
+        <span style="width: 32px; height: 32px; border-radius: 50%; background: #ec3b68; color: #ffffff; font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center;">PD</span>
+        <div style="min-width: 0; flex: 1;">
+          <div style="font-size: 14px; font-weight: 500; color: #ffffff;">P. Dupont</div>
+          <div style="font-size: 12px; color: #aac0dc;">Data manager</div>
+        </div>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+      </div>
+    </div>
+  </aside>
+
+  <main style="flex: 1; min-width: 0; display: flex; flex-direction: column; overflow: hidden;">
+    <div style="flex-shrink: 0; height: 56px; background: #ffffff; border-bottom: 1px solid #dde2e9; display: flex; align-items: center; gap: 24px; padding: 0 32px;">
+      <span style="display: inline-flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #9aa5b3;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ec3b68" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Administration
+      </span>
+      <span style="width: 1px; height: 22px; background: #dde2e9;"></span>
+      <nav style="display: flex; align-items: center; gap: 4px; height: 100%;">
+        <span style="display: inline-flex; align-items: center; height: 100%; padding: 0 14px; font-size: 14px; color: #6b7685;">Vue d'ensemble</span>
+        <span style="display: inline-flex; align-items: center; height: 100%; padding: 0 14px; font-size: 14px; color: #6b7685;">Études</span>
+        <span style="display: inline-flex; align-items: center; height: 100%; padding: 0 14px; font-size: 14px; color: #6b7685;">Bibliothèque</span>
+        <span style="display: inline-flex; align-items: center; height: 100%; padding: 0 14px; font-size: 14px; color: #6b7685;">Utilisateurs</span>
+        <span style="display: inline-flex; align-items: center; height: 100%; padding: 0 14px; font-size: 14px; font-weight: 600; color: #141a22; box-shadow: inset 0 -2px 0 #d61f55;">Journal d'audit</span>
+      </nav>
+    </div>
+    <div style="flex: 1; min-height: 0; overflow: hidden; background: linear-gradient(to bottom, #ffffff 0px, #f5f7fa 220px);">
+      <div style="padding: 32px; display: flex; flex-direction: column; gap: 20px;">
+
+        <header style="display: flex; align-items: flex-start; justify-content: space-between; gap: 16px;">
+          <div style="display: flex; align-items: stretch; gap: 14px;">
+            <span style="width: 5px; flex-shrink: 0; border-radius: 4px; background: linear-gradient(to bottom, #ec3b68, #d61f55);"></span>
+            <div>
+              <h1 style="margin: 0; font-size: 30px; font-weight: 800; letter-spacing: -0.025em; color: #141a22;">Journal d'audit</h1>
+              <p style="margin: 6px 0 0; max-width: 780px; font-size: 14px; line-height: 1.625; color: #6b7685;">Chaque geste qui touche une donnée laisse une trace : qui, quoi, quand, depuis où. Le journal couvre toutes les études et ne s&#39;efface pas.</p>
+            </div>
+          </div>
+
+        </header>
+
+        <div style="background: #ffffff; border: 1px solid #dde2e9; border-radius: 16px; padding: 16px 18px; box-shadow: 0 1px 3px rgba(16,28,48,0.08), 0 1px 2px rgba(16,28,48,0.04);">
+          <div style="display: flex; align-items: flex-end; gap: 12px; flex-wrap: wrap;">
+          <div style="width: 230px; display: flex; flex-direction: column; gap: 5px;"><span style="font-size: 11.5px; font-weight: 500; color: #6b7685;">Période</span><div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; height: 34px; padding: 0 11px; border-radius: 10px; border: 1px solid #dde2e9; background: #ffffff; font-size: 13px; color: #141a22;"><span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Du 1er au 2 septembre 2026</span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9aa5b3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></div></div>
+          <div style="width: 170px; display: flex; flex-direction: column; gap: 5px;"><span style="font-size: 11.5px; font-weight: 500; color: #6b7685;">Utilisateur</span><div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; height: 34px; padding: 0 11px; border-radius: 10px; border: 1px solid #dde2e9; background: #ffffff; font-size: 13px; color: #141a22;"><span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Tous</span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9aa5b3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></div></div>
+          <div style="width: 170px; display: flex; flex-direction: column; gap: 5px;"><span style="font-size: 11.5px; font-weight: 500; color: #6b7685;">Type d&#39;action</span><div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; height: 34px; padding: 0 11px; border-radius: 10px; border: 1px solid #dde2e9; background: #ffffff; font-size: 13px; color: #141a22;"><span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Tous</span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9aa5b3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></div></div>
+          <div style="width: 170px; display: flex; flex-direction: column; gap: 5px;"><span style="font-size: 11.5px; font-weight: 500; color: #6b7685;">Étude</span><div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; height: 34px; padding: 0 11px; border-radius: 10px; border: 1px solid #dde2e9; background: #ffffff; font-size: 13px; color: #141a22;"><span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Toutes</span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9aa5b3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></div></div>
+          <div style="width: 260px; display: flex; flex-direction: column; gap: 5px;"><span style="font-size: 11.5px; font-weight: 500; color: #6b7685;">Recherche</span><div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; height: 34px; padding: 0 11px; border-radius: 10px; border: 1px solid #dde2e9; background: #ffffff; font-size: 13px; color: #aeb7c2;"><span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Patient, variable, identifiant…</span></div></div>
+            <span style="display: inline-flex; align-items: center; gap: 7px; height: 34px; padding: 0 14px; border-radius: 10px; border: 1px solid #dde2e9; background: #ffffff; color: #363f4c; font-size: 13px; font-weight: 500;">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#6b7685" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
+              Exporter le journal filtré
+            </span>
+          </div>
+        </div>
+
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px;">
+          <span style="font-size: 13px; color: #6b7685;"><span style="font-weight: 600; color: #141a22; font-variant-numeric: tabular-nums;">12 847</span> entrées au total · <span style="font-variant-numeric: tabular-nums;">14</span> affichées pour ce filtre</span>
+          <span style="font-size: 12.5px; color: #9aa5b3;">Horodatage en heure de Paris</span>
+        </div>
+
+        <div style="background: #ffffff; border: 1px solid #dde2e9; border-radius: 16px; box-shadow: 0 1px 3px rgba(16,28,48,0.08), 0 1px 2px rgba(16,28,48,0.04); overflow: hidden;">
+          <table style="width: 100%;">
+            <thead>
+              <tr style="background: #fafbfc; border-bottom: 1px solid #dde2e9;">
+                <th style="height: 38px; padding: 0 20px; text-align: left; font-weight: 500; font-size: 12.5px; color: #6b7685;">Horodatage</th>
+                <th style="height: 38px; padding: 0 12px; text-align: left; font-weight: 500; font-size: 12.5px; color: #6b7685;">Auteur</th>
+                <th style="height: 38px; padding: 0 12px; text-align: left; font-weight: 500; font-size: 12.5px; color: #6b7685;">Action</th>
+                <th style="height: 38px; padding: 0 12px; text-align: left; font-weight: 500; font-size: 12.5px; color: #6b7685;">Objet</th>
+                <th style="height: 38px; padding: 0 12px; text-align: left; font-weight: 500; font-size: 12.5px; color: #6b7685;">Détail</th>
+                <th style="height: 38px; padding: 0 20px; text-align: left; font-weight: 500; font-size: 12.5px; color: #6b7685;">Adresse IP</th>
+              </tr>
+            </thead>
+            <tbody>
+            <tr style="border-bottom: 1px solid #dde2e9;">
+              <td style="padding: 10px 20px; font-size: 12.5px; color: #4d5765; white-space: nowrap; font-variant-numeric: tabular-nums;">02/09 09:41:07</td>
+              <td style="padding: 10px 12px;">
+                <div style="font-size: 13px; font-weight: 500; color: #141a22; white-space: nowrap;">Dr. Martin</div>
+                <div style="font-size: 11.5px; color: #9aa5b3; white-space: nowrap;">Relecteur · MIR-DIJON</div>
+              </td>
+              <td style="padding: 10px 12px;"><span style="display: inline-flex; align-items: center; border-radius: 9px; border: 1px solid #A7F3D0; background: #ECFDF5; color: #047857; padding: 2px 8px; font-size: 11.5px; font-weight: 500; white-space: nowrap;">Signature de patient</span></td>
+              <td style="padding: 10px 12px; font-size: 12.5px; color: #4d5765; white-space: nowrap; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;">MIR-DJ-0142</td>
+              <td style="padding: 10px 12px; font-size: 12.5px; color: #4d5765;">Adjudication signée, 3 discordances tranchées</td>
+              <td style="padding: 10px 20px; font-size: 12px; color: #9aa5b3; white-space: nowrap; font-variant-numeric: tabular-nums;">10.32.4.18</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #dde2e9;">
+              <td style="padding: 10px 20px; font-size: 12.5px; color: #4d5765; white-space: nowrap; font-variant-numeric: tabular-nums;">02/09 09:38:52</td>
+              <td style="padding: 10px 12px;">
+                <div style="font-size: 13px; font-weight: 500; color: #141a22; white-space: nowrap;">Dr. Martin</div>
+                <div style="font-size: 11.5px; color: #9aa5b3; white-space: nowrap;">Relecteur · MIR-DIJON</div>
+              </td>
+              <td style="padding: 10px 12px;"><span style="display: inline-flex; align-items: center; border-radius: 9px; border: 1px solid #FDBA74; background: #FFF3E9; color: #EA580C; padding: 2px 8px; font-size: 11.5px; font-weight: 500; white-space: nowrap;">Adjudication</span></td>
+              <td style="padding: 10px 12px; font-size: 12.5px; color: #4d5765; white-space: nowrap; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;">MIR-DJ-0142 · lv_ef</td>
+              <td style="padding: 10px 12px; font-size: 12.5px; color: #4d5765;">Valeur retenue 47 % (lecteur 1 : 44, lecteur 2 : 50)</td>
+              <td style="padding: 10px 20px; font-size: 12px; color: #9aa5b3; white-space: nowrap; font-variant-numeric: tabular-nums;">10.32.4.18</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #dde2e9;">
+              <td style="padding: 10px 20px; font-size: 12.5px; color: #4d5765; white-space: nowrap; font-variant-numeric: tabular-nums;">02/09 09:12:30</td>
+              <td style="padding: 10px 12px;">
+                <div style="font-size: 13px; font-weight: 500; color: #141a22; white-space: nowrap;">Dr. Chen</div>
+                <div style="font-size: 11.5px; color: #9aa5b3; white-space: nowrap;">Lecteur · MIR-DIJON</div>
+              </td>
+              <td style="padding: 10px 12px;"><span style="display: inline-flex; align-items: center; border-radius: 9px; border: 1px solid #A7F3D0; background: #ECFDF5; color: #047857; padding: 2px 8px; font-size: 11.5px; font-weight: 500; white-space: nowrap;">Soumission de lecture</span></td>
+              <td style="padding: 10px 12px; font-size: 12.5px; color: #4d5765; white-space: nowrap; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;">MIR-DJ-0147</td>
+              <td style="padding: 10px 12px; font-size: 12.5px; color: #4d5765;">Examen 2 sur 2, 41 variables renseignées</td>
+              <td style="padding: 10px 20px; font-size: 12px; color: #9aa5b3; white-space: nowrap; font-variant-numeric: tabular-nums;">10.32.7.55</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #dde2e9;">
+              <td style="padding: 10px 20px; font-size: 12.5px; color: #4d5765; white-space: nowrap; font-variant-numeric: tabular-nums;">02/09 08:56:14</td>
+              <td style="padding: 10px 12px;">
+                <div style="font-size: 13px; font-weight: 500; color: #141a22; white-space: nowrap;">M. Dupont</div>
+                <div style="font-size: 11.5px; color: #9aa5b3; white-space: nowrap;">Administrateur</div>
+              </td>
+              <td style="padding: 10px 12px;"><span style="display: inline-flex; align-items: center; border-radius: 9px; border: 1px solid #dde2e9; background: #eceff3; color: #4d5765; padding: 2px 8px; font-size: 11.5px; font-weight: 500; white-space: nowrap;">Export</span></td>
+              <td style="padding: 10px 12px; font-size: 12.5px; color: #4d5765; white-space: nowrap; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;">MIR-DIJON</td>
+              <td style="padding: 10px 12px; font-size: 12.5px; color: #4d5765;">Lectures complètes, 142 patients, format CSV</td>
+              <td style="padding: 10px 20px; font-size: 12px; color: #9aa5b3; white-space: nowrap; font-variant-numeric: tabular-nums;">10.32.1.4</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #dde2e9;">
+              <td style="padding: 10px 20px; font-size: 12.5px; color: #4d5765; white-space: nowrap; font-variant-numeric: tabular-nums;">02/09 08:14:02</td>
+              <td style="padding: 10px 12px;">
+                <div style="font-size: 13px; font-weight: 500; color: #141a22; white-space: nowrap;">M. Dupont</div>
+                <div style="font-size: 11.5px; color: #9aa5b3; white-space: nowrap;">Administrateur</div>
+              </td>
+              <td style="padding: 10px 12px;"><span style="display: inline-flex; align-items: center; border-radius: 9px; border: 1px solid #dde2e9; background: #eceff3; color: #4d5765; padding: 2px 8px; font-size: 11.5px; font-weight: 500; white-space: nowrap;">Connexion</span></td>
+              <td style="padding: 10px 12px; font-size: 12.5px; color: #4d5765; white-space: nowrap; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;">compte</td>
+              <td style="padding: 10px 12px; font-size: 12.5px; color: #4d5765;">Authentification par mot de passe</td>
+              <td style="padding: 10px 20px; font-size: 12px; color: #9aa5b3; white-space: nowrap; font-variant-numeric: tabular-nums;">10.32.1.4</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #dde2e9;">
+              <td style="padding: 10px 20px; font-size: 12.5px; color: #4d5765; white-space: nowrap; font-variant-numeric: tabular-nums;">01/09 18:02:44</td>
+              <td style="padding: 10px 12px;">
+                <div style="font-size: 13px; font-weight: 500; color: #141a22; white-space: nowrap;">Pr. Dubois</div>
+                <div style="font-size: 11.5px; color: #9aa5b3; white-space: nowrap;">Investigateur · INFLAME</div>
+              </td>
+              <td style="padding: 10px 12px;"><span style="display: inline-flex; align-items: center; border-radius: 9px; border: 1px solid #A7F3D0; background: #ECFDF5; color: #047857; padding: 2px 8px; font-size: 11.5px; font-weight: 500; white-space: nowrap;">Certification de lecteur</span></td>
+              <td style="padding: 10px 12px; font-size: 12.5px; color: #4d5765; white-space: nowrap; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;">INFLAME · Dr. Lefèvre</td>
+              <td style="padding: 10px 12px; font-size: 12.5px; color: #4d5765;">Certifié après 3 cas de calibration, passage en production</td>
+              <td style="padding: 10px 20px; font-size: 12px; color: #9aa5b3; white-space: nowrap; font-variant-numeric: tabular-nums;">10.32.9.21</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #dde2e9;">
+              <td style="padding: 10px 20px; font-size: 12.5px; color: #4d5765; white-space: nowrap; font-variant-numeric: tabular-nums;">01/09 17:47:19</td>
+              <td style="padding: 10px 12px;">
+                <div style="font-size: 13px; font-weight: 500; color: #141a22; white-space: nowrap;">Pr. Dubois</div>
+                <div style="font-size: 11.5px; color: #9aa5b3; white-space: nowrap;">Investigateur · INFLAME</div>
+              </td>
+              <td style="padding: 10px 12px;"><span style="display: inline-flex; align-items: center; border-radius: 9px; border: 1px solid #FECACA; background: #FEF2F2; color: #DC2626; padding: 2px 8px; font-size: 11.5px; font-weight: 500; white-space: nowrap;">Renvoi pour correction</span></td>
+              <td style="padding: 10px 12px; font-size: 12.5px; color: #4d5765; white-space: nowrap; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;">INFLAME-0031</td>
+              <td style="padding: 10px 12px; font-size: 12.5px; color: #4d5765;">Séquence T2 : 4 variables à reprendre, motif renseigné</td>
+              <td style="padding: 10px 20px; font-size: 12px; color: #9aa5b3; white-space: nowrap; font-variant-numeric: tabular-nums;">10.32.9.21</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #dde2e9;">
+              <td style="padding: 10px 20px; font-size: 12.5px; color: #4d5765; white-space: nowrap; font-variant-numeric: tabular-nums;">01/09 16:30:08</td>
+              <td style="padding: 10px 12px;">
+                <div style="font-size: 13px; font-weight: 500; color: #141a22; white-space: nowrap;">Pr. Dubois</div>
+                <div style="font-size: 11.5px; color: #9aa5b3; white-space: nowrap;">Investigateur · MIR-DIJON</div>
+              </td>
+              <td style="padding: 10px 12px;"><span style="display: inline-flex; align-items: center; border-radius: 9px; border: 1px solid #FDBA74; background: #FFF3E9; color: #EA580C; padding: 2px 8px; font-size: 11.5px; font-weight: 500; white-space: nowrap;">Modification de bibliothèque</span></td>
+              <td style="padding: 10px 12px; font-size: 12.5px; color: #4d5765; white-space: nowrap; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;">lge_transmurality</td>
+              <td style="padding: 10px 12px; font-size: 12.5px; color: #4d5765;">Poids numériques ajoutés aux 5 valeurs</td>
+              <td style="padding: 10px 20px; font-size: 12px; color: #9aa5b3; white-space: nowrap; font-variant-numeric: tabular-nums;">10.32.9.21</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #dde2e9;">
+              <td style="padding: 10px 20px; font-size: 12.5px; color: #4d5765; white-space: nowrap; font-variant-numeric: tabular-nums;">01/09 15:22:51</td>
+              <td style="padding: 10px 12px;">
+                <div style="font-size: 13px; font-weight: 500; color: #141a22; white-space: nowrap;">Dr. Anderson</div>
+                <div style="font-size: 11.5px; color: #9aa5b3; white-space: nowrap;">Lecteur · MIR-DIJON</div>
+              </td>
+              <td style="padding: 10px 12px;"><span style="display: inline-flex; align-items: center; border-radius: 9px; border: 1px solid #FDBA74; background: #FFF3E9; color: #EA580C; padding: 2px 8px; font-size: 11.5px; font-weight: 500; white-space: nowrap;">Enregistrement</span></td>
+              <td style="padding: 10px 12px; font-size: 12.5px; color: #4d5765; white-space: nowrap; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;">CAL-MIR-DJ-002</td>
+              <td style="padding: 10px 12px; font-size: 12.5px; color: #4d5765;">Sauvegarde automatique, 12 variables modifiées</td>
+              <td style="padding: 10px 20px; font-size: 12px; color: #9aa5b3; white-space: nowrap; font-variant-numeric: tabular-nums;">10.32.6.9</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #dde2e9;">
+              <td style="padding: 10px 20px; font-size: 12.5px; color: #4d5765; white-space: nowrap; font-variant-numeric: tabular-nums;">01/09 14:27:36</td>
+              <td style="padding: 10px 12px;">
+                <div style="font-size: 13px; font-weight: 500; color: #141a22; white-space: nowrap;">Dr. Chen</div>
+                <div style="font-size: 11.5px; color: #9aa5b3; white-space: nowrap;">Lecteur · MIR-DIJON</div>
+              </td>
+              <td style="padding: 10px 12px;"><span style="display: inline-flex; align-items: center; border-radius: 9px; border: 1px solid #A7F3D0; background: #ECFDF5; color: #047857; padding: 2px 8px; font-size: 11.5px; font-weight: 500; white-space: nowrap;">Soumission de calibration</span></td>
+              <td style="padding: 10px 12px; font-size: 12.5px; color: #4d5765; white-space: nowrap; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;">CAL-MIR-DJ-003</td>
+              <td style="padding: 10px 12px; font-size: 12.5px; color: #4d5765;">Dernier cas soumis, dossier en attente de revue</td>
+              <td style="padding: 10px 20px; font-size: 12px; color: #9aa5b3; white-space: nowrap; font-variant-numeric: tabular-nums;">10.32.7.55</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #dde2e9;">
+              <td style="padding: 10px 20px; font-size: 12.5px; color: #4d5765; white-space: nowrap; font-variant-numeric: tabular-nums;">01/09 11:09:12</td>
+              <td style="padding: 10px 12px;">
+                <div style="font-size: 13px; font-weight: 500; color: #141a22; white-space: nowrap;">M. Dupont</div>
+                <div style="font-size: 11.5px; color: #9aa5b3; white-space: nowrap;">Administrateur</div>
+              </td>
+              <td style="padding: 10px 12px;"><span style="display: inline-flex; align-items: center; border-radius: 9px; border: 1px solid #FDBA74; background: #FFF3E9; color: #EA580C; padding: 2px 8px; font-size: 11.5px; font-weight: 500; white-space: nowrap;">Assignation</span></td>
+              <td style="padding: 10px 12px; font-size: 12.5px; color: #4d5765; white-space: nowrap; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;">MIR-DIJON</td>
+              <td style="padding: 10px 12px; font-size: 12.5px; color: #4d5765;">18 patients assignés à 6 lecteurs, courriels envoyés</td>
+              <td style="padding: 10px 20px; font-size: 12px; color: #9aa5b3; white-space: nowrap; font-variant-numeric: tabular-nums;">10.32.1.4</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #dde2e9;">
+              <td style="padding: 10px 20px; font-size: 12.5px; color: #4d5765; white-space: nowrap; font-variant-numeric: tabular-nums;">01/09 10:44:57</td>
+              <td style="padding: 10px 12px;">
+                <div style="font-size: 13px; font-weight: 500; color: #141a22; white-space: nowrap;">M. Dupont</div>
+                <div style="font-size: 11.5px; color: #9aa5b3; white-space: nowrap;">Administrateur</div>
+              </td>
+              <td style="padding: 10px 12px;"><span style="display: inline-flex; align-items: center; border-radius: 9px; border: 1px solid #FDBA74; background: #FFF3E9; color: #EA580C; padding: 2px 8px; font-size: 11.5px; font-weight: 500; white-space: nowrap;">Changement de phase</span></td>
+              <td style="padding: 10px 12px; font-size: 12.5px; color: #4d5765; white-space: nowrap; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;">CARDIO-T1</td>
+              <td style="padding: 10px 12px; font-size: 12.5px; color: #4d5765;">Passage de run-in à production, signé</td>
+              <td style="padding: 10px 20px; font-size: 12px; color: #9aa5b3; white-space: nowrap; font-variant-numeric: tabular-nums;">10.32.1.4</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #dde2e9;">
+              <td style="padding: 10px 20px; font-size: 12.5px; color: #4d5765; white-space: nowrap; font-variant-numeric: tabular-nums;">01/09 09:58:03</td>
+              <td style="padding: 10px 12px;">
+                <div style="font-size: 13px; font-weight: 500; color: #141a22; white-space: nowrap;">Dr. Rossi</div>
+                <div style="font-size: 11.5px; color: #9aa5b3; white-space: nowrap;">Relecteur · INFLAME</div>
+              </td>
+              <td style="padding: 10px 12px;"><span style="display: inline-flex; align-items: center; border-radius: 9px; border: 1px solid #dde2e9; background: #eceff3; color: #4d5765; padding: 2px 8px; font-size: 11.5px; font-weight: 500; white-space: nowrap;">Consultation</span></td>
+              <td style="padding: 10px 12px; font-size: 12.5px; color: #4d5765; white-space: nowrap; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;">INFLAME-0028</td>
+              <td style="padding: 10px 12px; font-size: 12.5px; color: #4d5765;">Lecture ouverte en lecture seule</td>
+              <td style="padding: 10px 20px; font-size: 12px; color: #9aa5b3; white-space: nowrap; font-variant-numeric: tabular-nums;">93.44.201.7</td>
+            </tr>
+            <tr style="">
+              <td style="padding: 10px 20px; font-size: 12.5px; color: #4d5765; white-space: nowrap; font-variant-numeric: tabular-nums;">31/08 22:15:40</td>
+              <td style="padding: 10px 12px;">
+                <div style="font-size: 13px; font-weight: 500; color: #141a22; white-space: nowrap;">Dr. Okonkwo</div>
+                <div style="font-size: 11.5px; color: #9aa5b3; white-space: nowrap;">Lecteur · SAR-CMR</div>
+              </td>
+              <td style="padding: 10px 12px;"><span style="display: inline-flex; align-items: center; border-radius: 9px; border: 1px solid #FECACA; background: #FEF2F2; color: #DC2626; padding: 2px 8px; font-size: 11.5px; font-weight: 500; white-space: nowrap;">Échec de connexion</span></td>
+              <td style="padding: 10px 12px; font-size: 12.5px; color: #4d5765; white-space: nowrap; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;">compte</td>
+              <td style="padding: 10px 12px; font-size: 12.5px; color: #4d5765;">3 tentatives, compte verrouillé 15 minutes</td>
+              <td style="padding: 10px 20px; font-size: 12px; color: #9aa5b3; white-space: nowrap; font-variant-numeric: tabular-nums;">82.65.118.203</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px;">
+          <span style="font-size: 12.5px; color: #9aa5b3;">Page 1 sur 918 · 14 entrées par page</span>
+          <div style="display: flex; align-items: center; gap: 6px;">
+            <span style="display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 10px; border: 1px solid #dde2e9; background: #ffffff;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#c4ccd6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></span>
+            <span style="display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 10px; background: #122f54; color: #ffffff; font-size: 13px; font-weight: 500;">1</span>
+            <span style="display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 10px; border: 1px solid #dde2e9; background: #ffffff; color: #4d5765; font-size: 13px;">2</span>
+            <span style="display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 10px; border: 1px solid #dde2e9; background: #ffffff; color: #4d5765; font-size: 13px;">3</span>
+            <span style="font-size: 13px; color: #9aa5b3; padding: 0 4px;">…</span>
+            <span style="display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 10px; border: 1px solid #dde2e9; background: #ffffff;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6b7685" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span>
+          </div>
+        </div>
+
+        <p style="margin: 0; max-width: 900px; font-size: 12.5px; line-height: 1.6; color: #9aa5b3;">Le journal est en écriture seule : personne, administrateur compris, ne peut modifier ni supprimer une entrée. C&#39;est ce qui rend les signatures opposables.</p>
+
+      </div>
+    </div>
+  </main>
+</div>
+</x-dc>
+</body>
+</html>

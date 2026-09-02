@@ -1,0 +1,342 @@
+{
+  "pages": [
+    {
+      "id": "page-1",
+      "name": "Parcours lecteur"
+    },
+    {
+      "id": "page-2",
+      "name": "Administration"
+    }
+  ],
+  "artboards": [
+    {
+      "file": "Dashboard.dc.html",
+      "page": "page-1",
+      "title": "1 · Tableau de bord du portail",
+      "x": 0,
+      "y": 0,
+      "w": 1440,
+      "h": 950
+    },
+    {
+      "file": "Studies.dc.html",
+      "page": "page-1",
+      "title": "2 · Mes études",
+      "x": 1560,
+      "y": 0,
+      "w": 1440,
+      "h": 1120
+    },
+    {
+      "file": "TrainingLibrary.dc.html",
+      "page": "page-1",
+      "title": "2b · Ma formation",
+      "x": 3120,
+      "y": 0,
+      "w": 1440,
+      "h": 1620
+    },
+    {
+      "file": "Training.dc.html",
+      "page": "page-1",
+      "title": "3a · Formation d'une étude",
+      "x": 4680,
+      "y": 0,
+      "w": 1440,
+      "h": 1020
+    },
+    {
+      "file": "Calibration.dc.html",
+      "page": "page-1",
+      "title": "3b · Calibration et retour du PI",
+      "x": 6240,
+      "y": 0,
+      "w": 1440,
+      "h": 1060
+    },
+    {
+      "file": "CalibrationCase.dc.html",
+      "page": "page-1",
+      "title": "3c · Cas vierge",
+      "x": 0,
+      "y": 1820,
+      "w": 1440,
+      "h": 1000
+    },
+    {
+      "file": "CalibrationFilled.dc.html",
+      "page": "page-1",
+      "title": "3d · Saisie et valeur hors bornes",
+      "x": 1560,
+      "y": 1820,
+      "w": 1440,
+      "h": 1040
+    },
+    {
+      "file": "CalibrationSign.dc.html",
+      "page": "page-1",
+      "title": "3e · Signature du cas",
+      "x": 3120,
+      "y": 1820,
+      "w": 1440,
+      "h": 1040
+    },
+    {
+      "file": "Main.dc.html",
+      "page": "page-1",
+      "title": "4 · Mes lectures",
+      "x": 4680,
+      "y": 1820,
+      "w": 1440,
+      "h": 900
+    },
+    {
+      "file": "Reading.dc.html",
+      "page": "page-1",
+      "title": "5 · Écran de lecture",
+      "x": 6240,
+      "y": 1820,
+      "w": 1440,
+      "h": 1000
+    },
+    {
+      "file": "Signature.dc.html",
+      "page": "page-1",
+      "title": "6 · Soumission et signature",
+      "x": 0,
+      "y": 3060,
+      "w": 1440,
+      "h": 1000
+    },
+    {
+      "file": "ReturnedReview.dc.html",
+      "page": "page-1",
+      "title": "7a · Retour du relecteur",
+      "x": 1560,
+      "y": 3060,
+      "w": 1440,
+      "h": 1000
+    },
+    {
+      "file": "AdminReturn.dc.html",
+      "page": "page-1",
+      "title": "7b · Renvoi du data manager",
+      "x": 3120,
+      "y": 3060,
+      "w": 1440,
+      "h": 940
+    },
+    {
+      "file": "AdminStudies.dc.html",
+      "page": "page-2",
+      "title": "1 · Études",
+      "x": 0,
+      "y": 0,
+      "w": 1440,
+      "h": 1120
+    },
+    {
+      "file": "AdminConfig.dc.html",
+      "page": "page-2",
+      "title": "2 · Configuration et seuils",
+      "x": 1560,
+      "y": 0,
+      "w": 1440,
+      "h": 1720
+    },
+    {
+      "file": "CrfStart.dc.html",
+      "page": "page-2",
+      "title": "2b · Démarrer un CRF",
+      "x": 3120,
+      "y": 0,
+      "w": 1440,
+      "h": 940
+    },
+    {
+      "file": "CrfLibrary.dc.html",
+      "page": "page-2",
+      "title": "2c · Bibliothèque de blocs",
+      "x": 4680,
+      "y": 0,
+      "w": 1440,
+      "h": 1120
+    },
+    {
+      "file": "CrfBuilder.dc.html",
+      "page": "page-2",
+      "title": "2d · Éditeur de CRF",
+      "x": 6240,
+      "y": 0,
+      "w": 1440,
+      "h": 1120
+    },
+    {
+      "file": "CrfPublish.dc.html",
+      "page": "page-2",
+      "title": "2e · Publier une version",
+      "x": 7800,
+      "y": 0,
+      "w": 1440,
+      "h": 1120
+    },
+    {
+      "file": "AdminImport.dc.html",
+      "page": "page-2",
+      "title": "3 · Import de la cohorte",
+      "x": 0,
+      "y": 1900,
+      "w": 1440,
+      "h": 1080
+    },
+    {
+      "file": "AdminAssignment.dc.html",
+      "page": "page-2",
+      "title": "4 · Assignation des patients",
+      "x": 1560,
+      "y": 1900,
+      "w": 1440,
+      "h": 1050
+    },
+    {
+      "file": "AdminCalibration.dc.html",
+      "page": "page-2",
+      "title": "5 · Calibration et gold standard",
+      "x": 3120,
+      "y": 1900,
+      "w": 1440,
+      "h": 1050
+    },
+    {
+      "file": "AdminStats.dc.html",
+      "page": "page-2",
+      "title": "6 · Discordance",
+      "x": 4680,
+      "y": 1900,
+      "w": 1440,
+      "h": 1050
+    },
+    {
+      "file": "LibraryOverview.dc.html",
+      "page": "page-2",
+      "title": "7 · Bibliothèque de CRF",
+      "x": 6240,
+      "y": 1900,
+      "w": 1440,
+      "h": 1300
+    },
+    {
+      "file": "LibraryVariables.dc.html",
+      "page": "page-2",
+      "title": "7b · Bibliothèque de variables",
+      "x": 7800,
+      "y": 1900,
+      "w": 1440,
+      "h": 1400
+    },
+    {
+      "file": "LibraryValueSets.dc.html",
+      "page": "page-2",
+      "title": "7c · Jeux de valeurs",
+      "x": 9360,
+      "y": 1900,
+      "w": 1440,
+      "h": 1060
+    },
+    {
+      "file": "LibraryValueSet.dc.html",
+      "page": "page-2",
+      "title": "7d · Édition d'un jeu de valeurs",
+      "x": 10920,
+      "y": 1900,
+      "w": 1440,
+      "h": 1120
+    },
+    {
+      "file": "LibraryVariable.dc.html",
+      "page": "page-2",
+      "title": "7e · Édition d'une variable",
+      "x": 12480,
+      "y": 1900,
+      "w": 1440,
+      "h": 1160
+    },
+    {
+      "file": "LibraryBlock.dc.html",
+      "page": "page-2",
+      "title": "7f · Édition d'un bloc",
+      "x": 14040,
+      "y": 1900,
+      "w": 1440,
+      "h": 1120
+    },
+    {
+      "file": "LibraryBlockLge.dc.html",
+      "page": "page-2",
+      "title": "7g · Édition du bloc LGE",
+      "x": 15600,
+      "y": 1900,
+      "w": 1440,
+      "h": 1180
+    },
+    {
+      "file": "AdminUsers.dc.html",
+      "page": "page-2",
+      "title": "8 · Utilisateurs",
+      "x": 17160,
+      "y": 1900,
+      "w": 1440,
+      "h": 1180
+    },
+    {
+      "file": "AdminAudit.dc.html",
+      "page": "page-2",
+      "title": "9 · Journal d'audit",
+      "x": 18720,
+      "y": 1900,
+      "w": 1440,
+      "h": 1240
+    },
+    {
+      "file": "AdminExport.dc.html",
+      "page": "page-2",
+      "title": "10 · Export des données",
+      "x": 20280,
+      "y": 1900,
+      "w": 1440,
+      "h": 1150
+    },
+    {
+      "file": "AdminTeam.dc.html",
+      "page": "page-2",
+      "title": "4b · Équipe de l'étude",
+      "x": 21840,
+      "y": 1900,
+      "w": 1440,
+      "h": 1080
+    }
+  ],
+  "annotations": [
+    {
+      "id": "note-parcours",
+      "page": "page-1",
+      "x": 0,
+      "y": -200,
+      "w": 1400,
+      "text": "Parcours complet du lecteur, dans l'ordre où il le vit.\n1 · Le tableau de bord du portail. 2 · Mes études, la porte d'entrée : plusieurs études en parallèle, chacune à son stade.\n2b · Ma formation : la bibliothèque de modules. Un module se suit une seule fois — le socle et les logiciels traversent les études, seuls les modules de protocole et de certification appartiennent à une étude.\n3a à 3e · Ce qui précède la production : la formation, le retour du PI, puis le cycle complet d'un cas — vierge, rempli avec une valeur hors bornes qui bloque la soumission, et signé. La formation, huit modules qui se déverrouillent l'un après l'autre. Puis la calibration, où le lecteur se compare au gold standard : chaque variable est acceptée si l'écart tient dans la tolérance absolue OU relative, et le PI statue sur l'ensemble.\n4 · Mes lectures, une fois la production ouverte. 5 · L'écran de lecture. 6 · La soumission, où la signature scelle version du CRF, valeurs et fichiers.\n7a et 7b · Les deux façons dont un dossier revient : le relecteur conteste des valeurs (rouge, à traiter point par point), le data manager signale une pièce manquante (ambre, rien à ressaisir)."
+    },
+    {
+      "id": "note-admin",
+      "page": "page-2",
+      "x": 0,
+      "y": -190,
+      "w": 1400,
+      "text": "Parcours du data manager, dans l'ordre où une étude prend vie.\n1 · Études : l'entrée. Chaque carte porte la phase, les chiffres clés et ce qui attend une décision — jamais ce qui avance normalement.\n2 · Configuration et seuils. Les réglages sont classés par ce qu'ils coûtent : les informations générales se changent librement, la phase se signe et ne s'annule pas, le CRF est en lecture seule parce que le modifier créerait une v4 et scinderait les exports. Les seuils de discordance (deux lecteurs entre eux) sont éditables ; la tolérance de calibration (un lecteur face au gold standard) est rappelée à droite mais vient du CRF.\n2b à 2e · La chaîne du CRF. Démarrer, en assemblant depuis la bibliothèque ou en dupliquant une étude. La bibliothèque elle-même, rangée par modalité, en séquences et en sections : l'insertion crée une copie, sans lien de retour. L'éditeur. Puis la publication d'une version. L'éditeur classe chaque réglage par ce qu'il coûte ; la publication classe chaque modification par son effet sur les 19 lectures déjà signées — sans conséquence, crée un manque, casse l'interprétation — et demande une décision là où il en faut une.\n3 · Import de la cohorte, à l'étape de contrôle. 4 · Assignation et binômes. 5 · Calibration et gold standard. 6 · Discordance.\n7 à 7g · La bibliothèque pour elle-même, hors de toute étude. Quatre objets, toutes plates : aucune n'en contient une autre, on pioche celle qu'on veut. 7 · les blocs, séquence entière ou section isolée, avec ceux que personne n'a jamais repris. 7b · les variables, avec type, unité, bornes et tolérance de calibration. 7c · les jeux de valeurs : les réponses possibles, indépendamment de la question — un même jeu sert une catégorielle, une échelle en étoiles ou un bull's eye. 7d · l'édition d'un jeu, où l'ordre des valeurs, leurs couleurs et leurs poids se règlent une fois pour toutes — avec un aperçu du même jeu rendu en catégorielle, en dégradé et en bull's eye. 7e · l'édition d'une variable, où le type est un gabarit paramétrable : un bull's eye, c'est un découpage (16, 17 ou 32 segments) plus un jeu de valeurs, donc 17 réponses catégorielles comparées segment par segment. 7f · l'édition d'un bloc, où chaque variable porte sa provenance : venue de la bibliothèque, venue puis modifiée, ou propre au bloc. 7g · le même écran sur le bloc LGE, dont la variable sélectionnée est un bull's eye : les 17 segments AHA y sont numérotés, nommés et orientés (antérieur, septum, inférieur, latéral).\nLe fil rouge de ces cinq écrans : insérer, c'est copier. Modifier ici ne change rien à ce qui existe déjà.\n4b · Équipe de l'étude, l'onglet où l'on ajoute quelqu'un : le portail a ouvert l'accès à CoreLab, ici on choisit l'étude et le rôle. Un lecteur qui arrive sur une étude déjà en production commence quand même par la formation, puis la calibration — la phase de l'étude et celle du lecteur sont deux axes distincts. 8 · Utilisateurs : la vue CoreLab des accès accordés par le portail, avec leurs dates de début et de fin ; on n'invite personne d'ici, et un accès expiré fait disparaître la personne de toutes les études sans toucher à ses signatures. 9 · Journal d'audit, transversal aux études, en écriture seule — c'est lui qui rend les signatures opposables. 10 · Export, onglet de l'étude : seules les lectures signées sortent, et l'export lui-même est un acte tracé."
+    }
+  ],
+  "launch": {
+    "view": "canvas",
+    "page": "page-1"
+  }
+}
