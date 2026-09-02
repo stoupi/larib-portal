@@ -2002,7 +2002,12 @@
         "JOURNAL": "Revue",
         "STUDY": "Étude",
         "STUDY_INVESTIGATOR": "Investigateur",
-        "PUBLICATION_REQUEST": "Demande sur une publication"
+        "PUBLICATION_REQUEST": "Demande sur une publication",
+        "CORELAB_STUDY": "Étude CoreLab",
+        "CORELAB_SITE": "Centre CoreLab",
+        "CORELAB_MEMBERSHIP": "Équipe CoreLab",
+        "CORELAB_CRF_VERSION": "Version de CRF",
+        "CORELAB_SIGNATURE": "Signature CoreLab"
       },
       "fields": {
         "status": "Statut",

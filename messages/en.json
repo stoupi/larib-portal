@@ -2004,7 +2004,12 @@
         "JOURNAL": "Journal",
         "STUDY": "Study",
         "STUDY_INVESTIGATOR": "Investigator",
-        "PUBLICATION_REQUEST": "Publication request"
+        "PUBLICATION_REQUEST": "Publication request",
+        "CORELAB_STUDY": "CoreLab study",
+        "CORELAB_SITE": "CoreLab site",
+        "CORELAB_MEMBERSHIP": "CoreLab team",
+        "CORELAB_CRF_VERSION": "CRF version",
+        "CORELAB_SIGNATURE": "CoreLab signature"
       },
       "fields": {
         "status": "Status",
