@@ -24,7 +24,7 @@ function publicationItem(overrides: Partial<MyPublicationItem>): MyPublicationIt
     order: 2,
     totalAuthors: 5,
     positionBucket: 'middle',
-    isFirst: false,
+    isFirst: true,
     isStatistician: false,
     canDelete: false,
     authors: [],
@@ -49,7 +49,7 @@ describe('selectRecapArticles', () => {
     expect(rows.map((row: RecapArticle) => row.id)).toEqual(['1', '2', '3'])
   })
 
-  it('exposes title, status, journal, author position and how long it has waited', () => {
+  it('exposes title, status, journal and how long it has waited', () => {
     const [row] = selectRecapArticles(
       [publicationItem({ status: 'UNDER_REVIEW', lastSubmissionAt: '2026-08-03T00:00:00.000Z' })],
       new Date('2026-09-02T00:00:00.000Z'),
@@ -59,9 +59,6 @@ describe('selectRecapArticles', () => {
       title: 'T',
       status: 'UNDER_REVIEW',
       journalName: 'JACC',
-      order: 2,
-      totalAuthors: 5,
-      isFirstAuthor: false,
       since: '2026-08-03T00:00:00.000Z',
       waitingDays: 30,
     })
@@ -115,15 +112,15 @@ describe('the recap that chases stalled papers', () => {
     expect(selectOngoingArticles(articles).map((article) => article.id)).toEqual(['c'])
   })
 
-  it('puts the papers the reader leads before the ones they merely signed', () => {
+  it('drops the papers the reader merely signed: the recap speaks to who can act', () => {
     const articles = selectRecapArticles(
       [
-        publicationItem({ id: 'co', status: 'UNDER_REVIEW', isFirst: false, lastSubmissionAt: '2026-01-01T00:00:00.000Z' }),
-        publicationItem({ id: 'lead', status: 'UNDER_REVIEW', isFirst: true, lastSubmissionAt: '2026-08-01T00:00:00.000Z' }),
+        publicationItem({ id: 'co', status: 'UNDER_REVIEW', isFirst: false }),
+        publicationItem({ id: 'lead', status: 'UNDER_REVIEW', isFirst: true }),
       ],
       NOW,
     )
-    expect(selectOngoingArticles(articles).map((article) => article.id)).toEqual(['lead', 'co'])
+    expect(articles.map((article) => article.id)).toEqual(['lead'])
   })
 })
 
@@ -145,7 +142,7 @@ describe('selectRecapCelebrations', () => {
     expect(selectRecapCelebrations([publicationItem({ id: 'x', status: 'UNDER_REVIEW' })], SINCE)).toEqual([])
   })
 
-  it('leads with the ones the reader signs first', () => {
+  it('celebrates only what the reader signs first', () => {
     const celebrations = selectRecapCelebrations(
       [
         publicationItem({ id: 'co', status: 'PUBLISHED', isFirst: false, acceptedAt: '2026-08-25T00:00:00.000Z' }),
@@ -153,6 +150,6 @@ describe('selectRecapCelebrations', () => {
       ],
       SINCE,
     )
-    expect(celebrations.map((celebration) => celebration.id)).toEqual(['lead', 'co'])
+    expect(celebrations.map((celebration) => celebration.id)).toEqual(['lead'])
   })
 })

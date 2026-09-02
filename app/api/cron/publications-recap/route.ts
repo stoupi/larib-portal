@@ -2,7 +2,12 @@ import { NextRequest, NextResponse } from 'next/server'
 import { isAuthorizedCron } from '@/lib/cron-auth'
 import { getPublicationsRecapRecipients } from '@/lib/services/publications/recap'
 import { listMyPublications } from '@/lib/services/publications/my-publications'
-import { previousMonthStart, selectRecapArticles, selectRecapCelebrations } from '@/lib/publications/recap'
+import {
+  PUBLICATIONS_CONTACT_EMAIL,
+  previousMonthStart,
+  selectRecapArticles,
+  selectRecapCelebrations,
+} from '@/lib/publications/recap'
 import { sendPublicationsRecapEmail, renderPublicationsRecapEmail } from '@/lib/services/email'
 import { recordPublicationEmail } from '@/lib/services/publications/email-log'
 import { resolveAppBaseUrl } from '@/lib/app-url'
@@ -41,6 +46,7 @@ export async function GET(request: NextRequest) {
       articles,
       celebrations,
       appUrl,
+      contactEmail: PUBLICATIONS_CONTACT_EMAIL,
     }
     const result = await sendPublicationsRecapEmail({ to: recipient.email, ...params })
     const failed = 'error' in result

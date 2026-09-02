@@ -40,9 +40,9 @@ describe('renderLeaveRecapEmail', () => {
 
 describe('renderPublicationsRecapEmail', () => {
   const articles: RecapArticle[] = [
-    { id: '1', title: 'AI in cardiac MRI', status: 'UNDER_REVIEW', journalName: 'JACC', order: 1, totalAuthors: 6, isFirstAuthor: true, since: '2026-07-02T00:00:00.000Z', waitingDays: 62 },
-    { id: '2', title: 'Valve outcomes', status: 'IN_PREPARATION', journalName: null, order: 3, totalAuthors: 4, isFirstAuthor: false, since: null, waitingDays: null },
-    { id: '3', title: 'Strain analysis', status: 'TO_RESUBMIT', journalName: 'EHJ', order: 2, totalAuthors: 3, isFirstAuthor: false, since: '2026-03-04T00:00:00.000Z', waitingDays: 182 },
+    { id: '1', title: 'AI in cardiac MRI', status: 'UNDER_REVIEW', journalName: 'JACC', since: '2026-07-02T00:00:00.000Z', waitingDays: 62 },
+    { id: '2', title: 'Valve outcomes', status: 'IN_PREPARATION', journalName: null, since: null, waitingDays: null },
+    { id: '3', title: 'Strain analysis', status: 'TO_RESUBMIT', journalName: 'EHJ', since: '2026-03-04T00:00:00.000Z', waitingDays: 182 },
   ]
 
   it('renders French subject, statuses, journal fallback and app link', () => {
@@ -61,7 +61,6 @@ describe('renderPublicationsRecapEmail', () => {
     expect(text).toContain('aucun journal visé')
     expect(html).toContain('https://portal.test/fr/publications')
     expect(html).toContain('Marie')
-    expect(html).toContain('1er auteur sur 6')
   })
 
   it('renders English labels for EN users without a first name', () => {
@@ -90,9 +89,6 @@ describe('renderPublicationsRecapEmail', () => {
           title: 'Survival < 10% & the <script>alert(1)</script> case',
           status: 'UNDER_REVIEW',
           journalName: 'Heart & Vessels <Suppl>',
-          order: 1,
-          totalAuthors: 2,
-          isFirstAuthor: true,
           since: '2026-08-01T00:00:00.000Z',
           waitingDays: 32,
         },
@@ -179,9 +175,6 @@ describe('the recap that chases what stalls', () => {
       title: 'Rejected and never sent back',
       status: 'TO_RESUBMIT',
       journalName: 'EHJ',
-      order: 1,
-      totalAuthors: 3,
-      isFirstAuthor: true,
       since: '2026-03-04T00:00:00.000Z',
       waitingDays: 182,
     },
@@ -206,7 +199,7 @@ describe('the recap that chases what stalls', () => {
     })
     expect(html).toContain('À resoumettre')
     expect(html).toContain('04 mars 2026')
-    expect(html).toContain('en attente depuis 182 jours')
+    expect(html).toContain('en attente depuis 6 mois')
   })
 
   it('opens on the acceptances, with the confetti', () => {
@@ -215,7 +208,7 @@ describe('the recap that chases what stalls', () => {
       firstName: 'Marie',
       articles: [],
       celebrations: [
-        { id: 'c', title: 'Accepted at last', journalName: 'JACC', acceptedAt: '2026-08-20T00:00:00.000Z', isFirstAuthor: true },
+        { id: 'c', title: 'Accepted at last', journalName: 'JACC', acceptedAt: '2026-08-20T00:00:00.000Z' },
       ],
       appUrl: 'https://portal.test',
     })

@@ -4,14 +4,14 @@ import type { ArticleStatusValue } from '@/lib/services/publications/articles'
 export const RECAP_STATUSES = ['IN_PREPARATION', 'UNDER_REVIEW', 'REVISION', 'TO_RESUBMIT'] as const
 export type RecapStatusValue = (typeof RECAP_STATUSES)[number]
 
+// The recap speaks to the person who can act: only the papers they sign first.
+export const PUBLICATIONS_CONTACT_EMAIL = 'publications@cardiolarib-portal.com'
+
 export type RecapArticle = {
   id: string
   title: string
   status: RecapStatusValue
   journalName: string | null
-  order: number
-  totalAuthors: number
-  isFirstAuthor: boolean
   // The day the publication entered its current state, and how long it has sat there.
   since: string | null
   waitingDays: number | null
@@ -22,7 +22,6 @@ export type RecapCelebration = {
   title: string
   journalName: string | null
   acceptedAt: string
-  isFirstAuthor: boolean
 }
 
 function isRecapStatus(status: ArticleStatusValue): status is RecapStatusValue {
@@ -51,7 +50,7 @@ export function selectRecapArticles(
   now: Date = new Date(),
 ): RecapArticle[] {
   return publications.flatMap((publication) => {
-    if (!isRecapStatus(publication.status)) return []
+    if (!publication.isFirst || !isRecapStatus(publication.status)) return []
     const since = statusSince(publication)
     return [
       {
@@ -59,9 +58,6 @@ export function selectRecapArticles(
         title: publication.title,
         status: publication.status,
         journalName: publication.currentJournal,
-        order: publication.order,
-        totalAuthors: publication.totalAuthors,
-        isFirstAuthor: publication.isFirst,
         since,
         waitingDays: daysSince(since, now),
       },
@@ -80,10 +76,23 @@ export function selectStalledArticles(articles: RecapArticle[]): RecapArticle[] 
 export function selectOngoingArticles(articles: RecapArticle[]): RecapArticle[] {
   return articles
     .filter((article) => article.status !== 'TO_RESUBMIT')
-    .sort((first, second) => {
-      if (first.isFirstAuthor !== second.isFirstAuthor) return first.isFirstAuthor ? -1 : 1
-      return (second.waitingDays ?? -1) - (first.waitingDays ?? -1)
-    })
+    .sort((first, second) => (second.waitingDays ?? -1) - (first.waitingDays ?? -1))
+}
+
+// Past a month, a day count stops meaning anything: nobody reads "182 days" as
+// "six months", which is the number that should worry them.
+const DAYS_IN_MONTH = 30
+
+export function waitingLabel(days: number, locale: 'fr' | 'en'): string {
+  if (days < DAYS_IN_MONTH) {
+    return locale === 'fr'
+      ? `en attente depuis ${days} jour${days > 1 ? 's' : ''}`
+      : `waiting for ${days} day${days > 1 ? 's' : ''}`
+  }
+  const months = Math.round(days / DAYS_IN_MONTH)
+  return locale === 'fr'
+    ? `en attente depuis ${months} mois`
+    : `waiting for ${months} month${months > 1 ? 's' : ''}`
 }
 
 // Only what the journal accepted since the last recap is worth celebrating; an older
@@ -94,6 +103,7 @@ export function selectRecapCelebrations(
 ): RecapCelebration[] {
   return publications
     .flatMap((publication) => {
+      if (!publication.isFirst) return []
       if (publication.status !== 'ACCEPTED' && publication.status !== 'PUBLISHED') return []
       if (!publication.acceptedAt || new Date(publication.acceptedAt) < since) return []
       return [
@@ -102,14 +112,10 @@ export function selectRecapCelebrations(
           title: publication.title,
           journalName: publication.currentJournal,
           acceptedAt: publication.acceptedAt,
-          isFirstAuthor: publication.isFirst,
         },
       ]
     })
-    .sort((first, second) => {
-      if (first.isFirstAuthor !== second.isFirstAuthor) return first.isFirstAuthor ? -1 : 1
-      return second.acceptedAt.localeCompare(first.acceptedAt)
-    })
+    .sort((first, second) => second.acceptedAt.localeCompare(first.acceptedAt))
 }
 
 export function previousMonthStart(now: Date = new Date()): Date {

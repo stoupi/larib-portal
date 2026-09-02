@@ -11,6 +11,7 @@ import type { RecapPeriod, RecapRow, RecapStatus } from '@/lib/services/conges/r
 import {
   selectOngoingArticles,
   selectStalledArticles,
+  waitingLabel,
   type RecapArticle,
   type RecapCelebration,
   type RecapStatusValue,
@@ -679,10 +680,8 @@ const RECAP_WORDS = {
     colStatus: 'Statut',
     colJournal: 'Journal',
     colSince: 'Depuis le',
-    waiting: (days: number) => `en attente depuis ${days} jour${days > 1 ? 's' : ''}`,
     noJournal: 'aucun journal visé',
     notSubmitted: 'pas encore soumise',
-    position: (order: number, total: number) => `${order}${order === 1 ? 'er' : 'e'} auteur sur ${total}`,
     askTitle: 'Ces données servent au suivi du service',
     askBody:
       'Un statut à jour nous permet de suivre précisément l’activité de l’équipe et de ne laisser aucun travail s’enliser. Si une information n’est plus exacte, corrigez-la directement depuis votre espace : cela prend quelques secondes.',
@@ -713,10 +712,8 @@ const RECAP_WORDS = {
     colStatus: 'Status',
     colJournal: 'Journal',
     colSince: 'Since',
-    waiting: (days: number) => `waiting for ${days} day${days > 1 ? 's' : ''}`,
     noJournal: 'no target journal',
     notSubmitted: 'not submitted yet',
-    position: (order: number, total: number) => `author ${order} of ${total}`,
     askTitle: 'These records drive the department’s follow-up',
     askBody:
       'An up-to-date status lets us follow the team’s activity precisely and keeps work from stalling. If anything is no longer accurate, correct it from your own space — it takes seconds.',
@@ -769,7 +766,7 @@ export function renderPublicationsRecapEmail({
       const status = PUBLICATION_STATUS_STYLE[article.status].label[locale]
       const journal = article.journalName ?? words.noJournal
       const since = article.since ? recapDate(article.since, locale) : words.notSubmitted
-      const waiting = article.waitingDays === null ? '' : ` (${words.waiting(article.waitingDays)})`
+      const waiting = article.waitingDays === null ? '' : ` (${waitingLabel(article.waitingDays, locale)})`
       return `- [${status}] ${article.title} — ${journal} — ${since}${waiting}`
     }),
     '',
@@ -787,9 +784,9 @@ export function renderPublicationsRecapEmail({
         const waiting =
           article.waitingDays === null
             ? ''
-            : `<br /><span style="font-size:11px;color:${COLORS.mutedForeground};">${escapeHtml(words.waiting(article.waitingDays))}</span>`
+            : `<br /><span style="font-size:11px;color:${COLORS.mutedForeground};">${escapeHtml(waitingLabel(article.waitingDays, locale))}</span>`
         return `<tr>
-        <td style="padding:10px 12px;border-bottom:1px solid ${COLORS.border};font-family:${FONT_SANS};font-size:13px;line-height:19px;color:${COLORS.foreground};">${escapeHtml(article.title)}<br /><span style="font-size:11px;color:${COLORS.mutedForeground};">${escapeHtml(words.position(article.order, article.totalAuthors))}</span></td>
+        <td style="padding:10px 12px;border-bottom:1px solid ${COLORS.border};font-family:${FONT_SANS};font-size:13px;line-height:19px;color:${COLORS.foreground};">${escapeHtml(article.title)}</td>
         <td style="padding:10px 12px;border-bottom:1px solid ${COLORS.border};white-space:nowrap;vertical-align:top;"><span style="background-color:${style.bgColor};border-radius:4px;padding:3px 8px;font-family:${FONT_SANS};font-size:11px;color:#ffffff;white-space:nowrap;">${style.label[locale]}</span></td>
         <td style="padding:10px 12px;border-bottom:1px solid ${COLORS.border};font-family:${FONT_SANS};font-size:12px;color:${COLORS.mutedForeground};vertical-align:top;">${journal}</td>
         <td style="padding:10px 12px;border-bottom:1px solid ${COLORS.border};font-family:${FONT_SANS};font-size:12px;color:${COLORS.foreground};white-space:nowrap;vertical-align:top;">${escapeHtml(since)}${waiting}</td>
