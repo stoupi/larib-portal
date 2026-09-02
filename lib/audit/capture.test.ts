@@ -16,6 +16,7 @@ describe('buildAuditEvents', () => {
       entityId: 'article-1',
       entityLabel: 'New paper',
       articleId: 'article-1',
+      studyId: null,
       action: 'CREATE',
     })
     expect(events[0].changes).toEqual([
@@ -58,6 +59,7 @@ describe('buildAuditEvents', () => {
       entity: 'SUBMISSION',
       entityId: 'sub-1',
       articleId: 'article-9',
+      studyId: null,
       action: 'DELETE',
     })
     expect(events[0].changes).toEqual([
@@ -114,5 +116,16 @@ describe('buildAuditEvents', () => {
       after: [],
     })
     expect(events[0].entityLabel).toBe('Lariboisière')
+  })
+
+  it('attaches a corelab membership to its study', () => {
+    const events = buildAuditEvents({
+      model: 'CorelabStudyMembership',
+      action: 'CREATE',
+      before: [],
+      after: [{ id: 'm1', studyId: 's1', userId: 'u1', role: 'READER', canReview: false }],
+    })
+    expect(events[0].studyId).toBe('s1')
+    expect(events[0].articleId).toBeNull()
   })
 })

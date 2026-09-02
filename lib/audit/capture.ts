@@ -52,6 +52,7 @@ export function buildAuditEvents(input: CaptureInput): PendingAuditEvent[] {
         entityId: id,
         entityLabel: config.buildLabel(naming),
         articleId: articleIdOf(naming, config.articleIdField),
+        studyId: articleIdOf(naming, config.studyIdField),
         action: input.action,
         changes,
       },

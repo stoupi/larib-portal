@@ -90,3 +90,11 @@ describe('registry consistency', () => {
     }
   })
 })
+
+describe('corelab registry', () => {
+  it('scopes a membership to its study', () => {
+    expect(auditConfigFor('CorelabStudyMembership')?.entity).toBe('CORELAB_MEMBERSHIP')
+    expect(auditConfigFor('CorelabStudyMembership')?.studyIdField).toBe('studyId')
+    expect(auditConfigFor('CorelabStudy')?.studyIdField).toBe('id')
+  })
+})

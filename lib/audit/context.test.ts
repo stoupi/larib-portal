@@ -7,6 +7,7 @@ const META = {
   actorLabel: 'Solenn Toupin',
   source: 'UI' as const,
   summary: 'updateArticleStatus',
+  ipAddress: null,
 }
 
 function statusEvent() {
@@ -16,6 +17,7 @@ function statusEvent() {
     entityId: 'article-1',
     entityLabel: 'A paper',
     articleId: 'article-1',
+    studyId: null,
     action: 'UPDATE' as const,
     changes: [{ field: 'status', oldValue: 'UNDER_REVIEW', newValue: 'ACCEPTED' }],
   }

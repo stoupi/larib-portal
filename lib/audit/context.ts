@@ -10,6 +10,7 @@ export type PendingAuditEvent = {
   // Null for pivot rows, which borrow their publication's title when written.
   entityLabel: string | null
   articleId: string | null
+  studyId: string | null
   action: AuditAction
   changes: AuditFieldChange[]
 }
@@ -19,6 +20,7 @@ export type AuditOperationMeta = {
   actorLabel: string | null
   source: AuditSource
   summary: string | null
+  ipAddress: string | null
 }
 
 // Resolved once the work is done: a write inside a transaction is invisible to any

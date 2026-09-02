@@ -9,6 +9,7 @@ function statusEvent(): PendingAuditEvent {
     entityId: 'sub-1',
     entityLabel: null,
     articleId: 'article-9',
+    studyId: null,
     action: 'UPDATE',
     changes: [
       { field: 'journalId', oldValue: 'journal-1', newValue: 'journal-2' },
@@ -41,6 +42,7 @@ describe('collectReferenceLookups', () => {
         entity: 'CENTRE',
         entityLabel: 'Lariboisière',
         articleId: null,
+        studyId: null,
         changes: [{ field: 'name', oldValue: 'Old name', newValue: 'New name' }],
       },
     ])

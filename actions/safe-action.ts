@@ -29,7 +29,7 @@ export const authenticatedAction = actionClient.use(async ({ next }) => {
   }
 
   return runAuditedOperation(
-    { actorId: session.user.id, actorLabel: actorLabelOf(session.user), source: 'UI', summary: null },
+    { actorId: session.user.id, actorLabel: actorLabelOf(session.user), source: 'UI', summary: null, ipAddress: session.session.ipAddress ?? null },
     () =>
       next({
         ctx: {

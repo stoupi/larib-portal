@@ -118,6 +118,8 @@ export async function writeAuditOperation(client: PrismaClient, operation: Audit
     entityId: event.entityId,
     entityLabel: event.entityLabel,
     articleId: event.articleId,
+    studyId: event.studyId,
+    ipAddress: operation.ipAddress,
     action: event.action,
     actorId: operation.actorId,
     actorLabel: operation.actorLabel,

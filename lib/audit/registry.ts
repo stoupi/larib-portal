@@ -14,6 +14,7 @@ export type AuditedModelConfig = {
   // and borrow their publication's title, resolved when the event is written.
   buildLabel: (record: AuditRecord) => string | null
   articleIdField: string | null
+  studyIdField: string | null
   ignoredFields: readonly string[]
   referenceFields: Readonly<Record<string, AuditReference>>
 }
@@ -38,6 +39,7 @@ const JOURNAL_REFERENCE: AuditReference = { model: 'journal', labelFields: ['nam
 const CENTRE_REFERENCE: AuditReference = { model: 'centre', labelFields: ['name'] }
 const STUDY_REFERENCE: AuditReference = { model: 'study', labelFields: ['title'] }
 const AUTHOR_REFERENCE: AuditReference = { model: 'author', labelFields: ['firstName', 'lastName'] }
+const USER_REFERENCE: AuditReference = { model: 'user', labelFields: ['firstName', 'lastName'] }
 export const ARTICLE_REFERENCE: AuditReference = { model: 'article', labelFields: ['title'] }
 
 export const AUDITED_MODELS: Readonly<Record<string, AuditedModelConfig>> = {
@@ -63,6 +65,7 @@ export const AUDITED_MODELS: Readonly<Record<string, AuditedModelConfig>> = {
     labelFields: ['title'],
     buildLabel: (record) => joinLabel([text(record, 'title')]),
     articleIdField: 'id',
+    studyIdField: null,
     ignoredFields: [...BOOKKEEPING_FIELDS, 'reviewDelayDays', 'pdfKey', 'carouselEmailSentAt', 'createdById'],
     referenceFields: {
       studyId: STUDY_REFERENCE,
@@ -76,6 +79,7 @@ export const AUDITED_MODELS: Readonly<Record<string, AuditedModelConfig>> = {
     labelFields: ['articleId'],
     buildLabel: () => null,
     articleIdField: 'articleId',
+    studyIdField: null,
     ignoredFields: [...BOOKKEEPING_FIELDS],
     referenceFields: { journalId: JOURNAL_REFERENCE, articleId: ARTICLE_REFERENCE },
   },
@@ -85,6 +89,7 @@ export const AUDITED_MODELS: Readonly<Record<string, AuditedModelConfig>> = {
     labelFields: [],
     buildLabel: () => null,
     articleIdField: 'articleId',
+    studyIdField: null,
     ignoredFields: [...BOOKKEEPING_FIELDS],
     referenceFields: { journalId: JOURNAL_REFERENCE, articleId: ARTICLE_REFERENCE },
   },
@@ -105,6 +110,7 @@ export const AUDITED_MODELS: Readonly<Record<string, AuditedModelConfig>> = {
     labelFields: ['firstName', 'lastName'],
     buildLabel: (record) => joinLabel([text(record, 'firstName'), text(record, 'lastName')]),
     articleIdField: null,
+    studyIdField: null,
     ignoredFields: [...BOOKKEEPING_FIELDS, 'emails'],
     referenceFields: { centreId: CENTRE_REFERENCE },
   },
@@ -114,6 +120,7 @@ export const AUDITED_MODELS: Readonly<Record<string, AuditedModelConfig>> = {
     labelFields: [],
     buildLabel: () => null,
     articleIdField: 'articleId',
+    studyIdField: null,
     ignoredFields: [...BOOKKEEPING_FIELDS],
     referenceFields: { authorId: AUTHOR_REFERENCE, articleId: ARTICLE_REFERENCE },
   },
@@ -123,6 +130,7 @@ export const AUDITED_MODELS: Readonly<Record<string, AuditedModelConfig>> = {
     labelFields: [],
     buildLabel: () => null,
     articleIdField: null,
+    studyIdField: null,
     ignoredFields: [...BOOKKEEPING_FIELDS],
     referenceFields: {},
   },
@@ -132,6 +140,7 @@ export const AUDITED_MODELS: Readonly<Record<string, AuditedModelConfig>> = {
     labelFields: ['raw'],
     buildLabel: (record) => joinLabel([text(record, 'raw')]),
     articleIdField: null,
+    studyIdField: null,
     ignoredFields: [...BOOKKEEPING_FIELDS],
     referenceFields: { authorId: AUTHOR_REFERENCE },
   },
@@ -141,6 +150,7 @@ export const AUDITED_MODELS: Readonly<Record<string, AuditedModelConfig>> = {
     labelFields: [],
     buildLabel: () => null,
     articleIdField: null,
+    studyIdField: null,
     ignoredFields: [...BOOKKEEPING_FIELDS],
     referenceFields: { authorId: AUTHOR_REFERENCE, centreId: CENTRE_REFERENCE },
   },
@@ -150,6 +160,7 @@ export const AUDITED_MODELS: Readonly<Record<string, AuditedModelConfig>> = {
     labelFields: ['name'],
     buildLabel: (record) => joinLabel([text(record, 'name')]),
     articleIdField: null,
+    studyIdField: null,
     ignoredFields: [...BOOKKEEPING_FIELDS],
     referenceFields: { centreId: CENTRE_REFERENCE },
   },
@@ -159,6 +170,7 @@ export const AUDITED_MODELS: Readonly<Record<string, AuditedModelConfig>> = {
     labelFields: ['name'],
     buildLabel: (record) => joinLabel([text(record, 'name')]),
     articleIdField: null,
+    studyIdField: null,
     ignoredFields: [...BOOKKEEPING_FIELDS],
     referenceFields: {},
   },
@@ -168,6 +180,7 @@ export const AUDITED_MODELS: Readonly<Record<string, AuditedModelConfig>> = {
     labelFields: ['alias'],
     buildLabel: (record) => joinLabel([text(record, 'alias')]),
     articleIdField: null,
+    studyIdField: null,
     ignoredFields: [...BOOKKEEPING_FIELDS],
     referenceFields: { centreId: CENTRE_REFERENCE },
   },
@@ -191,6 +204,7 @@ export const AUDITED_MODELS: Readonly<Record<string, AuditedModelConfig>> = {
     labelFields: ['name'],
     buildLabel: (record) => joinLabel([text(record, 'name')]),
     articleIdField: null,
+    studyIdField: null,
     ignoredFields: [...BOOKKEEPING_FIELDS],
     referenceFields: {},
   },
@@ -211,6 +225,7 @@ export const AUDITED_MODELS: Readonly<Record<string, AuditedModelConfig>> = {
     labelFields: ['title', 'acronym'],
     buildLabel: (record) => joinLabel([text(record, 'acronym') || text(record, 'title')]),
     articleIdField: null,
+    studyIdField: null,
     ignoredFields: [...BOOKKEEPING_FIELDS, 'lastSyncedAt', 'createdById'],
     referenceFields: {},
   },
@@ -220,6 +235,7 @@ export const AUDITED_MODELS: Readonly<Record<string, AuditedModelConfig>> = {
     labelFields: [],
     buildLabel: () => null,
     articleIdField: null,
+    studyIdField: null,
     ignoredFields: [...BOOKKEEPING_FIELDS],
     referenceFields: { studyId: STUDY_REFERENCE, authorId: AUTHOR_REFERENCE, centreId: CENTRE_REFERENCE },
   },
@@ -229,8 +245,59 @@ export const AUDITED_MODELS: Readonly<Record<string, AuditedModelConfig>> = {
     labelFields: [],
     buildLabel: () => null,
     articleIdField: 'articleId',
+    studyIdField: null,
     ignoredFields: [...BOOKKEEPING_FIELDS],
     referenceFields: { articleId: ARTICLE_REFERENCE },
+  },
+  CorelabStudy: {
+    entity: 'CORELAB_STUDY',
+    auditedFields: ['code', 'name', 'description', 'phase', 'modalities', 'maxExamsPerPatient', 'reviewDeadlineDays', 'documentSlots', 'startedAt', 'closedAt'],
+    labelFields: ['code'],
+    buildLabel: (record) => joinLabel([text(record, 'code')]),
+    articleIdField: null,
+    studyIdField: 'id',
+    ignoredFields: [...BOOKKEEPING_FIELDS, 'createdById'],
+    referenceFields: {},
+  },
+  CorelabSite: {
+    entity: 'CORELAB_SITE',
+    auditedFields: ['studyId', 'code', 'name'],
+    labelFields: ['code'],
+    buildLabel: (record) => joinLabel([text(record, 'code')]),
+    articleIdField: null,
+    studyIdField: 'studyId',
+    ignoredFields: [...BOOKKEEPING_FIELDS],
+    referenceFields: {},
+  },
+  CorelabStudyMembership: {
+    entity: 'CORELAB_MEMBERSHIP',
+    auditedFields: ['studyId', 'userId', 'role', 'canReview', 'certificationPhase', 'calibrationStatus', 'trainingDueAt', 'calibrationDueAt', 'removedAt'],
+    labelFields: ['userId'],
+    buildLabel: (record) => joinLabel([text(record, 'userId')]),
+    articleIdField: null,
+    studyIdField: 'studyId',
+    ignoredFields: [...BOOKKEEPING_FIELDS, 'addedById', 'joinedAt'],
+    referenceFields: { userId: USER_REFERENCE },
+  },
+  CorelabCrfVersion: {
+    entity: 'CORELAB_CRF_VERSION',
+    auditedFields: ['studyId', 'number', 'publishedAt', 'publishedById'],
+    labelFields: ['number'],
+    buildLabel: (record) => joinLabel([`v${String(record.number ?? '')}`]),
+    articleIdField: null,
+    studyIdField: 'studyId',
+    ignoredFields: [...BOOKKEEPING_FIELDS, 'definition', 'discordanceThresholds'],
+    referenceFields: {},
+  },
+  CorelabSignature: {
+    entity: 'CORELAB_SIGNATURE',
+    auditedFields: ['userId', 'role', 'reason', 'entityType', 'entityId', 'studyId', 'crfVersionId', 'snapshotHash', 'signedAt'],
+    labelFields: ['entityType'],
+    buildLabel: (record) => joinLabel([text(record, 'entityType'), text(record, 'entityId')]),
+    articleIdField: null,
+    studyIdField: 'studyId',
+    ignoredFields: [...BOOKKEEPING_FIELDS, 'ipAddress'],
+    referenceFields: { userId: USER_REFERENCE },
   },
 }
 
