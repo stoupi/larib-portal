@@ -1,7 +1,9 @@
 import { getTranslations } from 'next-intl/server'
 import { ExternalLink } from 'lucide-react'
+import { redirect } from 'next/navigation'
 import { requireAuth } from '@/lib/auth-guard'
-import { isSuperAdmin } from '@/lib/permissions'
+import { applicationLink } from '@/lib/application-link'
+import { canAdminApp, isSuperAdmin } from '@/lib/permissions'
 import { Link } from '@/app/i18n/navigation'
 import { Button } from '@/components/ui/button'
 import { PageHeader } from '@/app/[locale]/components/page-header'
@@ -13,6 +15,7 @@ type PageParams = { params: Promise<{ locale: 'en' | 'fr' }> }
 export default async function CorelabUsersPage({ params }: PageParams) {
   const { locale } = await params
   const session = await requireAuth()
+  if (!canAdminApp(session.user, 'CORELAB')) redirect(applicationLink(locale, '/corelab'))
   const t = await getTranslations({ locale, namespace: 'corelab.users' })
 
   const users = await listCorelabUsers()

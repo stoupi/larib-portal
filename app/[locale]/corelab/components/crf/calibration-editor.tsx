@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { createDebouncer } from '@/lib/corelab/debounce'
-import { sequenceCompletion } from '@/lib/corelab/crf/values'
+import { defaultSequenceValues, sequenceCompletion } from '@/lib/corelab/crf/values'
 import { FocusShell } from './focus-shell'
 import { SequenceNav } from './sequence-nav'
 import { CrfForm } from './crf-form'
@@ -33,9 +33,23 @@ export type CalibrationEditorProps = {
   }
 }
 
+function withCrfDefaults(definition: CrfDefinition, exams: Array<{ id: string }>, values: ReadingValues): ReadingValues {
+  const seeded: ReadingValues = { ...values }
+  for (const exam of exams) {
+    const examValues = { ...(seeded[exam.id] ?? {}) }
+    for (const sequence of definition) {
+      if (examValues[sequence.id]) continue
+      const defaults = defaultSequenceValues(sequence)
+      if (Object.keys(defaults).length > 0) examValues[sequence.id] = defaults
+    }
+    seeded[exam.id] = examValues
+  }
+  return seeded
+}
+
 export function CalibrationEditor({ context, definition, exams, initialValues, handlers }: CalibrationEditorProps) {
   const t = useTranslations('corelab.calibration')
-  const [values, setValues] = useState<ReadingValues>(initialValues)
+  const [values, setValues] = useState<ReadingValues>(() => withCrfDefaults(definition, exams, initialValues))
   const [examId, setExamId] = useState(exams[0]?.id ?? '')
   const [sequenceId, setSequenceId] = useState(definition[0]?.id ?? '')
   const [signing, setSigning] = useState(false)

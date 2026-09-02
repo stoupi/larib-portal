@@ -1,4 +1,8 @@
 import { getTranslations } from 'next-intl/server'
+import { redirect } from 'next/navigation'
+import { requireAuth } from '@/lib/auth-guard'
+import { applicationLink } from '@/lib/application-link'
+import { canAdminApp } from '@/lib/permissions'
 import { PageHeader } from '@/app/[locale]/components/page-header'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { listModules } from '@/lib/services/corelab/training'
@@ -11,6 +15,8 @@ type PageParams = { params: Promise<{ locale: 'en' | 'fr' }> }
 
 export default async function AdminTrainingPage({ params }: PageParams) {
   const { locale } = await params
+  const session = await requireAuth()
+  if (!canAdminApp(session.user, 'CORELAB')) redirect(applicationLink(locale, '/corelab'))
   const t = await getTranslations({ locale, namespace: 'corelab.training.admin' })
   const tScope = await getTranslations({ locale, namespace: 'corelab.training.scope' })
   const tType = await getTranslations({ locale, namespace: 'corelab.training.type' })

@@ -66,7 +66,7 @@ export function FieldRow({ field, value, onChange, readOnly }: FieldRowProps) {
       </div>
 
       <div className="flex flex-1 items-start gap-2">
-        <div className="flex-1">
+        <div className="flex-1" data-field={field.id}>
           {field.type === 'numeric' ? (
             <FieldInputNumeric field={field} value={value?.value} onChange={emit} readOnly={readOnly} />
           ) : field.type === 'boolean' ? (

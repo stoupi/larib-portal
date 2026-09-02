@@ -13,7 +13,7 @@ const ITEMS = [
   { key: 'audit', href: '/corelab/admin/audit', enabled: false },
 ] as const
 
-export function CorelabAdminNav() {
+export function CorelabAdminNav({ isDataManager }: { isDataManager: boolean }) {
   const t = useTranslations('corelab.nav')
   const pathname = usePathname()
 
@@ -27,7 +27,7 @@ export function CorelabAdminNav() {
       <nav className="flex h-full items-center gap-1">
         {ITEMS.map((item) => {
           const active = pathname.includes(item.href)
-          if (!item.enabled) {
+          if (!item.enabled || !isDataManager) {
             return (
               <span key={item.key} className="inline-flex h-full cursor-not-allowed items-center px-3.5 text-sm text-neutral-300" title={t('comingSoon')}>
                 {t(item.key)}

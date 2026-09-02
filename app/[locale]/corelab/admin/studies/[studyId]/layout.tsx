@@ -1,5 +1,8 @@
 import type { ReactNode } from 'react'
-import { notFound } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
+import { requireAuth } from '@/lib/auth-guard'
+import { applicationLink } from '@/lib/application-link'
+import { resolveStudyAccess } from '@/lib/corelab/guards'
 import { getStudy } from '@/lib/services/corelab/studies'
 import { StudyPhaseBadge } from '../../../components/study-phase-badge'
 import { StudyTabs } from './study-tabs'
@@ -7,7 +10,13 @@ import { StudyTabs } from './study-tabs'
 type LayoutProps = { children: ReactNode; params: Promise<{ locale: 'en' | 'fr'; studyId: string }> }
 
 export default async function StudyLayout({ children, params }: LayoutProps) {
-  const { studyId } = await params
+  const { locale, studyId } = await params
+  const session = await requireAuth()
+  try {
+    await resolveStudyAccess(session.user, studyId, [])
+  } catch {
+    redirect(applicationLink(locale, '/corelab'))
+  }
   const study = await getStudy(studyId)
   if (!study) notFound()
 

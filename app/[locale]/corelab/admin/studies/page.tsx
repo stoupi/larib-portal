@@ -1,4 +1,8 @@
 import { getTranslations } from 'next-intl/server'
+import { redirect } from 'next/navigation'
+import { requireAuth } from '@/lib/auth-guard'
+import { applicationLink } from '@/lib/application-link'
+import { canAdminApp } from '@/lib/permissions'
 import { prisma } from '@/lib/prisma'
 import { PageHeader } from '@/app/[locale]/components/page-header'
 import { listStudies } from '@/lib/services/corelab/studies'
@@ -9,6 +13,8 @@ type PageParams = { params: Promise<{ locale: 'en' | 'fr' }> }
 
 export default async function CorelabStudiesPage({ params }: PageParams) {
   const { locale } = await params
+  const session = await requireAuth()
+  if (!canAdminApp(session.user, 'CORELAB')) redirect(applicationLink(locale, '/corelab'))
   const t = await getTranslations({ locale, namespace: 'corelab' })
 
   const studies = await listStudies()

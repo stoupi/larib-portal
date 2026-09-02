@@ -339,6 +339,14 @@ async function main() {
 			accounts: { create: { id: randomUUID(), providerId: 'credential', accountId: 'corelab-reader-2@larib-portal.test', password: await ctx.password.hash('ristifou') } },
 		},
 	});
+	const corelabTraineeUser = await prisma.user.create({
+		data: {
+			id: randomUUID(), name: 'CoreLab Trainee', firstName: 'Reader', lastName: 'Trainee',
+			email: 'corelab-trainee@larib-portal.test', emailVerified: true, role: 'USER',
+			applications: ['CORELAB'],
+			accounts: { create: { id: randomUUID(), providerId: 'credential', accountId: 'corelab-trainee@larib-portal.test', password: await ctx.password.hash('ristifou') } },
+		},
+	});
 	const corelabReaderNewUser = await prisma.user.create({
 		data: {
 			id: randomUUID(), name: 'CoreLab Reader New', firstName: 'Reader', lastName: 'New',
@@ -347,7 +355,7 @@ async function main() {
 			accounts: { create: { id: randomUUID(), providerId: 'credential', accountId: 'corelab-reader-new@larib-portal.test', password: await ctx.password.hash('ristifou') } },
 		},
 	});
-	console.log('✅ Created CoreLab users:', corelabAdminUser.email, corelabMemberUser.email, corelabExpiredUser.email, corelabPiUser.email, corelabReader2User.email, corelabReaderNewUser.email);
+	console.log('✅ Created CoreLab users:', corelabAdminUser.email, corelabMemberUser.email, corelabExpiredUser.email, corelabPiUser.email, corelabReader2User.email, corelabReaderNewUser.email, corelabTraineeUser.email);
 
 	const mirStudy = await prisma.corelabStudy.create({
 		data: {
@@ -360,10 +368,55 @@ async function main() {
 				{ userId: corelabPiUser.id, canRead: false, canAuthorReference: true, canCertify: true, certificationPhase: 'PRODUCTION', calibrationStatus: 'CERTIFIED', addedById: corelabAdminUser.id },
 				{ userId: corelabMemberUser.id, canRead: true, canAdjudicate: true, certificationPhase: 'PRODUCTION', calibrationStatus: 'CERTIFIED', addedById: corelabAdminUser.id },
 				{ userId: corelabReader2User.id, canRead: true, certificationPhase: 'PRODUCTION', calibrationStatus: 'CERTIFIED', addedById: corelabAdminUser.id },
+				{ userId: corelabTraineeUser.id, canRead: true, addedById: corelabAdminUser.id },
 			] },
 		},
 	});
 	console.log('✅ Created CoreLab study:', mirStudy.code);
+	const coreModule = await prisma.corelabTrainingModule.create({
+		data: {
+			scope: 'CORE', order: 1, title: 'Core lab reading principles', type: 'VIDEO', durationMinutes: 14,
+			videoKey: 'corelab/training/seed/sample.mp4', videoMimeType: 'video/mp4', videoSize: 1024,
+		},
+	});
+	const studyQuizModule = await prisma.corelabTrainingModule.create({
+		data: {
+			scope: 'STUDY', studyId: mirStudy.id, order: 2, title: 'MIR-Dijon final quiz', type: 'QUIZ',
+			durationMinutes: 5, passThreshold: 50,
+			quiz: {
+				questions: [
+					{ id: 'q1', prompt: 'Which sequence measures LVEF?', choices: [{ id: 'a', label: 'Cine' }, { id: 'b', label: 'LGE' }], correctChoiceId: 'a' },
+					{ id: 'q2', prompt: 'How many AHA segments?', choices: [{ id: 'a', label: '12' }, { id: 'b', label: '17' }], correctChoiceId: 'b' },
+				],
+			},
+		},
+	});
+	await prisma.corelabStudyTrainingRequirement.createMany({
+		data: [
+			{ studyId: mirStudy.id, moduleId: coreModule.id, order: 1 },
+			{ studyId: mirStudy.id, moduleId: studyQuizModule.id, order: 2 },
+		],
+	});
+
+	const goldStandard = {
+		'1': {
+			cine: {
+				visual_lvef: { value: 52, source: 'MANUAL' },
+				lvef: { value: 52, source: 'MANUAL' },
+				lv_edv: { value: 172, source: 'MANUAL' },
+				lv_esv: { value: 82, source: 'MANUAL' },
+				lv_measurable: { value: true, source: 'MANUAL' },
+			},
+		},
+	};
+	const calibrationCase = await prisma.corelabCalibrationCase.create({
+		data: {
+			studyId: mirStudy.id, code: 'CAL-MIR-DJ-TEST-001',
+			exams: [{ index: 1, date: '2026-01-14', timeLabel: 'Baseline' }],
+			goldStandard, goldStandardUserId: corelabPiUser.id,
+		},
+	});
+	console.log('✅ Created CoreLab training and calibration:', coreModule.title, studyQuizModule.title, calibrationCase.code);
 
 	// Minimal publications sample dataset (article where publicationsUser is first author)
 	const publicationsJournal = await prisma.journal.create({

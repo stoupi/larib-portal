@@ -1,7 +1,10 @@
 import { getTranslations } from 'next-intl/server'
 import { Link } from '@/app/i18n/navigation'
 import { Button } from '@/components/ui/button'
-import { notFound } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
+import { requireAuth } from '@/lib/auth-guard'
+import { applicationLink } from '@/lib/application-link'
+import { canAdminApp } from '@/lib/permissions'
 import { getStudy, getCurrentCrfVersion } from '@/lib/services/corelab/studies'
 import { allowedNextPhases } from '@/lib/corelab/study-phase'
 import { findField } from '@/lib/corelab/crf/schema'
@@ -21,6 +24,9 @@ export default async function StudyConfigPage({ params }: PageParams) {
   const { locale, studyId } = await params
   const t = await getTranslations({ locale, namespace: 'corelab.config' })
   const tForm = await getTranslations({ locale, namespace: 'corelab.form.preview' })
+
+  const session = await requireAuth()
+  if (!canAdminApp(session.user, 'CORELAB')) redirect(applicationLink(locale, '/corelab'))
 
   const study = await getStudy(studyId)
   if (!study) notFound()
