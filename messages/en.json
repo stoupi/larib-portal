@@ -2096,7 +2096,8 @@
       "library": "Library",
       "users": "Users",
       "audit": "Audit log",
-      "comingSoon": "Available in a later release"
+      "comingSoon": "Available in a later release",
+      "training": "Training"
     },
     "phase": {
       "DRAFT": "Draft",
@@ -2153,7 +2154,8 @@
       "calibration": "Calibration",
       "patients": "Patients",
       "discordance": "Discordance",
-      "export": "Export"
+      "export": "Export",
+      "trainingTab": "Training"
     },
     "config": {
       "infoTitle": "General information",
@@ -2297,6 +2299,89 @@
         "reset": "Reset",
         "changes": "Changes emitted: {count}",
         "noCrf": "This study has no published CRF yet."
+      }
+    },
+    "training": {
+      "title": "My training",
+      "subtitle": "Your modules, study by study. A core or software module validated once counts everywhere.",
+      "studyTitle": "Training · {code}",
+      "studySubtitle": "Calibration opens automatically once the last module is validated.",
+      "progress": "{filled} of {required}",
+      "complete": "Complete",
+      "remaining": "{count} left",
+      "empty": "No module is required from you yet.",
+      "noStudy": "You do not belong to any study.",
+      "scope": {
+        "CORE": "Core Lab basics",
+        "SOFTWARE": "Software",
+        "STUDY": "This study"
+      },
+      "scopeHelp": {
+        "CORE": "Required by every study. Validated once, it counts everywhere.",
+        "SOFTWARE": "Tied to a piece of software, not to a study. It follows the reader from study to study.",
+        "STUDY": "Protocol, CRF and final certification. They only serve the study that defines them."
+      },
+      "state": {
+        "done": "Validated",
+        "todo": "To do",
+        "locked": "Locked",
+        "resume": "Resume"
+      },
+      "recognised": "Validated elsewhere, carried over without redoing it",
+      "type": {
+        "VIDEO": "Video",
+        "QUIZ": "Quiz"
+      },
+      "minutes": "{count} min",
+      "dueAt": "To finish before {date}",
+      "open": "Open module",
+      "videoMissing": "The video for this module has not been uploaded yet.",
+      "markDone": "I have finished this module",
+      "marked": "Module validated.",
+      "unlocked": "Training complete: calibration is open.",
+      "quizIntro": "{count} questions · {threshold}% required",
+      "submitQuiz": "Submit my answers",
+      "quizPassed": "Passed with {score}%",
+      "quizFailed": "Failed with {score}%: {threshold}% are required.",
+      "retry": "Retake the quiz",
+      "backToStudy": "Back to the study",
+      "locked": "Finish the previous module to open this one.",
+      "error": "The operation failed.",
+      "admin": {
+        "title": "Training modules",
+        "subtitle": "Core and software modules serve every study; a study module belongs to its own study only.",
+        "new": "New module",
+        "moduleTitle": "Title",
+        "moduleScope": "Scope",
+        "softwareName": "Software",
+        "moduleType": "Type",
+        "duration": "Duration (min)",
+        "version": "Version",
+        "usedBy": "Studies requiring it",
+        "passThreshold": "Pass threshold (%)",
+        "description": "Description",
+        "order": "Order",
+        "video": "Video",
+        "uploadVideo": "Upload a video",
+        "uploading": "Uploading: {percent}%",
+        "videoSet": "Video saved.",
+        "questions": "Questions",
+        "addQuestion": "Add a question",
+        "removeQuestion": "Remove",
+        "prompt": "Question",
+        "choice": "Answer {index}",
+        "correct": "Correct answer",
+        "save": "Save",
+        "saved": "Module saved.",
+        "archive": "Archive",
+        "archived": "Module archived.",
+        "empty": "No module yet.",
+        "requirementsTitle": "Modules required by this study",
+        "requirementsSubtitle": "Tick the modules and order them: the reader follows them in this order.",
+        "requirementsSaved": "Requirements saved.",
+        "moveUp": "Move up",
+        "moveDown": "Move down",
+        "cancel": "Cancel"
       }
     }
   }

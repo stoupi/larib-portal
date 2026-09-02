@@ -7,6 +7,7 @@ import { Link } from '@/app/i18n/navigation'
 
 const ITEMS = [
   { key: 'studies', href: '/corelab/admin/studies', enabled: true },
+  { key: 'training', href: '/corelab/admin/training', enabled: true },
   { key: 'users', href: '/corelab/admin/users', enabled: true },
   { key: 'library', href: '/corelab/admin/library', enabled: false },
   { key: 'audit', href: '/corelab/admin/audit', enabled: false },

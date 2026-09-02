@@ -4,9 +4,12 @@ import { requireAuth } from '@/lib/auth-guard'
 import { applicationLink } from '@/lib/application-link'
 import { canAccessApp } from '@/lib/permissions'
 import { prisma } from '@/lib/prisma'
+import { Link } from '@/app/i18n/navigation'
+import { Button } from '@/components/ui/button'
 import { PageHeader } from '@/app/[locale]/components/page-header'
 import { StudyPhaseBadge } from '../../components/study-phase-badge'
 import { PhaseTrack } from '../../components/phase-track'
+import { getStudyTraining } from '@/lib/services/corelab/training'
 
 type PageParams = { params: Promise<{ locale: 'en' | 'fr'; studyId: string }> }
 
@@ -26,6 +29,9 @@ export default async function ReaderStudyPage({ params }: PageParams) {
   })
   if (!membership) notFound()
 
+  const training = membership.role === 'READER' ? await getStudyTraining(studyId, session.user.id) : null
+  const filled = training?.modules.filter((module) => module.completed).length ?? 0
+
   return (
     <div className="app-gradient min-h-full px-4 py-8 md:px-8">
       <div className="mx-auto max-w-[1400px] space-y-6">
@@ -36,8 +42,24 @@ export default async function ReaderStudyPage({ params }: PageParams) {
           />
           <StudyPhaseBadge phase={membership.study.phase} />
         </div>
+
         <PhaseTrack phase={membership.role === 'PI' ? null : membership.certificationPhase} />
-        <p className="text-sm text-text-secondary">{t('study.comingSoon')}</p>
+
+        {training && training.modules.length > 0 ? (
+          <section className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border bg-white p-6">
+            <div>
+              <h2 className="text-base font-semibold text-text-primary">{t('training.studyTitle', { code: membership.study.code })}</h2>
+              <p className="mt-0.5 text-sm text-text-secondary">
+                {t('training.progress', { filled, required: training.modules.length })}
+              </p>
+            </div>
+            <Button asChild variant="outline">
+              <Link href={`/corelab/studies/${studyId}/training`}>{t('training.open')}</Link>
+            </Button>
+          </section>
+        ) : (
+          <p className="text-sm text-text-secondary">{t('study.comingSoon')}</p>
+        )}
       </div>
     </div>
   )

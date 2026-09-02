@@ -11,6 +11,7 @@ export function StudyTabs({ studyId }: { studyId: string }) {
   const tabs = [
     { key: 'config', href: base, enabled: true },
     { key: 'team', href: `${base}/team`, enabled: true },
+    { key: 'trainingTab', href: `${base}/training`, enabled: true },
     { key: 'calibration', href: `${base}/calibration`, enabled: false },
     { key: 'patients', href: `${base}/patients`, enabled: false },
     { key: 'discordance', href: `${base}/discordance`, enabled: false },

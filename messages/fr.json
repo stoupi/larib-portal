@@ -2094,7 +2094,8 @@
       "library": "Bibliothèque",
       "users": "Utilisateurs",
       "audit": "Journal d'audit",
-      "comingSoon": "Disponible dans un prochain lot"
+      "comingSoon": "Disponible dans un prochain lot",
+      "training": "Formation"
     },
     "phase": {
       "DRAFT": "Brouillon",
@@ -2151,7 +2152,8 @@
       "calibration": "Calibration",
       "patients": "Patients",
       "discordance": "Discordance",
-      "export": "Export"
+      "export": "Export",
+      "trainingTab": "Formation"
     },
     "config": {
       "infoTitle": "Informations générales",
@@ -2295,6 +2297,89 @@
         "reset": "Réinitialiser",
         "changes": "Modifications émises : {count}",
         "noCrf": "Cette étude n'a pas encore de CRF publié."
+      }
+    },
+    "training": {
+      "title": "Ma formation",
+      "subtitle": "Vos modules, par étude. Un module du socle ou d'un logiciel validé une fois compte partout.",
+      "studyTitle": "Formation · {code}",
+      "studySubtitle": "La calibration s'ouvrira automatiquement à la validation du dernier module.",
+      "progress": "{filled} sur {required}",
+      "complete": "Complète",
+      "remaining": "{count} restants",
+      "empty": "Aucun module ne vous est demandé pour l'instant.",
+      "noStudy": "Vous n'êtes membre d'aucune étude.",
+      "scope": {
+        "CORE": "Socle Core Lab",
+        "SOFTWARE": "Logiciel",
+        "STUDY": "Cette étude"
+      },
+      "scopeHelp": {
+        "CORE": "Exigé par toutes les études. Validé une fois, il compte partout.",
+        "SOFTWARE": "Attaché à un logiciel, pas à une étude. Il suit le lecteur d'une étude à l'autre.",
+        "STUDY": "Protocole, CRF et certification finale. Ils ne servent qu'à l'étude qui les définit."
+      },
+      "state": {
+        "done": "Validé",
+        "todo": "À faire",
+        "locked": "Verrouillé",
+        "resume": "Reprendre"
+      },
+      "recognised": "Validé ailleurs, repris ici sans le refaire",
+      "type": {
+        "VIDEO": "Vidéo",
+        "QUIZ": "Quiz"
+      },
+      "minutes": "{count} min",
+      "dueAt": "À terminer avant le {date}",
+      "open": "Ouvrir le module",
+      "videoMissing": "La vidéo de ce module n'a pas encore été déposée.",
+      "markDone": "J'ai terminé ce module",
+      "marked": "Module validé.",
+      "unlocked": "Formation terminée : la calibration est ouverte.",
+      "quizIntro": "{count} questions · {threshold} % requis",
+      "submitQuiz": "Valider mes réponses",
+      "quizPassed": "Réussi avec {score} %",
+      "quizFailed": "Échec avec {score} % : {threshold} % sont requis.",
+      "retry": "Reprendre le quiz",
+      "backToStudy": "Retour à l'étude",
+      "locked": "Terminez le module précédent pour ouvrir celui-ci.",
+      "error": "L'opération a échoué.",
+      "admin": {
+        "title": "Modules de formation",
+        "subtitle": "Le socle et les modules logiciels servent à toutes les études ; un module d'étude n'appartient qu'à la sienne.",
+        "new": "Nouveau module",
+        "moduleTitle": "Titre",
+        "moduleScope": "Portée",
+        "softwareName": "Logiciel",
+        "moduleType": "Type",
+        "duration": "Durée (min)",
+        "version": "Version",
+        "usedBy": "Études qui l'exigent",
+        "passThreshold": "Seuil de réussite (%)",
+        "description": "Description",
+        "order": "Ordre",
+        "video": "Vidéo",
+        "uploadVideo": "Déposer une vidéo",
+        "uploading": "Envoi : {percent} %",
+        "videoSet": "Vidéo enregistrée.",
+        "questions": "Questions",
+        "addQuestion": "Ajouter une question",
+        "removeQuestion": "Retirer",
+        "prompt": "Énoncé",
+        "choice": "Réponse {index}",
+        "correct": "Bonne réponse",
+        "save": "Enregistrer",
+        "saved": "Module enregistré.",
+        "archive": "Archiver",
+        "archived": "Module archivé.",
+        "empty": "Aucun module pour l'instant.",
+        "requirementsTitle": "Modules exigés par cette étude",
+        "requirementsSubtitle": "Cochez les modules et ordonnez-les : le lecteur les suit dans cet ordre.",
+        "requirementsSaved": "Exigences enregistrées.",
+        "moveUp": "Monter",
+        "moveDown": "Descendre",
+        "cancel": "Annuler"
       }
     }
   }
