@@ -38,6 +38,7 @@ async function main() {
 	await prisma.affiliation.deleteMany();
 	await prisma.centre.deleteMany();
 	await prisma.journal.deleteMany();
+	await prisma.applicationAccessPeriod.deleteMany();
 	await prisma.user.deleteMany();
 
 	// Create test admin user
@@ -278,6 +279,33 @@ async function main() {
 		},
 	});
 	console.log('✅ Created Publications reader:', publicationsReader.email);
+
+	const corelabAdminUser = await prisma.user.create({
+		data: {
+			id: randomUUID(), name: 'CoreLab Admin', firstName: 'CoreLab', lastName: 'Admin',
+			email: 'corelab-admin@larib-portal.test', emailVerified: true, role: 'USER',
+			applications: ['CORELAB'], adminApplications: ['CORELAB'],
+			accounts: { create: { id: randomUUID(), providerId: 'credential', accountId: 'corelab-admin@larib-portal.test', password: await ctx.password.hash('ristifou') } },
+		},
+	});
+	const corelabMemberUser = await prisma.user.create({
+		data: {
+			id: randomUUID(), name: 'CoreLab Reader One', firstName: 'Reader', lastName: 'One',
+			email: 'corelab-reader-1@larib-portal.test', emailVerified: true, role: 'USER',
+			applications: ['CORELAB'],
+			accounts: { create: { id: randomUUID(), providerId: 'credential', accountId: 'corelab-reader-1@larib-portal.test', password: await ctx.password.hash('ristifou') } },
+		},
+	});
+	const corelabExpiredUser = await prisma.user.create({
+		data: {
+			id: randomUUID(), name: 'CoreLab Expired', firstName: 'CoreLab', lastName: 'Expired',
+			email: 'corelab-expired@larib-portal.test', emailVerified: true, role: 'USER',
+			applications: ['CORELAB', 'CONGES'],
+			accessPeriods: { create: { application: 'CORELAB', endsAt: new Date('2026-01-31T23:59:59.999Z') } },
+			accounts: { create: { id: randomUUID(), providerId: 'credential', accountId: 'corelab-expired@larib-portal.test', password: await ctx.password.hash('ristifou') } },
+		},
+	});
+	console.log('✅ Created CoreLab users:', corelabAdminUser.email, corelabMemberUser.email, corelabExpiredUser.email);
 
 	// Minimal publications sample dataset (article where publicationsUser is first author)
 	const publicationsJournal = await prisma.journal.create({

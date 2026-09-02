@@ -22,7 +22,7 @@ import {
 import { toast } from 'sonner'
 import type { InvitationStatus } from '@/lib/services/invitations'
 import { Mail, Shield, Trash2, UserIcon } from 'lucide-react'
-import { accessibleApplications, canAdminApp, toActiveApplications, type AccessPeriodSummary, type ActiveApplication } from '@/lib/permissions'
+import { toActiveApplications, type AccessPeriodSummary, type ActiveApplication } from '@/lib/permissions'
 
 export type UserRow = Omit<UserFormValues, 'accessPeriods'> & {
   accessPeriods?: AccessPeriodSummary[]
@@ -190,7 +190,7 @@ export function UserTable({ users, positions, locale }: { users: UserRow[]; posi
                 const placeholder = isPlaceholderUser(user)
                 const tint = avatarTint(user.id)
                 const initials = (user.firstName?.[0] || user.name?.[0] || user.email[0]).toUpperCase()
-                const apps = toActiveApplications(accessibleApplications(user))
+                const apps = toActiveApplications(Array.from(new Set([...(user.applications ?? []), ...(user.adminApplications ?? [])])))
 
                 return (
                   <TableRow key={user.id} className={placeholder ? 'bg-gray-50/50' : ''}>
@@ -235,7 +235,7 @@ export function UserTable({ users, positions, locale }: { users: UserRow[]; posi
                               {accessLabel(user.accessPeriods, app) && (
                                 <span className="text-[10px] text-text-secondary">{accessLabel(user.accessPeriods, app)}</span>
                               )}
-                              {canAdminApp(user, app) && (
+                              {user.adminApplications?.includes(app) && (
                                 <span className="inline-flex items-center gap-0.5 rounded-full bg-navy-800 px-1.5 py-0.5 text-[10px] font-semibold uppercase text-white">
                                   <Shield className="h-2.5 w-2.5" />
                                   {t('appColAdmin')}
