@@ -19,9 +19,16 @@ function textValue(article: DashboardArticleItem, key: ArticleSortKey): string |
   return article.studyLabel
 }
 
+// The date that tells where a publication stands: the day it appeared, else the day it
+// was taken, else the day it was last sent out. Sorting on the submission alone put a
+// paper published years ago next to one submitted last week.
+export function milestoneDate(article: DashboardArticleItem): string | null {
+  return article.publishedAt ?? article.acceptedAt ?? article.lastSubmissionAt
+}
+
 function hasValue(article: DashboardArticleItem, key: ArticleSortKey): boolean {
   if (key === 'status') return true
-  if (key === 'submission') return article.lastSubmissionAt != null
+  if (key === 'submission') return milestoneDate(article) != null
   return textValue(article, key) != null
 }
 
@@ -30,7 +37,7 @@ function compareByKey(first: DashboardArticleItem, second: DashboardArticleItem,
     return ARTICLE_STATUS_VALUES.indexOf(first.status) - ARTICLE_STATUS_VALUES.indexOf(second.status)
   }
   if (key === 'submission') {
-    return Date.parse(first.lastSubmissionAt ?? '') - Date.parse(second.lastSubmissionAt ?? '')
+    return Date.parse(milestoneDate(first) ?? '') - Date.parse(milestoneDate(second) ?? '')
   }
   return (textValue(first, key) ?? '').localeCompare(textValue(second, key) ?? '', undefined, { sensitivity: 'base' })
 }

@@ -5,6 +5,11 @@ import { useTranslations } from 'next-intl'
 import { cn } from '@/lib/utils'
 import { computePublicationStats } from '@/lib/publications/stats'
 import { articleGroup, POSITION_BUCKETS, STATISTICIAN_ROLE, type ArticleGroup } from '@/lib/publications/status-display'
+// Same rule as the admin library: where a paper stands is its publication date, else
+// its acceptance, else its last submission.
+function milestoneOf(item: MyPublicationItem): string | null {
+  return item.publishedAt ?? item.acceptedAt ?? item.lastSubmissionAt
+}
 import type { ArticleStatusValue } from '@/lib/services/publications/articles'
 import type { MyPublicationItem } from '@/lib/services/publications/my-publications'
 import { PublicationsStats } from './publications-stats'
@@ -114,7 +119,7 @@ export function MyPublications({
       if (sortKey === 'role')
         return (POSITION_BUCKETS.indexOf(a.positionBucket) - POSITION_BUCKETS.indexOf(b.positionBucket)) * direction
       if (sortKey === 'status') return (STATUS_SORT[a.status] - STATUS_SORT[b.status]) * direction
-      return (timeValue(a.lastSubmissionAt) - timeValue(b.lastSubmissionAt)) * direction
+      return (timeValue(milestoneOf(a)) - timeValue(milestoneOf(b))) * direction
     })
   }, [items, filter, filters, sortKey, sortDir])
 

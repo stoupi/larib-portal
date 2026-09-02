@@ -33,6 +33,7 @@ export type DashboardArticleItem = {
   pdfUrl: string | null
   lastSubmissionAt: string | null
   acceptedAt: string | null
+  publishedAt: string | null
   pendingDays: number | null
   carouselEmailSentAt: string | null
   linkedinPostUrl: string | null

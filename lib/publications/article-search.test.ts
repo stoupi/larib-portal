@@ -18,6 +18,7 @@ function article(overrides: Partial<DashboardArticleItem> & { id: string }): Das
     pdfUrl: null,
     lastSubmissionAt: null,
     acceptedAt: null,
+    publishedAt: null,
     pendingDays: null,
     carouselEmailSentAt: null,
     linkedinPostUrl: null,

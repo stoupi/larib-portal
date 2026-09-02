@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { nextArticleSort, sortArticles, type ArticleSortKey } from './article-sort'
+import { nextArticleSort, sortArticles, type ArticleSortKey, milestoneDate } from './article-sort'
 import type { DashboardArticleItem } from './admin-dashboard'
 
 function article(overrides: Partial<DashboardArticleItem> & { id: string }): DashboardArticleItem {
@@ -18,6 +18,7 @@ function article(overrides: Partial<DashboardArticleItem> & { id: string }): Das
     pdfUrl: null,
     lastSubmissionAt: null,
     acceptedAt: null,
+    publishedAt: null,
     pendingDays: null,
     carouselEmailSentAt: null,
     linkedinPostUrl: null,
@@ -93,5 +94,50 @@ describe('nextArticleSort', () => {
 
   it('restarts ascending when switching column', () => {
     expect(nextArticleSort({ key: 'title', direction: 'desc' }, 'journal')).toEqual({ key: 'journal', direction: 'asc' })
+  })
+})
+
+describe('sorting on the submission column', () => {
+  const paper = (id: string, dates: Partial<DashboardArticleItem>) =>
+    article({ id, title: id, journal: null, studyLabel: null, status: 'PUBLISHED', ...dates })
+
+  it('reads the publication date first, then the acceptance, then the submission', () => {
+    const rows = [
+      paper('submitted', { lastSubmissionAt: '2026-05-01T00:00:00.000Z' }),
+      paper('published', {
+        publishedAt: '2026-01-01T00:00:00.000Z',
+        acceptedAt: '2025-12-01T00:00:00.000Z',
+        lastSubmissionAt: '2025-06-01T00:00:00.000Z',
+      }),
+      paper('accepted', { acceptedAt: '2026-03-01T00:00:00.000Z', lastSubmissionAt: '2025-01-01T00:00:00.000Z' }),
+    ]
+    expect(sortArticles(rows, { key: 'submission', direction: 'asc' }).map((row) => row.id)).toEqual([
+      'published',
+      'accepted',
+      'submitted',
+    ])
+  })
+
+  it('keeps a paper with no date at all at the end, whichever way round', () => {
+    const rows = [
+      paper('nothing', {}),
+      paper('dated', { lastSubmissionAt: '2026-05-01T00:00:00.000Z' }),
+    ]
+    expect(sortArticles(rows, { key: 'submission', direction: 'asc' }).map((row) => row.id)).toEqual([
+      'dated',
+      'nothing',
+    ])
+    expect(sortArticles(rows, { key: 'submission', direction: 'desc' }).map((row) => row.id)).toEqual([
+      'dated',
+      'nothing',
+    ])
+  })
+
+  it('exposes the date it sorted on', () => {
+    expect(milestoneDate(paper('x', { publishedAt: '2026-01-01T00:00:00.000Z', acceptedAt: '2025-01-01T00:00:00.000Z' }))).toBe(
+      '2026-01-01T00:00:00.000Z',
+    )
+    expect(milestoneDate(paper('y', { acceptedAt: '2025-01-01T00:00:00.000Z' }))).toBe('2025-01-01T00:00:00.000Z')
+    expect(milestoneDate(paper('z', {}))).toBeNull()
   })
 })

@@ -30,6 +30,7 @@ function publicationItem(overrides: Partial<MyPublicationItem>): MyPublicationIt
     authors: [],
     lastSubmissionAt: null,
     acceptedAt: null,
+    publishedAt: null,
     pendingDays: null,
     submissions: [],
     ...overrides,

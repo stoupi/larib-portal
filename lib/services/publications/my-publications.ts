@@ -38,6 +38,7 @@ export type MyPublicationItem = {
   authors: string[]
   lastSubmissionAt: string | null
   acceptedAt: string | null
+  publishedAt: string | null
   pendingDays: number | null
   submissions: MyPublicationSubmission[]
 }
@@ -139,6 +140,7 @@ export async function listMyPublications(userId: string, now: Date = new Date())
       authors,
       lastSubmissionAt: lastSubmissionDate ? lastSubmissionDate.toISOString() : null,
       acceptedAt: acceptedDate ? acceptedDate.toISOString() : null,
+      publishedAt: article.publishedAt ? article.publishedAt.toISOString() : null,
       pendingDays,
       submissions,
     }

@@ -74,6 +74,7 @@ export async function listDashboardArticles(now: Date = new Date()): Promise<Das
       pdfUrl: article.pdfUrl,
       lastSubmissionAt: lastSubmissionDate ? lastSubmissionDate.toISOString() : null,
       acceptedAt: acceptedDate ? acceptedDate.toISOString() : null,
+      publishedAt: article.publishedAt ? article.publishedAt.toISOString() : null,
       pendingDays: isActive && !acceptedDate && lastSubmissionDate ? daysBetween(lastSubmissionDate, now) : null,
       carouselEmailSentAt: article.carouselEmailSentAt ? article.carouselEmailSentAt.toISOString() : null,
       linkedinPostUrl: article.linkedinPostUrl,
