@@ -119,3 +119,19 @@ describe('carouselEmailState', () => {
     }
   })
 })
+
+describe('carouselEmailState once a post exists', () => {
+  const posted = { status: 'PUBLISHED' as const, linkedinPostUrl: 'https://www.linkedin.com/x' }
+
+  it('reports the post, which supersedes the email that asked for it', () => {
+    expect(carouselEmailState({ ...posted, carouselEmailSentAt: '2026-03-01T00:00:00.000Z' })).toBe('posted')
+  })
+
+  it('reports the post even when no email was ever sent', () => {
+    expect(carouselEmailState({ ...posted, carouselEmailSentAt: null })).toBe('posted')
+  })
+
+  it('stays silent on a paper the journal has not taken, post or no post', () => {
+    expect(carouselEmailState({ ...posted, status: 'UNDER_REVIEW', carouselEmailSentAt: null })).toBe('notApplicable')
+  })
+})

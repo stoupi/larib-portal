@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl'
 import { ChevronDown, Clock, Search, X } from 'lucide-react'
 import { MultiSelect } from '@/components/ui/multiselect'
 import { Input } from '@/components/ui/input'
+import { LinkedinBadge } from '@/components/ui/linkedin-badge'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
 import { ScopeToggleFace } from '../articles/article-scope-switch'
@@ -80,6 +81,7 @@ export function PublicationsDashboardView({
     filters.author !== ALL_FILTER ||
     filters.authorPosition !== ALL_FILTER ||
     filters.pendingOverMonth ||
+    filters.linkedinPosted ||
     filters.scopes.join() !== DEFAULT_DASHBOARD_FILTERS.scopes.join()
 
   return (
@@ -168,6 +170,27 @@ export function PublicationsDashboardView({
               </button>
             </TooltipTrigger>
             <TooltipContent>{t('filters.pendingOverMonthHint')}</TooltipContent>
+          </Tooltip>
+
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                type="button"
+                aria-pressed={filters.linkedinPosted}
+                aria-label={t('filters.linkedinPosted')}
+                onClick={() => updateFilter({ linkedinPosted: !filters.linkedinPosted })}
+                className={cn(
+                  'inline-flex h-9 shrink-0 items-center gap-1.5 rounded-full border px-3.5 text-[13px] font-bold transition',
+                  filters.linkedinPosted
+                    ? 'border-[#0A66C2] bg-[#E8F1FB] text-[#0A66C2] dark:border-[rgba(10,102,194,0.4)] dark:bg-[rgba(10,102,194,0.18)] dark:text-[#7CB8F0]'
+                    : 'border-line bg-gray-50 text-text-secondary hover:bg-gray-100 dark:bg-white/10 dark:hover:bg-white/15',
+                )}
+              >
+                <LinkedinBadge className="size-3.5" />
+                {t('filters.linkedinPosted')}
+              </button>
+            </TooltipTrigger>
+            <TooltipContent>{t('filters.linkedinPostedHint')}</TooltipContent>
           </Tooltip>
 
           <Tooltip>

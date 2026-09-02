@@ -39,6 +39,7 @@ function article(overrides: Partial<DashboardArticleItem> & { id: string }): Das
     acceptedAt: null,
     pendingDays: null,
     carouselEmailSentAt: null,
+    linkedinPostUrl: null,
     statisticianId: null,
     submissions: [],
     ...overrides,

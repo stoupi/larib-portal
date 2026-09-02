@@ -140,7 +140,11 @@ export function ArticleListRow({
 
         <div className="flex items-center gap-2">
           <span className={pillClassName(ARTICLE_STATUS_TONE[article.status])}>{t(`articles.status.${article.status}`)}</span>
-          <CarouselEmailDot status={article.status} carouselEmailSentAt={article.carouselEmailSentAt} />
+          <CarouselEmailDot
+            status={article.status}
+            carouselEmailSentAt={article.carouselEmailSentAt}
+            linkedinPostUrl={article.linkedinPostUrl}
+          />
         </div>
 
         <div className="flex flex-col gap-1">

@@ -35,6 +35,7 @@ export type DashboardArticleItem = {
   acceptedAt: string | null
   pendingDays: number | null
   carouselEmailSentAt: string | null
+  linkedinPostUrl: string | null
   statisticianId: string | null
   submissions: MyPublicationSubmission[]
 }
@@ -51,6 +52,7 @@ export type DashboardFilters = {
   authorPosition: string
   query: string
   pendingOverMonth: boolean
+  linkedinPosted: boolean
 }
 
 export const ALL_FILTER = ALL_YEARS
@@ -69,6 +71,7 @@ export const DEFAULT_DASHBOARD_FILTERS: DashboardFilters = {
   authorPosition: ALL_FILTER,
   query: '',
   pendingOverMonth: false,
+  linkedinPosted: false,
 }
 
 export function toggleFilterValue(values: string[], value: string): string[] {
@@ -133,6 +136,7 @@ export function filterDashboardArticles(
     if (filters.journals.length > 0 && !filters.journals.includes(articleJournalKey(article))) return false
     if (filters.statuses.length > 0 && !filters.statuses.includes(article.status)) return false
     if (filters.pendingOverMonth && !isPendingOverAMonth(article.pendingDays)) return false
+    if (filters.linkedinPosted && !article.linkedinPostUrl) return false
     if (filters.types.length > 0 && !filters.types.includes(normalizeArticleType(article.type))) return false
     if (!matchesYearRange(filters, article.year)) return false
     if (filters.author !== ALL_FILTER && !article.authors.some((author) => author.id === filters.author)) return false

@@ -3,22 +3,40 @@
 import { useTranslations, useLocale } from 'next-intl'
 import { MailCheck } from 'lucide-react'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
+import { LinkedinBadge } from '@/components/ui/linkedin-badge'
 import { carouselEmailState } from '@/lib/publications/communication'
 import type { ArticleStatusValue } from '@/lib/services/publications/articles'
 
-// Only a departure is worth a mark. Flagging the ones still owed would light up every
-// paper imported from PubMed, none of which will ever get a carousel email.
+// Only what happened is marked. An email still owed would light up every paper imported
+// from PubMed, none of which will ever get one; a published post replaces the email mark,
+// since the errand it belonged to is over.
 export function CarouselEmailDot({
   status,
   carouselEmailSentAt,
+  linkedinPostUrl,
 }: {
   status: ArticleStatusValue
   carouselEmailSentAt: string | null
+  linkedinPostUrl?: string | null
 }) {
   const t = useTranslations('publications.communication')
   const locale = useLocale()
+  const state = carouselEmailState({ status, carouselEmailSentAt, linkedinPostUrl })
 
-  if (carouselEmailState({ status, carouselEmailSentAt }) !== 'sent') return null
+  if (state === 'posted') {
+    return (
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <span aria-label={t('rowPosted')} className="inline-flex">
+            <LinkedinBadge />
+          </span>
+        </TooltipTrigger>
+        <TooltipContent>{t('rowPosted')}</TooltipContent>
+      </Tooltip>
+    )
+  }
+
+  if (state !== 'sent') return null
 
   const label = t('rowSent', {
     date: new Intl.DateTimeFormat(locale, { dateStyle: 'medium' }).format(new Date(carouselEmailSentAt ?? '')),

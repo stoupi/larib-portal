@@ -20,6 +20,7 @@ describe('dashboard filter params', () => {
       authorPosition: 'first',
       query: 'valve mitrale',
       pendingOverMonth: true,
+      linkedinPosted: true,
     }
     const restored = filtersFromSearchParams(new URLSearchParams(filtersToSearchParams(filters).toString()))
     expect(restored).toEqual(filters)

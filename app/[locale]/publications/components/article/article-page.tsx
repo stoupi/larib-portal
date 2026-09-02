@@ -42,6 +42,7 @@ import { ArticleReadingHeader } from './article-reading-header'
 import { ArticleAbstractTimeline } from './article-abstract-timeline'
 import { CarouselEmailDialog, useCarouselEmailDialog } from './carousel-email-dialog'
 import { CommunicationCard } from '../communication/communication-card'
+import { LinkedinPostPanel } from '../communication/linkedin-post-panel'
 import { COMMUNICATION_STATUSES } from '@/lib/publications/communication'
 
 const FormSchema = z.object({
@@ -106,6 +107,9 @@ export function ArticlePage({
   const persistedStatus = useRef(article.status)
   const showCommunicationCard =
     basePath === PUBLICATIONS_ADMIN_BASE && viewer.isAdmin && COMMUNICATION_STATUSES.includes(article.status)
+  // In their own space the author sees the post and may record it; the carousel email
+  // stays an admin errand, so only the LinkedIn half crosses over.
+  const showLinkedinCard = !showCommunicationCard && COMMUNICATION_STATUSES.includes(article.status)
 
   const save = useAction(updateArticleCoreAction, {
     onSuccess() {
@@ -268,6 +272,15 @@ export function ArticlePage({
               }}
               editable={visibility.cardsEditable}
             />
+            {showLinkedinCard && (
+              <LinkedinPostPanel
+                standalone
+                articleId={article.id}
+                postUrl={article.linkedinPostUrl}
+                postedAt={article.linkedinPostedAt}
+                editable={viewer.isFirstAuthor}
+              />
+            )}
             {showCommunicationCard && (
               <CommunicationCard
                 articleId={article.id}

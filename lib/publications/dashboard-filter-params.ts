@@ -84,6 +84,7 @@ export function filtersToSearchParams(filters: DashboardFilters): URLSearchParam
   }
   if (filters.query !== DEFAULT_DASHBOARD_FILTERS.query) params.set('query', filters.query)
   if (filters.pendingOverMonth !== DEFAULT_DASHBOARD_FILTERS.pendingOverMonth) params.set('pendingOverMonth', '1')
+  if (filters.linkedinPosted !== DEFAULT_DASHBOARD_FILTERS.linkedinPosted) params.set('linkedinPosted', '1')
 
   return params
 }
@@ -97,5 +98,6 @@ export function filtersFromSearchParams(params: URLSearchParams): DashboardFilte
     authorPosition: authorPositionFromParam(params),
     query: params.get('query') ?? DEFAULT_DASHBOARD_FILTERS.query,
     pendingOverMonth: params.get('pendingOverMonth') === '1',
+    linkedinPosted: params.get('linkedinPosted') === '1',
   }
 }

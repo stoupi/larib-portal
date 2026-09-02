@@ -76,14 +76,17 @@ export function nextCommunicationSort(current: CommunicationSort, key: Communica
   return { key, direction: key === 'title' ? 'asc' : 'desc' }
 }
 
-export type CarouselEmailState = 'sent' | 'pending' | 'notApplicable'
+export type CarouselEmailState = 'posted' | 'sent' | 'pending' | 'notApplicable'
 
 // The carousel email only concerns a paper the journal has taken: showing "pending"
-// on a draft would read as a task nobody owes.
+// on a draft would read as a task nobody owes. A recorded post supersedes the email
+// that asked for it — the errand is over, and one mark says so.
 export function carouselEmailState(article: {
   status: ArticleStatusValue
   carouselEmailSentAt: string | null
+  linkedinPostUrl?: string | null
 }): CarouselEmailState {
   if (!COMMUNICATION_STATUSES.includes(article.status)) return 'notApplicable'
+  if (article.linkedinPostUrl) return 'posted'
   return article.carouselEmailSentAt === null ? 'pending' : 'sent'
 }

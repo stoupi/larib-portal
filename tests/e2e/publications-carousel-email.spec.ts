@@ -213,6 +213,17 @@ test('an admin records the LinkedIn post and finds it from the publication and t
   await expect(embed).toHaveAttribute('src', /embed\/feed\/update\/urn:li:activity:7100000000000000000/)
   await expect(page.getByRole('link', { name: /Open the post on LinkedIn/ })).toBeVisible()
 
+  // The list swaps the sent-email mark for the post: the errand is over
+  await page.goto('/en/publications/admin', { timeout: 60000 })
+  await page.getByPlaceholder('Author, journal, article, study…').fill('Carousel done')
+  await expect(page.getByLabel('LinkedIn post published')).toHaveCount(1, { timeout: 20000 })
+  await expect(page.getByLabel(/Communication email sent on/)).toHaveCount(0)
+
+  // …and the filter narrows the library to the papers already posted
+  await page.getByRole('button', { name: 'LinkedIn post', exact: true }).click()
+  await expect(page.getByRole('link', { name: COMMUNICATED_ARTICLE })).toBeVisible({ timeout: 20000 })
+  await expect(page).toHaveURL(/linkedinPosted=1/)
+
   // The module lists it too, and taking it off clears both
   await page.goto('/en/publications/admin/communication', { timeout: 60000 })
   await page.getByRole('button', { name: /^Sent/ }).click()

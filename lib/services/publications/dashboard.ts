@@ -24,6 +24,7 @@ export async function listDashboardArticles(now: Date = new Date()): Promise<Das
       receivedAt: true,
       acceptedAt: true,
       carouselEmailSentAt: true,
+      linkedinPostUrl: true,
       statisticianId: true,
       publishedJournal: { select: { name: true, abbreviation: true } },
       study: { select: { id: true, acronym: true, title: true } },
@@ -75,6 +76,7 @@ export async function listDashboardArticles(now: Date = new Date()): Promise<Das
       acceptedAt: acceptedDate ? acceptedDate.toISOString() : null,
       pendingDays: isActive && !acceptedDate && lastSubmissionDate ? daysBetween(lastSubmissionDate, now) : null,
       carouselEmailSentAt: article.carouselEmailSentAt ? article.carouselEmailSentAt.toISOString() : null,
+      linkedinPostUrl: article.linkedinPostUrl,
       statisticianId: article.statisticianId,
       submissions: article.submissions.map((submission) => ({
         id: submission.id,

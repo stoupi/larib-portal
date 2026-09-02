@@ -9,6 +9,7 @@ import { ExternalLink, Save, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { cn } from '@/lib/utils'
 import { LinkedinBadge } from '@/components/ui/linkedin-badge'
 import { linkedinEmbedUrl } from '@/lib/publications/linkedin-post'
 import { setLinkedinPostAction } from '../../actions'
@@ -23,11 +24,13 @@ export function LinkedinPostPanel({
   postUrl,
   postedAt,
   editable,
+  standalone = false,
 }: {
   articleId: string
   postUrl: string | null
   postedAt: Date | string | null
   editable: boolean
+  standalone?: boolean
 }) {
   const t = useTranslations('publications.communication')
   const locale = useLocale()
@@ -51,7 +54,7 @@ export function LinkedinPostPanel({
     : null
 
   return (
-    <div className="space-y-3 border-t border-dashed border-line pt-4">
+    <div className={cn('space-y-3', standalone ? 'rounded-2xl border border-line bg-bg-surface p-5 shadow-elevation-xs' : 'border-t border-dashed border-line pt-4')}>
       <div className="flex items-center gap-2">
         <LinkedinBadge />
         <h3 className="text-sm font-semibold text-text-primary">{t('linkedinTitle')}</h3>

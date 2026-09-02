@@ -1846,6 +1846,8 @@
         "clearJournal": "Annuler le filtre de revue",
         "teamOnly": "Publication menée par l'équipe Larib",
         "pendingOverMonth": "En attente > 1 mois",
+        "linkedinPosted": "Post LinkedIn",
+        "linkedinPostedHint": "Ne garder que les publications dont le post LinkedIn est enregistré",
         "pendingOverMonthHint": "Seulement les articles en attente chez un journal depuis plus d'un mois"
       },
       "overview": {
@@ -1921,6 +1923,7 @@
       "linkedinUnreadable": "Lien enregistré, mais LinkedIn ne permet pas de l'afficher ici.",
       "linkedinNone": "Aucun post pour le moment.",
       "rowSent": "Mail com envoyé le {date}",
+      "rowPosted": "Post LinkedIn publié",
       "sendEmail": "Envoyer le mail",
       "resendEmail": "Renvoyer le mail",
       "cardTitle": "Communication",

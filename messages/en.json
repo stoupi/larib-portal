@@ -1848,6 +1848,8 @@
         "clearJournal": "Clear the journal filter",
         "teamOnly": "Publication led by Larib's team",
         "pendingOverMonth": "Pending > 1 month",
+        "linkedinPosted": "LinkedIn post",
+        "linkedinPostedHint": "Keep only the publications whose LinkedIn post is recorded",
         "pendingOverMonthHint": "Only papers waiting at a journal for more than a month"
       },
       "overview": {
@@ -1923,6 +1925,7 @@
       "linkedinUnreadable": "Link saved, but LinkedIn will not display it here.",
       "linkedinNone": "No post yet.",
       "rowSent": "Communication email sent on {date}",
+      "rowPosted": "LinkedIn post published",
       "sendEmail": "Send email",
       "resendEmail": "Send again",
       "cardTitle": "Communication",
