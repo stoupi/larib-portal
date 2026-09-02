@@ -1,7 +1,7 @@
 import { getTypedSession } from '@/lib/auth-helpers'
 import { NavbarClient } from './navbar-client'
 import { AppSidebar } from './app-sidebar'
-import { toActiveApplications, canAdminApp } from '@/lib/permissions'
+import { toActiveApplications, canAdminApp, effectiveApplications } from '@/lib/permissions'
 import { countPendingLeaveRequests } from '@/lib/services/conges'
 
 // Always rendered dynamically to reflect auth changes
@@ -20,12 +20,17 @@ export async function AppShell({ children }: { children: React.ReactNode }) {
     )
   }
 
+  const effective = effectiveApplications(user)
   const pendingLeaveRequestsCount = canAdminApp(user, 'CONGES') ? await countPendingLeaveRequests() : 0
 
   return (
     <div className="flex min-h-screen">
       <AppSidebar
-        user={{ ...user, applications: toActiveApplications(user.applications), adminApplications: toActiveApplications(user.adminApplications) }}
+        user={{
+          ...user,
+          applications: toActiveApplications(effective.applications),
+          adminApplications: toActiveApplications(effective.adminApplications),
+        }}
         pendingLeaveRequestsCount={pendingLeaveRequestsCount}
       />
       <div className="flex min-w-0 flex-1 flex-col">

@@ -17,6 +17,7 @@ import {
   ChevronUp,
   Check,
   BookOpen,
+  HeartPulse,
   Shield,
   type LucideIcon,
 } from 'lucide-react'
@@ -119,6 +120,9 @@ export function AppSidebar({
   if (accessible.includes('PUBLICATIONS')) {
     applicationItems.push({ href: '/publications', label: tAdmin('app_PUBLICATIONS'), icon: BookOpen })
   }
+  if (accessible.includes('CORELAB')) {
+    applicationItems.push({ href: '/corelab', label: tAdmin('app_CORELAB'), icon: HeartPulse })
+  }
 
   const sections: SidebarSection[] = [
     {
@@ -146,6 +150,9 @@ export function AppSidebar({
   }
   if (accessible.includes('PUBLICATIONS') && canAdminApp(user, 'PUBLICATIONS')) {
     adminItems.push({ href: '/publications/admin', label: tAdmin('app_PUBLICATIONS'), icon: BookOpen, adminBadge: true })
+  }
+  if (accessible.includes('CORELAB') && canAdminApp(user, 'CORELAB')) {
+    adminItems.push({ href: '/corelab/admin', label: tAdmin('app_CORELAB'), icon: HeartPulse, adminBadge: true })
   }
   if (isAdmin) {
     adminItems.push({ href: '/admin/users', label: tAdmin('usersNav'), icon: Users })

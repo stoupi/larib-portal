@@ -3,7 +3,7 @@ import { Link } from '@/app/i18n/navigation'
 import { getTranslations } from 'next-intl/server'
 import { formatUserName } from '@/lib/format-user-name'
 import { getRandomGreeting } from '@/lib/random-greeting'
-import { isSuperAdmin, accessibleApplications, canAdminApp } from '@/lib/permissions'
+import { isSuperAdmin, accessibleApplications, canAdminApp, effectiveApplications, type ActiveApplication } from '@/lib/permissions'
 import * as motion from "framer-motion/client"
 import { ArrowRight, User, Shield } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -20,22 +20,24 @@ export default async function DashboardPage({
   const t = await getTranslations({ locale, namespace: 'dashboard' })
   const adminT = await getTranslations({ locale, namespace: 'admin' })
 
-  const allApps = accessibleApplications(session.user) as Array<'BESTOF_LARIB' | 'CONGES' | 'PUBLICATIONS'>
-  const appOrder: Array<'BESTOF_LARIB' | 'CONGES' | 'PUBLICATIONS'> = ['BESTOF_LARIB', 'CONGES', 'PUBLICATIONS']
+  const allApps = accessibleApplications(session.user) as ActiveApplication[]
+  const appOrder: ActiveApplication[] = ['BESTOF_LARIB', 'CONGES', 'PUBLICATIONS', 'CORELAB']
   const apps = appOrder.filter(app => allApps.includes(app))
 
   const canAdminConges = canAdminApp(session.user, 'CONGES')
   const pendingLeaveRequestsCount = canAdminConges ? await countPendingLeaveRequests() : 0
 
-  function appSlug(app: 'BESTOF_LARIB' | 'CONGES' | 'PUBLICATIONS'): string {
+  function appSlug(app: ActiveApplication): string {
     return app === 'BESTOF_LARIB'
       ? '/bestof-larib'
       : app === 'CONGES'
         ? '/conges'
-        : '/publications'
+        : app === 'CORELAB'
+          ? '/corelab'
+          : '/publications'
   }
 
-  function getAppIcon(app: 'BESTOF_LARIB' | 'CONGES' | 'PUBLICATIONS') {
+  function getAppIcon(app: ActiveApplication) {
     switch (app) {
       case 'BESTOF_LARIB':
         return (
@@ -64,6 +66,13 @@ export default async function DashboardPage({
             {/* Open book */}
             <path d="M24 12C20 9 12 8 6 9v28c6-1 14 0 18 3 4-3 12-4 18-3V9c-6-1-14 0-18 3z" stroke="currentColor" strokeWidth="2" fill="none"/>
             <path d="M24 12v28" stroke="currentColor" strokeWidth="2"/>
+          </svg>
+        );
+      case 'CORELAB':
+        return (
+          <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
+            <path d="M24 42s-16-9.5-16-22a8 8 0 0 1 16-2 8 8 0 0 1 16 2c0 12.5-16 22-16 22z" stroke="currentColor" strokeWidth="2" fill="none"/>
+            <path d="M10 24h7l3-6 4 12 3-6h11" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
         );
     }
@@ -134,7 +143,7 @@ export default async function DashboardPage({
               className="grid grid-cols-1 md:grid-cols-2 gap-6"
             >
               {apps.map((app) => {
-                const hasUserAccess = (session.user.applications ?? []).includes(app)
+                const hasUserAccess = effectiveApplications(session.user).applications.includes(app)
                 const hasAdminAccess = canAdminApp(session.user, app)
                 const userButton = (
                   <Button asChild size="lg" className="w-full justify-between">
