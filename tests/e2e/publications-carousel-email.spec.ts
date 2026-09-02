@@ -147,3 +147,19 @@ test('an admin accepts an article, defers the carousel email and sends it from t
   await page.getByRole('button', { name: /^Envoyés/ }).click()
   await expect(communicationRow(page, COMMUNICATED_ARTICLE).getByText(/Envoyé le/)).toBeVisible({ timeout: 20000 })
 })
+
+test('the publications list says whether the communication email has gone out', async ({ page }) => {
+  await login(page, 'publications-admin@larib-portal.test')
+  await page.goto('/en/publications/admin', { timeout: 60000 })
+
+  const searchField = page.getByPlaceholder('Author, journal, article, study…')
+  await searchField.fill('Carousel')
+
+  await expect(page.getByLabel('Communication email to send').first()).toBeVisible({ timeout: 20000 })
+  await expect(page.getByLabel(/Communication email sent on/).first()).toBeVisible()
+
+  // A paper the journal has not taken owes no email, so it carries no flag at all
+  await searchField.fill('multi-valve')
+  await expect(page.getByRole('link', { name: /Outcomes of multi-valve intervention/ })).toBeVisible({ timeout: 20000 })
+  await expect(page.getByLabel(/Communication email/)).toHaveCount(0)
+})

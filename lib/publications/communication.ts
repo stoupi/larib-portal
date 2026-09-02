@@ -74,3 +74,15 @@ export function nextCommunicationSort(current: CommunicationSort, key: Communica
   if (current.key === key) return { key, direction: current.direction === 'asc' ? 'desc' : 'asc' }
   return { key, direction: key === 'title' ? 'asc' : 'desc' }
 }
+
+export type CarouselEmailState = 'sent' | 'pending' | 'notApplicable'
+
+// The carousel email only concerns a paper the journal has taken: showing "pending"
+// on a draft would read as a task nobody owes.
+export function carouselEmailState(article: {
+  status: ArticleStatusValue
+  carouselEmailSentAt: string | null
+}): CarouselEmailState {
+  if (!COMMUNICATION_STATUSES.includes(article.status)) return 'notApplicable'
+  return article.carouselEmailSentAt === null ? 'pending' : 'sent'
+}

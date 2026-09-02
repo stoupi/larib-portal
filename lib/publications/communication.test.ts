@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import {
+  carouselEmailState,
   communicationTabCounts,
   countPendingCommunications,
   filterCommunicationArticles,
@@ -99,5 +100,21 @@ describe('communication list', () => {
       key: 'title',
       direction: 'asc',
     })
+  })
+})
+
+describe('carouselEmailState', () => {
+  it('reports the email as sent once it has left', () => {
+    expect(carouselEmailState({ status: 'PUBLISHED', carouselEmailSentAt: '2026-03-01T00:00:00.000Z' })).toBe('sent')
+  })
+
+  it('reports an accepted paper with no email as pending', () => {
+    expect(carouselEmailState({ status: 'ACCEPTED', carouselEmailSentAt: null })).toBe('pending')
+  })
+
+  it('says nothing at all about a paper the journal has not taken', () => {
+    for (const status of ['IN_PREPARATION', 'UNDER_REVIEW', 'REVISION', 'TO_RESUBMIT', 'ABANDONED'] as const) {
+      expect(carouselEmailState({ status, carouselEmailSentAt: null })).toBe('notApplicable')
+    }
   })
 })

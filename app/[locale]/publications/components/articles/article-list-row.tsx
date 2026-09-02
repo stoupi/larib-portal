@@ -16,6 +16,7 @@ import { PendingTag } from '../pending-tag'
 import { ArticleStudySelect } from './article-study-select'
 import { ArticleScopeSwitch } from './article-scope-switch'
 import { ArticleDeleteButton } from './article-delete-button'
+import { CarouselEmailDot } from '../communication/carousel-email-dot'
 
 const ADMIN_PATHS = publicationsPaths(PUBLICATIONS_ADMIN_BASE)
 
@@ -137,8 +138,9 @@ export function ArticleListRow({
           />
         </div>
 
-        <div>
+        <div className="flex items-center gap-2">
           <span className={pillClassName(ARTICLE_STATUS_TONE[article.status])}>{t(`articles.status.${article.status}`)}</span>
+          <CarouselEmailDot status={article.status} carouselEmailSentAt={article.carouselEmailSentAt} />
         </div>
 
         <div className="flex flex-col gap-1">
