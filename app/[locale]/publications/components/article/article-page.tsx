@@ -274,6 +274,11 @@ export function ArticlePage({
                 carouselEmailSentAt={article.carouselEmailSentAt}
                 locale={locale}
                 controller={carouselDialog}
+                linkedinPost={{
+                  url: article.linkedinPostUrl,
+                  postedAt: article.linkedinPostedAt,
+                  editable: viewer.isAdmin,
+                }}
               />
             )}
             <EditorJournalQueue targets={journalTargets} />

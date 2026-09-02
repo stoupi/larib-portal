@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react'
 import { useTranslations } from 'next-intl'
-import { ChevronDown, ChevronUp, ChevronsUpDown, Search } from 'lucide-react'
+import { ChevronDown, ChevronUp, ChevronsUpDown, Linkedin, Search } from 'lucide-react'
 import { Link } from '@/app/i18n/navigation'
 import { Input } from '@/components/ui/input'
 import { TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table'
@@ -173,7 +173,20 @@ export function CommunicationView({
                       {article.acceptedAt ? dateFormatter.format(new Date(article.acceptedAt)) : '—'}
                     </TableCell>
                     <TableCell>
-                      <CarouselEmailTag sentAt={article.carouselEmailSentAt} locale={locale} />
+                      <div className="flex items-center gap-2">
+                        <CarouselEmailTag sentAt={article.carouselEmailSentAt} locale={locale} />
+                        {article.linkedinPostUrl && (
+                          <a
+                            href={article.linkedinPostUrl}
+                            target="_blank"
+                            rel="noreferrer"
+                            aria-label={`${t('linkedinOpen')}: ${article.title}`}
+                            className="inline-flex text-[#0A66C2] transition hover:opacity-80"
+                          >
+                            <Linkedin className="size-4" strokeWidth={2.2} />
+                          </a>
+                        )}
+                      </div>
                     </TableCell>
                     <TableCell className="text-right">
                       <CarouselSendButton

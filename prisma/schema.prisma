@@ -606,6 +606,8 @@ model Article {
   pdfUrl              String?
   pdfKey              String?
   carouselEmailSentAt DateTime?
+  linkedinPostUrl     String?
+  linkedinPostedAt    DateTime?
   statisticianId      String?
   statistician        Author?       @relation("ArticleStatistician", fields: [statisticianId], references: [id], onDelete: SetNull)
   createdById         String

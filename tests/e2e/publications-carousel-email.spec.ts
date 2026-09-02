@@ -191,3 +191,35 @@ test('the publications list marks a communication email that has gone out, and n
   await expect(page.getByRole('link', { name: /Outcomes of multi-valve intervention/ })).toBeVisible({ timeout: 20000 })
   await expect(page.getByLabel(/Communication email/)).toHaveCount(0)
 })
+
+test('an admin records the LinkedIn post and finds it from the publication and the module', async ({ page }) => {
+  await login(page, 'publications-admin@larib-portal.test')
+  await page.goto('/en/publications/admin', { timeout: 60000 })
+  await page.getByPlaceholder('Author, journal, article, study…').fill('Carousel done')
+  await page.getByRole('link', { name: COMMUNICATED_ARTICLE }).first().click()
+  await page.waitForURL(/\/publications\/admin\/articles\/[^/?]+$/, { timeout: 60000 })
+  const articleUrl = page.url()
+
+  // The card offers the field only once the journal has taken the paper
+  await expect(page.getByRole('heading', { name: 'LinkedIn post' })).toBeVisible({ timeout: 20000 })
+  await page.getByLabel('Post link').fill('https://www.linkedin.com/feed/update/urn:li:activity:7100000000000000000')
+  await page.getByLabel('Published on').fill('2026-09-01')
+  await page.getByRole('button', { name: 'Save the post' }).click()
+  await expect(page.getByText('LinkedIn post saved')).toBeVisible({ timeout: 20000 })
+
+  // A readable link becomes the embed, and the link back to LinkedIn carries its date
+  const embed = page.locator('iframe[title="LinkedIn post"]')
+  await expect(embed).toBeVisible({ timeout: 20000 })
+  await expect(embed).toHaveAttribute('src', /embed\/feed\/update\/urn:li:activity:7100000000000000000/)
+  await expect(page.getByRole('link', { name: /Open the post on LinkedIn/ })).toBeVisible()
+
+  // The module lists it too, and taking it off clears both
+  await page.goto('/en/publications/admin/communication', { timeout: 60000 })
+  await page.getByRole('button', { name: /^Sent/ }).click()
+  await expect(page.getByLabel(`Open the post on LinkedIn: ${COMMUNICATED_ARTICLE}`)).toBeVisible({ timeout: 20000 })
+
+  await page.goto(articleUrl, { timeout: 60000 })
+  await page.getByRole('button', { name: 'Remove the post' }).click()
+  await expect(page.getByText('LinkedIn post saved')).toBeVisible({ timeout: 20000 })
+  await expect(page.locator('iframe[title="LinkedIn post"]')).toHaveCount(0, { timeout: 20000 })
+})

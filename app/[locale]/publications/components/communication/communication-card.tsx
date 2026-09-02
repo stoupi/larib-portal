@@ -4,6 +4,7 @@ import { useTranslations } from 'next-intl'
 import { CollapsibleCard } from '../editor/collapsible-card'
 import { CarouselEmailTag } from './carousel-email-tag'
 import { CarouselSendButton } from './carousel-send-button'
+import { LinkedinPostPanel } from './linkedin-post-panel'
 import type { CarouselEmailController } from '../article/carousel-email-dialog'
 
 export function CommunicationCard({
@@ -11,11 +12,13 @@ export function CommunicationCard({
   carouselEmailSentAt,
   locale,
   controller,
+  linkedinPost,
 }: {
   articleId: string
   carouselEmailSentAt: Date | null
   locale: string
   controller: CarouselEmailController
+  linkedinPost: { url: string | null; postedAt: Date | null; editable: boolean }
 }) {
   const t = useTranslations('publications.communication')
   const sentAt = carouselEmailSentAt ? carouselEmailSentAt.toISOString() : null
@@ -35,6 +38,12 @@ export function CommunicationCard({
           <CarouselEmailTag sentAt={sentAt} locale={locale} />
           <CarouselSendButton alreadySent={sentAt !== null} onClick={() => controller.openFor(articleId)} />
         </div>
+        <LinkedinPostPanel
+          articleId={articleId}
+          postUrl={linkedinPost.url}
+          postedAt={linkedinPost.postedAt}
+          editable={linkedinPost.editable}
+        />
       </div>
     </CollapsibleCard>
   )

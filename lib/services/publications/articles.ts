@@ -52,6 +52,19 @@ export async function updateArticleType(id: string, type: ArticleTypeValue) {
   return prisma.article.update({ where: { id }, data: { type }, select: { id: true } })
 }
 
+// The link is stored as pasted so the admin can see what they typed; the embed is
+// derived at render time, and an unreadable link simply shows as a plain link.
+export async function setArticleLinkedinPost(
+  id: string,
+  input: { url: string | null; postedAt: Date | null },
+) {
+  return prisma.article.update({
+    where: { id },
+    data: { linkedinPostUrl: input.url, linkedinPostedAt: input.url ? input.postedAt : null },
+    select: { id: true, linkedinPostUrl: true, linkedinPostedAt: true },
+  })
+}
+
 export async function updateArticleStudy(id: string, studyId: string | null) {
   return prisma.article.update({
     where: { id },

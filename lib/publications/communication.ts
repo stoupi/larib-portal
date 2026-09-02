@@ -11,6 +11,7 @@ export type CommunicationArticleItem = {
   authorNames: string[]
   acceptedAt: string | null
   carouselEmailSentAt: string | null
+  linkedinPostUrl: string | null
 }
 
 export const COMMUNICATION_TABS = ['pending', 'sent', 'all'] as const

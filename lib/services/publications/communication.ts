@@ -12,6 +12,7 @@ export async function listCommunicationArticles(): Promise<CommunicationArticleI
       publishedAt: true,
       acceptedAt: true,
       carouselEmailSentAt: true,
+      linkedinPostUrl: true,
       publishedJournal: { select: { name: true, abbreviation: true } },
       submissions: {
         orderBy: { submittedAt: 'asc' },
@@ -41,6 +42,7 @@ export async function listCommunicationArticles(): Promise<CommunicationArticleI
       authorNames,
       acceptedAt: acceptedDate ? acceptedDate.toISOString() : null,
       carouselEmailSentAt: article.carouselEmailSentAt ? article.carouselEmailSentAt.toISOString() : null,
+      linkedinPostUrl: article.linkedinPostUrl,
     }
   })
 }

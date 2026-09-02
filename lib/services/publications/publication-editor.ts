@@ -137,6 +137,8 @@ export async function getPublicationForEdit(articleId: string) {
       acceptedAt: true,
       reviewDelayDays: true,
       carouselEmailSentAt: true,
+      linkedinPostUrl: true,
+      linkedinPostedAt: true,
       statisticianId: true,
       statistician: { select: { id: true, firstName: true, lastName: true, degrees: true } },
       publishedJournal: { select: { name: true, abbreviation: true } },

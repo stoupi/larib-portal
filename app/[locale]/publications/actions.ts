@@ -30,7 +30,9 @@ import { findAuthorDuplicates, matchAuthorsAgainstBank, normalizeName } from '@/
 import { fetchPublicationByIdentifier } from '@/lib/services/publications/publication-lookup'
 import { backfillAffiliations, PUBLICATIONS_CENTRES_TAG, PUBLICATIONS_AFFILIATIONS_TAG } from '@/lib/services/publications/affiliations'
 import { renameCentre, setCentreOwn, deleteCentre, mergeCentres, getCentreAuthors, getCentreStudies, createCentre, updateCentre, listCentreOptions } from '@/lib/services/publications/centres'
-import { updateArticleStatus, updateArticleType, updateArticleStudy, updateArticleScope, deleteArticle, userCreatedArticleInPreparation, ARTICLE_STATUSES } from '@/lib/services/publications/articles'
+import { updateArticleStatus, updateArticleType, updateArticleStudy, updateArticleScope, deleteArticle, userCreatedArticleInPreparation, ARTICLE_STATUSES,
+  setArticleLinkedinPost,
+} from '@/lib/services/publications/articles'
 import { ARTICLE_TYPE_VALUES } from '@/lib/publications/article-type'
 import { ARTICLE_SCOPES } from '@/lib/publications/article-scope'
 import { findLibraryDuplicates } from '@/lib/services/publications/duplicates'
@@ -261,6 +263,23 @@ export const updateArticleScopeAction = authenticatedAction
     const canEdit = canAdminApp(ctx.user, 'PUBLICATIONS') || (await userIsFirstAuthor(ctx.userId, parsedInput.id))
     if (!canEdit) throw new Error('Forbidden')
     const updated = await updateArticleScope(parsedInput.id, parsedInput.scope)
+    revalidateTag(PUBLICATIONS_ARTICLES_TAG)
+    return updated
+  })
+
+export const setLinkedinPostAction = appAdminAction('PUBLICATIONS')
+  .inputSchema(
+    z.object({
+      id: z.string().min(1),
+      url: z.string().trim().url().nullable(),
+      postedAt: z.string().nullable(),
+    }),
+  )
+  .action(async ({ parsedInput }) => {
+    const updated = await setArticleLinkedinPost(parsedInput.id, {
+      url: parsedInput.url,
+      postedAt: parsedInput.postedAt ? new Date(parsedInput.postedAt) : null,
+    })
     revalidateTag(PUBLICATIONS_ARTICLES_TAG)
     return updated
   })
