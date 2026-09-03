@@ -68,3 +68,11 @@ export async function r2GetSignedDownloadUrl(key: string, expiresInSeconds = 6 *
   const command = new GetObjectCommand({ Bucket: cfg.bucket, Key: key })
   return getSignedUrl(client(), command, { expiresIn: expiresInSeconds })
 }
+
+export async function r2GetObject(key: string): Promise<Buffer> {
+  const cfg = getR2Config()
+  const response = await client().send(new GetObjectCommand({ Bucket: cfg.bucket, Key: key }))
+  const bytes = await response.Body?.transformToByteArray()
+  if (!bytes) throw new Error('EMPTY_OBJECT')
+  return Buffer.from(bytes)
+}
