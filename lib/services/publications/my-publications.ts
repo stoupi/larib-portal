@@ -7,6 +7,7 @@ import {
   type SubmissionStatusValue,
 } from '@/lib/publications/status-display'
 import { normalizeArticleType, type ArticleTypeValue } from '@/lib/publications/article-type'
+import { pendingSince } from '@/lib/publications/pending-delay'
 import type { ArticleScopeValue } from '@/lib/publications/article-scope'
 
 export type MyPublicationSubmission = {
@@ -116,8 +117,12 @@ export async function listMyPublications(userId: string, now: Date = new Date())
     const acceptedDate = article.acceptedAt ?? acceptedSubmission?.decidedAt ?? null
 
     const isActive = ACTIVE_STATUSES.includes(article.status)
-    const pendingDays =
-      isActive && !acceptedDate && lastSubmissionDate ? daysBetween(lastSubmissionDate, now) : null
+    const pendingStart = pendingSince({
+      status: article.status,
+      submissions: article.submissions,
+      lastSubmissionAt: lastSubmissionDate,
+    })
+    const pendingDays = isActive && !acceptedDate && pendingStart ? daysBetween(pendingStart, now) : null
 
     return {
       id: article.id,

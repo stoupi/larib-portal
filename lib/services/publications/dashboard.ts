@@ -1,6 +1,7 @@
 import { prisma } from '@/lib/prisma'
 import type { DashboardArticleItem } from '@/lib/publications/admin-dashboard'
 import { normalizeArticleType } from '@/lib/publications/article-type'
+import { pendingSince } from '@/lib/publications/pending-delay'
 
 const DAY_MS = 86_400_000
 const ACTIVE_STATUSES = ['UNDER_REVIEW', 'REVISION', 'TO_RESUBMIT'] as const
@@ -53,6 +54,11 @@ export async function listDashboardArticles(now: Date = new Date()): Promise<Das
     const acceptedDate = article.acceptedAt ?? acceptedSubmission?.decidedAt ?? null
     const referenceDate = article.publishedAt ?? lastSubmissionDate
     const isActive = ACTIVE_STATUSES.some((status) => status === article.status)
+    const pendingStart = pendingSince({
+      status: article.status,
+      submissions: article.submissions,
+      lastSubmissionAt: lastSubmissionDate,
+    })
 
     return {
       id: article.id,
@@ -75,7 +81,7 @@ export async function listDashboardArticles(now: Date = new Date()): Promise<Das
       lastSubmissionAt: lastSubmissionDate ? lastSubmissionDate.toISOString() : null,
       acceptedAt: acceptedDate ? acceptedDate.toISOString() : null,
       publishedAt: article.publishedAt ? article.publishedAt.toISOString() : null,
-      pendingDays: isActive && !acceptedDate && lastSubmissionDate ? daysBetween(lastSubmissionDate, now) : null,
+      pendingDays: isActive && !acceptedDate && pendingStart ? daysBetween(pendingStart, now) : null,
       carouselEmailSentAt: article.carouselEmailSentAt ? article.carouselEmailSentAt.toISOString() : null,
       linkedinPostUrl: article.linkedinPostUrl,
       statisticianId: article.statisticianId,

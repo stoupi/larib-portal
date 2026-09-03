@@ -12,3 +12,19 @@ export function pendingDelay(days: number): PendingDelay {
 export function isPendingOverAMonth(pendingDays: number | null): boolean {
   return pendingDays != null && pendingDays > PENDING_MONTH_THRESHOLD_DAYS
 }
+
+// A refused paper waits from the day of the refusal, not from the day it was sent: the
+// submission that earned the rejection is over, what is running is the silence since.
+export function pendingSince({
+  status,
+  submissions,
+  lastSubmissionAt,
+}: {
+  status: string
+  submissions: { decidedAt: Date | null }[]
+  lastSubmissionAt: Date | null
+}): Date | null {
+  if (status !== 'TO_RESUBMIT') return lastSubmissionAt
+  const decided = submissions.filter((submission) => submission.decidedAt !== null).at(-1)
+  return decided?.decidedAt ?? lastSubmissionAt
+}
