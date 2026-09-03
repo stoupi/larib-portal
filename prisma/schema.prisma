@@ -801,6 +801,12 @@ enum AuditEntity {
   CORELAB_COHORT_IMPORT
   CORELAB_ASSIGNMENT
   CORELAB_ASSIGNMENT_BATCH
+  CORELAB_READING_VALUE
+  CORELAB_SEQUENCE_FLAG
+  CORELAB_READING_DOCUMENT
+  CORELAB_READING_SUBMISSION
+  CORELAB_DOCUMENT_RETURN
+  CORELAB_STUDY_DOCUMENT
 }
 
 model AuditEvent {
@@ -924,6 +930,7 @@ model CorelabStudy {
   calibrationReviews   CorelabCalibrationReview[]
   patients             CorelabPatient[]
   cohortImports        CorelabCohortImport[]
+  studyDocuments       CorelabStudyDocument[]
   assignmentBatches    CorelabAssignmentBatch[]
 
   @@map("CorelabStudy")
@@ -1209,18 +1216,23 @@ model CorelabCohortImport {
 }
 
 model CorelabReadingAssignment {
-  id         String                  @id @default(cuid())
-  patientId  String
-  patient    CorelabPatient          @relation(fields: [patientId], references: [id], onDelete: Cascade)
-  userId     String
-  user       User                    @relation("CorelabReadingAssignmentUser", fields: [userId], references: [id], onDelete: Restrict)
-  role       CorelabAssignmentRole
-  status     CorelabAssignmentStatus @default(DRAFT)
-  dueDate    DateTime?
-  batchId    String?
-  assignedAt DateTime?
-  createdAt  DateTime                @default(now())
-  updatedAt  DateTime                @updatedAt
+  id           String                  @id @default(cuid())
+  patientId    String
+  patient      CorelabPatient          @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  userId       String
+  user         User                    @relation("CorelabReadingAssignmentUser", fields: [userId], references: [id], onDelete: Restrict)
+  role         CorelabAssignmentRole
+  status       CorelabAssignmentStatus @default(DRAFT)
+  dueDate      DateTime?
+  batchId      String?
+  assignedAt   DateTime?
+  crfVersionId String?
+  createdAt    DateTime                @default(now())
+  updatedAt    DateTime                @updatedAt
+
+  values      CorelabReadingValue[]
+  documents   CorelabReadingDocument[]
+  submissions CorelabReadingSubmission[]
 
   @@unique([patientId, role])
   @@index([userId, status])
@@ -1240,4 +1252,136 @@ model CorelabAssignmentBatch {
   createdAt  DateTime     @default(now())
 
   @@map("CorelabAssignmentBatch")
+}
+
+enum CorelabValueSource {
+  MANUAL
+  IMPORTED
+  MODIFIED
+}
+
+enum CorelabFieldFlag {
+  UNCERTAIN_VALUE
+  POOR_IMAGE_QUALITY
+  MEASUREMENT_DIFFICULT
+  OTHER
+}
+
+enum CorelabSequenceFlagCategory {
+  NOT_ANALYZABLE
+  ARTEFACTS_SEVERE
+  SOFTWARE_ERROR
+  OTHER
+}
+
+enum CorelabDocumentStatus {
+  PENDING
+  CONFORMANT
+  MISSING
+  REJECTED
+}
+
+model CorelabReadingValue {
+  id           String                   @id @default(cuid())
+  assignmentId String
+  assignment   CorelabReadingAssignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+  examId       String
+  sequenceId   String
+  fieldId      String
+  value        Json?
+  source       CorelabValueSource       @default(MANUAL)
+  flag         CorelabFieldFlag?
+  flagNote     String?
+  updatedAt    DateTime                 @updatedAt
+
+  @@unique([assignmentId, examId, sequenceId, fieldId])
+  @@map("CorelabReadingValue")
+}
+
+model CorelabSequenceFlag {
+  id           String                      @id @default(cuid())
+  assignmentId String
+  examId       String
+  sequenceId   String
+  category     CorelabSequenceFlagCategory
+  note         String                      @default("")
+  createdAt    DateTime                    @default(now())
+
+  @@unique([assignmentId, examId, sequenceId])
+  @@map("CorelabSequenceFlag")
+}
+
+model CorelabReadingDocument {
+  id           String                   @id @default(cuid())
+  assignmentId String
+  assignment   CorelabReadingAssignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+  examId       String?
+  slotKey      String
+  fileName     String
+  fileKey      String
+  mimeType     String
+  fileSize     Int
+  status       CorelabDocumentStatus    @default(PENDING)
+  statusNote   String?
+  uploadedById String
+  uploadedAt   DateTime                 @default(now())
+
+  @@index([assignmentId, slotKey])
+  @@map("CorelabReadingDocument")
+}
+
+model CorelabImportMapping {
+  id              String  @id @default(cuid())
+  crfVersionId    String
+  software        String
+  softwareVersion String?
+  sheetPattern    String
+  cellRef         String?
+  columnHeader    String?
+  sequenceId      String
+  fieldId         String
+
+  @@index([crfVersionId])
+  @@map("CorelabImportMapping")
+}
+
+model CorelabReadingSubmission {
+  id           String                   @id @default(cuid())
+  assignmentId String
+  assignment   CorelabReadingAssignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+  crfVersionId String
+  snapshot     Json
+  snapshotHash String
+  version      Int                      @default(1)
+  signatureId  String
+  submittedAt  DateTime                 @default(now())
+
+  @@index([assignmentId, version])
+  @@map("CorelabReadingSubmission")
+}
+
+model CorelabDocumentReturn {
+  id            String    @id @default(cuid())
+  patientId     String
+  requestedById String
+  message       String
+  slotKeys      String[]
+  requestedAt   DateTime  @default(now())
+  resolvedAt    DateTime?
+
+  @@index([patientId])
+  @@map("CorelabDocumentReturn")
+}
+
+model CorelabStudyDocument {
+  id           String       @id @default(cuid())
+  studyId      String
+  study        CorelabStudy @relation(fields: [studyId], references: [id], onDelete: Cascade)
+  title        String
+  fileKey      String
+  fileName     String
+  uploadedById String
+  createdAt    DateTime     @default(now())
+
+  @@map("CorelabStudyDocument")
 }
