@@ -1,3 +1,4 @@
+import { renderCorelabAssignmentEmail, type CorelabAssignmentEmailParams } from '@/lib/email/corelab-assignment-template'
 import { COLORS, FONT_SERIF, FONT_SANS, emailLayout } from '@/lib/email/layout'
 import { resolveAppBaseUrl } from '@/lib/app-url'
 import { renderWelcomeEmail, type WelcomeEmailParams } from '@/lib/email/welcome-template'
@@ -1040,4 +1041,19 @@ export async function sendCarouselRequestEmail(
   }
   const json = (await res.json()) as { id?: string }
   return { id: json.id ?? '' }
+}
+
+export type CorelabAssignmentMailParams = CorelabAssignmentEmailParams & { to: string }
+
+export async function sendCorelabAssignmentEmail(params: CorelabAssignmentMailParams): Promise<{ ok: boolean }> {
+  const apiKey = process.env.RESEND_API_KEY
+  if (!apiKey) return { ok: false }
+  const fromEmail = process.env.RESEND_FROM || 'noreply@your-domain.com'
+  const { subject, text, html } = renderCorelabAssignmentEmail(params)
+  const res = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ from: `Larib Portal <${fromEmail}>`, to: [params.to], subject, text, html }),
+  })
+  return { ok: res.ok }
 }
