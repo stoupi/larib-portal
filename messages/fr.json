@@ -2495,6 +2495,53 @@
       "none": "Aucune capacité",
       "reference": "Référence produite par",
       "unassigned": "Personne désignée"
+    },
+    "cohort": {
+      "title": "Import de la cohorte",
+      "subtitle": "Déposez le fichier, contrôlez les anomalies, puis importez les lignes retenues.",
+      "steps": {
+        "upload": "Dépôt",
+        "check": "Contrôle",
+        "confirm": "Confirmation"
+      },
+      "pick": "Choisir un fichier",
+      "help": "CSV ou Excel, colonnes patient_id, centre, modality, exam_date, exam_index, time_label. 4 Mo maximum.",
+      "uploading": "Envoi du fichier…",
+      "analysing": "Analyse…",
+      "ready": "Prêtes",
+      "warnings": "À vérifier",
+      "blocked": "Bloquantes",
+      "blockedTitle": "Ces lignes ne seront pas importées",
+      "warningsTitle": "Ces lignes seront importées malgré une réserve",
+      "onlyIssues": "Problèmes seuls",
+      "allRows": "Toutes les lignes",
+      "line": "Ligne",
+      "patient": "Patient",
+      "centre": "Centre",
+      "modality": "Modalité",
+      "date": "Date",
+      "index": "Index",
+      "state": "État",
+      "sitesToCreate": "Centres à créer : {codes}",
+      "commit": "Importer les {count} lignes retenues",
+      "imported": "{rows} lignes importées, {patients} patients créés.",
+      "restart": "Recommencer",
+      "error": "L'import a échoué.",
+      "verdict": {
+        "READY": "Prête",
+        "WARNING": "À vérifier",
+        "BLOCKED": "Bloquante"
+      },
+      "issue": {
+        "DUPLICATE": "Doublon dans le fichier",
+        "UNKNOWN_MODALITY": "Modalité inconnue",
+        "INDEX_TOO_HIGH": "Index d'examen trop grand",
+        "DATE_BEFORE_STUDY": "Date antérieure au début de l'étude",
+        "NEW_SITE": "Centre inconnu, il sera créé",
+        "BAD_DATE": "Date mal formée",
+        "PATIENT_EXISTS": "Examen déjà en base"
+      },
+      "openImport": "Importer une cohorte"
     }
   }
 }

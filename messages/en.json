@@ -2497,6 +2497,53 @@
       "none": "No capability",
       "reference": "Reference authored by",
       "unassigned": "Nobody designated"
+    },
+    "cohort": {
+      "title": "Cohort import",
+      "subtitle": "Drop the file, review the issues, then import the rows you keep.",
+      "steps": {
+        "upload": "Upload",
+        "check": "Review",
+        "confirm": "Confirm"
+      },
+      "pick": "Choose a file",
+      "help": "CSV or Excel, columns patient_id, centre, modality, exam_date, exam_index, time_label. 4 MB maximum.",
+      "uploading": "Uploading…",
+      "analysing": "Analysing…",
+      "ready": "Ready",
+      "warnings": "To check",
+      "blocked": "Blocked",
+      "blockedTitle": "These rows will not be imported",
+      "warningsTitle": "These rows will be imported despite a reservation",
+      "onlyIssues": "Issues only",
+      "allRows": "All rows",
+      "line": "Line",
+      "patient": "Patient",
+      "centre": "Site",
+      "modality": "Modality",
+      "date": "Date",
+      "index": "Index",
+      "state": "State",
+      "sitesToCreate": "Sites to create: {codes}",
+      "commit": "Import the {count} rows kept",
+      "imported": "{rows} rows imported, {patients} patients created.",
+      "restart": "Start again",
+      "error": "The import failed.",
+      "verdict": {
+        "READY": "Ready",
+        "WARNING": "To check",
+        "BLOCKED": "Blocked"
+      },
+      "issue": {
+        "DUPLICATE": "Duplicate inside the file",
+        "UNKNOWN_MODALITY": "Unknown modality",
+        "INDEX_TOO_HIGH": "Exam index too high",
+        "DATE_BEFORE_STUDY": "Date before the study started",
+        "NEW_SITE": "Unknown site, it will be created",
+        "BAD_DATE": "Malformed date",
+        "PATIENT_EXISTS": "Exam already in the database"
+      },
+      "openImport": "Import a cohort"
     }
   }
 }
