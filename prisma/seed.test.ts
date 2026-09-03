@@ -421,6 +421,20 @@ async function main() {
 			goldStandard, goldStandardUserId: corelabPiUser.id,
 		},
 	});
+	const mirSite = await prisma.corelabSite.findFirstOrThrow({ where: { studyId: mirStudy.id, code: 'CHU-DIJ-1' }, select: { id: true } });
+	for (let index = 1; index <= 6; index += 1) {
+		await prisma.corelabPatient.create({
+			data: {
+				studyId: mirStudy.id, siteId: mirSite.id, code: `MIR-DJ-T-00${index}`,
+				exams: { create: [
+					{ index: 1, modality: 'CMR', examDate: new Date('2026-04-01T00:00:00.000Z'), timeLabel: 'Baseline' },
+					{ index: 2, modality: 'CMR', examDate: new Date('2026-10-01T00:00:00.000Z'), timeLabel: 'FU1' },
+				] },
+			},
+		});
+	}
+	console.log('✅ Created CoreLab cohort: 6 patients');
+
 	console.log('✅ Created CoreLab training and calibration:', coreModule.title, studyQuizModule.title, calibrationCase.code);
 
 	// Minimal publications sample dataset (article where publicationsUser is first author)

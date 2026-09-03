@@ -101,6 +101,14 @@ export function CohortImportWizard({ studyId }: { studyId: string }) {
               ))}
             </div>
 
+            {report.parseErrors.length > 0 ? (
+              <ul className="mt-4 space-y-1 rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-800" data-testid="cohort-parse-errors">
+                {report.parseErrors.map((issue) => (
+                  <li key={`${issue.line}-${issue.message}`}>{t('line')} {issue.line} — {issue.message}</li>
+                ))}
+              </ul>
+            ) : null}
+
             {report.sitesToCreate.length > 0 ? (
               <p className="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
                 {t('sitesToCreate', { codes: report.sitesToCreate.join(', ') })}
