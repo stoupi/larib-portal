@@ -8,6 +8,7 @@ import * as motion from "framer-motion/client"
 import { ArrowRight, User, Shield } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { PendingCountBadge } from '@/components/ui/pending-count-badge'
+import { countPendingReadings } from '@/lib/services/corelab/assignments'
 import { countPendingLeaveRequests } from '@/lib/services/conges'
 
 export default async function DashboardPage({
@@ -19,6 +20,7 @@ export default async function DashboardPage({
   const { locale } = await params
   const t = await getTranslations({ locale, namespace: 'dashboard' })
   const adminT = await getTranslations({ locale, namespace: 'admin' })
+  const corelabT = await getTranslations({ locale, namespace: 'corelab' })
 
   const allApps = accessibleApplications(session.user) as ActiveApplication[]
   const appOrder: ActiveApplication[] = ['BESTOF_LARIB', 'CONGES', 'PUBLICATIONS', 'CORELAB']
@@ -26,6 +28,7 @@ export default async function DashboardPage({
 
   const canAdminConges = canAdminApp(session.user, 'CONGES')
   const pendingLeaveRequestsCount = canAdminConges ? await countPendingLeaveRequests() : 0
+  const pendingReadingsCount = allApps.includes('CORELAB') ? await countPendingReadings(session.user.id) : 0
 
   function appSlug(app: ActiveApplication): string {
     return app === 'BESTOF_LARIB'
@@ -164,6 +167,17 @@ export default async function DashboardPage({
                 return (
                 <motion.div key={app} variants={item}>
                   <div className="group h-full relative overflow-hidden rounded-2xl border border-line bg-bg-surface shadow-elevation-sm transition-all duration-500 hover:shadow-elevation-md hover:-translate-y-1">
+                    {app === 'CORELAB' && pendingReadingsCount > 0 && (
+                      <div className="absolute top-4 right-4 z-10 flex items-center gap-2 rounded-full border border-coral-200 bg-coral-50 py-1 pl-1 pr-3">
+                        <PendingCountBadge
+                          count={pendingReadingsCount}
+                          label={corelabT('patients.readings.pending', { count: pendingReadingsCount })}
+                        />
+                        <span className="text-xs font-medium text-coral-700">
+                          {corelabT('patients.readings.pending', { count: pendingReadingsCount })}
+                        </span>
+                      </div>
+                    )}
                     {app === 'CONGES' && pendingLeaveRequestsCount > 0 && (
                       <div className="absolute top-4 right-4 z-10 flex items-center gap-2 rounded-full border border-coral-200 bg-coral-50 py-1 pl-1 pr-3">
                         <PendingCountBadge

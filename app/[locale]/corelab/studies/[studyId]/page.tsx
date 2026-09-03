@@ -48,6 +48,18 @@ export default async function ReaderStudyPage({ params }: PageParams) {
 
         <PhaseTrack phase={membership.canRead ? membership.certificationPhase : null} />
 
+        {membership.certificationPhase === 'PRODUCTION' && membership.canRead ? (
+          <section className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border bg-white p-6">
+            <div>
+              <h2 className="text-base font-semibold text-text-primary">{t('patients.readings.title')}</h2>
+              <p className="mt-0.5 text-sm text-text-secondary">{t('patients.readings.subtitle')}</p>
+            </div>
+            <Button asChild variant="outline">
+              <Link href={`/corelab/studies/${studyId}/readings`}>{t('patients.readings.title')}</Link>
+            </Button>
+          </section>
+        ) : null}
+
         {membership.certificationPhase !== 'TRAINING' && membership.canRead ? (
           <section className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border bg-white p-6">
             <div>
