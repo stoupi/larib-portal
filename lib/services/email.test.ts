@@ -1,5 +1,10 @@
 import { describe, it, expect } from 'vitest'
-import { renderLeaveRecapEmail, renderPublicationsRecapEmail, renderCarouselRequestEmailHtml } from './email'
+import {
+  renderLeaveRecapEmail,
+  renderPublicationsRecapEmail,
+  renderCarouselRequestEmailHtml,
+  renderAcceptedPapersEmail,
+} from './email'
 import type { RecapArticle } from '@/lib/publications/recap'
 
 describe('renderLeaveRecapEmail', () => {
@@ -237,5 +242,65 @@ describe('the recap that chases what stalls', () => {
     })
     expect(html).toContain('suivi du service')
     expect(html).not.toContain('mailto:')
+  })
+})
+
+describe('the recap that celebrates what was accepted', () => {
+  const papers = [
+    {
+      id: 'a',
+      title: 'Stress CMR in very elderly patients',
+      journalName: 'Circ Cardiovasc Imaging',
+      firstAuthorName: 'Vincent Grosjean',
+      date: '2026-08-20T00:00:00.000Z',
+      published: false,
+    },
+    {
+      id: 'b',
+      title: 'Late gadolinium enhancement and outcomes',
+      journalName: null,
+      firstAuthorName: null,
+      date: '2026-06-02T00:00:00.000Z',
+      published: true,
+    },
+  ]
+
+  it('counts the papers in the subject and dates the window', () => {
+    const { subject, html } = renderAcceptedPapersEmail({
+      locale: 'fr',
+      firstName: 'Marie',
+      papers,
+      since: new Date('2026-05-04T00:00:00.000Z'),
+      appUrl: 'https://portal.test',
+    })
+    expect(subject).toBe('2 publications acceptées 🎉')
+    expect(html).toContain('Stress CMR in very elderly patients')
+    expect(html).toContain('Vincent Grosjean')
+    expect(html).toContain('04 mai 2026')
+  })
+
+  it('falls back when the journal or the first author is missing', () => {
+    const { html } = renderAcceptedPapersEmail({
+      locale: 'fr',
+      firstName: null,
+      papers,
+      since: new Date('2026-05-04T00:00:00.000Z'),
+      appUrl: 'https://portal.test',
+    })
+    expect(html).toContain('journal non renseigné')
+    expect(html).toContain('auteur non renseigné')
+    expect(html).toContain('Publié')
+  })
+
+  it('speaks English to an English reader', () => {
+    const { subject, html } = renderAcceptedPapersEmail({
+      locale: 'en',
+      firstName: 'Marie',
+      papers: [papers[0]],
+      since: new Date('2026-08-04T00:00:00.000Z'),
+      appUrl: 'https://portal.test',
+    })
+    expect(subject).toBe('1 publication accepted 🎉')
+    expect(html).toContain('First author')
   })
 })

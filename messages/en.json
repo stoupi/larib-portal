@@ -1959,6 +1959,7 @@
       "kindAUTHOR_LIST_REQUEST": "Author list request",
       "kindISSUE_REPORT": "Error report",
       "kindMONTHLY_RECAP": "Monthly recap",
+      "kindACCEPTED_RECAP": "Accepted publications",
       "ccLabel": "In copy",
       "systemSender": "Automatic",
       "audienceTitle": "Monthly recap",

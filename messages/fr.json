@@ -1957,6 +1957,7 @@
       "kindAUTHOR_LIST_REQUEST": "Demande de liste d'auteurs",
       "kindISSUE_REPORT": "Signalement d'erreur",
       "kindMONTHLY_RECAP": "Récapitulatif mensuel",
+      "kindACCEPTED_RECAP": "Publications acceptées",
       "ccLabel": "En copie",
       "systemSender": "Automatique",
       "audienceTitle": "Récapitulatif mensuel",

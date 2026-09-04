@@ -16,6 +16,7 @@ import {
   type RecapCelebration,
   type RecapStatusValue,
 } from '@/lib/publications/recap'
+import type { AcceptedPaper } from '@/lib/publications/accepted-recap'
 
 export async function sendWelcomeEmail(params: WelcomeEmailParams): Promise<{ id: string } | { error: string }>
 {
@@ -845,6 +846,117 @@ export function renderPublicationsRecapEmail({
         </td>
       </tr>
     </table>
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:0 auto;"><tr>
+      <td align="center" style="background-color:${COLORS.accent};border-radius:8px;">
+        <a href="${publicationsLink}" target="_blank" style="display:inline-block;padding:14px 34px;font-family:${FONT_SANS};font-size:15px;font-weight:600;color:#ffffff;text-decoration:none;">${escapeHtml(words.button)}</a>
+      </td>
+    </tr></table>`
+
+  return { subject, text: textLines.join('\n'), html: emailLayout(body, subject, words.footer) }
+}
+
+export type AcceptedPapersEmailParams = {
+  locale: 'en' | 'fr'
+  firstName: string | null
+  papers: AcceptedPaper[]
+  since: Date
+  appUrl: string
+}
+
+const ACCEPTED_WORDS = {
+  fr: {
+    subject: (count: number) => `${count} publication${count > 1 ? 's' : ''} acceptée${count > 1 ? 's' : ''} 🎉`,
+    eyebrow: 'Publications acceptées',
+    hello: (name: string | null) => (name ? `Bonjour ${name},` : 'Bonjour,'),
+    heading: (count: number) =>
+      count > 1
+        ? `${count} publications de l’équipe ont été acceptées.`
+        : 'Une publication de l’équipe a été acceptée.',
+    lead: (since: string) => `Voici les papiers acceptés depuis le ${since}. Bravo à toutes les équipes concernées !`,
+    colTitle: 'Publication',
+    colAuthor: 'Premier auteur',
+    colJournal: 'Journal',
+    colDate: 'Date',
+    published: 'Publié',
+    noJournal: 'journal non renseigné',
+    unknownAuthor: 'auteur non renseigné',
+    button: 'Voir toutes les publications',
+    footer: 'Ceci est un email automatique envoyé depuis Larib Portal.',
+  },
+  en: {
+    subject: (count: number) => `${count} publication${count > 1 ? 's' : ''} accepted 🎉`,
+    eyebrow: 'Accepted publications',
+    hello: (name: string | null) => (name ? `Hello ${name},` : 'Hello,'),
+    heading: (count: number) =>
+      count > 1 ? `${count} of the team’s publications were accepted.` : 'One of the team’s publications was accepted.',
+    lead: (since: string) => `Here are the papers accepted since ${since}. Congratulations to everyone involved!`,
+    colTitle: 'Publication',
+    colAuthor: 'First author',
+    colJournal: 'Journal',
+    colDate: 'Date',
+    published: 'Published',
+    noJournal: 'no journal recorded',
+    unknownAuthor: 'author not recorded',
+    button: 'See all publications',
+    footer: 'This is an automatic email sent from Larib Portal.',
+  },
+}
+
+export function renderAcceptedPapersEmail({
+  locale,
+  firstName,
+  papers,
+  since,
+  appUrl,
+}: AcceptedPapersEmailParams): { subject: string; text: string; html: string } {
+  const words = ACCEPTED_WORDS[locale]
+  const subject = words.subject(papers.length)
+  const publicationsLink = `${appUrl}/${locale}/publications`
+  const sinceLabel = recapDate(since.toISOString(), locale)
+
+  const textLines = [
+    words.hello(firstName),
+    '',
+    words.heading(papers.length),
+    words.lead(sinceLabel),
+    '',
+    ...papers.map((paper) => {
+      const author = paper.firstAuthorName ?? words.unknownAuthor
+      const journal = paper.journalName ?? words.noJournal
+      return `- ${paper.title} — ${author} — ${journal} — ${recapDate(paper.date, locale)}`
+    }),
+    '',
+    publicationsLink,
+  ]
+
+  const head = (label: string) =>
+    `<th align="left" style="padding:8px 12px;border-bottom:2px solid ${COLORS.border};font-family:${FONT_SANS};font-size:10px;font-weight:700;letter-spacing:0.6px;text-transform:uppercase;color:${COLORS.mutedForeground};">${escapeHtml(label)}</th>`
+
+  const rows = papers
+    .map((paper) => {
+      const badge = paper.published
+        ? `<span style="background-color:#10B981;border-radius:4px;padding:2px 7px;font-family:${FONT_SANS};font-size:10px;color:#ffffff;white-space:nowrap;">${escapeHtml(words.published)}</span>`
+        : ''
+      return `<tr>
+        <td style="padding:11px 12px;border-bottom:1px solid ${COLORS.border};font-family:${FONT_SANS};font-size:13px;line-height:19px;color:${COLORS.foreground};"><strong>${escapeHtml(paper.title)}</strong>${badge ? `<br />${badge}` : ''}</td>
+        <td style="padding:11px 12px;border-bottom:1px solid ${COLORS.border};font-family:${FONT_SANS};font-size:12px;color:${COLORS.foreground};vertical-align:top;white-space:nowrap;">${escapeHtml(paper.firstAuthorName ?? words.unknownAuthor)}</td>
+        <td style="padding:11px 12px;border-bottom:1px solid ${COLORS.border};font-family:${FONT_SANS};font-size:12px;color:${COLORS.mutedForeground};vertical-align:top;">${escapeHtml(paper.journalName ?? words.noJournal)}</td>
+        <td style="padding:11px 12px;border-bottom:1px solid ${COLORS.border};font-family:${FONT_SANS};font-size:12px;color:${COLORS.foreground};vertical-align:top;white-space:nowrap;">${escapeHtml(recapDate(paper.date, locale))}</td>
+      </tr>`
+    })
+    .join('')
+
+  const body = `<p style="margin:0 0 8px 0;font-family:${FONT_SANS};font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:${COLORS.accent};">${escapeHtml(words.eyebrow)}</p>
+    <p style="margin:0 0 20px 0;font-family:${FONT_SANS};font-size:15px;line-height:23px;color:${COLORS.foreground};">${escapeHtml(words.hello(firstName))}</p>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 24px 0;">
+      <tr>
+        <td style="background-color:#F0FDF4;border-left:4px solid #10B981;border-radius:6px;padding:20px;">
+          <p style="margin:0 0 8px 0;font-family:${FONT_SERIF};font-size:22px;line-height:28px;font-weight:700;color:#047857;">🎉 ${escapeHtml(words.heading(papers.length))}</p>
+          <p style="margin:0;font-family:${FONT_SANS};font-size:14px;line-height:21px;color:#065F46;">${escapeHtml(words.lead(sinceLabel))}</p>
+        </td>
+      </tr>
+    </table>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 26px 0;"><tr>${head(words.colTitle)}${head(words.colAuthor)}${head(words.colJournal)}${head(words.colDate)}</tr>${rows}</table>
     <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:0 auto;"><tr>
       <td align="center" style="background-color:${COLORS.accent};border-radius:8px;">
         <a href="${publicationsLink}" target="_blank" style="display:inline-block;padding:14px 34px;font-family:${FONT_SANS};font-size:15px;font-weight:600;color:#ffffff;text-decoration:none;">${escapeHtml(words.button)}</a>
