@@ -10,7 +10,7 @@ const ITEMS = [
   { key: 'training', href: '/corelab/admin/training', enabled: true },
   { key: 'users', href: '/corelab/admin/users', enabled: true },
   { key: 'library', href: '/corelab/admin/library', enabled: false },
-  { key: 'audit', href: '/corelab/admin/audit', enabled: false },
+  { key: 'audit', href: '/corelab/admin/audit', enabled: true },
 ] as const
 
 export function CorelabAdminNav({ isDataManager }: { isDataManager: boolean }) {

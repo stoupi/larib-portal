@@ -2801,6 +2801,37 @@
       "noData": "Cette étude n'a pas encore de CRF publié.",
       "error": "L'export a échoué.",
       "notImplemented": "Ce format arrive dans un prochain lot."
+    },
+    "audit": {
+      "title": "Journal d'audit",
+      "subtitle": "Chaque écriture Core Lab, avec son auteur, son horodatage et son adresse IP.",
+      "timestamp": "Horodatage",
+      "actor": "Auteur",
+      "action": "Action",
+      "object": "Objet",
+      "detail": "Détail",
+      "ip": "Adresse IP",
+      "actions": {
+        "CREATE": "Création",
+        "UPDATE": "Mise à jour",
+        "DELETE": "Suppression"
+      },
+      "filterActor": "Tous les auteurs",
+      "filterEntity": "Tous les objets",
+      "filterStudy": "Toutes les études",
+      "search": "Rechercher",
+      "from": "Du",
+      "to": "Au",
+      "apply": "Filtrer",
+      "reset": "Réinitialiser",
+      "export": "Exporter le journal filtré",
+      "empty": "Aucun événement pour ces filtres.",
+      "results": "{count} événements",
+      "previous": "Précédent",
+      "next": "Suivant",
+      "page": "Page {page} sur {pages}",
+      "writeOnly": "Le journal est en écriture seule : aucune ligne ne peut être modifiée ni supprimée.",
+      "signature": "Signature"
     }
   }
 }

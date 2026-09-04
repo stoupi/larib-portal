@@ -2803,6 +2803,37 @@
       "noData": "This study has no published CRF yet.",
       "error": "The export failed.",
       "notImplemented": "This format arrives in a later release."
+    },
+    "audit": {
+      "title": "Audit log",
+      "subtitle": "Every Core Lab write, with its author, timestamp and IP address.",
+      "timestamp": "Timestamp",
+      "actor": "Author",
+      "action": "Action",
+      "object": "Object",
+      "detail": "Detail",
+      "ip": "IP address",
+      "actions": {
+        "CREATE": "Created",
+        "UPDATE": "Updated",
+        "DELETE": "Deleted"
+      },
+      "filterActor": "Every author",
+      "filterEntity": "Every object",
+      "filterStudy": "Every study",
+      "search": "Search",
+      "from": "From",
+      "to": "To",
+      "apply": "Filter",
+      "reset": "Reset",
+      "export": "Export the filtered log",
+      "empty": "No event for these filters.",
+      "results": "{count} events",
+      "previous": "Previous",
+      "next": "Next",
+      "page": "Page {page} of {pages}",
+      "writeOnly": "The log is write-only: no line can be edited or deleted.",
+      "signature": "Signature"
     }
   }
 }
