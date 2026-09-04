@@ -66,3 +66,4 @@ data/scimago.csv
 
 # User data backups from backfill script (contains PII)
 scripts/backups/
+.claude/worktrees/
