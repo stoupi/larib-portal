@@ -807,6 +807,8 @@ enum AuditEntity {
   CORELAB_READING_SUBMISSION
   CORELAB_DOCUMENT_RETURN
   CORELAB_STUDY_DOCUMENT
+  CORELAB_REVIEW_DECISION
+  CORELAB_REWORK_REQUEST
 }
 
 model AuditEvent {
@@ -1384,4 +1386,55 @@ model CorelabStudyDocument {
   createdAt    DateTime     @default(now())
 
   @@map("CorelabStudyDocument")
+}
+
+enum CorelabDecisionType {
+  AVERAGE
+  R1
+  R2
+  CUSTOM
+}
+
+enum CorelabDiscordanceLevel {
+  OK
+  MINOR
+  MAJOR
+}
+
+enum CorelabReworkStatus {
+  PENDING
+  RESUBMITTED
+}
+
+model CorelabReviewDecision {
+  id                   String                   @id @default(cuid())
+  patientId            String
+  reviewerAssignmentId String
+  examId               String
+  sequenceId           String
+  fieldId              String
+  decision             CorelabDecisionType
+  customValue          Json?
+  finalValue           Json?
+  discordanceLevel     CorelabDiscordanceLevel?
+  createdAt            DateTime                 @default(now())
+  updatedAt            DateTime                 @updatedAt
+
+  @@unique([reviewerAssignmentId, examId, sequenceId, fieldId])
+  @@index([patientId])
+  @@map("CorelabReviewDecision")
+}
+
+model CorelabReworkRequest {
+  id            String              @id @default(cuid())
+  patientId     String
+  requestedById String
+  items         Json
+  comments      Json                @default("{}")
+  status        CorelabReworkStatus @default(PENDING)
+  requestedAt   DateTime            @default(now())
+  resubmittedAt DateTime?
+
+  @@index([patientId])
+  @@map("CorelabReworkRequest")
 }

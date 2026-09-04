@@ -48,6 +48,8 @@ async function main() {
 	await prisma.corelabCalibrationReview.deleteMany();
 	await prisma.corelabReadingSubmission.deleteMany();
 	for (const table of immutableTables) await prisma.$executeRawUnsafe(`ALTER TABLE "${table}" ENABLE TRIGGER USER`);
+	await prisma.corelabReviewDecision.deleteMany();
+	await prisma.corelabReworkRequest.deleteMany();
 	await prisma.corelabReadingValue.deleteMany();
 	await prisma.corelabSequenceFlag.deleteMany();
 	await prisma.corelabReadingDocument.deleteMany();

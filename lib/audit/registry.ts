@@ -469,6 +469,26 @@ export const AUDITED_MODELS: Readonly<Record<string, AuditedModelConfig>> = {
     ignoredFields: [...BOOKKEEPING_FIELDS],
     referenceFields: {},
   },
+  CorelabReviewDecision: {
+    entity: 'CORELAB_REVIEW_DECISION',
+    auditedFields: ['patientId', 'examId', 'sequenceId', 'fieldId', 'decision', 'customValue', 'finalValue', 'discordanceLevel'],
+    labelFields: ['fieldId'],
+    buildLabel: (record) => joinLabel([text(record, 'sequenceId'), text(record, 'fieldId')]),
+    articleIdField: null,
+    studyIdField: null,
+    ignoredFields: [...BOOKKEEPING_FIELDS, 'reviewerAssignmentId'],
+    referenceFields: {},
+  },
+  CorelabReworkRequest: {
+    entity: 'CORELAB_REWORK_REQUEST',
+    auditedFields: ['patientId', 'requestedById', 'items', 'status', 'resubmittedAt'],
+    labelFields: ['patientId'],
+    buildLabel: (record) => joinLabel([text(record, 'patientId')]),
+    articleIdField: null,
+    studyIdField: null,
+    ignoredFields: [...BOOKKEEPING_FIELDS, 'comments', 'requestedAt'],
+    referenceFields: {},
+  },
 }
 
 export function auditConfigFor(model: string): AuditedModelConfig | null {
