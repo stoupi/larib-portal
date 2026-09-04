@@ -34,6 +34,10 @@ export function StudyPhaseCard({ studyId, phase, nextPhases, startedAt, closedAt
       router.refresh()
     },
     onError: ({ error }) => {
+      if (error.serverError === 'PATIENTS_STILL_OPEN') {
+        toast.error(t('patientsStillOpen'))
+        return
+      }
       toast.error(error.serverError === 'INVALID_PASSWORD' ? tSignature('invalidPassword') : tSignature('error'))
     },
   })

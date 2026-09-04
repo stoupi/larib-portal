@@ -5,6 +5,7 @@ import { applicationLink } from '@/lib/application-link'
 import { resolveStudyAccess } from '@/lib/corelab/guards'
 import { getStudy } from '@/lib/services/corelab/studies'
 import { StudyPhaseBadge } from '../../../components/study-phase-badge'
+import { getTranslations } from 'next-intl/server'
 import { StudyTabs } from './study-tabs'
 
 type LayoutProps = { children: ReactNode; params: Promise<{ locale: 'en' | 'fr'; studyId: string }> }
@@ -29,6 +30,13 @@ export default async function StudyLayout({ children, params }: LayoutProps) {
         </div>
         <StudyPhaseBadge phase={study.phase} />
       </div>
+      {study.closedAt ? (
+        <p className="rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
+          {(await getTranslations({ locale, namespace: 'corelab.config' }))('closedBanner', {
+            date: new Intl.DateTimeFormat(locale, { dateStyle: 'long', timeZone: 'UTC' }).format(study.closedAt),
+          })}
+        </p>
+      ) : null}
       <StudyTabs studyId={study.id} />
       {children}
     </div>

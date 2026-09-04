@@ -2085,7 +2085,15 @@
     "admin": {
       "title": "Administration Core Lab",
       "subtitle": "Études, équipes, cohortes, calibration et export.",
-      "empty": "Aucune étude pour l'instant."
+      "empty": "Aucune étude pour l'instant.",
+      "overviewTitle": "Vue d'ensemble",
+      "overviewSubtitle": "L'état de Core Lab en un coup d'œil.",
+      "studies": "Études",
+      "inProduction": "En production",
+      "activeReaders": "Lecteurs actifs",
+      "awaitingReview": "En attente d'arbitrage",
+      "lateReadings": "Lectures en retard",
+      "openStudies": "Ouvrir les études"
     },
     "nav": {
       "section": "Administration",
@@ -2190,7 +2198,10 @@
       "sequence": "Séquence",
       "saveThresholds": "Enregistrer les seuils",
       "thresholdsSaved": "Seuils enregistrés.",
-      "thresholdsEmpty": "Aucun seuil défini pour cette version du CRF."
+      "thresholdsEmpty": "Aucun seuil défini pour cette version du CRF.",
+      "closedBanner": "Étude clôturée le {date} : elle est en lecture seule.",
+      "patientsStillOpen": "Des patients ne sont pas terminés : la clôture est impossible.",
+      "closedArchive": "Un export des lectures a été généré à la clôture."
     },
     "team": {
       "title": "Qui travaille sur {code}",

@@ -2087,7 +2087,15 @@
     "admin": {
       "title": "Core Lab administration",
       "subtitle": "Studies, teams, cohorts, calibration and export.",
-      "empty": "No study yet."
+      "empty": "No study yet.",
+      "overviewTitle": "Overview",
+      "overviewSubtitle": "The state of Core Lab at a glance.",
+      "studies": "Studies",
+      "inProduction": "In production",
+      "activeReaders": "Active readers",
+      "awaitingReview": "Awaiting adjudication",
+      "lateReadings": "Late readings",
+      "openStudies": "Open the studies"
     },
     "nav": {
       "section": "Administration",
@@ -2192,7 +2200,10 @@
       "sequence": "Sequence",
       "saveThresholds": "Save thresholds",
       "thresholdsSaved": "Thresholds saved.",
-      "thresholdsEmpty": "No threshold defined for this CRF version."
+      "thresholdsEmpty": "No threshold defined for this CRF version.",
+      "closedBanner": "Study closed on {date}: it is read-only.",
+      "patientsStillOpen": "Some patients are not finished: the study cannot be closed.",
+      "closedArchive": "A readings export was generated at closure."
     },
     "team": {
       "title": "Who works on {code}",

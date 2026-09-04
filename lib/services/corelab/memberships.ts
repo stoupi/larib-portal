@@ -1,5 +1,6 @@
 import { prisma } from '@/lib/prisma'
 import { accessWindowOpen } from '@/lib/permissions'
+import { assertStudyOpen } from './studies'
 import type { Prisma } from '@/app/generated/prisma'
 
 const MEMBER_SELECT = {
@@ -69,6 +70,7 @@ export type AddMemberInput = MemberCapabilities & {
 }
 
 export async function addMember(input: AddMemberInput): Promise<{ id: string }> {
+  await assertStudyOpen(input.studyId)
   const active = await prisma.corelabStudyMembership.findFirst({
     where: { studyId: input.studyId, userId: input.userId, removedAt: null },
     select: { id: true },

@@ -5,7 +5,7 @@ import { nextSource } from '@/lib/corelab/crf/values'
 import { readinessOf, type Readiness } from '@/lib/corelab/reading/readiness'
 import { extractValues } from '@/lib/corelab/import/excel'
 import { r2GetObject } from '@/lib/services/r2-s3'
-import { getCurrentCrfVersion } from './studies'
+import { assertStudyOpenForAssignment, getCurrentCrfVersion } from './studies'
 import { listSlots } from './documents'
 import { sendCorelabAssignmentEmail } from '@/lib/services/email'
 import type { CrfDefinition } from '@/lib/corelab/crf/schema'
@@ -107,6 +107,7 @@ export async function getReadingForUser(assignmentId: string, userId: string): P
 }
 
 async function assertEditable(assignmentId: string, userId: string): Promise<void> {
+  await assertStudyOpenForAssignment(assignmentId)
   const assignment = await prisma.corelabReadingAssignment.findUniqueOrThrow({
     where: { id: assignmentId },
     select: { userId: true, status: true },
@@ -252,6 +253,7 @@ export async function submitReading(
   signatureId: string,
   client: SubmissionClient = prisma,
 ): Promise<{ version: number; snapshotHash: string }> {
+  await assertStudyOpenForAssignment(assignmentId)
   const context = await getReadingForUser(assignmentId, userId)
   if (!context) throw new Error('Forbidden')
   if (!EDITABLE.includes(context.assignment.status)) throw new Error('ALREADY_SUBMITTED')

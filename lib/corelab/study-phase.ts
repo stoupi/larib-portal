@@ -10,3 +10,7 @@ const NEXT_PHASES: Readonly<Record<CorelabStudyPhase, CorelabStudyPhase[]>> = {
 export function allowedNextPhases(phase: CorelabStudyPhase): CorelabStudyPhase[] {
   return NEXT_PHASES[phase]
 }
+
+export function assertStudyWritable(phase: CorelabStudyPhase): void {
+  if (phase === 'CLOSED') throw new Error('STUDY_CLOSED')
+}

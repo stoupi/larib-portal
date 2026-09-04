@@ -1,5 +1,6 @@
 import { prisma } from '@/lib/prisma'
 import { parseCrfDefinition, discordanceThresholdsSchema, type DiscordanceThreshold } from '@/lib/corelab/crf/schema'
+import { assertStudyWritable } from '@/lib/corelab/study-phase'
 import { toJsonValue } from '@/lib/corelab/crf/json'
 import type { CorelabStudyPhase, Prisma } from '@/app/generated/prisma'
 
@@ -142,4 +143,25 @@ export async function setStudyPhase(
     },
     select: { id: true },
   })
+}
+
+export async function assertStudyOpen(studyId: string): Promise<void> {
+  const study = await prisma.corelabStudy.findUniqueOrThrow({ where: { id: studyId }, select: { phase: true } })
+  assertStudyWritable(study.phase)
+}
+
+export async function assertStudyOpenForPatient(patientId: string): Promise<void> {
+  const patient = await prisma.corelabPatient.findUniqueOrThrow({
+    where: { id: patientId },
+    select: { study: { select: { phase: true } } },
+  })
+  assertStudyWritable(patient.study.phase)
+}
+
+export async function assertStudyOpenForAssignment(assignmentId: string): Promise<void> {
+  const assignment = await prisma.corelabReadingAssignment.findUniqueOrThrow({
+    where: { id: assignmentId },
+    select: { patient: { select: { study: { select: { phase: true } } } } },
+  })
+  assertStudyWritable(assignment.patient.study.phase)
 }

@@ -7,6 +7,7 @@ import { corelabAdminAction, signOrThrow } from '@/lib/corelab/guards'
 import { allowedNextPhases } from '@/lib/corelab/study-phase'
 import { discordanceThresholdsSchema } from '@/lib/corelab/crf/schema'
 import { createStudy, updateStudyInfo, updateDiscordanceThresholds, setStudyPhase } from '@/lib/services/corelab/studies'
+import { buildExport } from '@/lib/services/corelab/exports'
 import { addMember, updateMember, removeMember } from '@/lib/services/corelab/memberships'
 
 async function revalidateCorelab(studyId?: string) {
@@ -76,6 +77,13 @@ export const changeStudyPhaseAction = corelabAdminAction
       select: { phase: true },
     })
     if (!allowedNextPhases(study.phase).includes(parsedInput.phase)) throw new Error('PHASE_TRANSITION_NOT_ALLOWED')
+
+    if (parsedInput.phase === 'CLOSED') {
+      const unfinished = await prisma.corelabPatient.count({
+        where: { studyId: parsedInput.studyId, status: { notIn: ['COMPLETED', 'FORCE_CLOSED'] } },
+      })
+      if (unfinished > 0) throw new Error('PATIENTS_STILL_OPEN')
+    }
     await prisma.$transaction(async (transaction) => {
       await signOrThrow(
         ctx.session,
@@ -90,6 +98,9 @@ export const changeStudyPhaseAction = corelabAdminAction
       )
       await setStudyPhase(parsedInput.studyId, parsedInput.phase, transaction)
     })
+    if (parsedInput.phase === 'CLOSED') {
+      await buildExport(parsedInput.studyId, 'READINGS_LONG', ctx.userId)
+    }
     await revalidateCorelab(parsedInput.studyId)
     return { ok: true }
   })

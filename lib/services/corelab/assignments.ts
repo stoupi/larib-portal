@@ -1,6 +1,7 @@
 import { prisma } from '@/lib/prisma'
 import { computePace, pairDistribution } from '@/lib/corelab/assignment/rules'
 import { sendCorelabAssignmentEmail } from '@/lib/services/email'
+import { assertStudyOpen, assertStudyOpenForPatient } from './studies'
 import type { CorelabAssignmentRole, CorelabReadingMode, Prisma } from '@/app/generated/prisma'
 
 export type DraftInput = {
@@ -19,6 +20,7 @@ const ROLE_OF: Array<{ role: CorelabAssignmentRole; key: 'reader1' | 'reader2' |
 
 export async function saveDraftAssignments(drafts: DraftInput[]): Promise<void> {
   for (const draft of drafts) {
+    await assertStudyOpenForPatient(draft.patientId)
     const wanted = draft.readingMode === 'SINGLE'
       ? ROLE_OF.filter((entry) => entry.key !== 'reader2')
       : ROLE_OF
@@ -78,6 +80,7 @@ export async function validateAndSendAssignments(
   dueDates: Record<string, string>,
   origin: string,
 ): Promise<{ readers: number; patients: number }> {
+  await assertStudyOpen(studyId)
   const drafts = await prisma.corelabReadingAssignment.findMany({
     where: { status: 'DRAFT', patient: { studyId } },
     select: {

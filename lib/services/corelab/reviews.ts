@@ -1,7 +1,7 @@
 import { prisma } from '@/lib/prisma'
 import { toJsonValue } from '@/lib/corelab/crf/json'
 import { compareReadings, comparedKey, finalValueFor, reviewComplete, type ComparedField, type DecisionType } from '@/lib/corelab/review/compare'
-import { getCurrentCrfVersion } from './studies'
+import { assertStudyOpenForPatient, getCurrentCrfVersion } from './studies'
 import { sendCorelabAssignmentEmail } from '@/lib/services/email'
 import type { CrfDefinition, DiscordanceThreshold } from '@/lib/corelab/crf/schema'
 import type { ReadingValues } from '@/types/corelab'
@@ -109,6 +109,7 @@ export type DecisionInput = {
 }
 
 export async function saveDecisions(patientId: string, userId: string, decisions: DecisionInput[]): Promise<void> {
+  await assertStudyOpenForPatient(patientId)
   const context = await getReviewForUser(patientId, userId)
   if (!context) throw new Error('Forbidden')
 
@@ -153,6 +154,7 @@ export async function requestRework(
   comments: Record<string, string>,
   origin: string,
 ): Promise<{ id: string }> {
+  await assertStudyOpenForPatient(patientId)
   const context = await getReviewForUser(patientId, userId)
   if (!context) throw new Error('Forbidden')
   if (items.length === 0) throw new Error('NOTHING_TO_REWORK')

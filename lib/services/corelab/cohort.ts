@@ -3,6 +3,7 @@ import { r2GetObject } from '@/lib/services/r2-s3'
 import { toJsonValue } from '@/lib/corelab/crf/json'
 import { parseCohortFile } from '@/lib/corelab/cohort/parse'
 import { examKey, validateCohortRows, type ValidatedRow } from '@/lib/corelab/cohort/validate'
+import { assertStudyOpen } from './studies'
 import type { CorelabModality, Prisma } from '@/app/generated/prisma'
 
 export type CohortReport = {
@@ -51,6 +52,7 @@ export async function commitCohortImport(
   fileName: string,
   importedById: string,
 ): Promise<{ importedRows: number; patientsCreated: number }> {
+  await assertStudyOpen(studyId)
   const report = await buildReport(studyId, fileKey, fileName)
   const importable = report.rows.filter((row) => row.verdict !== 'BLOCKED')
 

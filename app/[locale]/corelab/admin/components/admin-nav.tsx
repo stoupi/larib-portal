@@ -6,6 +6,7 @@ import { ShieldCheck } from 'lucide-react'
 import { Link } from '@/app/i18n/navigation'
 
 const ITEMS = [
+  { key: 'overview', href: '/corelab/admin', enabled: true },
   { key: 'studies', href: '/corelab/admin/studies', enabled: true },
   { key: 'training', href: '/corelab/admin/training', enabled: true },
   { key: 'users', href: '/corelab/admin/users', enabled: true },
@@ -26,7 +27,7 @@ export function CorelabAdminNav({ isDataManager }: { isDataManager: boolean }) {
       <span className="h-5 w-px bg-border" />
       <nav className="flex h-full items-center gap-1">
         {ITEMS.map((item) => {
-          const active = pathname.includes(item.href)
+          const active = item.href === '/corelab/admin' ? pathname === item.href : pathname.includes(item.href)
           if (!item.enabled || !isDataManager) {
             return (
               <span key={item.key} className="inline-flex h-full cursor-not-allowed items-center px-3.5 text-sm text-neutral-300" title={t('comingSoon')}>

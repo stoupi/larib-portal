@@ -1,7 +1,7 @@
 import { prisma } from '@/lib/prisma'
 import { toJsonValue } from '@/lib/corelab/crf/json'
 import { nextCalibrationStatus } from '@/lib/corelab/calibration/status'
-import { getCurrentCrfVersion } from './studies'
+import { assertStudyOpen, getCurrentCrfVersion } from './studies'
 import type { CorelabCalibrationDecision, Prisma } from '@/app/generated/prisma'
 import type { ExamValues, ReadingValues } from '@/types/corelab'
 
@@ -56,6 +56,7 @@ export async function createCase(
   studyId: string,
   input: { code?: string | null; exams: CaseExam[] },
 ): Promise<{ id: string; code: string }> {
+  await assertStudyOpen(studyId)
   const code = input.code?.trim() || (await nextCaseCode(studyId))
   return prisma.corelabCalibrationCase.create({
     data: { studyId, code, exams: toJsonValue(input.exams) },
@@ -101,8 +102,9 @@ export async function listReferenceAuthors(studyId: string) {
 export async function saveGoldStandardValues(caseId: string, values: ReadingValues): Promise<void> {
   const calibrationCase = await prisma.corelabCalibrationCase.findUniqueOrThrow({
     where: { id: caseId },
-    select: { goldStandardSignatureId: true },
+    select: { goldStandardSignatureId: true, studyId: true },
   })
+  await assertStudyOpen(calibrationCase.studyId)
   if (calibrationCase.goldStandardSignatureId) throw new Error('GOLD_STANDARD_SIGNED')
   await prisma.corelabCalibrationCase.update({
     where: { id: caseId },
@@ -126,6 +128,7 @@ export async function assignCases(
   caseIds: string[],
   userIds: string[],
 ): Promise<{ created: number }> {
+  await assertStudyOpen(studyId)
   const eligible = await prisma.corelabStudyMembership.findMany({
     where: { studyId, userId: { in: userIds }, removedAt: null, certificationPhase: 'CALIBRATION' },
     select: { userId: true },
