@@ -587,19 +587,19 @@ model AuthorAffiliation {
 }
 
 model Article {
-  id                  String        @id @default(cuid())
+  id                  String             @id @default(cuid())
   title               String
-  type                ArticleType   @default(ORIGINAL)
-  scope               ArticleScope  @default(LARIB_TEAM)
+  type                ArticleType        @default(ORIGINAL)
+  scope               ArticleScope       @default(LARIB_TEAM)
   studyId             String?
-  study               Study?        @relation(fields: [studyId], references: [id], onDelete: SetNull)
-  status              ArticleStatus @default(IN_PREPARATION)
+  study               Study?             @relation(fields: [studyId], references: [id], onDelete: SetNull)
+  status              ArticleStatus      @default(IN_PREPARATION)
   abstract            String?
   contributorsNote    String?
   pubmedId            String?
   doi                 String?
   publishedJournalId  String?
-  publishedJournal    Journal?      @relation("PublishedJournal", fields: [publishedJournalId], references: [id], onDelete: SetNull)
+  publishedJournal    Journal?           @relation("PublishedJournal", fields: [publishedJournalId], references: [id], onDelete: SetNull)
   publishedAt         DateTime?
   receivedAt          DateTime?
   acceptedAt          DateTime?
@@ -611,11 +611,11 @@ model Article {
   linkedinPostUrl     String?
   linkedinPostedAt    DateTime?
   statisticianId      String?
-  statistician        Author?       @relation("ArticleStatistician", fields: [statisticianId], references: [id], onDelete: SetNull)
+  statistician        Author?            @relation("ArticleStatistician", fields: [statisticianId], references: [id], onDelete: SetNull)
   createdById         String
-  createdBy           User          @relation("ArticleCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
-  createdAt           DateTime      @default(now())
-  updatedAt           DateTime      @updatedAt
+  createdBy           User               @relation("ArticleCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
+  createdAt           DateTime           @default(now())
+  updatedAt           DateTime           @updatedAt
 
   authorships    Authorship[]
   submissions    Submission[]
@@ -645,9 +645,10 @@ enum PublicationEmailStatus {
 
 // One row, holding the settings the Publications admins share.
 model PublicationSettings {
-  id             String   @id @default("singleton")
-  recapCcEmails  String[] @default([])
-  updatedAt      DateTime @updatedAt
+  id                  String   @id @default("singleton")
+  recapCcEmails       String[] @default([])
+  acceptedRecapEmails String[] @default([])
+  updatedAt           DateTime @updatedAt
 
   @@map("PublicationSettings")
 }

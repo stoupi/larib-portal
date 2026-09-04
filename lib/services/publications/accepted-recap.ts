@@ -7,6 +7,22 @@ import { recordPublicationEmail } from './email-log'
 export const FIRST_ACCEPTED_RECAP_MONTHS = 4
 export const ACCEPTED_RECAP_MONTHS = 1
 
+export async function listAcceptedRecapRecipients(): Promise<string[]> {
+  const settings = await prisma.publicationSettings.findUnique({
+    where: { id: 'singleton' },
+    select: { acceptedRecapEmails: true },
+  })
+  return settings?.acceptedRecapEmails ?? []
+}
+
+export async function setAcceptedRecapRecipients(emails: string[]): Promise<void> {
+  await prisma.publicationSettings.upsert({
+    where: { id: 'singleton' },
+    create: { id: 'singleton', acceptedRecapEmails: emails },
+    update: { acceptedRecapEmails: emails },
+  })
+}
+
 export async function listAcceptedPapersSince(since: Date): Promise<AcceptedPaper[]> {
   const articles = await prisma.article.findMany({
     where: {
@@ -63,36 +79,36 @@ export async function acceptedRecapWindow(now: Date = new Date()): Promise<Date>
 
 export type AcceptedRecapOutcome = 'sent' | 'failed' | 'nothingToSay'
 
+// Addressed by email rather than by account: the announcement goes to a list the admins
+// keep, and a recipient there does not have to be a portal user.
 export async function sendAcceptedRecapTo({
-  userId,
+  email,
   papers,
   since,
-  cc,
   sentById,
 }: {
-  userId: string
+  email: string
   papers: AcceptedPaper[]
   since: Date
-  cc: string[]
   sentById: string | null
 }): Promise<{ outcome: AcceptedRecapOutcome; error?: string }> {
   if (papers.length === 0) return { outcome: 'nothingToSay' }
 
-  const user = await prisma.user.findUniqueOrThrow({
-    where: { id: userId },
-    select: { email: true, firstName: true, language: true },
+  const user = await prisma.user.findUnique({
+    where: { email },
+    select: { firstName: true, language: true },
   })
   const rendered = renderAcceptedPapersEmail({
-    locale: user.language === 'FR' ? 'fr' : 'en',
-    firstName: user.firstName,
+    locale: user?.language === 'EN' ? 'en' : 'fr',
+    firstName: user?.firstName ?? null,
     papers,
     since,
     appUrl: resolveAppBaseUrl(),
   })
 
   const result = await sendPublicationsRecapEmail({
-    to: user.email,
-    cc,
+    to: email,
+    cc: [],
     subject: rendered.subject,
     text: rendered.text,
     html: rendered.html,
@@ -101,8 +117,8 @@ export async function sendAcceptedRecapTo({
 
   await recordPublicationEmail({
     kind: 'ACCEPTED_RECAP',
-    to: [user.email],
-    cc,
+    to: [email],
+    cc: [],
     subject: rendered.subject,
     bodyText: rendered.text,
     bodyHtml: rendered.html,
