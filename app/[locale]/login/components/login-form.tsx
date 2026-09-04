@@ -16,6 +16,7 @@ import Link from 'next/link';
 import { useRouter } from '@/app/i18n/navigation';
 import { applicationLink } from '@/lib/application-link';
 import { authClient } from '@/lib/auth-client';
+import { DevQuickLogin, QUICK_PASSWORD } from './dev-quick-login';
 
 interface LoginFormProps {
   showSignupLink?: boolean;
@@ -41,6 +42,7 @@ export function LoginForm({ showSignupLink = true }: LoginFormProps) {
     handleSubmit,
     formState: { errors },
     setError,
+    setValue,
   } = useForm<FormData>({
     resolver: zodResolver(formSchema),
   });
@@ -152,6 +154,16 @@ export function LoginForm({ showSignupLink = true }: LoginFormProps) {
               {isExecuting ? t('loading') : t('signIn')}
             </Button>
           </form>
+
+          {process.env.NODE_ENV !== 'production' && (
+            <DevQuickLogin
+              onPick={(account) => {
+                setValue('email', account.email)
+                setValue('password', QUICK_PASSWORD)
+                executeLogin({ email: account.email, password: QUICK_PASSWORD })
+              }}
+            />
+          )}
 
           {showSignupLink && (
             <div className="text-center">
