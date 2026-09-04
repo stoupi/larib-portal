@@ -36,6 +36,8 @@ export default async function ReviewPage({ params }: PageParams) {
     sequenceName: sequenceName.get(entry.sequenceId) ?? entry.sequenceId,
     fieldId: entry.fieldId,
     fieldName: entry.field.name,
+    fieldType: entry.field.type,
+    options: entry.field.options ?? [],
     unit: entry.field.unit ?? null,
     r1: entry.r1?.value ?? null,
     r2: entry.r2?.value ?? null,

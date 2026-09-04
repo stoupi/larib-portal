@@ -24,6 +24,8 @@ export type ComparedRow = {
   sequenceName: string
   fieldId: string
   fieldName: string
+  fieldType: string
+  options: string[]
   unit: string | null
   r1: unknown
   r2: unknown
@@ -202,12 +204,35 @@ export function ReviewClient({ context, rows, initialDecisions, readers, sequenc
                       onChange={(value) => decide(row, value as DecisionType)}
                     />
                     {decisions[row.key]?.decision === 'CUSTOM' ? (
-                      <Input
-                        className="w-24"
-                        aria-label={t('customValue')}
-                        defaultValue={String(decisions[row.key]?.customValue ?? '')}
-                        onBlur={(event) => decide(row, 'CUSTOM', Number(event.target.value))}
-                      />
+                      row.fieldType === 'boolean' ? (
+                        <SingleSelect
+                          className="w-28"
+                          placeholder={t('customValue')}
+                          options={[{ value: 'true', label: 'true' }, { value: 'false', label: 'false' }]}
+                          value={decisions[row.key]?.customValue === true ? 'true' : decisions[row.key]?.customValue === false ? 'false' : ''}
+                          onChange={(value) => decide(row, 'CUSTOM', value === 'true')}
+                        />
+                      ) : row.fieldType === 'categorical' ? (
+                        <SingleSelect
+                          className="w-32"
+                          placeholder={t('customValue')}
+                          options={row.options.map((option) => ({ value: option, label: option }))}
+                          value={typeof decisions[row.key]?.customValue === 'string' ? String(decisions[row.key]?.customValue) : ''}
+                          onChange={(value) => decide(row, 'CUSTOM', value)}
+                        />
+                      ) : (
+                        <Input
+                          className="w-24"
+                          type={row.fieldType === 'numeric' ? 'number' : 'text'}
+                          aria-label={t('customValue')}
+                          defaultValue={String(decisions[row.key]?.customValue ?? '')}
+                          onBlur={(event) => {
+                            const raw = event.target.value
+                            if (raw.trim() === '') return
+                            decide(row, 'CUSTOM', row.fieldType === 'numeric' ? Number(raw) : raw)
+                          }}
+                        />
+                      )
                     ) : null}
                   </div>
                 </TableCell>
