@@ -227,7 +227,7 @@ export type MyAssignment = Prisma.CorelabReadingAssignmentGetPayload<{ select: t
 
 export async function listMyAssignments(userId: string, studyId: string): Promise<MyAssignment[]> {
   const assignments = await prisma.corelabReadingAssignment.findMany({
-    where: { userId, status: { not: 'DRAFT' }, patient: { studyId } },
+    where: { userId, status: { not: 'DRAFT' }, role: { not: 'REVIEWER' }, patient: { studyId } },
     select: MY_ASSIGNMENT_SELECT,
     orderBy: [{ dueDate: 'asc' }],
   })
@@ -239,6 +239,6 @@ export async function listMyAssignments(userId: string, studyId: string): Promis
 
 export async function countPendingReadings(userId: string): Promise<number> {
   return prisma.corelabReadingAssignment.count({
-    where: { userId, status: { in: ['ASSIGNED', 'IN_PROGRESS', 'RETURNED'] } },
+    where: { userId, role: { not: 'REVIEWER' }, status: { in: ['ASSIGNED', 'IN_PROGRESS', 'RETURNED'] } },
   })
 }

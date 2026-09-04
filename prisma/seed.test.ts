@@ -470,7 +470,9 @@ async function main() {
 			crfVersions: { create: { number: 1, definition: miniCrf, discordanceThresholds: [], publishedById: corelabAdminUser.id } },
 			sites: { create: [{ code: 'CHU-MINI', name: 'Mini site' }] },
 			memberships: { create: [
-				{ userId: corelabMemberUser.id, canRead: true, certificationPhase: 'PRODUCTION', calibrationStatus: 'CERTIFIED', addedById: corelabAdminUser.id },
+				{ userId: corelabMemberUser.id, canRead: true, canAdjudicate: true, certificationPhase: 'PRODUCTION', calibrationStatus: 'CERTIFIED', addedById: corelabAdminUser.id },
+				{ userId: corelabTraineeUser.id, canRead: true, certificationPhase: 'PRODUCTION', calibrationStatus: 'CERTIFIED', addedById: corelabAdminUser.id },
+				{ userId: corelabReader2User.id, canRead: true, certificationPhase: 'PRODUCTION', calibrationStatus: 'CERTIFIED', addedById: corelabAdminUser.id },
 				{ userId: corelabPiUser.id, canRead: false, canAdjudicate: true, canAuthorReference: true, canCertify: true, certificationPhase: 'PRODUCTION', calibrationStatus: 'CERTIFIED', addedById: corelabAdminUser.id },
 			] },
 		},
@@ -495,6 +497,53 @@ async function main() {
 		],
 	});
 	console.log('✅ Created CoreLab mini study:', miniStudy.code, miniPatient.code);
+
+	const reviewValues = (lvef: number, esv: number, effusion: boolean) => ({
+		values: { EXAM: { cine: {
+			lvef: { value: lvef, source: 'MANUAL' },
+			lv_edv: { value: 170, source: 'MANUAL' },
+			lv_measurable: { value: effusion, source: 'MANUAL' },
+		} } },
+		flags: [],
+		documents: [],
+	});
+	const reviewPatient = await prisma.corelabPatient.create({
+		data: {
+			studyId: miniStudy.id, siteId: miniSite.id, code: 'MINI-002', status: 'UNDER_REVIEW', readingMode: 'DOUBLE',
+			exams: { create: [{ index: 1, modality: 'CMR', examDate: new Date('2026-04-02T00:00:00.000Z'), timeLabel: 'Baseline' }] },
+		},
+		select: { id: true, exams: { select: { id: true } } },
+	});
+	const reviewExamId = reviewPatient.exams[0].id;
+	const withExam = (payload: ReturnType<typeof reviewValues>) => ({
+		...payload,
+		values: { [reviewExamId]: payload.values.EXAM },
+	});
+	for (const [index, entry] of [
+		{ userId: corelabReader2User.id, role: 'READER_1' as const, payload: reviewValues(44, 91, true) },
+		{ userId: corelabTraineeUser.id, role: 'READER_2' as const, payload: reviewValues(48, 82, false) },
+	].entries()) {
+		const assignment = await prisma.corelabReadingAssignment.create({
+			data: {
+				patientId: reviewPatient.id, userId: entry.userId, role: entry.role, status: 'SUBMITTED',
+				assignedAt: new Date(), crfVersionId: miniVersion.id,
+			},
+			select: { id: true },
+		});
+		await prisma.corelabReadingSubmission.create({
+			data: {
+				assignmentId: assignment.id, crfVersionId: miniVersion.id,
+				snapshot: withExam(entry.payload), snapshotHash: `seed-${index}`, version: 1, signatureId: `seed-signature-${index}`,
+			},
+		});
+	}
+	await prisma.corelabReadingAssignment.create({
+		data: {
+			patientId: reviewPatient.id, userId: corelabMemberUser.id, role: 'REVIEWER', status: 'ASSIGNED',
+			assignedAt: new Date(), dueDate: new Date('2026-12-31T23:59:59.999Z'), crfVersionId: miniVersion.id,
+		},
+	});
+	console.log('✅ Created CoreLab review patient: MINI-002');
 
 	console.log('✅ Created CoreLab training and calibration:', coreModule.title, studyQuizModule.title, calibrationCase.code);
 
