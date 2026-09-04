@@ -194,7 +194,7 @@ function PublicationRow({
               {fmt(item.acceptedAt)}
             </span>
           ) : item.pendingDays != null ? (
-            <PendingTag pendingDays={item.pendingDays} />
+            <PendingTag pendingDays={item.pendingDays} status={item.status} />
           ) : null}
         </div>
 

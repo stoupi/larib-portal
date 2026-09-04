@@ -942,6 +942,8 @@
       "acceptedTag": "Accept.",
       "pending": "en attente · {days} j",
       "pendingMonths": "en attente · {months} mois",
+      "rejected": "refusé depuis {days} j",
+      "rejectedMonths": "refusé depuis {months} mois",
       "edit": "Modifier",
       "view": "Voir",
       "openSite": "Ouvrir sur le site de l'éditeur",

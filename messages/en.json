@@ -944,6 +944,8 @@
       "acceptedTag": "Accept.",
       "pending": "pending · {days} d",
       "pendingMonths": "pending · {months} mo",
+      "rejected": "rejected for {days} d",
+      "rejectedMonths": "rejected for {months} mo",
       "edit": "Edit",
       "view": "View",
       "openSite": "Open on the publisher's site",

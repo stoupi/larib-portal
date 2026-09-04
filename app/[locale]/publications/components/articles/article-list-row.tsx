@@ -162,7 +162,7 @@ export function ArticleListRow({
               {formatDate(article.acceptedAt)}
             </span>
           ) : article.pendingDays != null ? (
-            <PendingTag pendingDays={article.pendingDays} />
+            <PendingTag pendingDays={article.pendingDays} status={article.status} />
           ) : null}
         </div>
 
