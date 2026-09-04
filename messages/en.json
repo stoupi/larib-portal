@@ -2775,6 +2775,34 @@
         "empty": "No adjudicated review yet."
       },
       "error": "The operation failed."
+    },
+    "export": {
+      "title": "Export",
+      "subtitle": "The study data, ready for analysis.",
+      "kinds": {
+        "READINGS_LONG": "Readings — long format",
+        "READINGS_WIDE": "Readings — wide format",
+        "REVIEW_DECISIONS": "Adjudication decisions",
+        "CALIBRATION": "Calibration",
+        "FULL_ARCHIVE": "Full archive"
+      },
+      "kindHelp": {
+        "READINGS_LONG": "One line per variable, segments included.",
+        "READINGS_WIDE": "One line per patient and exam, one column per variable.",
+        "REVIEW_DECISIONS": "Every settled discordance, with both readings.",
+        "CALIBRATION": "The calibration cases compared to the gold standard.",
+        "FULL_ARCHIVE": "Every file, the CRF and the audit log."
+      },
+      "preview": "Preview",
+      "generate": "Generate",
+      "generated": "Export generated: {rows} rows.",
+      "download": "Download",
+      "recent": "Recent exports",
+      "rows": "{count} rows",
+      "noExport": "No export yet.",
+      "noData": "This study has no published CRF yet.",
+      "error": "The export failed.",
+      "notImplemented": "This format arrives in a later release."
     }
   }
 }

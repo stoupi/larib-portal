@@ -809,6 +809,7 @@ enum AuditEntity {
   CORELAB_STUDY_DOCUMENT
   CORELAB_REVIEW_DECISION
   CORELAB_REWORK_REQUEST
+  CORELAB_EXPORT
 }
 
 model AuditEvent {
@@ -933,6 +934,7 @@ model CorelabStudy {
   patients             CorelabPatient[]
   cohortImports        CorelabCohortImport[]
   studyDocuments       CorelabStudyDocument[]
+  exports              CorelabExport[]
   assignmentBatches    CorelabAssignmentBatch[]
 
   @@map("CorelabStudy")
@@ -1437,4 +1439,38 @@ model CorelabReworkRequest {
 
   @@index([patientId])
   @@map("CorelabReworkRequest")
+}
+
+enum CorelabExportKind {
+  READINGS_LONG
+  READINGS_WIDE
+  REVIEW_DECISIONS
+  CALIBRATION
+  FULL_ARCHIVE
+}
+
+model CorelabExport {
+  id            String            @id @default(cuid())
+  studyId       String
+  study         CorelabStudy      @relation(fields: [studyId], references: [id], onDelete: Cascade)
+  kind          CorelabExportKind
+  fileKey       String
+  fileName      String
+  rowCount      Int               @default(0)
+  requestedById String
+  createdAt     DateTime          @default(now())
+
+  @@index([studyId, createdAt])
+  @@map("CorelabExport")
+}
+
+model CorelabReminderLog {
+  id       String   @id @default(cuid())
+  userId   String
+  kind     String
+  entityId String
+  sentAt   DateTime @default(now())
+
+  @@index([userId, kind, sentAt])
+  @@map("CorelabReminderLog")
 }

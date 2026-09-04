@@ -15,7 +15,7 @@ export function StudyTabs({ studyId }: { studyId: string }) {
     { key: 'calibration', href: `${base}/calibration`, enabled: true },
     { key: 'patients', href: `${base}/patients`, enabled: true },
     { key: 'discordance', href: `${base}/discordance`, enabled: true },
-    { key: 'export', href: `${base}/export`, enabled: false },
+    { key: 'export', href: `${base}/export`, enabled: true },
   ] as const
 
   return (

@@ -2773,6 +2773,34 @@
         "empty": "Aucune relecture arbitrée pour l'instant."
       },
       "error": "L'opération a échoué."
+    },
+    "export": {
+      "title": "Export",
+      "subtitle": "Les données de l'étude, prêtes pour l'analyse.",
+      "kinds": {
+        "READINGS_LONG": "Lectures — format long",
+        "READINGS_WIDE": "Lectures — format large",
+        "REVIEW_DECISIONS": "Décisions d'arbitrage",
+        "CALIBRATION": "Calibration",
+        "FULL_ARCHIVE": "Archive complète"
+      },
+      "kindHelp": {
+        "READINGS_LONG": "Une ligne par variable, segments compris.",
+        "READINGS_WIDE": "Une ligne par patient et examen, une colonne par variable.",
+        "REVIEW_DECISIONS": "Chaque discordance tranchée, avec les deux lectures.",
+        "CALIBRATION": "Les cas de calibration comparés au gold standard.",
+        "FULL_ARCHIVE": "Tous les fichiers, le CRF et le journal."
+      },
+      "preview": "Aperçu",
+      "generate": "Générer",
+      "generated": "Export généré : {rows} lignes.",
+      "download": "Télécharger",
+      "recent": "Exports récents",
+      "rows": "{count} lignes",
+      "noExport": "Aucun export pour l'instant.",
+      "noData": "Cette étude n'a pas encore de CRF publié.",
+      "error": "L'export a échoué.",
+      "notImplemented": "Ce format arrive dans un prochain lot."
     }
   }
 }
