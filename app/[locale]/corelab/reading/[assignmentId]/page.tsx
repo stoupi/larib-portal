@@ -3,9 +3,10 @@ import { notFound, redirect } from 'next/navigation'
 import { requireAuth } from '@/lib/auth-guard'
 import { applicationLink } from '@/lib/application-link'
 import { canAccessApp } from '@/lib/permissions'
-import { Link } from '@/app/i18n/navigation'
-import { PageHeader } from '@/app/[locale]/components/page-header'
-import { prisma } from '@/lib/prisma'
+import { getReadingForUser } from '@/lib/services/corelab/readings'
+import { openReturnFor } from '@/lib/services/corelab/document-returns'
+import { getCurrentCrfVersion } from '@/lib/services/corelab/studies'
+import { ReadingClient } from './reading-client'
 
 type PageParams = { params: Promise<{ locale: 'en' | 'fr'; assignmentId: string }> }
 
@@ -14,28 +15,47 @@ export default async function ReadingPage({ params }: PageParams) {
   const session = await requireAuth()
   if (!canAccessApp(session.user, 'CORELAB')) redirect(applicationLink(locale, '/dashboard'))
 
-  const t = await getTranslations({ locale, namespace: 'corelab.patients.readings' })
-  const assignment = await prisma.corelabReadingAssignment.findUnique({
-    where: { id: assignmentId },
-    select: {
-      userId: true,
-      patient: { select: { code: true, studyId: true, site: { select: { code: true } }, exams: { select: { id: true } } } },
-    },
-  })
-  if (!assignment || assignment.userId !== session.user.id) notFound()
+  const t = await getTranslations({ locale, namespace: 'corelab.reading' })
+  const context = await getReadingForUser(assignmentId, session.user.id)
+  if (!context) notFound()
+
+  const [documentReturn, crfVersion] = await Promise.all([
+    openReturnFor(context.assignment.patient.id),
+    getCurrentCrfVersion(context.assignment.patient.studyId),
+  ])
+
+  const mode = context.assignment.role === 'REVIEWER'
+    ? t('review')
+    : context.assignment.patient.readingMode === 'DOUBLE' ? t('double') : t('single')
 
   return (
-    <div className="app-gradient min-h-full px-4 py-8 md:px-8">
-      <div className="mx-auto max-w-[900px] space-y-6">
-        <Link href={`/corelab/studies/${assignment.patient.studyId}/readings`} className="text-sm text-text-secondary">
-          {t('back')}
-        </Link>
-        <PageHeader
-          title={assignment.patient.code}
-          subtitle={`${assignment.patient.site.code} · ${assignment.patient.exams.length}`}
-        />
-        <p className="text-sm text-text-secondary">{t('comingSoon')}</p>
-      </div>
-    </div>
+    <ReadingClient
+      context={{
+        assignmentId: context.assignment.id,
+        studyId: context.assignment.patient.studyId,
+        title: t('title', { code: context.assignment.patient.code }),
+        subtitle: t('subtitle', {
+          study: context.assignment.patient.study.code,
+          site: context.assignment.patient.site.code,
+          mode,
+        }),
+        readOnly: !context.editable,
+        crfVersionLabel: crfVersion ? `v${crfVersion.number}` : '—',
+      }}
+      definition={context.definition}
+      exams={context.assignment.patient.exams.map((exam) => ({
+        id: exam.id,
+        label: exam.timeLabel || `${exam.index}`,
+      }))}
+      initialValues={context.values}
+      extras={{
+        slots: context.slots,
+        documents: context.documents,
+        openFlags: context.flags.length,
+        documentReturn: documentReturn && context.assignment.status === 'RETURNED'
+          ? { id: documentReturn.id, message: documentReturn.message, slotKeys: documentReturn.slotKeys }
+          : null,
+      }}
+    />
   )
 }

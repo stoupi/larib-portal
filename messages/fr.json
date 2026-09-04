@@ -2612,6 +2612,84 @@
         "back": "Retour à mes lectures",
         "pending": "{count} lectures en attente"
       }
+    },
+    "reading": {
+      "title": "Lecture : {code}",
+      "subtitle": "{study} · {site} · {mode}",
+      "back": "Mes lectures",
+      "single": "lecture simple",
+      "double": "lecture double",
+      "review": "relecture",
+      "exam": "Examen {index}",
+      "saved": "Enregistré",
+      "saving": "Enregistrement…",
+      "submit": "Soumettre le patient",
+      "submitted": "Lecture signée et soumise.",
+      "readOnly": "Cette lecture est signée : elle n'est plus modifiable.",
+      "documents": "Pièces",
+      "slotAccept": "Formats acceptés : {accept}",
+      "slotRequired": "obligatoire",
+      "slotOptional": "facultatif",
+      "upload": "Déposer",
+      "replace": "Remplacer",
+      "removeDocument": "Retirer",
+      "documentStatus": {
+        "PENDING": "En attente",
+        "CONFORMANT": "Conforme",
+        "MISSING": "Manquant",
+        "REJECTED": "Format refusé"
+      },
+      "import": "Importer les valeurs",
+      "imported": "{count} valeurs pré-remplies depuis le fichier.",
+      "importKept": "{count} valeurs conservées car déjà modifiées.",
+      "importUnmatched": "{count} variables sans correspondance : elles restent à saisir.",
+      "importFailed": "L'import a échoué.",
+      "flagSequence": "Signaler un problème",
+      "flagCategories": {
+        "NOT_ANALYZABLE": "Non analysable",
+        "ARTEFACTS_SEVERE": "Artefacts sévères",
+        "SOFTWARE_ERROR": "Erreur logicielle",
+        "OTHER": "Autre"
+      },
+      "flagNote": "Précision",
+      "flagSave": "Signaler",
+      "flagClear": "Retirer le signalement",
+      "signTitle": "Signature de la lecture",
+      "signSummary": "{filled} champs requis sur {required} · {flags} signalements ouverts",
+      "signVersion": "Version du CRF : {version}",
+      "signBlocked": "Signature impossible : {reason}",
+      "missingFields": "champs requis manquants ({count})",
+      "missingDocuments": "pièces obligatoires manquantes ({count})",
+      "returned": {
+        "banner": "Renvoyée · pièce manquante",
+        "message": "Message du data manager : {message}",
+        "resend": "Renvoyer le dossier",
+        "resent": "Dossier renvoyé.",
+        "stillMissing": "Il manque encore : {slots}"
+      },
+      "admin": {
+        "return": "Renvoyer pour pièce manquante",
+        "returnTitle": "Renvoyer le dossier au lecteur",
+        "returnHelp": "Choisissez les pièces à redemander et expliquez ce qui manque.",
+        "returnMessage": "Message",
+        "returnSend": "Renvoyer",
+        "returnSent": "Dossier renvoyé au lecteur.",
+        "patientTitle": "Patient {code}",
+        "assignments": "Assignations",
+        "submissions": "Soumissions",
+        "version": "Version {version}",
+        "download": "Télécharger",
+        "noSubmission": "Aucune soumission pour l'instant."
+      },
+      "studyDocuments": {
+        "title": "Documents de l'étude",
+        "subtitle": "Protocole, charte et pièces de référence.",
+        "empty": "Aucun document.",
+        "add": "Ajouter un document",
+        "documentTitle": "Titre",
+        "added": "Document ajouté."
+      },
+      "error": "L'opération a échoué."
     }
   }
 }

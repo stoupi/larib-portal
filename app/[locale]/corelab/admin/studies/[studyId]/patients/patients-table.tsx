@@ -11,6 +11,7 @@ import { Label } from '@/components/ui/label'
 import { SingleSelect } from '@/components/ui/single-select'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { Link } from '@/app/i18n/navigation'
 import { saveDraftAssignmentsAction, validateAssignmentsAction } from '../../../actions-assignment'
 import { canValidateDraft } from '@/lib/corelab/assignment/rules'
 import type { CohortPatient } from '@/lib/services/corelab/cohort'
@@ -119,7 +120,9 @@ export function PatientsTable({ studyId, patients, readers, reviewers }: Patient
               const taken = [draft?.reader1, draft?.reader2].filter(Boolean)
               return (
                 <TableRow key={patient.id} data-testid={`patient-${patient.code}`}>
-                  <TableCell className="font-medium text-text-primary">{patient.code}</TableCell>
+                  <TableCell className="font-medium text-text-primary">
+                    <Link href={`/corelab/admin/studies/${studyId}/patients/${patient.id}`}>{patient.code}</Link>
+                  </TableCell>
                   <TableCell className="text-text-secondary">{patient.site.code}</TableCell>
                   <TableCell className="text-text-secondary">{patient.exams.length}</TableCell>
                   <TableCell>

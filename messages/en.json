@@ -2614,6 +2614,84 @@
         "back": "Back to my readings",
         "pending": "{count} pending readings"
       }
+    },
+    "reading": {
+      "title": "Reading: {code}",
+      "subtitle": "{study} · {site} · {mode}",
+      "back": "My readings",
+      "single": "single reading",
+      "double": "double reading",
+      "review": "review",
+      "exam": "Exam {index}",
+      "saved": "Saved",
+      "saving": "Saving…",
+      "submit": "Submit the patient",
+      "submitted": "Reading signed and submitted.",
+      "readOnly": "This reading is signed: it can no longer be edited.",
+      "documents": "Documents",
+      "slotAccept": "Accepted formats: {accept}",
+      "slotRequired": "required",
+      "slotOptional": "optional",
+      "upload": "Upload",
+      "replace": "Replace",
+      "removeDocument": "Remove",
+      "documentStatus": {
+        "PENDING": "Pending",
+        "CONFORMANT": "Conformant",
+        "MISSING": "Missing",
+        "REJECTED": "Format refused"
+      },
+      "import": "Import the values",
+      "imported": "{count} values pre-filled from the file.",
+      "importKept": "{count} values kept because they were already modified.",
+      "importUnmatched": "{count} variables without a match: they stay to be filled.",
+      "importFailed": "The import failed.",
+      "flagSequence": "Flag a problem",
+      "flagCategories": {
+        "NOT_ANALYZABLE": "Not analyzable",
+        "ARTEFACTS_SEVERE": "Severe artefacts",
+        "SOFTWARE_ERROR": "Software error",
+        "OTHER": "Other"
+      },
+      "flagNote": "Note",
+      "flagSave": "Flag",
+      "flagClear": "Clear the flag",
+      "signTitle": "Reading signature",
+      "signSummary": "{filled} of {required} required fields · {flags} open flags",
+      "signVersion": "CRF version: {version}",
+      "signBlocked": "Cannot sign: {reason}",
+      "missingFields": "missing required fields ({count})",
+      "missingDocuments": "missing required documents ({count})",
+      "returned": {
+        "banner": "Returned · missing document",
+        "message": "Data manager message: {message}",
+        "resend": "Send the file back",
+        "resent": "File sent back.",
+        "stillMissing": "Still missing: {slots}"
+      },
+      "admin": {
+        "return": "Return for a missing document",
+        "returnTitle": "Return the file to the reader",
+        "returnHelp": "Pick the documents to ask again and explain what is missing.",
+        "returnMessage": "Message",
+        "returnSend": "Return",
+        "returnSent": "File returned to the reader.",
+        "patientTitle": "Patient {code}",
+        "assignments": "Assignments",
+        "submissions": "Submissions",
+        "version": "Version {version}",
+        "download": "Download",
+        "noSubmission": "No submission yet."
+      },
+      "studyDocuments": {
+        "title": "Study documents",
+        "subtitle": "Protocol, charter and reference files.",
+        "empty": "No document.",
+        "add": "Add a document",
+        "documentTitle": "Title",
+        "added": "Document added."
+      },
+      "error": "The operation failed."
     }
   }
 }
