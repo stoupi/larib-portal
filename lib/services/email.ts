@@ -659,7 +659,7 @@ const PUBLICATION_STATUS_STYLE: Record<
 
 const RECAP_WORDS = {
   fr: {
-    subject: (count: number) => `Vos ${count} publication${count > 1 ? 's' : ''} en cours — récap mensuel`,
+    subject: 'Vos publications en cours — récap mensuel',
     subjectNone: 'Votre récap mensuel de publications',
     eyebrow: 'Récap mensuel',
     hello: (name: string | null) => (name ? `Bonjour ${name},` : 'Bonjour,'),
@@ -691,7 +691,7 @@ const RECAP_WORDS = {
     footer: 'Ceci est un email automatique envoyé depuis Larib Portal.',
   },
   en: {
-    subject: (count: number) => `Your ${count} in-progress publication${count > 1 ? 's' : ''} — monthly recap`,
+    subject: 'Your in-progress publications — monthly recap',
     subjectNone: 'Your monthly publications recap',
     eyebrow: 'Monthly recap',
     hello: (name: string | null) => (name ? `Hello ${name},` : 'Hello,'),
@@ -744,7 +744,7 @@ export function renderPublicationsRecapEmail({
   const words = RECAP_WORDS[locale]
   const stalled = selectStalledArticles(articles)
   const ongoing = selectOngoingArticles(articles)
-  const subject = articles.length === 0 ? words.subjectNone : words.subject(articles.length)
+  const subject = articles.length === 0 ? words.subjectNone : words.subject
   const publicationsLink = `${appUrl}/${locale}/publications`
 
   const textLines = [

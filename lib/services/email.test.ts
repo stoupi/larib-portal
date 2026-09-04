@@ -180,14 +180,14 @@ describe('the recap that chases what stalls', () => {
     },
   ]
 
-  it('counts the publications in the subject', () => {
+  it('keeps the subject free of a count that would read wrong in the singular', () => {
     const { subject } = renderPublicationsRecapEmail({
       locale: 'fr',
       firstName: 'Marie',
       articles: stalled,
       appUrl: 'https://portal.test',
     })
-    expect(subject).toBe('Vos 1 publication en cours — récap mensuel')
+    expect(subject).toBe('Vos publications en cours — récap mensuel')
   })
 
   it('gives the papers to resubmit their own block, dated and aged', () => {
