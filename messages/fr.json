@@ -2138,7 +2138,8 @@
       "submit": "Créer l'étude",
       "cancel": "Annuler",
       "created": "Étude créée.",
-      "error": "L'étude n'a pas pu être créée."
+      "error": "L'étude n'a pas pu être créée.",
+      "nameRequired": "Deux caractères au minimum."
     },
     "tabs": {
       "config": "Configuration",

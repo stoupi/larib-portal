@@ -75,11 +75,14 @@ export function CreateStudyDialog() {
           <div className="space-y-2">
             <Label htmlFor="study-code">{t('code')}</Label>
             <Input id="study-code" {...form.register('code')} placeholder="MIR-DJ-2024" />
-            <p className="text-xs text-text-secondary">{t('codeHelp')}</p>
+            <p className={form.formState.errors.code ? 'text-xs text-red-600' : 'text-xs text-text-secondary'}>
+              {t('codeHelp')}
+            </p>
           </div>
           <div className="space-y-2">
             <Label htmlFor="study-name">{t('name')}</Label>
             <Input id="study-name" {...form.register('name')} />
+            {form.formState.errors.name ? <p className="text-xs text-red-600">{t('nameRequired')}</p> : null}
           </div>
           <div className="space-y-2">
             <Label htmlFor="study-description">{t('studyDescription')}</Label>

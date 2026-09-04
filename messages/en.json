@@ -2140,7 +2140,8 @@
       "submit": "Create study",
       "cancel": "Cancel",
       "created": "Study created.",
-      "error": "The study could not be created."
+      "error": "The study could not be created.",
+      "nameRequired": "Two characters minimum."
     },
     "tabs": {
       "config": "Configuration",

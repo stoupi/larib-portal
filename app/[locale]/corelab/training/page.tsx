@@ -34,16 +34,15 @@ export default async function MyTrainingPage({ params }: PageParams) {
                     <h2 className="text-lg font-semibold text-text-primary">{training.studyName}</h2>
                     <p className="text-sm text-text-secondary">{training.studyCode}</p>
                   </div>
-                  <span className={`text-sm ${training.complete ? 'text-emerald-700' : 'text-text-secondary'}`}>
-                    {t('progress', { filled, required: training.modules.length })}
-                    {training.complete ? ` · ${t('complete')}` : ''}
+                  <span className={`text-sm ${training.complete && training.modules.length > 0 ? 'text-emerald-700' : 'text-text-secondary'}`}>
+                    {training.modules.length === 0
+                      ? t('empty')
+                      : `${t('progress', { filled, required: training.modules.length })}${training.complete ? ` · ${t('complete')}` : ''}`}
                   </span>
                 </div>
 
                 <div className="mt-4 space-y-2">
-                  {training.modules.length === 0 ? (
-                    <p className="text-sm text-text-secondary">{t('empty')}</p>
-                  ) : (
+                  {training.modules.length === 0 ? null : (
                     training.modules.map((module) => (
                       <ModuleCard
                         key={`${training.studyId}-${module.moduleId}`}
