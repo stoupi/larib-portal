@@ -442,6 +442,58 @@ async function main() {
 	}
 	console.log('✅ Created CoreLab cohort: 6 patients');
 
+	const miniCrf = [
+		{
+			id: 'cine', name: 'Cine',
+			sections: [{
+				id: 'lv', name: 'Left ventricle',
+				fields: [
+					{ id: 'lvef', name: 'LVEF', type: 'numeric', required: true, unit: '%', min: 10, max: 80 },
+					{ id: 'lv_edv', name: 'LV EDV', type: 'numeric', required: true, unit: 'mL' },
+					{ id: 'lv_measurable', name: 'LV Measurable', type: 'boolean', required: true },
+					{ id: 'comment', name: 'Comment', type: 'text', required: false },
+				],
+			}],
+		},
+	];
+	const miniStudy = await prisma.corelabStudy.create({
+		data: {
+			code: 'E2E-MINI', name: 'End to end mini study', modalities: ['CMR'], phase: 'PRODUCTION',
+			maxExamsPerPatient: 1, startedAt: new Date('2026-03-01T00:00:00.000Z'),
+			documentSlots: [
+				{ id: 'excel_crf', label: 'Excel CRF', accept: '.xlsx', required: true, onUpload: 'import' },
+				{ id: 'mask', label: 'Segmentation mask', accept: '.zip', required: true },
+			],
+			createdById: corelabAdminUser.id,
+			crfVersions: { create: { number: 1, definition: miniCrf, discordanceThresholds: [], publishedById: corelabAdminUser.id } },
+			sites: { create: [{ code: 'CHU-MINI', name: 'Mini site' }] },
+			memberships: { create: [
+				{ userId: corelabMemberUser.id, canRead: true, certificationPhase: 'PRODUCTION', calibrationStatus: 'CERTIFIED', addedById: corelabAdminUser.id },
+				{ userId: corelabPiUser.id, canRead: false, canAdjudicate: true, canAuthorReference: true, canCertify: true, certificationPhase: 'PRODUCTION', calibrationStatus: 'CERTIFIED', addedById: corelabAdminUser.id },
+			] },
+		},
+	});
+	const miniSite = await prisma.corelabSite.findFirstOrThrow({ where: { studyId: miniStudy.id }, select: { id: true } });
+	const miniVersion = await prisma.corelabCrfVersion.findFirstOrThrow({ where: { studyId: miniStudy.id }, select: { id: true } });
+	const miniPatient = await prisma.corelabPatient.create({
+		data: {
+			studyId: miniStudy.id, siteId: miniSite.id, code: 'MINI-001', status: 'AWAITING_READING', readingMode: 'SINGLE',
+			exams: { create: [{ index: 1, modality: 'CMR', examDate: new Date('2026-04-01T00:00:00.000Z'), timeLabel: 'Baseline' }] },
+			assignments: { create: [
+				{ userId: corelabMemberUser.id, role: 'READER_1', status: 'ASSIGNED', assignedAt: new Date(), dueDate: new Date('2026-12-31T23:59:59.999Z'), crfVersionId: miniVersion.id },
+				{ userId: corelabPiUser.id, role: 'REVIEWER', status: 'ASSIGNED', crfVersionId: miniVersion.id },
+			] },
+		},
+	});
+	await prisma.corelabImportMapping.createMany({
+		data: [
+			{ crfVersionId: miniVersion.id, software: 'CVI42', sheetPattern: 'CINE', cellRef: 'AE', columnHeader: 'LVEF (%)', sequenceId: 'cine', fieldId: 'lvef' },
+			{ crfVersionId: miniVersion.id, software: 'CVI42', sheetPattern: 'CINE', cellRef: 'AF', columnHeader: 'LV EDV (mL)', sequenceId: 'cine', fieldId: 'lv_edv' },
+			{ crfVersionId: miniVersion.id, software: 'CVI42', sheetPattern: 'CINE', cellRef: 'AD', columnHeader: 'Measurable', sequenceId: 'cine', fieldId: 'lv_measurable' },
+		],
+	});
+	console.log('✅ Created CoreLab mini study:', miniStudy.code, miniPatient.code);
+
 	console.log('✅ Created CoreLab training and calibration:', coreModule.title, studyQuizModule.title, calibrationCase.code);
 
 	// Minimal publications sample dataset (article where publicationsUser is first author)

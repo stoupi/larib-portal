@@ -28,8 +28,15 @@ export default async function ReadingPage({ params }: PageParams) {
     ? t('review')
     : context.assignment.patient.readingMode === 'DOUBLE' ? t('double') : t('single')
 
+  const stateKey = [
+    Object.values(context.values).flatMap((exam) => Object.values(exam).flatMap((sequence) => Object.keys(sequence))).length,
+    context.documents.length,
+    context.assignment.status,
+  ].join('-')
+
   return (
     <ReadingClient
+      key={stateKey}
       context={{
         assignmentId: context.assignment.id,
         studyId: context.assignment.patient.studyId,

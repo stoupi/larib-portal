@@ -50,8 +50,19 @@ export function DocumentSlots({ context, slots, documents }: DocumentSlotsProps)
     onError: () => toast.error(t('importFailed')),
   })
 
-  async function upload(slot: DocumentSlot, file: File) {
-    setBusy(true)
+  const SERVER_UPLOAD_MAX_BYTES = 4 * 1024 * 1024
+
+  async function uploadThroughServer(slot: DocumentSlot, file: File): Promise<string | null> {
+    const body = new FormData()
+    body.append('file', file)
+    body.append('assignmentId', context.assignmentId)
+    body.append('slotKey', slot.id)
+    const response = await fetch('/api/corelab/uploads/reading-document', { method: 'POST', body })
+    if (!response.ok) return null
+    return ((await response.json()) as { key: string }).key
+  }
+
+  async function uploadDirectly(slot: DocumentSlot, file: File): Promise<string | null> {
     const response = await fetch('/api/corelab/uploads/reading-document-signed', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -62,14 +73,22 @@ export function DocumentSlots({ context, slots, documents }: DocumentSlotsProps)
         contentType: file.type || 'application/octet-stream',
       }),
     })
-    if (!response.ok) {
-      toast.error(t('error'))
-      setBusy(false)
-      return
-    }
+    if (!response.ok) return null
     const { uploadUrl, key } = (await response.json()) as { uploadUrl: string; key: string }
-    const put = await fetch(uploadUrl, { method: 'PUT', body: file, headers: { 'Content-Type': file.type || 'application/octet-stream' } })
-    if (!put.ok) {
+    const put = await fetch(uploadUrl, {
+      method: 'PUT',
+      body: file,
+      headers: { 'Content-Type': file.type || 'application/octet-stream' },
+    })
+    return put.ok ? key : null
+  }
+
+  async function upload(slot: DocumentSlot, file: File) {
+    setBusy(true)
+    const key = file.size <= SERVER_UPLOAD_MAX_BYTES
+      ? await uploadThroughServer(slot, file)
+      : await uploadDirectly(slot, file)
+    if (!key) {
       toast.error(t('error'))
       setBusy(false)
       return

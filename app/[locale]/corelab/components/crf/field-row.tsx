@@ -44,7 +44,7 @@ export function FieldRow({ field, value, onChange, readOnly }: FieldRowProps) {
         <div className="flex items-center gap-2">
           <span className="text-sm font-medium text-text-primary">{field.name}</span>
           {value ? (
-            <span className={`rounded-md border px-1.5 py-0.5 text-[11px] ${SOURCE_STYLE[value.source]}`}>
+            <span data-testid={`source-${field.id}`} className={`rounded-md border px-1.5 py-0.5 text-[11px] ${SOURCE_STYLE[value.source]}`}>
               {t(`source.${value.source}`)}
             </span>
           ) : (

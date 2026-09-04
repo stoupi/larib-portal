@@ -71,7 +71,7 @@ test('the data manager creates a study, signs its phase change and builds its te
   await expect(expiredRow.getByText(/expired on/i)).toBeVisible()
   const readerRow = page.locator('tr', { hasText: 'corelab-reader-1@larib-portal.test' })
   await expect(readerRow.getByText('MIR-DJ-TEST')).toBeVisible()
-  await expect(readerRow.getByText('Read', { exact: true })).toBeVisible()
+  await expect(readerRow.getByText('Read', { exact: true }).first()).toBeVisible()
 })
 
 test('a reader sees their study, and non-members never reach CoreLab administration', async ({ page }) => {
