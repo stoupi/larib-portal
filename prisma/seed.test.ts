@@ -545,6 +545,27 @@ async function main() {
 	});
 	console.log('✅ Created CoreLab review patient: MINI-002');
 
+	const closedStudy = await prisma.corelabStudy.create({
+		data: {
+			code: 'E2E-CLOSE', name: 'End to end closing study', modalities: ['CMR'], phase: 'PRODUCTION',
+			maxExamsPerPatient: 1, startedAt: new Date('2026-03-01T00:00:00.000Z'),
+			documentSlots: [], createdById: corelabAdminUser.id,
+			crfVersions: { create: { number: 1, definition: miniCrf, discordanceThresholds: [], publishedById: corelabAdminUser.id } },
+			sites: { create: [{ code: 'CHU-CLOSE', name: 'Closing site' }] },
+			memberships: { create: [
+				{ userId: corelabMemberUser.id, canRead: true, certificationPhase: 'PRODUCTION', calibrationStatus: 'CERTIFIED', addedById: corelabAdminUser.id },
+			] },
+		},
+		select: { id: true, code: true, sites: { select: { id: true } } },
+	});
+	await prisma.corelabPatient.create({
+		data: {
+			studyId: closedStudy.id, siteId: closedStudy.sites[0].id, code: 'CLOSE-001', status: 'COMPLETED', readingMode: 'SINGLE',
+			exams: { create: [{ index: 1, modality: 'CMR', examDate: new Date('2026-04-03T00:00:00.000Z'), timeLabel: 'Baseline' }] },
+		},
+	});
+	console.log('✅ Created CoreLab closing study:', closedStudy.code);
+
 	console.log('✅ Created CoreLab training and calibration:', coreModule.title, studyQuizModule.title, calibrationCase.code);
 
 	// Minimal publications sample dataset (article where publicationsUser is first author)
