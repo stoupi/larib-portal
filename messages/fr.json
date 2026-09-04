@@ -1979,7 +1979,19 @@
       "ccTitle": "Personnes en copie",
       "ccHint": "Ces adresses reçoivent chaque récapitulatif en copie.",
       "ccSave": "Enregistrer les copies",
-      "ccSaved": "Copies enregistrées"
+      "ccSaved": "Copies enregistrées",
+      "acceptedTitle": "Publications acceptées",
+      "acceptedSubtitle": "L'annonce mensuelle des papiers de l'équipe Larib acceptés ou publiés.",
+      "acceptedListTitle": "Destinataires",
+      "acceptedListHint": "Ces adresses reçoivent l'annonce le 1er de chaque mois. Elles n'ont pas besoin d'un compte sur le portail.",
+      "acceptedSaved": "Destinataires enregistrés",
+      "acceptedPreview": "Aperçu du prochain envoi",
+      "acceptedPreviewTitle": "Ce qui partira le 1er du mois",
+      "acceptedWindow": "{count} publication(s) depuis le {since}",
+      "acceptedNothing": "Rien à annoncer : aucune publication acceptée sur la période.",
+      "acceptedSendNow": "Envoyer maintenant",
+      "acceptedSent": "Annonce envoyée à {count} destinataire(s)",
+      "acceptedNoRecipient": "Ajoutez au moins une adresse avant d'envoyer."
     },
     "logbook": {
       "title": "Logbook",

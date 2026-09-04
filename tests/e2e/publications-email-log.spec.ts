@@ -77,3 +77,32 @@ test('an admin previews the monthly recap, sends it by hand and suspends someone
   await row.getByRole('button', { name: 'Resume sending' }).click()
   await expect(row.getByText('Active')).toBeVisible({ timeout: 20000 })
 })
+
+test('an admin keeps the accepted-papers list and previews what will go out', async ({ page }) => {
+  await login(page, 'publications-admin@larib-portal.test')
+  await page.goto('/en/publications/admin/emails', { timeout: 60000 })
+
+  const section = page.getByRole('region', { name: 'Accepted publications' })
+  await expect(section).toBeVisible({ timeout: 20000 })
+
+  // The list is saved as it is typed: no Save button to forget
+  const address = `accepted-${Date.now()}@larib-portal.test`
+  await section.getByRole('textbox').first().fill(address)
+  await section.getByRole('textbox').first().press('Enter')
+  await expect(section.getByText(address)).toBeVisible({ timeout: 20000 })
+  await expect(page.getByText('Recipients saved')).toBeVisible({ timeout: 20000 })
+
+  await page.reload()
+  const reloaded = page.getByRole('region', { name: 'Accepted publications' })
+  await expect(reloaded.getByText(address)).toBeVisible({ timeout: 20000 })
+
+  // The preview is the real message, built from today's data
+  await reloaded.getByRole('button', { name: 'Preview the next send' }).click()
+  const dialog = page.getByRole('dialog')
+  await expect(dialog).toBeVisible({ timeout: 20000 })
+  const frame = dialog.locator('iframe')
+  await expect(frame).toBeVisible({ timeout: 20000 })
+  await expect(frame.contentFrame().getByText('Freshly accepted: myocardial mapping in amyloidosis')).toBeVisible({
+    timeout: 20000,
+  })
+})

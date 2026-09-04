@@ -546,6 +546,18 @@ async function main() {
 			authorships: { create: [{ order: 1, author: { connect: { id: communicatedAuthor.id } } }] },
 		},
 	});
+	const recentlyAccepted = new Date(Date.now() - 10 * 24 * 60 * 60 * 1000);
+	await prisma.article.create({
+		data: {
+			title: 'Freshly accepted: myocardial mapping in amyloidosis',
+			type: 'ORIGINAL',
+			scope: 'LARIB_TEAM',
+			status: 'ACCEPTED',
+			acceptedAt: recentlyAccepted,
+			createdBy: { connect: { id: publicationsAdmin.id } },
+			authorships: { create: [{ order: 1, author: { connect: { id: communicatedAuthor.id } } }] },
+		},
+	});
 	console.log('✅ Created publications sample data');
 
 	// Create exam types first (using upsert to handle duplicates)

@@ -1981,7 +1981,19 @@
       "ccTitle": "People in copy",
       "ccHint": "These addresses receive every recap in copy.",
       "ccSave": "Save the copies",
-      "ccSaved": "Copies saved"
+      "ccSaved": "Copies saved",
+      "acceptedTitle": "Accepted publications",
+      "acceptedSubtitle": "The monthly announcement of the Larib team's accepted or published papers.",
+      "acceptedListTitle": "Recipients",
+      "acceptedListHint": "These addresses get the announcement on the 1st of each month. They do not need a portal account.",
+      "acceptedSaved": "Recipients saved",
+      "acceptedPreview": "Preview the next send",
+      "acceptedPreviewTitle": "What will go out on the 1st",
+      "acceptedWindow": "{count} publication(s) since {since}",
+      "acceptedNothing": "Nothing to announce: no publication accepted in the window.",
+      "acceptedSendNow": "Send now",
+      "acceptedSent": "Announcement sent to {count} recipient(s)",
+      "acceptedNoRecipient": "Add at least one address before sending."
     },
     "logbook": {
       "title": "Logbook",

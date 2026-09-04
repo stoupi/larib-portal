@@ -24,6 +24,15 @@ import {
   setPublicationsRecapOptOut,
   setRecapCopyRecipients,
 } from '@/lib/services/publications/recap'
+import {
+  acceptedRecapWindow,
+  listAcceptedPapersSince,
+  listAcceptedRecapRecipients,
+  sendAcceptedRecapTo,
+  setAcceptedRecapRecipients,
+} from '@/lib/services/publications/accepted-recap'
+import { renderAcceptedPapersEmail } from '@/lib/services/email'
+import { resolveAppBaseUrl } from '@/lib/app-url'
 import { renderCarouselRequestEmailHtml } from '@/lib/email/carousel-template'
 import { searchByAuthor, fetchByPmids } from '@/lib/services/publications/pubmed'
 import {
@@ -306,6 +315,48 @@ export const setRecapCopyRecipientsAction = appAdminAction('PUBLICATIONS')
     const saved = await setRecapCopyRecipients(parsedInput.emails)
     revalidateTag(PUBLICATIONS_EMAILS_TAG)
     return { emails: saved }
+  })
+
+export const setAcceptedRecapRecipientsAction = appAdminAction('PUBLICATIONS')
+  .inputSchema(z.object({ emails: z.array(z.string().trim().email()) }))
+  .action(async ({ parsedInput }) => {
+    await setAcceptedRecapRecipients(parsedInput.emails)
+    revalidateTag(PUBLICATIONS_EMAILS_TAG)
+    return { emails: parsedInput.emails }
+  })
+
+export const previewAcceptedRecapAction = appAdminAction('PUBLICATIONS')
+  .inputSchema(z.object({}))
+  .action(async () => {
+    const since = await acceptedRecapWindow()
+    const papers = await listAcceptedPapersSince(since)
+    if (papers.length === 0) return { nothingToSay: true as const }
+    const rendered = renderAcceptedPapersEmail({
+      locale: 'fr',
+      firstName: null,
+      papers,
+      since,
+      appUrl: resolveAppBaseUrl(),
+    })
+    return { subject: rendered.subject, html: rendered.html, since: since.toISOString(), papers: papers.length }
+  })
+
+export const sendAcceptedRecapAction = appAdminAction('PUBLICATIONS')
+  .inputSchema(z.object({}))
+  .action(async ({ ctx }) => {
+    const since = await acceptedRecapWindow()
+    const papers = await listAcceptedPapersSince(since)
+    if (papers.length === 0) return { outcome: 'nothingToSay' as const, sent: 0 }
+
+    const recipients = await listAcceptedRecapRecipients()
+    let sent = 0
+    for (const email of recipients) {
+      const result = await sendAcceptedRecapTo({ email, papers, since, sentById: ctx.userId })
+      if (result.outcome === 'failed') throw new Error(result.error ?? 'SEND_FAILED')
+      if (result.outcome === 'sent') sent += 1
+    }
+    revalidateTag(PUBLICATIONS_EMAILS_TAG)
+    return { outcome: 'sent' as const, sent }
   })
 
 export const setLinkedinPostAction = appAdminAction('PUBLICATIONS')
