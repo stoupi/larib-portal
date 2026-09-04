@@ -5,8 +5,6 @@ export const RECAP_STATUSES = ['IN_PREPARATION', 'UNDER_REVIEW', 'REVISION', 'TO
 export type RecapStatusValue = (typeof RECAP_STATUSES)[number]
 
 // The recap speaks to the person who can act: only the papers they sign first.
-export const PUBLICATIONS_CONTACT_EMAIL = 'publications@cardiolarib-portal.com'
-
 export type RecapArticle = {
   id: string
   title: string

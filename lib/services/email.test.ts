@@ -228,15 +228,14 @@ describe('the recap that chases what stalls', () => {
     expect(html).not.toContain('🎉')
   })
 
-  it('asks for a correction and offers a reply address', () => {
+  it('asks for a correction without pointing at a mailbox', () => {
     const { html } = renderPublicationsRecapEmail({
       locale: 'fr',
       firstName: 'Marie',
       articles: stalled,
       appUrl: 'https://portal.test',
-      contactEmail: 'publications@larib.test',
     })
     expect(html).toContain('suivi du service')
-    expect(html).toContain('mailto:publications@larib.test')
+    expect(html).not.toContain('mailto:')
   })
 })

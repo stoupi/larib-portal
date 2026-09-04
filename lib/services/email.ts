@@ -644,7 +644,6 @@ export type PublicationsRecapEmailParams = {
   articles: RecapArticle[]
   celebrations?: RecapCelebration[]
   appUrl: string
-  contactEmail?: string | null
 }
 
 const PUBLICATION_STATUS_STYLE: Record<
@@ -739,7 +738,6 @@ export function renderPublicationsRecapEmail({
   articles,
   celebrations = [],
   appUrl,
-  contactEmail,
 }: PublicationsRecapEmailParams): { subject: string; text: string; html: string } {
   const words = RECAP_WORDS[locale]
   const stalled = selectStalledArticles(articles)
@@ -832,10 +830,6 @@ export function renderPublicationsRecapEmail({
       : `${stalled.length > 0 ? `<p style="margin:0 0 10px 0;font-family:${FONT_SANS};font-size:12px;font-weight:700;letter-spacing:0.6px;text-transform:uppercase;color:${COLORS.mutedForeground};">${escapeHtml(words.ongoingTitle)}</p>` : ''}
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 26px 0;">${tableHead()}${tableRows(ongoing)}</table>`
 
-  const contactLine = contactEmail
-    ? `<br /><a href="mailto:${escapeHtml(contactEmail)}" style="color:${COLORS.primary};">${escapeHtml(contactEmail)}</a>`
-    : ''
-
   const body = `<p style="margin:0 0 8px 0;font-family:${FONT_SANS};font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:${COLORS.accent};">${escapeHtml(words.eyebrow)}</p>
     <p style="margin:0 0 20px 0;font-family:${FONT_SANS};font-size:15px;line-height:23px;color:${COLORS.foreground};">${escapeHtml(words.hello(firstName))}</p>
     ${celebrationBlock}
@@ -847,7 +841,7 @@ export function renderPublicationsRecapEmail({
         <td style="background-color:${COLORS.secondary};border-radius:8px;padding:18px 20px;">
           <p style="margin:0 0 8px 0;font-family:${FONT_SANS};font-size:13px;font-weight:700;color:${COLORS.primary};">${escapeHtml(words.askTitle)}</p>
           <p style="margin:0 0 10px 0;font-family:${FONT_SANS};font-size:13px;line-height:20px;color:${COLORS.foreground};">${escapeHtml(words.askBody)}</p>
-          <p style="margin:0;font-family:${FONT_SANS};font-size:13px;line-height:20px;color:${COLORS.foreground};">${escapeHtml(words.askReply)}${contactLine}</p>
+          <p style="margin:0;font-family:${FONT_SANS};font-size:13px;line-height:20px;color:${COLORS.foreground};">${escapeHtml(words.askReply)}</p>
         </td>
       </tr>
     </table>

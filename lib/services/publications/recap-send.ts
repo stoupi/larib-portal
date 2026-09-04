@@ -1,7 +1,6 @@
 import { prisma } from '@/lib/prisma'
 import { resolveAppBaseUrl } from '@/lib/app-url'
 import {
-  PUBLICATIONS_CONTACT_EMAIL,
   previousMonthStart,
   selectRecapArticles,
   selectRecapCelebrations,
@@ -37,7 +36,6 @@ export async function buildRecapForMember(userId: string, now: Date = new Date()
     articles,
     celebrations,
     appUrl: resolveAppBaseUrl(),
-    contactEmail: PUBLICATIONS_CONTACT_EMAIL,
   })
 
   return {
