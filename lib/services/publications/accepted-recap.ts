@@ -11,6 +11,7 @@ export async function listAcceptedPapersSince(since: Date): Promise<AcceptedPape
   const articles = await prisma.article.findMany({
     where: {
       status: { in: ['ACCEPTED', 'PUBLISHED'] },
+      scope: 'LARIB_TEAM',
       OR: [{ acceptedAt: { gte: since } }, { acceptedAt: null, publishedAt: { gte: since } }],
     },
     select: {
