@@ -5,6 +5,7 @@ import { applicationLink } from '@/lib/application-link'
 import { canAdminApp } from '@/lib/permissions'
 import { prisma } from '@/lib/prisma'
 import { listSlots } from '@/lib/services/corelab/documents'
+import { DownloadButton } from '../../../../../components/download-button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { ReturnDialog } from './return-dialog'
 
@@ -77,7 +78,12 @@ export default async function AdminPatientPage({ params }: PageParams) {
                   <TableCell className="text-text-secondary">
                     {assignment.documents.length === 0
                       ? '—'
-                      : assignment.documents.map((document) => `${document.fileName} (${document.status})`).join(', ')}
+                      : assignment.documents.map((document) => (
+                          <span key={document.id} className="mr-2 inline-flex items-center gap-1 whitespace-nowrap">
+                            {document.fileName} ({document.status})
+                            <DownloadButton studyId={studyId} documentId={document.id} kind="READING" />
+                          </span>
+                        ))}
                   </TableCell>
                 </TableRow>
               ))}

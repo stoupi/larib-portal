@@ -2163,7 +2163,8 @@
       "discordance": "Discordance",
       "export": "Export",
       "trainingTab": "Formation",
-      "crf": "CRF"
+      "crf": "CRF",
+      "documents": "Documents"
     },
     "config": {
       "infoTitle": "Informations générales",
@@ -2707,7 +2708,12 @@
         "empty": "Aucun document.",
         "add": "Ajouter un document",
         "documentTitle": "Titre",
-        "added": "Document ajouté."
+        "added": "Document ajouté.",
+        "titleLabel": "Titre",
+        "file": "Fichier",
+        "download": "Télécharger",
+        "uploadFailed": "Le dépôt a échoué.",
+        "adminSubtitle": "Ces fichiers sont visibles par tous les membres actifs de l'étude."
       },
       "error": "L'opération a échoué.",
       "clearSequenceFlag": "Retirer le signalement"

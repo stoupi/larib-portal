@@ -9,6 +9,7 @@ import { discordanceThresholdsSchema } from '@/lib/corelab/crf/schema'
 import { createStudy, updateStudyInfo, updateDiscordanceThresholds, setStudyPhase } from '@/lib/services/corelab/studies'
 import { buildExport } from '@/lib/services/corelab/exports'
 import { addMember, updateMember, removeMember } from '@/lib/services/corelab/memberships'
+import { addStudyDocument, documentDownloadUrl } from '@/lib/services/corelab/documents'
 
 async function revalidateCorelab(studyId?: string) {
   const paths = [
@@ -162,4 +163,32 @@ export const removeMemberAction = corelabAdminAction
     await removeMember(parsedInput.membershipId)
     await revalidateCorelab(parsedInput.studyId)
     return { ok: true }
+  })
+
+export const addStudyDocumentAction = corelabAdminAction
+  .inputSchema(z.object({
+    studyId: z.string(),
+    title: z.string().trim().min(2),
+    key: z.string().min(1),
+    fileName: z.string().min(1),
+  }))
+  .action(async ({ parsedInput, ctx }) => {
+    const created = await addStudyDocument({
+      studyId: parsedInput.studyId,
+      title: parsedInput.title,
+      fileKey: parsedInput.key,
+      fileName: parsedInput.fileName,
+      uploadedById: ctx.userId,
+    })
+    for (const locale of ['en', 'fr']) {
+      revalidatePath(`/${locale}/corelab/studies/${parsedInput.studyId}/documents`)
+      revalidatePath(`/${locale}/corelab/admin/studies/${parsedInput.studyId}/documents`)
+    }
+    return created
+  })
+
+export const readingDocumentUrlAction = corelabAdminAction
+  .inputSchema(z.object({ studyId: z.string(), documentId: z.string() }))
+  .action(async ({ parsedInput }) => {
+    return { url: await documentDownloadUrl(parsedInput.documentId) }
   })

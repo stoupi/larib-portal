@@ -88,3 +88,21 @@ test('a reader imports a workbook, corrects a value, signs, and answers a docume
   await page.goto(`/en/corelab/studies/${studyId}/readings`, { timeout: 60000 })
   await expect(page.locator('tr', { hasText: 'MINI-001' }).getByText('Submitted')).toBeVisible({ timeout: 60000 })
 })
+
+test('the data manager publishes a study document and the reader downloads it', async ({ page }) => {
+  await login(page, 'corelab-admin@larib-portal.test')
+  await page.goto('/en/corelab/admin/studies', { timeout: 60000 })
+  const href = await page.getByRole('link', { name: /E2E-MINI/ }).getAttribute('href')
+  const studyId = (href ?? '').split('/').pop() ?? ''
+
+  await page.goto(`/en/corelab/admin/studies/${studyId}/documents`, { timeout: 60000 })
+  await page.getByLabel(/^title$/i).fill('Reading charter')
+  await page.getByLabel(/^file$/i).setInputFiles({ name: 'charter.txt', mimeType: 'text/plain', buffer: Buffer.from('charter') })
+  await expect(page.getByText('Reading charter')).toBeVisible({ timeout: 60000 })
+  await page.context().clearCookies()
+
+  await login(page, 'corelab-reader-1@larib-portal.test')
+  await page.goto(`/en/corelab/studies/${studyId}/documents`, { timeout: 60000 })
+  await expect(page.getByText('Reading charter')).toBeVisible()
+  await expect(page.getByRole('button', { name: /download/i }).first()).toBeEnabled()
+})

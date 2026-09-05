@@ -2165,7 +2165,8 @@
       "discordance": "Discordance",
       "export": "Export",
       "trainingTab": "Training",
-      "crf": "CRF"
+      "crf": "CRF",
+      "documents": "Documents"
     },
     "config": {
       "infoTitle": "General information",
@@ -2709,7 +2710,12 @@
         "empty": "No document.",
         "add": "Add a document",
         "documentTitle": "Title",
-        "added": "Document added."
+        "added": "Document added.",
+        "titleLabel": "Title",
+        "file": "File",
+        "download": "Download",
+        "uploadFailed": "The upload failed.",
+        "adminSubtitle": "Every active member of the study can read these files."
       },
       "error": "The operation failed.",
       "clearSequenceFlag": "Clear the flag"

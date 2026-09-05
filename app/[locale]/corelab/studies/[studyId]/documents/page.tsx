@@ -6,6 +6,7 @@ import { canAccessApp } from '@/lib/permissions'
 import { prisma } from '@/lib/prisma'
 import { PageHeader } from '@/app/[locale]/components/page-header'
 import { studyDocuments } from '@/lib/services/corelab/documents'
+import { DownloadButton } from '../../../components/download-button'
 
 type PageParams = { params: Promise<{ locale: 'en' | 'fr'; studyId: string }> }
 
@@ -33,9 +34,10 @@ export default async function StudyDocumentsPage({ params }: PageParams) {
           ) : (
             <ul className="space-y-2">
               {documents.map((document) => (
-                <li key={document.id} className="flex items-center justify-between text-sm">
+                <li key={document.id} className="flex items-center justify-between gap-3 text-sm">
                   <span className="text-text-primary">{document.title}</span>
-                  <span className="text-text-secondary">{document.fileName}</span>
+                  <span className="ml-auto text-text-secondary">{document.fileName}</span>
+                  <DownloadButton studyId={studyId} documentId={document.id} kind="STUDY" />
                 </li>
               ))}
             </ul>

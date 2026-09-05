@@ -12,6 +12,7 @@ export function StudyTabs({ studyId }: { studyId: string }) {
     { key: 'config', href: base, enabled: true },
     { key: 'crf', href: `${base}/crf`, enabled: true },
     { key: 'team', href: `${base}/team`, enabled: true },
+    { key: 'documents', href: `${base}/documents`, enabled: true },
     { key: 'trainingTab', href: `${base}/training`, enabled: true },
     { key: 'calibration', href: `${base}/calibration`, enabled: true },
     { key: 'patients', href: `${base}/patients`, enabled: true },

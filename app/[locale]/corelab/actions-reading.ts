@@ -8,7 +8,7 @@ import { corelabMemberAction, signOrThrow } from '@/lib/corelab/guards'
 import {
   importFromWorkbook, notifyReviewerIfReady, saveValues, setSequenceFlag, submitReading,
 } from '@/lib/services/corelab/readings'
-import { deleteDocument, registerUpload } from '@/lib/services/corelab/documents'
+import { deleteDocument, registerUpload, studyDocumentUrl } from '@/lib/services/corelab/documents'
 import { resolveReturn } from '@/lib/services/corelab/document-returns'
 
 async function revalidateReading(assignmentId: string, studyId: string) {
@@ -158,4 +158,15 @@ export const resolveDocumentReturnAction = corelabMemberAction
     const result = await resolveReturn(parsedInput.returnId, ctx.userId)
     await revalidateReading(parsedInput.assignmentId, await studyOf(parsedInput.assignmentId))
     return result
+  })
+
+export const studyDocumentUrlAction = corelabMemberAction
+  .inputSchema(z.object({ studyId: z.string(), documentId: z.string() }))
+  .action(async ({ parsedInput, ctx }) => {
+    const membership = await prisma.corelabStudyMembership.findFirst({
+      where: { studyId: parsedInput.studyId, userId: ctx.userId, removedAt: null },
+      select: { id: true },
+    })
+    if (!membership) throw new Error('Forbidden')
+    return { url: await studyDocumentUrl(parsedInput.documentId) }
   })
