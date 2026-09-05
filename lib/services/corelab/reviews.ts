@@ -6,6 +6,7 @@ import { sendCorelabAssignmentEmail } from '@/lib/services/email'
 import type { CrfDefinition, DiscordanceThreshold } from '@/lib/corelab/crf/schema'
 import type { ReadingValues } from '@/types/corelab'
 import type { Prisma } from '@/app/generated/prisma'
+import { pairStats } from '@/lib/corelab/review/pair-stats'
 
 export type ReworkItem = { readerAssignmentId: string; sequenceId: string; fieldIds: string[] }
 
@@ -262,7 +263,7 @@ export async function listReviewsForUser(studyId: string, userId: string) {
 
 export type DiscordanceStats = {
   variables: Array<{ fieldId: string; sequenceId: string; compared: number; minor: number; major: number; minorPercent: number; majorPercent: number }>
-  pairs: Array<{ pair: string; names: string[]; exams: number; discordantPercent: number; majorPercent: number }>
+  pairs: Array<{ pair: string; names: string[]; exams: number; compared: number; discordantPercent: number; majorPercent: number }>
   totals: { compared: number; minor: number; major: number; awaitingReview: number }
 }
 
@@ -271,11 +272,12 @@ export async function discordanceStats(studyId: string): Promise<DiscordanceStat
   const [decisions, patients] = await Promise.all([
     prisma.corelabReviewDecision.findMany({
       where: { patientId: { in: patientIds.map((patient) => patient.id) } },
-      select: { sequenceId: true, fieldId: true, discordanceLevel: true },
+      select: { patientId: true, sequenceId: true, fieldId: true, discordanceLevel: true },
     }),
     prisma.corelabPatient.findMany({
       where: { studyId },
       select: {
+        id: true,
         status: true,
         exams: { select: { id: true } },
         assignments: {
@@ -297,19 +299,14 @@ export async function discordanceStats(studyId: string): Promise<DiscordanceStat
     byVariable.set(key, current)
   }
 
-  const byPair = new Map<string, { names: string[]; exams: number }>()
+  const nameOf = new Map<string, string>()
   for (const patient of patients) {
-    if (patient.assignments.length < 2) continue
-    const sorted = [...patient.assignments].sort((left, right) => left.userId.localeCompare(right.userId))
-    const key = sorted.map((assignment) => assignment.userId).join('|')
-    const current = byPair.get(key) ?? {
-      names: sorted.map((assignment) =>
+    for (const assignment of patient.assignments) {
+      nameOf.set(
+        assignment.userId,
         [assignment.user.firstName, assignment.user.lastName].filter(Boolean).join(' ').trim() || assignment.user.email,
-      ),
-      exams: 0,
+      )
     }
-    current.exams += patient.exams.length
-    byPair.set(key, current)
   }
 
   const totals = {
@@ -318,9 +315,6 @@ export async function discordanceStats(studyId: string): Promise<DiscordanceStat
     major: decisions.filter((decision) => decision.discordanceLevel === 'MAJOR').length,
     awaitingReview: patients.filter((patient) => patient.status === 'UNDER_REVIEW').length,
   }
-  const discordantPercent = totals.compared === 0 ? 0 : ((totals.minor + totals.major) / totals.compared) * 100
-  const majorPercent = totals.compared === 0 ? 0 : (totals.major / totals.compared) * 100
-
   return {
     variables: [...byVariable.values()]
       .map((variable) => ({
@@ -329,12 +323,16 @@ export async function discordanceStats(studyId: string): Promise<DiscordanceStat
         majorPercent: variable.compared === 0 ? 0 : (variable.major / variable.compared) * 100,
       }))
       .sort((left, right) => right.major - left.major || right.minor - left.minor),
-    pairs: [...byPair.entries()].map(([pair, value]) => ({
-      pair,
-      names: value.names,
-      exams: value.exams,
-      discordantPercent,
-      majorPercent,
+    pairs: pairStats(
+      patients.map((patient) => ({
+        patientId: patient.id,
+        readerIds: patient.assignments.map((assignment) => assignment.userId),
+        examCount: patient.exams.length,
+      })),
+      decisions.map((decision) => ({ patientId: decision.patientId, level: decision.discordanceLevel })),
+    ).map((pair) => ({
+      ...pair,
+      names: pair.readerIds.map((userId) => nameOf.get(userId) ?? userId),
     })),
     totals,
   }
