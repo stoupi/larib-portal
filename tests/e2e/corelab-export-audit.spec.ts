@@ -32,6 +32,9 @@ test('the data manager previews both export formats and reads the audit log', as
   await expect(preview.getByText('cine.lvef', { exact: true }).first()).toBeVisible({ timeout: 60000 })
   await expect(preview.getByText('cine.wall_motion_segments_seg_17', { exact: true }).first()).toBeVisible()
 
+  await page.getByTestId('export-READINGS_LONG').getByRole('button', { name: /generate/i }).click()
+  await expect(page.getByText(/readings_long/i).first()).toBeVisible({ timeout: 120000 })
+
   await page.goto('/en/corelab/admin/audit', { timeout: 60000 })
   await expect(page.getByRole('heading', { name: /audit log/i })).toBeVisible()
   await expect(page.getByText(/write-only/i)).toBeVisible()
@@ -58,7 +61,7 @@ test('a closed study refuses every write, not only in the interface', async ({ p
   await expect(page.getByRole('button', { name: /validate and send/i })).toHaveCount(0)
 
   await page.goto(`/en/corelab/admin/studies/${studyId}/export`, { timeout: 60000 })
-  await expect(page.getByText(/readings_long/i).first()).toBeVisible({ timeout: 60000 })
+  await expect(page.getByText(/full_archive/i).first()).toBeVisible({ timeout: 60000 })
 
   await page.context().clearCookies()
   await login(page, 'corelab-reader-1@larib-portal.test')

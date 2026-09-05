@@ -99,7 +99,7 @@ export const changeStudyPhaseAction = corelabAdminAction
       await setStudyPhase(parsedInput.studyId, parsedInput.phase, transaction)
     })
     if (parsedInput.phase === 'CLOSED') {
-      await buildExport(parsedInput.studyId, 'READINGS_LONG', ctx.userId)
+      await buildExport(parsedInput.studyId, 'FULL_ARCHIVE', ctx.userId)
     }
     await revalidateCorelab(parsedInput.studyId)
     return { ok: true }
