@@ -337,3 +337,23 @@ export async function discordanceStats(studyId: string): Promise<DiscordanceStat
     totals,
   }
 }
+
+export type OpenRework = {
+  id: string
+  items: ReworkItem[]
+  comments: Record<string, string>
+}
+
+export async function openReworkFor(patientId: string): Promise<OpenRework | null> {
+  const rework = await prisma.corelabReworkRequest.findFirst({
+    where: { patientId, status: 'PENDING' },
+    select: { id: true, items: true, comments: true },
+    orderBy: { requestedAt: 'desc' },
+  })
+  if (!rework) return null
+  return {
+    id: rework.id,
+    items: Array.isArray(rework.items) ? (rework.items as unknown as ReworkItem[]) : [],
+    comments: (rework.comments ?? {}) as Record<string, string>,
+  }
+}

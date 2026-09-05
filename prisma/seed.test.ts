@@ -542,6 +542,11 @@ async function main() {
 				snapshot: withExam(entry.payload), snapshotHash: `seed-${index}`, version: 1, signatureId: `seed-signature-${index}`,
 			},
 		});
+		await prisma.corelabReadingValue.createMany({
+			data: Object.entries(entry.payload.values.EXAM.cine).map(([fieldId, cell]) => ({
+				assignmentId: assignment.id, examId: reviewExamId, sequenceId: 'cine', fieldId, value: cell.value, source: 'MANUAL' as const,
+			})),
+		});
 	}
 	await prisma.corelabReadingAssignment.create({
 		data: {

@@ -5,6 +5,7 @@ import { applicationLink } from '@/lib/application-link'
 import { canAccessApp } from '@/lib/permissions'
 import { getReadingForUser } from '@/lib/services/corelab/readings'
 import { openReturnFor } from '@/lib/services/corelab/document-returns'
+import { openReworkFor } from '@/lib/services/corelab/reviews'
 import { getCurrentCrfVersion } from '@/lib/services/corelab/studies'
 import { ReadingClient } from './reading-client'
 
@@ -19,9 +20,10 @@ export default async function ReadingPage({ params }: PageParams) {
   const context = await getReadingForUser(assignmentId, session.user.id)
   if (!context) notFound()
 
-  const [documentReturn, crfVersion] = await Promise.all([
+  const [documentReturn, crfVersion, rework] = await Promise.all([
     openReturnFor(context.assignment.patient.id),
     getCurrentCrfVersion(context.assignment.patient.studyId),
+    openReworkFor(context.assignment.patient.id),
   ])
 
   const mode = context.assignment.role === 'REVIEWER'
@@ -61,6 +63,18 @@ export default async function ReadingPage({ params }: PageParams) {
         openFlags: context.flags.length,
         documentReturn: documentReturn && context.assignment.status === 'RETURNED'
           ? { id: documentReturn.id, message: documentReturn.message, slotKeys: documentReturn.slotKeys }
+          : null,
+        rework: rework && context.assignment.status === 'RETURNED'
+          ? {
+              id: rework.id,
+              points: rework.items
+                .filter((item) => item.readerAssignmentId === context.assignment.id)
+                .map((item) => ({
+                  key: `${item.readerAssignmentId}.${item.sequenceId}`,
+                  sequenceName: context.definition.find((sequence) => sequence.id === item.sequenceId)?.name ?? item.sequenceId,
+                  comment: rework.comments[`${item.readerAssignmentId}.${item.sequenceId}`] ?? '',
+                })),
+            }
           : null,
       }}
     />

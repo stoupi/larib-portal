@@ -13,7 +13,9 @@ import { SequenceNav } from '../../components/crf/sequence-nav'
 import { CrfForm } from '../../components/crf/crf-form'
 import { SignatureDialog } from '../../components/signature-dialog'
 import { DocumentSlots } from './document-slots'
+import { ReworkPanel, type ReworkPoint } from './rework-panel'
 import { resolveDocumentReturnAction, saveReadingValuesAction, submitReadingAction } from '../../actions-reading'
+import { resubmitAfterReworkAction } from '../../actions-review'
 import type { CrfDefinition, DocumentSlot } from '@/lib/corelab/crf/schema'
 import type { FieldChange, FieldValue, ReadingValues } from '@/types/corelab'
 
@@ -34,17 +36,20 @@ type ReadingClientProps = {
     documents: Array<{ id: string; examId: string | null; slotKey: string; fileName: string; status: string }>
     openFlags: number
     documentReturn: { id: string; message: string; slotKeys: string[] } | null
+    rework: { id: string; points: ReworkPoint[] } | null
   }
 }
 
 export function ReadingClient({ context, definition, exams, initialValues, extras }: ReadingClientProps) {
   const t = useTranslations('corelab.reading')
+  const tReview = useTranslations('corelab.review.reader')
   const router = useRouter()
   const [values, setValues] = useState<ReadingValues>(initialValues)
   const [examId, setExamId] = useState(exams[0]?.id ?? '')
   const [sequenceId, setSequenceId] = useState(definition[0]?.id ?? '')
   const [signing, setSigning] = useState(false)
   const [saving, setSaving] = useState(false)
+  const [allHandled, setAllHandled] = useState(false)
 
   const save = useAction(saveReadingValuesAction, {
     onSuccess: () => setSaving(false),
@@ -57,6 +62,16 @@ export function ReadingClient({ context, definition, exams, initialValues, extra
   const submit = useAction(submitReadingAction, {
     onSuccess: () => {
       toast.success(t('submitted'))
+      setSigning(false)
+      router.push(`/corelab/studies/${context.studyId}/readings`)
+      router.refresh()
+    },
+    onError: () => toast.error(t('error')),
+  })
+
+  const resubmit = useAction(resubmitAfterReworkAction, {
+    onSuccess: () => {
+      toast.success(tReview('resubmitted'))
       setSigning(false)
       router.push(`/corelab/studies/${context.studyId}/readings`)
       router.refresh()
@@ -128,6 +143,17 @@ export function ReadingClient({ context, definition, exams, initialValues, extra
               >
                 {t('returned.resend')}
               </Button>
+            ) : extras.rework ? (
+              <Button
+                size="sm"
+                disabled={!allHandled}
+                onClick={() => {
+                  debouncer.flushNow()
+                  setSigning(true)
+                }}
+              >
+                {tReview('resubmit')}
+              </Button>
             ) : (
               <Button
                 size="sm"
@@ -172,6 +198,12 @@ export function ReadingClient({ context, definition, exams, initialValues, extra
         </div>
       }
     >
+      {extras.rework ? (
+        <div className="mb-4">
+          <ReworkPanel points={extras.rework.points} onAllHandled={setAllHandled} />
+        </div>
+      ) : null}
+
       {extras.documentReturn ? (
         <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50 p-4">
           <p className="text-sm font-medium text-amber-900">{t('returned.banner')}</p>
@@ -198,7 +230,11 @@ export function ReadingClient({ context, definition, exams, initialValues, extra
             <span className="block">{t('signVersion', { version: context.crfVersionLabel })}</span>
           </>
         }
-        onConfirm={({ password, reason }) => submit.execute({ assignmentId: context.assignmentId, password, reason })}
+        onConfirm={({ password, reason }) =>
+          extras.rework
+            ? resubmit.execute({ assignmentId: context.assignmentId, password, reason })
+            : submit.execute({ assignmentId: context.assignmentId, password, reason })
+        }
       />
     </FocusShell>
   )
