@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { longRows, toCsv, wideRows } from './rows'
+import { CALIBRATION_HEADERS, calibrationRows, longRows, toCsv, wideRows } from './rows'
 import type { CrfDefinition } from '@/lib/corelab/crf/schema'
 
 const definition: CrfDefinition = [
@@ -90,5 +90,25 @@ describe('toCsv', () => {
   })
   it('writes an empty cell for a missing value', () => {
     expect(toCsv(['a', 'b'], [{ a: 1 }]).split('\n')[1]).toBe('1;')
+  })
+})
+
+describe('calibrationRows', () => {
+  const rows = calibrationRows([
+    { reader: 'Dr Martin', caseCode: 'CAL-001', sequenceId: 'cine', fieldId: 'lvef', readerValue: 48, goldValue: 52, delta: -4, withinTolerance: true, comment: 'fine', decision: 'CERTIFY' },
+    { reader: 'Dr Martin', caseCode: 'CAL-001', sequenceId: 'cine', fieldId: 'lv_mass', readerValue: 149, goldValue: 124, delta: 25, withinTolerance: false, comment: null, decision: 'CERTIFY' },
+  ])
+
+  it('says in plain words whether each value is within tolerance', () => {
+    expect(rows[0].within_tolerance).toBe('yes')
+    expect(rows[1].within_tolerance).toBe('no')
+  })
+  it('carries the investigator comment and the decision', () => {
+    expect(rows[0]).toMatchObject({ reader: 'Dr Martin', case: 'CAL-001', variable: 'lvef', pi_comment: 'fine', decision: 'CERTIFY' })
+    expect(rows[1].pi_comment).toBeNull()
+  })
+  it('exposes its header list', () => {
+    expect(CALIBRATION_HEADERS).toContain('within_tolerance')
+    expect(Object.keys(rows[0])).toEqual(CALIBRATION_HEADERS)
   })
 })

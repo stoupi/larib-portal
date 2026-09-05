@@ -180,6 +180,38 @@ export function reviewDecisionRows(input: ExportInput): Array<Record<string, unk
   })
 }
 
+export type CalibrationExportRow = {
+  reader: string
+  caseCode: string
+  sequenceId: string
+  fieldId: string
+  readerValue: unknown
+  goldValue: unknown
+  delta: number | null
+  withinTolerance: boolean | null
+  comment: string | null
+  decision: string | null
+}
+
+export function calibrationRows(rows: CalibrationExportRow[]): Array<Record<string, unknown>> {
+  return rows.map((row) => ({
+    reader: row.reader,
+    case: row.caseCode,
+    sequence: row.sequenceId,
+    variable: row.fieldId,
+    reader_value: scalar(row.readerValue),
+    gold_value: scalar(row.goldValue),
+    delta: row.delta,
+    within_tolerance: row.withinTolerance === null ? null : row.withinTolerance ? 'yes' : 'no',
+    pi_comment: row.comment,
+    decision: row.decision,
+  }))
+}
+
+export const CALIBRATION_HEADERS = [
+  'reader', 'case', 'sequence', 'variable', 'reader_value', 'gold_value', 'delta', 'within_tolerance', 'pi_comment', 'decision',
+]
+
 export function toCsv(headers: string[], rows: Array<Record<string, unknown>>): string {
   const cell = (value: unknown): string => {
     if (value === null || value === undefined) return ''

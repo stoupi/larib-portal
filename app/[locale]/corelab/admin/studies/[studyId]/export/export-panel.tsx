@@ -10,8 +10,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { exportDownloadUrlAction, exportStudyAction, previewExportAction } from '../../../actions-export'
 
 type Kind = 'READINGS_LONG' | 'READINGS_WIDE' | 'REVIEW_DECISIONS' | 'CALIBRATION' | 'FULL_ARCHIVE'
-const READY: Kind[] = ['READINGS_LONG', 'READINGS_WIDE', 'REVIEW_DECISIONS']
-const ALL: Kind[] = [...READY, 'CALIBRATION', 'FULL_ARCHIVE']
+const ALL: Kind[] = ['READINGS_LONG', 'READINGS_WIDE', 'REVIEW_DECISIONS', 'CALIBRATION', 'FULL_ARCHIVE']
+const PREVIEWABLE: Kind[] = ['READINGS_LONG', 'READINGS_WIDE', 'REVIEW_DECISIONS', 'CALIBRATION']
 
 type ExportPanelProps = {
   studyId: string
@@ -52,23 +52,21 @@ export function ExportPanel({ studyId, exports }: ExportPanelProps) {
     <div className="space-y-6">
       <div className="grid gap-4 lg:grid-cols-3">
         {ALL.map((kind) => {
-          const ready = READY.includes(kind)
+          const previewable = PREVIEWABLE.includes(kind)
           return (
             <div key={kind} className="rounded-2xl border border-border bg-white p-5" data-testid={`export-${kind}`}>
               <h3 className="text-base font-semibold text-text-primary">{t(`kinds.${kind}`)}</h3>
               <p className="mt-1 text-sm text-text-secondary">{t(`kindHelp.${kind}`)}</p>
-              {ready ? (
-                <div className="mt-4 flex gap-2">
+              <div className="mt-4 flex gap-2">
+                {previewable ? (
                   <Button variant="outline" size="sm" onClick={() => previewAction.execute({ studyId, kind })}>
                     {t('preview')}
                   </Button>
-                  <Button size="sm" disabled={generate.isPending} onClick={() => generate.execute({ studyId, kind })}>
-                    {t('generate')}
-                  </Button>
-                </div>
-              ) : (
-                <p className="mt-4 text-xs text-text-secondary">{t('notImplemented')}</p>
-              )}
+                ) : null}
+                <Button size="sm" disabled={generate.isPending} onClick={() => generate.execute({ studyId, kind })}>
+                  {t('generate')}
+                </Button>
+              </div>
             </div>
           )
         })}

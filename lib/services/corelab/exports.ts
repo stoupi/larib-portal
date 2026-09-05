@@ -1,6 +1,14 @@
 import { prisma } from '@/lib/prisma'
 import { r2GetSignedDownloadUrl, r2PutObject } from '@/lib/services/r2-s3'
-import { longRows, reviewDecisionRows, toCsv, wideRows, type ExportInput, type ExportValues } from '@/lib/corelab/export/rows'
+import archiver from 'archiver'
+import { PassThrough } from 'node:stream'
+import {
+  CALIBRATION_HEADERS, calibrationRows, longRows, reviewDecisionRows, toCsv, wideRows,
+  type CalibrationExportRow, type ExportInput, type ExportValues,
+} from '@/lib/corelab/export/rows'
+import { compareToGoldStandard } from '@/lib/corelab/crf/tolerance'
+import { findField } from '@/lib/corelab/crf/schema'
+import { exportAuditCsv } from './audit'
 import { getCurrentCrfVersion } from './studies'
 import type { CorelabExportKind, Prisma } from '@/app/generated/prisma'
 
@@ -82,6 +90,73 @@ export async function buildExportInput(studyId: string): Promise<ExportInput | n
   }
 }
 
+export async function calibrationExportRows(studyId: string): Promise<CalibrationExportRow[]> {
+  const crfVersion = await getCurrentCrfVersion(studyId)
+  if (!crfVersion) return []
+
+  const [assignments, reviews] = await Promise.all([
+    prisma.corelabCalibrationAssignment.findMany({
+      where: { case: { studyId }, status: { in: ['SUBMITTED', 'REVIEWED'] } },
+      select: {
+        values: true, userId: true,
+        user: { select: { firstName: true, lastName: true, email: true } },
+        case: { select: { code: true, goldStandard: true } },
+      },
+    }),
+    prisma.corelabCalibrationReview.findMany({
+      where: { studyId },
+      select: { userId: true, decision: true, comments: true },
+      orderBy: { createdAt: 'desc' },
+    }),
+  ])
+
+  const reviewOf = new Map(reviews.map((review) => [review.userId, review]))
+  const rows: CalibrationExportRow[] = []
+
+  for (const assignment of assignments) {
+    const reader = [assignment.user.firstName, assignment.user.lastName].filter(Boolean).join(' ').trim() || assignment.user.email
+    const review = reviewOf.get(assignment.userId)
+    const comments = (review?.comments ?? {}) as Record<string, string>
+    const readerValues = readValuesOf(assignment.values)
+    const goldValues = readValuesOf(assignment.case.goldStandard)
+
+    for (const examId of new Set([...Object.keys(readerValues), ...Object.keys(goldValues)])) {
+      for (const sequence of crfVersion.definition) {
+        for (const section of sequence.sections) {
+          for (const field of section.fields) {
+            const readerValue = readerValues[examId]?.[sequence.id]?.[field.id]?.value ?? null
+            const goldValue = goldValues[examId]?.[sequence.id]?.[field.id]?.value ?? null
+            if (readerValue === null && goldValue === null) continue
+
+            const definitionField = findField(crfVersion.definition, sequence.id, field.id)
+            const verdict = definitionField ? compareToGoldStandard(definitionField, readerValue, goldValue) : null
+            rows.push({
+              reader,
+              caseCode: assignment.case.code,
+              sequenceId: sequence.id,
+              fieldId: field.id,
+              readerValue,
+              goldValue,
+              delta: verdict?.delta ?? null,
+              withinTolerance: verdict && verdict.rule !== 'not_compared' ? verdict.withinTolerance : null,
+              comment: comments[`${examId}.${sequence.id}.${field.id}`] ?? null,
+              decision: review?.decision ?? null,
+            })
+          }
+        }
+      }
+    }
+  }
+  return rows
+}
+
+type StoredValues = Record<string, Record<string, Record<string, { value: unknown }>>>
+
+function readValuesOf(raw: Prisma.JsonValue): StoredValues {
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return {}
+  return raw as StoredValues
+}
+
 export type ExportPreview = { headers: string[]; rows: Array<Record<string, unknown>>; rowCount: number }
 
 function shape(kind: CorelabExportKind, input: ExportInput): ExportPreview {
@@ -106,10 +181,38 @@ function shape(kind: CorelabExportKind, input: ExportInput): ExportPreview {
 }
 
 export async function previewExport(studyId: string, kind: CorelabExportKind, limit = 6): Promise<ExportPreview | null> {
+  if (kind === 'CALIBRATION') {
+    const rows = calibrationRows(await calibrationExportRows(studyId))
+    return { headers: CALIBRATION_HEADERS, rows: rows.slice(0, limit), rowCount: rows.length }
+  }
   const input = await buildExportInput(studyId)
   if (!input) return null
   const shaped = shape(kind, input)
   return { ...shaped, rows: shaped.rows.slice(0, limit) }
+}
+
+async function buildArchive(studyId: string, input: ExportInput): Promise<{ buffer: Buffer; rowCount: number }> {
+  const archive = archiver('zip', { zlib: { level: 9 } })
+  const stream = new PassThrough()
+  const chunks: Buffer[] = []
+  stream.on('data', (chunk: Buffer) => chunks.push(chunk))
+  archive.pipe(stream)
+
+  const long = shape('READINGS_LONG', input)
+  const wide = shape('READINGS_WIDE', input)
+  const decisions = shape('REVIEW_DECISIONS', input)
+  const calibration = calibrationRows(await calibrationExportRows(studyId))
+
+  archive.append(toCsv(long.headers, long.rows), { name: 'readings-long.csv' })
+  archive.append(toCsv(wide.headers, wide.rows), { name: 'readings-wide.csv' })
+  archive.append(toCsv(decisions.headers, decisions.rows), { name: 'review-decisions.csv' })
+  archive.append(toCsv(CALIBRATION_HEADERS, calibration), { name: 'calibration.csv' })
+  archive.append(JSON.stringify(input.definition, null, 2), { name: `crf-v${input.crfVersion}.json` })
+  archive.append(await exportAuditCsv({ studyId, pageSize: 5000 }), { name: 'audit.csv' })
+
+  await archive.finalize()
+  await new Promise((resolve) => stream.on('end', resolve))
+  return { buffer: Buffer.concat(chunks), rowCount: long.rowCount }
 }
 
 export async function buildExport(
@@ -121,19 +224,42 @@ export async function buildExport(
   if (!input) return null
 
   const study = await prisma.corelabStudy.findUniqueOrThrow({ where: { id: studyId }, select: { code: true } })
-  const shaped = shape(kind, input)
-  const csv = toCsv(shaped.headers, shaped.rows)
   const stamp = new Date().toISOString().replace(/[:.]/g, '-')
-  const fileName = `${study.code}-${kind.toLowerCase()}-${stamp}.csv`
-  const fileKey = `corelab/${studyId}/exports/${fileName}`
 
-  await r2PutObject(fileKey, Buffer.from(csv, 'utf8'), 'text/csv; charset=utf-8')
+  let body: Buffer
+  let rowCount: number
+  let extension: string
+  let contentType: string
+
+  if (kind === 'FULL_ARCHIVE') {
+    const archive = await buildArchive(studyId, input)
+    body = archive.buffer
+    rowCount = archive.rowCount
+    extension = 'zip'
+    contentType = 'application/zip'
+  } else if (kind === 'CALIBRATION') {
+    const rows = calibrationRows(await calibrationExportRows(studyId))
+    body = Buffer.from(toCsv(CALIBRATION_HEADERS, rows), 'utf8')
+    rowCount = rows.length
+    extension = 'csv'
+    contentType = 'text/csv; charset=utf-8'
+  } else {
+    const shaped = shape(kind, input)
+    body = Buffer.from(toCsv(shaped.headers, shaped.rows), 'utf8')
+    rowCount = shaped.rowCount
+    extension = 'csv'
+    contentType = 'text/csv; charset=utf-8'
+  }
+
+  const fileName = `${study.code}-${kind.toLowerCase()}-${stamp}.${extension}`
+  const fileKey = `corelab/${studyId}/exports/${fileName}`
+  await r2PutObject(fileKey, body, contentType)
   const created = await prisma.corelabExport.create({
-    data: { studyId, kind, fileKey, fileName, rowCount: shaped.rowCount, requestedById },
+    data: { studyId, kind, fileKey, fileName, rowCount, requestedById },
     select: { id: true },
   })
 
-  return { id: created.id, url: await r2GetSignedDownloadUrl(fileKey, 600), rowCount: shaped.rowCount }
+  return { id: created.id, url: await r2GetSignedDownloadUrl(fileKey, 600), rowCount }
 }
 
 export async function listExports(studyId: string) {
