@@ -5,10 +5,8 @@ import { revalidatePath } from 'next/cache'
 import { prisma } from '@/lib/prisma'
 import { corelabStudyAction, signOrThrow } from '@/lib/corelab/guards'
 import { snapshotHash } from '@/lib/corelab/snapshot-hash'
-import {
-  recordCalibrationDecision, refreshCalibrationStatus, saveCalibrationValues,
-  saveGoldStandardValues, signGoldStandard, submitCalibrationCase,
-} from '@/lib/services/corelab/calibration'
+import { refreshCalibrationStatus, saveCalibrationValues, saveGoldStandardValues, signGoldStandard, submitCalibrationCase } from '@/lib/services/corelab/calibration'
+import { recordCalibrationDecision } from '@/lib/services/corelab/calibration-review'
 import { getCurrentCrfVersion } from '@/lib/services/corelab/studies'
 import type { ExamValues, ReadingValues } from '@/types/corelab'
 
