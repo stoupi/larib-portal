@@ -5,15 +5,13 @@ import { useAction } from 'next-safe-action/hooks'
 import { useTranslations } from 'next-intl'
 import { useRouter } from '@/app/i18n/navigation'
 import { toast } from 'sonner'
-import { Plus, Trash2 } from 'lucide-react'
+import { Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { SingleSelect } from '@/components/ui/single-select'
-import { discardDraftAction, publishDraftAction, saveDraftAction, startDraftAction } from '../../../actions-library'
-import type { CrfDefinition } from '@/lib/corelab/crf/schema'
+import { discardDraftAction, publishDraftAction, saveDraftAction, saveVariableAction, startDraftAction } from '../../../actions-library'
+import { SequenceCard, type LibraryOption, type SequenceEdits } from './sequence-card'
+import { FieldDialog } from './field-dialog'
+import type { CrfDefinition, FieldDefinition, SequenceDefinition } from '@/lib/corelab/crf/schema'
 import type { VersionChange } from '@/lib/corelab/crf/diff-versions'
-
-type LibraryOption = { id: string; code: string; name: string; type: string; options: string[] }
 
 type CrfEditorProps = {
   context: { studyId: string; draftNumber: number | null; publishedNumber: number | null; signedReadings: number }
@@ -33,7 +31,16 @@ export function CrfEditor({ context, definition, changes, worst, libraryVariable
   const t = useTranslations('corelab.library.editor')
   const router = useRouter()
   const [draft, setDraft] = useState<CrfDefinition>(definition)
-  const [pick, setPick] = useState<Record<string, string>>({})
+  const [editing, setEditing] = useState<{ field: FieldDefinition; apply: (next: FieldDefinition) => void } | null>(null)
+  const knownCodes = new Set(libraryVariables.map((variable) => variable.code))
+
+  const promote = useAction(saveVariableAction, {
+    onSuccess: () => {
+      toast.success(t('promoted'))
+      router.refresh()
+    },
+    onError: () => toast.error(t('emptyDefinition')),
+  })
 
   const start = useAction(startDraftAction, { onSuccess: () => router.refresh(), onError: () => toast.error(t('save')) })
   const save = useAction(saveDraftAction, {
@@ -72,29 +79,57 @@ export function CrfEditor({ context, definition, changes, worst, libraryVariable
   }
 
   function addSequence() {
-    setDraft([...draft, { id: `sequence_${draft.length + 1}`, name: `Sequence ${draft.length + 1}`, sections: [{ id: 'section_1', name: 'Section 1', fields: [] }] }])
+    setDraft([...draft, {
+      id: `sequence_${draft.length + 1}`,
+      name: `Sequence ${draft.length + 1}`,
+      sections: [{ id: 'section_1', name: 'Section 1', fields: [] }],
+    }])
   }
 
-  function addVariable(sequenceId: string, sectionId: string, variableId: string) {
-    const variable = libraryVariables.find((entry) => entry.id === variableId)
-    if (!variable) return
-    setDraft(draft.map((sequence) => sequence.id !== sequenceId ? sequence : {
-      ...sequence,
-      sections: sequence.sections.map((section) => section.id !== sectionId ? section : {
-        ...section,
-        fields: [
-          ...section.fields,
-          {
-            id: variable.code,
-            name: variable.name,
-            type: variable.type as 'numeric',
-            required: false,
-            ...(variable.options.length > 0 ? { options: variable.options } : {}),
-            ...(variable.type.startsWith('segment_') ? { segmentCount: 17 as const } : {}),
-          },
-        ],
+  function updateSequence(sequenceId: string, apply: (sequence: SequenceDefinition) => SequenceDefinition) {
+    setDraft(draft.map((sequence) => sequence.id === sequenceId ? apply(sequence) : sequence))
+  }
+
+  function editsFor(sequence: SequenceDefinition, index: number): SequenceEdits {
+    return {
+      rename: (name) => updateSequence(sequence.id, (entry) => ({ ...entry, name })),
+      remove: () => setDraft(draft.filter((entry) => entry.id !== sequence.id)),
+      move: (direction) => {
+        const target = index + direction
+        if (target < 0 || target >= draft.length) return
+        const next = [...draft]
+        const [moving] = next.splice(index, 1)
+        next.splice(target, 0, moving)
+        setDraft(next)
+      },
+      addSection: () => updateSequence(sequence.id, (entry) => ({
+        ...entry,
+        sections: [...entry.sections, { id: `section_${entry.sections.length + 1}`, name: `Section ${entry.sections.length + 1}`, fields: [] }],
+      })),
+      renameSection: (sectionId, name) => updateSequence(sequence.id, (entry) => ({
+        ...entry,
+        sections: entry.sections.map((section) => section.id === sectionId ? { ...section, name } : section),
+      })),
+      setFields: (sectionId, fields) => updateSequence(sequence.id, (entry) => ({
+        ...entry,
+        sections: entry.sections.map((section) => section.id === sectionId ? { ...section, fields } : section),
+      })),
+      editField: (field, apply) => setEditing({ field, apply }),
+      promote: (field) => promote.execute({
+        code: field.id,
+        name: field.name,
+        modality: 'CMR',
+        type: field.type,
+        params: {
+          required: field.required,
+          ...(field.unit === undefined ? {} : { unit: field.unit }),
+          ...(field.min === undefined ? {} : { min: field.min }),
+          ...(field.max === undefined ? {} : { max: field.max }),
+          ...(field.segmentCount === undefined ? {} : { segmentCount: field.segmentCount }),
+        },
+        valueSetId: null,
       }),
-    }))
+    }
   }
 
   return (
@@ -134,62 +169,29 @@ export function CrfEditor({ context, definition, changes, worst, libraryVariable
       </section>
 
       <section className="space-y-4">
-        {draft.map((sequence) => (
-          <div key={sequence.id} className="rounded-2xl border border-border bg-white p-5">
-            <div className="flex items-center gap-2">
-              <Input
-                className="max-w-xs"
-                aria-label={t('sequenceName')}
-                value={sequence.name}
-                onChange={(event) => setDraft(draft.map((entry) => entry.id === sequence.id ? { ...entry, name: event.target.value } : entry))}
-              />
-              <Button variant="ghost" size="sm" onClick={() => setDraft(draft.filter((entry) => entry.id !== sequence.id))}>
-                <Trash2 className="h-4 w-4" />
-              </Button>
-            </div>
-
-            {sequence.sections.map((section) => (
-              <div key={section.id} className="mt-4 rounded-xl border border-border p-4">
-                <p className="text-sm font-medium text-text-primary">{section.name}</p>
-                <ul className="mt-2 space-y-1">
-                  {section.fields.map((field) => (
-                    <li key={field.id} className="flex items-center justify-between text-sm">
-                      <span className="text-text-primary">{field.name} <span className="text-xs text-text-secondary">{field.type}</span></span>
-                      <Button
-                        variant="ghost" size="sm"
-                        onClick={() => setDraft(draft.map((entry) => entry.id !== sequence.id ? entry : {
-                          ...entry,
-                          sections: entry.sections.map((candidate) => candidate.id !== section.id ? candidate : {
-                            ...candidate,
-                            fields: candidate.fields.filter((existing) => existing.id !== field.id),
-                          }),
-                        }))}
-                      >
-                        {t('remove')}
-                      </Button>
-                    </li>
-                  ))}
-                </ul>
-                <div className="mt-3 flex items-center gap-2">
-                  <SingleSelect
-                    className="w-64"
-                    placeholder={t('fromLibrary')}
-                    options={libraryVariables.map((variable) => ({ value: variable.id, label: variable.name }))}
-                    value={pick[`${sequence.id}.${section.id}`] ?? ''}
-                    onChange={(value) => {
-                      setPick({ ...pick, [`${sequence.id}.${section.id}`]: value })
-                      addVariable(sequence.id, section.id, value)
-                    }}
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
+        {draft.map((sequence, index) => (
+          <SequenceCard
+            key={sequence.id}
+            sequence={sequence}
+            edits={editsFor(sequence, index)}
+            libraryVariables={libraryVariables}
+            knownCodes={knownCodes}
+          />
         ))}
         <Button variant="outline" className="gap-2" onClick={addSequence}>
           <Plus className="h-4 w-4" />{t('addSequence')}
         </Button>
       </section>
+
+      <FieldDialog
+        field={editing?.field ?? null}
+        onClose={() => setEditing(null)}
+        onSave={(next) => {
+          editing?.apply(next)
+          setEditing(null)
+        }}
+      />
+
     </div>
   )
 }

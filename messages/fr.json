@@ -2925,7 +2925,19 @@
         "noChange": "Aucun changement par rapport à la version publiée.",
         "lockedField": "Un identifiant de variable ne peut plus disparaître : des lectures sont signées.",
         "emptyDefinition": "Le CRF est vide.",
-        "preview": "Aperçu"
+        "preview": "Aperçu",
+        "editField": "Modifier la variable",
+        "required": "Requis",
+        "unit": "Unité",
+        "min": "Minimum",
+        "max": "Maximum",
+        "segmentCount": "Segments",
+        "moveUp": "Monter",
+        "moveDown": "Descendre",
+        "promote": "Ajouter à la bibliothèque",
+        "promoted": "Variable ajoutée à la bibliothèque.",
+        "edit": "Modifier",
+        "insertBlock": "Insérer une séquence de la bibliothèque"
       }
     }
   }

@@ -2927,7 +2927,19 @@
         "noChange": "No change against the published version.",
         "lockedField": "A variable identifier can no longer disappear: readings are signed.",
         "emptyDefinition": "The CRF is empty.",
-        "preview": "Preview"
+        "preview": "Preview",
+        "editField": "Edit the variable",
+        "required": "Required",
+        "unit": "Unit",
+        "min": "Minimum",
+        "max": "Maximum",
+        "segmentCount": "Segments",
+        "moveUp": "Move up",
+        "moveDown": "Move down",
+        "promote": "Add to the library",
+        "promoted": "Variable added to the library.",
+        "edit": "Edit",
+        "insertBlock": "Insert a library sequence"
       }
     }
   }
