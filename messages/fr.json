@@ -2591,7 +2591,7 @@
       "validateTitle": "Confirmer les assignations",
       "validateHelp": "Fixez une échéance par lecteur. Le relecteur n'est pas prévenu.",
       "dueDate": "Échéance",
-      "paceLine": "{count} patients · {amount} par {unit}",
+      "paceLine": "{count} patients · environ {amount} par {unit}",
       "week": "semaine",
       "month": "mois",
       "confirm": "Envoyer",

@@ -2593,7 +2593,7 @@
       "validateTitle": "Confirm the assignments",
       "validateHelp": "Set a deadline per reader. The reviewer is not notified.",
       "dueDate": "Deadline",
-      "paceLine": "{count} patients · {amount} per {unit}",
+      "paceLine": "{count} patients · about {amount} per {unit}",
       "week": "week",
       "month": "month",
       "confirm": "Send",

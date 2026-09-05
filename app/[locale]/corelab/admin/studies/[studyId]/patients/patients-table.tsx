@@ -12,8 +12,9 @@ import { SingleSelect } from '@/components/ui/single-select'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Link } from '@/app/i18n/navigation'
-import { saveDraftAssignmentsAction, setReviewerAction, validateAssignmentsAction } from '../../../actions-assignment'
-import { canValidateDraft } from '@/lib/corelab/assignment/rules'
+import { X } from 'lucide-react'
+import { clearDraftAction, saveDraftAssignmentsAction, setReviewerAction, validateAssignmentsAction } from '../../../actions-assignment'
+import { canValidateDraft, computePace } from '@/lib/corelab/assignment/rules'
 import type { CohortPatient } from '@/lib/services/corelab/cohort'
 
 type Person = { value: string; label: string }
@@ -57,6 +58,14 @@ export function PatientsTable({ studyId, patients, readers, reviewers, readOnly 
   const setReviewer = useAction(setReviewerAction, {
     onSuccess: () => {
       toast.success(t('reviewerSet'))
+      router.refresh()
+    },
+    onError: () => toast.error(t('error')),
+  })
+
+  const clear = useAction(clearDraftAction, {
+    onSuccess: () => {
+      toast.success(t('cleared'))
       router.refresh()
     },
     onError: () => toast.error(t('error')),
@@ -193,8 +202,26 @@ export function PatientsTable({ studyId, patients, readers, reviewers, readOnly 
                   </TableCell>
                   <TableCell className="text-text-secondary">
                     {locked ? t(`statuses.${patient.status}`) : (
-                      <span className="rounded-md border border-amber-200 bg-amber-50 px-1.5 py-0.5 text-[11px] text-amber-800">
-                        {draft?.reader1 ? t('draft') : t(`statuses.${patient.status}`)}
+                      <span className="inline-flex items-center gap-1">
+                        <span className="rounded-md border border-amber-200 bg-amber-50 px-1.5 py-0.5 text-[11px] text-amber-800">
+                          {draft?.reader1 ? t('draft') : t(`statuses.${patient.status}`)}
+                        </span>
+                        {draft?.reader1 ? (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            aria-label={t('clear')}
+                            onClick={() => {
+                              setDrafts((current) => ({
+                                ...current,
+                                [patient.id]: { readingMode: 'SINGLE', reader1: '', reader2: '', reviewer: '' },
+                              }))
+                              clear.execute({ studyId, patientId: patient.id })
+                            }}
+                          >
+                            <X className="h-3.5 w-3.5" />
+                          </Button>
+                        ) : null}
                       </span>
                     )}
                   </TableCell>
@@ -223,6 +250,18 @@ export function PatientsTable({ studyId, patients, readers, reviewers, readOnly 
                   value={dueDates[userId] ?? ''}
                   onChange={(event) => setDueDates((current) => ({ ...current, [userId]: event.target.value }))}
                 />
+                {dueDates[userId] ? (() => {
+                  const count = patients.filter(
+                    (patient) => patient.status === 'UNASSIGNED'
+                      && [drafts[patient.id]?.reader1, drafts[patient.id]?.reader2].includes(userId),
+                  ).length
+                  const pace = computePace(count, new Date(`${dueDates[userId]}T23:59:59.999Z`), new Date())
+                  return (
+                    <p className="text-xs text-text-secondary">
+                      {t('paceLine', { count, amount: pace.amount, unit: t(pace.unit) })}
+                    </p>
+                  )
+                })() : null}
               </div>
             ))}
           </div>

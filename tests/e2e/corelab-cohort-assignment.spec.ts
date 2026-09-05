@@ -56,11 +56,17 @@ test('the data manager imports a cohort, assigns patients and the reader sees th
   await choose(page, 'MIR-DJ-T-002', 1, /Reader Two/)
   await expect(page.getByTestId('patient-MIR-DJ-T-002').getByText('Draft')).toBeVisible()
 
+  await choose(page, 'MIR-DJ-T-003', 1, /Reader One/)
+  await expect(page.getByTestId('patient-MIR-DJ-T-003').getByText('Draft')).toBeVisible()
+  await page.getByTestId('patient-MIR-DJ-T-003').getByRole('button', { name: /clear the draft/i }).click()
+  await expect(page.getByTestId('patient-MIR-DJ-T-003').getByText('Draft')).toHaveCount(0, { timeout: 30000 })
+
   await page.getByRole('button', { name: /validate and send/i }).click()
   const dialog = page.getByRole('dialog')
   for (const input of await dialog.locator('input[type="date"]').all()) {
     await input.fill('2026-12-31')
   }
+  await expect(dialog.getByText(/patients · about/).first()).toBeVisible()
   await dialog.getByRole('button', { name: /^send$/i }).click()
   await expect(page.getByTestId('patient-MIR-DJ-T-001').getByText(/awaiting reading/i)).toBeVisible({ timeout: 30000 })
   await expect(page.getByText(/2 patients · 4 exams/).first()).toBeVisible()
