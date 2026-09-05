@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { dueReminders, shouldRemind } from './select'
+import { dueReminders, lateItems, shouldRemind } from './select'
 
 const NOW = new Date('2026-05-10T07:00:00.000Z')
 
@@ -36,5 +36,19 @@ describe('dueReminders', () => {
     const alreadySent = new Set(['u1|READING|a1'])
     const result = dueReminders(items, alreadySent, NOW)
     expect(result.map((entry) => entry.userId)).toEqual(['u2'])
+  })
+})
+
+describe('lateItems', () => {
+  it('keeps only what is past its deadline', () => {
+    const late = lateItems(
+      [
+        { userId: 'u1', kind: 'READING', entityId: 'a', label: 'P-1', dueDate: new Date('2026-05-01T00:00:00.000Z') },
+        { userId: 'u2', kind: 'READING', entityId: 'b', label: 'P-2', dueDate: new Date('2026-05-20T00:00:00.000Z') },
+        { userId: 'u3', kind: 'TRAINING', entityId: 'c', label: 'S-1', dueDate: null },
+      ],
+      new Date('2026-05-10T07:00:00.000Z'),
+    )
+    expect(late.map((item) => item.label)).toEqual(['P-1'])
   })
 })

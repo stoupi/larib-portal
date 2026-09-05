@@ -33,3 +33,7 @@ export function dueReminders(items: ReminderItem[], alreadySent: Set<string>, no
   }
   return [...grouped.entries()].map(([userId, userItems]) => ({ userId, items: userItems }))
 }
+
+export function lateItems(items: ReminderItem[], now: Date): ReminderItem[] {
+  return items.filter((item) => item.dueDate !== null && item.dueDate.getTime() < now.getTime())
+}

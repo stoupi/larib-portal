@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/prisma'
-import { dueReminders, type ReminderItem } from '@/lib/corelab/reminders/select'
+import { dueReminders, lateItems, type ReminderItem } from '@/lib/corelab/reminders/select'
 import { renderCorelabReminderEmail } from '@/lib/email/corelab-reminder-template'
 
 async function collectItems(): Promise<Array<ReminderItem & { email: string; name: string }>> {
@@ -54,7 +54,7 @@ async function collectItems(): Promise<Array<ReminderItem & { email: string; nam
 export async function sendDeadlineReminders(
   origin: string,
   now = new Date(),
-): Promise<{ people: number; reminders: number }> {
+): Promise<{ people: number; reminders: number; recapSentTo: number }> {
   const items = await collectItems()
   const startOfDay = new Date(now)
   startOfDay.setUTCHours(0, 0, 0, 0)
@@ -101,5 +101,58 @@ export async function sendDeadlineReminders(
     }
   }
 
-  return { people: groups.length, reminders }
+  const late = lateItems(items, now)
+  const recapSentTo = late.length === 0 ? 0 : await sendRecap(late, items, origin, startOfDay, apiKey, fromEmail)
+
+  return { people: groups.length, reminders, recapSentTo }
+}
+
+async function sendRecap(
+  late: ReminderItem[],
+  items: Array<ReminderItem & { email: string; name: string }>,
+  origin: string,
+  startOfDay: Date,
+  apiKey: string | undefined,
+  fromEmail: string,
+): Promise<number> {
+  const dataManagers = await prisma.user.findMany({
+    where: { adminApplications: { has: 'CORELAB' } },
+    select: { id: true, email: true, firstName: true, lastName: true },
+  })
+  const alreadySent = await prisma.corelabReminderLog.findMany({
+    where: { kind: 'DM_RECAP', entityId: 'daily', sentAt: { gte: startOfDay } },
+    select: { userId: true },
+  })
+  const done = new Set(alreadySent.map((entry) => entry.userId))
+  const nameOf = new Map(items.map((item) => [item.userId, item.name]))
+
+  let sent = 0
+  for (const manager of dataManagers) {
+    if (done.has(manager.id)) continue
+
+    const { subject, text, html } = renderCorelabReminderEmail({
+      personName: [manager.firstName, manager.lastName].filter(Boolean).join(' ').trim() || manager.email,
+      items: late.map((item) => ({
+        label: `${item.label} — ${nameOf.get(item.userId) ?? item.userId}`,
+        kind: item.kind,
+        dueDate: item.dueDate ? item.dueDate.toISOString().slice(0, 10) : '',
+      })),
+      portalUrl: `${origin}/en/corelab/admin`,
+    })
+
+    if (apiKey) {
+      await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ from: `Larib Portal <${fromEmail}>`, to: [manager.email], subject, text, html }),
+      })
+    }
+
+    await prisma.corelabReminderLog.create({
+      data: { userId: manager.id, kind: 'DM_RECAP', entityId: 'daily' },
+      select: { id: true },
+    })
+    sent += 1
+  }
+  return sent
 }
