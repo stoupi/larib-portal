@@ -489,6 +489,36 @@ export const AUDITED_MODELS: Readonly<Record<string, AuditedModelConfig>> = {
     ignoredFields: [...BOOKKEEPING_FIELDS, 'comments', 'requestedAt'],
     referenceFields: {},
   },
+  CorelabValueSet: {
+    entity: 'CORELAB_VALUE_SET',
+    auditedFields: ['code', 'name', 'modality', 'description', 'deprecated'],
+    labelFields: ['name'],
+    buildLabel: (record) => joinLabel([text(record, 'name')]),
+    articleIdField: null,
+    studyIdField: null,
+    ignoredFields: [...BOOKKEEPING_FIELDS],
+    referenceFields: {},
+  },
+  CorelabLibraryVariable: {
+    entity: 'CORELAB_LIBRARY_VARIABLE',
+    auditedFields: ['code', 'name', 'modality', 'type', 'valueSetId', 'deprecated'],
+    labelFields: ['name'],
+    buildLabel: (record) => joinLabel([text(record, 'name')]),
+    articleIdField: null,
+    studyIdField: null,
+    ignoredFields: [...BOOKKEEPING_FIELDS, 'params'],
+    referenceFields: {},
+  },
+  CorelabLibraryBlock: {
+    entity: 'CORELAB_LIBRARY_BLOCK',
+    auditedFields: ['code', 'name', 'kind', 'modality', 'deprecated'],
+    labelFields: ['name'],
+    buildLabel: (record) => joinLabel([text(record, 'name')]),
+    articleIdField: null,
+    studyIdField: null,
+    ignoredFields: [...BOOKKEEPING_FIELDS, 'definition'],
+    referenceFields: {},
+  },
 }
 
 export function auditConfigFor(model: string): AuditedModelConfig | null {

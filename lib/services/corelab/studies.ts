@@ -58,7 +58,7 @@ const STUDY_DETAIL_SELECT = {
   startedAt: true,
   closedAt: true,
   sites: { select: { id: true, code: true, name: true }, orderBy: { code: 'asc' } },
-  crfVersions: { select: { id: true, number: true, publishedAt: true }, orderBy: { number: 'desc' } },
+  crfVersions: { where: { publishedAt: { not: null } }, select: { id: true, number: true, publishedAt: true }, orderBy: { number: 'desc' } },
 } satisfies Prisma.CorelabStudySelect
 
 export type StudyDetail = Prisma.CorelabStudyGetPayload<{ select: typeof STUDY_DETAIL_SELECT }>
@@ -76,7 +76,7 @@ export type CurrentCrfVersion = {
 
 export async function getCurrentCrfVersion(studyId: string): Promise<CurrentCrfVersion | null> {
   const version = await prisma.corelabCrfVersion.findFirst({
-    where: { studyId },
+    where: { studyId, publishedAt: { not: null } },
     orderBy: { number: 'desc' },
     select: { id: true, number: true, definition: true, discordanceThresholds: true },
   })

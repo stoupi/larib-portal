@@ -810,6 +810,9 @@ enum AuditEntity {
   CORELAB_REVIEW_DECISION
   CORELAB_REWORK_REQUEST
   CORELAB_EXPORT
+  CORELAB_VALUE_SET
+  CORELAB_LIBRARY_VARIABLE
+  CORELAB_LIBRARY_BLOCK
 }
 
 model AuditEvent {
@@ -986,7 +989,7 @@ model CorelabCrfVersion {
   number                Int
   definition            Json
   discordanceThresholds Json         @default("[]")
-  publishedAt           DateTime     @default(now())
+  publishedAt           DateTime?    @default(now())
   publishedById         String
   publishedBy           User         @relation("CorelabCrfPublishedBy", fields: [publishedById], references: [id], onDelete: Restrict)
 
@@ -1473,4 +1476,69 @@ model CorelabReminderLog {
 
   @@index([userId, kind, sentAt])
   @@map("CorelabReminderLog")
+}
+
+enum CorelabLibraryBlockKind {
+  SECTION
+  SEQUENCE
+}
+
+model CorelabValueSet {
+  id          String          @id @default(cuid())
+  code        String          @unique
+  name        String
+  modality    CorelabModality
+  description String          @default("")
+  deprecated  Boolean         @default(false)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  items     CorelabValueSetItem[]
+  variables CorelabLibraryVariable[]
+
+  @@map("CorelabValueSet")
+}
+
+model CorelabValueSetItem {
+  id         String          @id @default(cuid())
+  valueSetId String
+  valueSet   CorelabValueSet @relation(fields: [valueSetId], references: [id], onDelete: Cascade)
+  code       String
+  label      String
+  colour     String?
+  order      Int             @default(0)
+  deprecated Boolean         @default(false)
+
+  @@unique([valueSetId, code])
+  @@map("CorelabValueSetItem")
+}
+
+model CorelabLibraryVariable {
+  id         String           @id @default(cuid())
+  code       String           @unique
+  name       String
+  modality   CorelabModality
+  type       String
+  params     Json             @default("{}")
+  valueSetId String?
+  valueSet   CorelabValueSet? @relation(fields: [valueSetId], references: [id], onDelete: SetNull)
+  deprecated Boolean          @default(false)
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime         @updatedAt
+
+  @@map("CorelabLibraryVariable")
+}
+
+model CorelabLibraryBlock {
+  id         String                  @id @default(cuid())
+  code       String                  @unique
+  name       String
+  kind       CorelabLibraryBlockKind
+  modality   CorelabModality
+  definition Json
+  deprecated Boolean                 @default(false)
+  createdAt  DateTime                @default(now())
+  updatedAt  DateTime                @updatedAt
+
+  @@map("CorelabLibraryBlock")
 }

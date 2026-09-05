@@ -2156,7 +2156,8 @@
       "patients": "Patients",
       "discordance": "Discordance",
       "export": "Export",
-      "trainingTab": "Formation"
+      "trainingTab": "Formation",
+      "crf": "CRF"
     },
     "config": {
       "infoTitle": "Informations générales",
@@ -2843,6 +2844,72 @@
       "page": "Page {page} sur {pages}",
       "writeOnly": "Le journal est en écriture seule : aucune ligne ne peut être modifiée ni supprimée.",
       "signature": "Signature"
+    },
+    "library": {
+      "title": "Bibliothèque",
+      "subtitle": "Jeux de valeurs, variables et blocs réutilisables, cloisonnés par modalité.",
+      "tabs": {
+        "valueSets": "Jeux de valeurs",
+        "variables": "Variables",
+        "blocks": "Blocs"
+      },
+      "modality": "Modalité",
+      "code": "Code",
+      "name": "Nom",
+      "type": "Type",
+      "usedBy": "Variables",
+      "kind": "Nature",
+      "kinds": {
+        "SECTION": "Section",
+        "SEQUENCE": "Séquence"
+      },
+      "values": "Valeurs",
+      "colour": "Couleur",
+      "order": "Ordre",
+      "label": "Libellé",
+      "newValueSet": "Nouveau jeu de valeurs",
+      "newVariable": "Nouvelle variable",
+      "newBlock": "Nouveau bloc",
+      "save": "Enregistrer",
+      "saved": "Enregistré.",
+      "cancel": "Annuler",
+      "deprecated": "Déprécié",
+      "emptyValueSets": "Aucun jeu de valeurs.",
+      "emptyVariables": "Aucune variable.",
+      "emptyBlocks": "Aucun bloc.",
+      "error": "L'opération a échoué.",
+      "editor": {
+        "title": "Éditeur de CRF",
+        "subtitle": "Composez le formulaire, mesurez l'impact, puis publiez une version.",
+        "start": "Commencer un brouillon",
+        "draft": "Brouillon v{number}",
+        "published": "Version publiée : v{number}",
+        "noVersion": "Aucune version publiée.",
+        "addSequence": "Ajouter une séquence",
+        "addSection": "Ajouter une section",
+        "addVariable": "Ajouter une variable",
+        "fromLibrary": "Depuis la bibliothèque",
+        "remove": "Retirer",
+        "sequenceName": "Nom de la séquence",
+        "sectionName": "Nom de la section",
+        "save": "Enregistrer le brouillon",
+        "saved": "Brouillon enregistré.",
+        "discard": "Abandonner le brouillon",
+        "discarded": "Brouillon abandonné.",
+        "publish": "Publier la version",
+        "published_": "Version v{number} publiée.",
+        "impactTitle": "Impact sur les lectures signées",
+        "impacts": {
+          "HARMLESS": "Sans conséquence",
+          "CREATES_GAP": "Crée un manque",
+          "BREAKS_READING": "Casse une lecture"
+        },
+        "signedReadings": "{count} lectures signées existent sur cette étude.",
+        "noChange": "Aucun changement par rapport à la version publiée.",
+        "lockedField": "Un identifiant de variable ne peut plus disparaître : des lectures sont signées.",
+        "emptyDefinition": "Le CRF est vide.",
+        "preview": "Aperçu"
+      }
     }
   }
 }

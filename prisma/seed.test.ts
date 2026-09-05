@@ -66,6 +66,12 @@ async function main() {
 	await prisma.corelabTrainingCompletion.deleteMany();
 	await prisma.corelabStudyTrainingRequirement.deleteMany();
 	await prisma.corelabTrainingModule.deleteMany();
+	await prisma.corelabExport.deleteMany();
+	await prisma.corelabReminderLog.deleteMany();
+	await prisma.corelabLibraryBlock.deleteMany();
+	await prisma.corelabLibraryVariable.deleteMany();
+	await prisma.corelabValueSetItem.deleteMany();
+	await prisma.corelabValueSet.deleteMany();
 	await prisma.corelabCrfVersion.deleteMany();
 	await prisma.corelabStudyMembership.deleteMany();
 	await prisma.corelabSite.deleteMany();
@@ -565,6 +571,27 @@ async function main() {
 		},
 	});
 	console.log('✅ Created CoreLab closing study:', closedStudy.code);
+
+	const wallMotionSet = await prisma.corelabValueSet.create({
+		data: {
+			code: 'wall_motion', name: 'Wall motion', modality: 'CMR',
+			description: 'Segmental wall motion grading',
+			items: { create: [
+				{ code: 'normal', label: 'Normal', colour: '#ECFDF5', order: 0 },
+				{ code: 'hypokinetic', label: 'Hypokinetic', colour: '#FEFCE8', order: 1 },
+				{ code: 'akinetic', label: 'Akinetic', colour: '#FEF2F2', order: 2 },
+			] },
+		},
+		select: { id: true },
+	});
+	await prisma.corelabLibraryVariable.createMany({
+		data: [
+			{ code: 'lvef', name: 'LVEF', modality: 'CMR', type: 'numeric', params: { unit: '%', min: 10, max: 80, required: true } },
+			{ code: 'lv_edv', name: 'LV EDV', modality: 'CMR', type: 'numeric', params: { unit: 'mL', required: true } },
+			{ code: 'wall_motion_segments', name: 'Wall motion segments', modality: 'CMR', type: 'segment_categorical', params: { segmentCount: 17, required: true }, valueSetId: wallMotionSet.id },
+		],
+	});
+	console.log('✅ Created CoreLab library: 1 value set, 3 variables');
 
 	console.log('✅ Created CoreLab training and calibration:', coreModule.title, studyQuizModule.title, calibrationCase.code);
 

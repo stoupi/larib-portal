@@ -18,6 +18,9 @@ export const fieldDefinitionSchema = z.object({
   longitudinal: z.boolean().optional(),
   defaultValue: z.unknown().optional(),
   calibrationTolerance: z.object({ absolute: z.number().nonnegative(), relativePercent: z.number().nonnegative() }).optional(),
+  valueSetId: z.string().optional(),
+  optionColours: z.record(z.string(), z.string()).optional(),
+  scale: z.object({ steps: z.number().int().min(2).max(10), render: z.enum(['stars', 'slider', 'buttons']) }).optional(),
 }).superRefine((field, context) => {
   if ((field.type === 'categorical' || field.type === 'segment_categorical' || field.type === 'series_availability') && !field.options?.length) {
     context.addIssue({ code: 'custom', message: `${field.id}: options required`, path: ['options'] })

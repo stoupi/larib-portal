@@ -2158,7 +2158,8 @@
       "patients": "Patients",
       "discordance": "Discordance",
       "export": "Export",
-      "trainingTab": "Training"
+      "trainingTab": "Training",
+      "crf": "CRF"
     },
     "config": {
       "infoTitle": "General information",
@@ -2845,6 +2846,72 @@
       "page": "Page {page} of {pages}",
       "writeOnly": "The log is write-only: no line can be edited or deleted.",
       "signature": "Signature"
+    },
+    "library": {
+      "title": "Library",
+      "subtitle": "Reusable value sets, variables and blocks, partitioned by modality.",
+      "tabs": {
+        "valueSets": "Value sets",
+        "variables": "Variables",
+        "blocks": "Blocks"
+      },
+      "modality": "Modality",
+      "code": "Code",
+      "name": "Name",
+      "type": "Type",
+      "usedBy": "Variables",
+      "kind": "Kind",
+      "kinds": {
+        "SECTION": "Section",
+        "SEQUENCE": "Sequence"
+      },
+      "values": "Values",
+      "colour": "Colour",
+      "order": "Order",
+      "label": "Label",
+      "newValueSet": "New value set",
+      "newVariable": "New variable",
+      "newBlock": "New block",
+      "save": "Save",
+      "saved": "Saved.",
+      "cancel": "Cancel",
+      "deprecated": "Deprecated",
+      "emptyValueSets": "No value set.",
+      "emptyVariables": "No variable.",
+      "emptyBlocks": "No block.",
+      "error": "The operation failed.",
+      "editor": {
+        "title": "CRF editor",
+        "subtitle": "Compose the form, measure the impact, then publish a version.",
+        "start": "Start a draft",
+        "draft": "Draft v{number}",
+        "published": "Published version: v{number}",
+        "noVersion": "No published version.",
+        "addSequence": "Add a sequence",
+        "addSection": "Add a section",
+        "addVariable": "Add a variable",
+        "fromLibrary": "From the library",
+        "remove": "Remove",
+        "sequenceName": "Sequence name",
+        "sectionName": "Section name",
+        "save": "Save the draft",
+        "saved": "Draft saved.",
+        "discard": "Discard the draft",
+        "discarded": "Draft discarded.",
+        "publish": "Publish the version",
+        "published_": "Version v{number} published.",
+        "impactTitle": "Impact on signed readings",
+        "impacts": {
+          "HARMLESS": "Harmless",
+          "CREATES_GAP": "Creates a gap",
+          "BREAKS_READING": "Breaks a reading"
+        },
+        "signedReadings": "{count} signed readings exist on this study.",
+        "noChange": "No change against the published version.",
+        "lockedField": "A variable identifier can no longer disappear: readings are signed.",
+        "emptyDefinition": "The CRF is empty.",
+        "preview": "Preview"
+      }
     }
   }
 }
