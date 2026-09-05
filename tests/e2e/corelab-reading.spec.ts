@@ -44,6 +44,11 @@ test('a reader imports a workbook, corrects a value, signs, and answers a docume
   await expect(page.getByLabel('LVEF', { exact: true })).toHaveValue('48')
   await expect(page.getByTestId('source-lvef')).toHaveText('Modified')
 
+  await page.getByRole('button', { name: /flag a problem/i }).click()
+  await page.getByRole('button', { name: /severe artefacts/i }).click()
+  await page.keyboard.press('Escape')
+  await expect(page.getByRole('button', { name: /flag a problem/i })).toHaveClass(/text-amber-600/)
+
   await page.getByRole('button', { name: /submit the patient/i }).dispatchEvent('click')
   await expect(page.getByText(/cannot sign/i)).toBeVisible()
 

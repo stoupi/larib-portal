@@ -61,6 +61,7 @@ export default async function ReadingPage({ params }: PageParams) {
         slots: context.slots,
         documents: context.documents,
         openFlags: context.flags.length,
+        flags: context.flags.map((flag) => ({ examId: flag.examId, sequenceId: flag.sequenceId, category: flag.category, note: flag.note })),
         documentReturn: documentReturn && context.assignment.status === 'RETURNED'
           ? { id: documentReturn.id, message: documentReturn.message, slotKeys: documentReturn.slotKeys }
           : null,

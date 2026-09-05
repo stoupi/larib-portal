@@ -10,11 +10,12 @@ import { createDebouncer } from '@/lib/corelab/debounce'
 import { readinessOf } from '@/lib/corelab/reading/readiness'
 import { FocusShell } from '../../components/crf/focus-shell'
 import { SequenceNav } from '../../components/crf/sequence-nav'
+import { SequenceFlagMenu, type SequenceFlag } from '../../components/crf/sequence-flag-menu'
 import { CrfForm } from '../../components/crf/crf-form'
 import { SignatureDialog } from '../../components/signature-dialog'
 import { DocumentSlots } from './document-slots'
 import { ReworkPanel, type ReworkPoint } from './rework-panel'
-import { resolveDocumentReturnAction, saveReadingValuesAction, submitReadingAction } from '../../actions-reading'
+import { resolveDocumentReturnAction, saveReadingValuesAction, setSequenceFlagAction, submitReadingAction } from '../../actions-reading'
 import { resubmitAfterReworkAction } from '../../actions-review'
 import type { CrfDefinition, DocumentSlot } from '@/lib/corelab/crf/schema'
 import type { FieldChange, FieldValue, ReadingValues } from '@/types/corelab'
@@ -35,6 +36,7 @@ type ReadingClientProps = {
     slots: DocumentSlot[]
     documents: Array<{ id: string; examId: string | null; slotKey: string; fileName: string; status: string }>
     openFlags: number
+    flags: Array<{ examId: string; sequenceId: string } & SequenceFlag>
     documentReturn: { id: string; message: string; slotKeys: string[] } | null
     rework: { id: string; points: ReworkPoint[] } | null
   }
@@ -76,6 +78,11 @@ export function ReadingClient({ context, definition, exams, initialValues, extra
       router.push(`/corelab/studies/${context.studyId}/readings`)
       router.refresh()
     },
+    onError: () => toast.error(t('error')),
+  })
+
+  const flagSequence = useAction(setSequenceFlagAction, {
+    onSuccess: () => router.refresh(),
     onError: () => toast.error(t('error')),
   })
 
@@ -208,6 +215,18 @@ export function ReadingClient({ context, definition, exams, initialValues, extra
         <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50 p-4">
           <p className="text-sm font-medium text-amber-900">{t('returned.banner')}</p>
           <p className="mt-1 text-sm text-amber-800">{t('returned.message', { message: extras.documentReturn.message })}</p>
+        </div>
+      ) : null}
+
+      {activeSequence ? (
+        <div className="mb-3 flex justify-end">
+          <SequenceFlagMenu
+            disabled={context.readOnly}
+            value={extras.flags.find((flag) => flag.examId === examId && flag.sequenceId === activeSequence.id) ?? null}
+            onChange={(next) =>
+              flagSequence.execute({ assignmentId: context.assignmentId, examId, sequenceId: activeSequence.id, flag: next })
+            }
+          />
         </div>
       ) : null}
 

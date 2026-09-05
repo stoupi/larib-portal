@@ -2711,7 +2711,8 @@
         "documentTitle": "Title",
         "added": "Document added."
       },
-      "error": "The operation failed."
+      "error": "The operation failed.",
+      "clearSequenceFlag": "Clear the flag"
     },
     "review": {
       "title": "Review: {code}",

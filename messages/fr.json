@@ -2709,7 +2709,8 @@
         "documentTitle": "Titre",
         "added": "Document ajouté."
       },
-      "error": "L'opération a échoué."
+      "error": "L'opération a échoué.",
+      "clearSequenceFlag": "Retirer le signalement"
     },
     "review": {
       "title": "Relecture : {code}",
