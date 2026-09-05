@@ -73,6 +73,7 @@ export async function getReadingForUser(assignmentId: string, userId: string): P
     select: READING_SELECT,
   })
   if (!assignment || assignment.userId !== userId) return null
+  if (assignment.role === 'REVIEWER') return null
 
   const crfVersion = await getCurrentCrfVersion(assignment.patient.studyId)
   if (!crfVersion) return null

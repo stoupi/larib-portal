@@ -80,4 +80,9 @@ test('a reader never adjudicates a patient they read themselves', async ({ page 
   const studyId = await miniStudyId(page)
   await page.goto(`/en/corelab/studies/${studyId}/reviews`, { timeout: 60000 })
   await expect(page.getByText(/no patient to review/i)).toBeVisible()
+
+  await page.context().clearCookies()
+  await login(page, 'corelab-reader-1@larib-portal.test')
+  await page.goto(`/en/corelab/studies/${studyId}/readings`, { timeout: 60000 })
+  await expect(page.getByRole('cell', { name: 'MINI-002' })).toHaveCount(0)
 })
