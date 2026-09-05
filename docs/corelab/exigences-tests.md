@@ -26,7 +26,12 @@ Mise à jour au lot 8.
 | 19 | Les identifiants patients ne quittent jamais un e-mail | Pseudonymisation | `lib/email/corelab-assignment-template.test.ts` « never names a patient » |
 | 20 | Les exports alignent les segments sur 17 colonnes | Décision 1 du cadre | `lib/corelab/export/rows.test.ts` (16/17 segments) |
 
+| 21 | Une valeur retirée d'un jeu reste si une lecture signée l'utilise | Décision 8 du cadre | `lib/services/corelab/library.ts` `saveValueSet` / `valueIsSigned` (dépréciation au lieu de suppression) |
+| 22 | Un identifiant de variable ne disparaît pas après une signature | Intégrité des exports | `lib/corelab/crf/diff-versions.ts` `assertLockedIdsKept` (test unitaire) ; `publishDraft` |
+| 23 | Publier une version annonce son impact sur les lectures signées | Gestion du changement | `diffVersions` / `worstImpact` (6 tests) ; E2E `corelab-library.spec.ts` |
+| 24 | Le CRF d'une étude est une copie, jamais un lien vers la bibliothèque | Décision du modèle de bibliothèque | `lib/services/corelab/library.ts` `variableToField` ; l'éditeur écrit la définition dans la version |
+
 ## Ce qui n'est pas encore couvert
 
-- Export **Calibration** et **Archive complète** : écrans annoncés, génération à écrire.
 - Rappels quotidiens : la sélection est testée en unitaire, l'envoi réel n'a pas de test d'intégration (Resend absent en test).
+- L'éditeur de CRF ne propose pas encore l'insertion de blocs entiers ni la promotion d'un champ local vers la bibliothèque.
