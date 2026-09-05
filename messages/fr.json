@@ -2391,7 +2391,10 @@
         "requirementsSaved": "Exigences enregistrées.",
         "moveUp": "Monter",
         "moveDown": "Descendre",
-        "cancel": "Annuler"
+        "cancel": "Annuler",
+        "edit": "Modifier",
+        "archiveConfirm": "Archiver ce module ? Il disparaît des listes mais les complétions restent.",
+        "error": "L'opération a échoué."
       }
     },
     "calibration": {

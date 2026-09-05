@@ -131,3 +131,17 @@ test('a reader trains, calibrates and is certified, then reaches production', as
   await expect(page.getByText(/Décision de l'investigateur/)).toBeVisible()
   await expect(page.getByText('Slightly high but acceptable')).toBeVisible()
 })
+
+test('the data manager edits then archives a training module', async ({ page }) => {
+  await login(page, 'corelab-admin@larib-portal.test')
+  await page.goto('/en/corelab/admin/training', { timeout: 60000 })
+  const row = page.locator('tr', { hasText: 'Core lab reading principles' })
+  await row.getByRole('button', { name: /^edit$/i }).click()
+  await page.getByRole('dialog').getByLabel(/^title$/i).fill('Core lab reading principles v2')
+  await page.getByRole('dialog').getByRole('button', { name: /^save$/i }).click()
+  await expect(page.locator('tr', { hasText: 'principles v2' })).toBeVisible({ timeout: 60000 })
+
+  await page.locator('tr', { hasText: 'principles v2' }).getByRole('button', { name: /^archive$/i }).click()
+  await page.getByRole('alertdialog').getByRole('button', { name: /^archive$/i }).click()
+  await expect(page.locator('tr', { hasText: 'principles v2' })).toHaveCount(0, { timeout: 60000 })
+})

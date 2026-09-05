@@ -9,6 +9,7 @@ import { listModules } from '@/lib/services/corelab/training'
 import { listStudies } from '@/lib/services/corelab/studies'
 import { prisma } from '@/lib/prisma'
 import { ModuleDialog } from './module-dialog'
+import { ModuleRowActions } from './module-row-actions'
 import { VideoUpload } from './video-upload'
 
 type PageParams = { params: Promise<{ locale: 'en' | 'fr' }> }
@@ -54,6 +55,7 @@ export default async function AdminTrainingPage({ params }: PageParams) {
                   <TableHead>{t('version')}</TableHead>
                   <TableHead>{t('usedBy')}</TableHead>
                   <TableHead>{t('video')}</TableHead>
+                  <TableHead />
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -69,6 +71,17 @@ export default async function AdminTrainingPage({ params }: PageParams) {
                     <TableCell className="text-text-secondary">{(usedBy.get(trainingModule.id) ?? []).join(', ') || '—'}</TableCell>
                     <TableCell>
                       {trainingModule.type === 'VIDEO' ? <VideoUpload moduleId={trainingModule.id} /> : '—'}
+                    </TableCell>
+                    <TableCell>
+                      <ModuleRowActions
+                        module={{
+                          id: trainingModule.id,
+                          title: trainingModule.title,
+                          description: trainingModule.description,
+                          durationMinutes: trainingModule.durationMinutes,
+                          order: trainingModule.order,
+                        }}
+                      />
                     </TableCell>
                   </TableRow>
                 ))}

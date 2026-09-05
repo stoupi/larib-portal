@@ -2393,7 +2393,10 @@
         "requirementsSaved": "Requirements saved.",
         "moveUp": "Move up",
         "moveDown": "Move down",
-        "cancel": "Cancel"
+        "cancel": "Cancel",
+        "edit": "Edit",
+        "archiveConfirm": "Archive this module? It leaves the lists but completions stay.",
+        "error": "The operation failed."
       }
     },
     "calibration": {
