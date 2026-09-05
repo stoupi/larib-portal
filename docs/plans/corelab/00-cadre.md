@@ -17,7 +17,7 @@
 | 0 | Clos | `01-lot0-securiser.md` |
 | 1 | Clos après revue de cohérence Portal | `02-lot1-droits-dates.md` et `docs/superpowers/specs/2026-09-02-corelab-lot1-closure-design.md` |
 | 2 à 9 | Clos | Plans correspondants dans ce dossier |
-| 10 | À faire — consolidation après revue (7 bugs, 8 écarts au plan, 4 améliorations) | `11-lot10-consolidation.md` |
+| 10 | Clos — consolidation après revue (7 bugs, 8 écarts au plan, 4 améliorations) | `11-lot10-consolidation.md` |
 
 La clôture fonctionnelle `fc2a5ce` a été publiée sur `origin/main` le 2 septembre 2026
 après une validation complète verte. Un nouvel agent peut commencer le lot 2 après

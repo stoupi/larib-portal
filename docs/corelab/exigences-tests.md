@@ -30,8 +30,12 @@ Mise à jour au lot 8.
 | 22 | Un identifiant de variable ne disparaît pas après une signature | Intégrité des exports | `lib/corelab/crf/diff-versions.ts` `assertLockedIdsKept` (test unitaire) ; `publishDraft` |
 | 23 | Publier une version annonce son impact sur les lectures signées | Gestion du changement | `diffVersions` / `worstImpact` (6 tests) ; E2E `corelab-library.spec.ts` |
 | 24 | Le CRF d'une étude est une copie, jamais un lien vers la bibliothèque | Décision du modèle de bibliothèque | `lib/services/corelab/library.ts` `variableToField` ; l'éditeur écrit la définition dans la version |
+| 25 | Un relecteur n'a pas de formulaire de lecture sur le patient qu'il arbitre | Indépendance de la relecture | `lib/services/corelab/readings.ts` `getReadingForUser` (rôle `REVIEWER` refusé) ; E2E `corelab-review.spec.ts` |
+| 26 | Une reprise resoumise est signée et clôt la demande | Traçabilité de la non-conformité | `resubmitAfterReworkAction` + `markReworkResubmitted` ; E2E `corelab-review.spec.ts` (panneau de reprise, points traités, signature) |
+| 27 | Aucun cas de calibration n'est assigné sans référence signée | Qualification du personnel | `lib/services/corelab/calibration.ts` `assignCases` (`REFERENCE_NOT_SIGNED`) ; E2E `corelab-training-calibration.spec.ts` |
+| 28 | Les taux de discordance sont calculés binôme par binôme | Exactitude des statistiques | `lib/corelab/review/pair-stats.ts` (2 tests unitaires) ; `discordanceStats` |
 
 ## Ce qui n'est pas encore couvert
 
-- Rappels quotidiens : la sélection est testée en unitaire, l'envoi réel n'a pas de test d'intégration (Resend absent en test).
-- L'éditeur de CRF ne propose pas encore l'insertion de blocs entiers ni la promotion d'un champ local vers la bibliothèque.
+- Rappels quotidiens : la sélection et le tri des retards sont testés en unitaire, l'envoi réel (Resend) n'a pas de test d'intégration.
+- L'avertissement d'hydratation React du composant partagé `components/ui/multiselect.tsx` reste ouvert (hors périmètre CoreLab).
