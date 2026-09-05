@@ -7,6 +7,7 @@ import { useRouter } from '@/app/i18n/navigation'
 import { toast } from 'sonner'
 import { Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { SingleSelect } from '@/components/ui/single-select'
 import { discardDraftAction, publishDraftAction, saveDraftAction, saveVariableAction, startDraftAction } from '../../../actions-library'
 import { SequenceCard, type LibraryOption, type SequenceEdits } from './sequence-card'
 import { FieldDialog } from './field-dialog'
@@ -18,7 +19,7 @@ type CrfEditorProps = {
   definition: CrfDefinition
   changes: VersionChange[]
   worst: 'HARMLESS' | 'CREATES_GAP' | 'BREAKS_READING'
-  libraryVariables: LibraryOption[]
+  library: { variables: LibraryOption[]; blocks: Array<{ id: string; name: string; definition: unknown }> }
 }
 
 const IMPACT_STYLE: Record<string, string> = {
@@ -27,12 +28,12 @@ const IMPACT_STYLE: Record<string, string> = {
   BREAKS_READING: 'text-red-600',
 }
 
-export function CrfEditor({ context, definition, changes, worst, libraryVariables }: CrfEditorProps) {
+export function CrfEditor({ context, definition, changes, worst, library }: CrfEditorProps) {
   const t = useTranslations('corelab.library.editor')
   const router = useRouter()
   const [draft, setDraft] = useState<CrfDefinition>(definition)
   const [editing, setEditing] = useState<{ field: FieldDefinition; apply: (next: FieldDefinition) => void } | null>(null)
-  const knownCodes = new Set(libraryVariables.map((variable) => variable.code))
+  const knownCodes = new Set(library.variables.map((variable) => variable.code))
 
   const promote = useAction(saveVariableAction, {
     onSuccess: () => {
@@ -76,6 +77,12 @@ export function CrfEditor({ context, definition, changes, worst, libraryVariable
         <Button className="mt-4" onClick={() => start.execute({ studyId: context.studyId })}>{t('start')}</Button>
       </section>
     )
+  }
+
+  function filled(): CrfDefinition {
+    return draft
+      .map((sequence) => ({ ...sequence, sections: sequence.sections.filter((section) => section.fields.length > 0) }))
+      .filter((sequence) => sequence.sections.length > 0)
   }
 
   function addSequence() {
@@ -142,7 +149,7 @@ export function CrfEditor({ context, definition, changes, worst, libraryVariable
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <Button variant="outline" size="sm" onClick={() => save.execute({ studyId: context.studyId, definition: draft })}>{t('save')}</Button>
+          <Button variant="outline" size="sm" onClick={() => save.execute({ studyId: context.studyId, definition: filled() })}>{t('save')}</Button>
           <Button variant="ghost" size="sm" onClick={() => discard.execute({ studyId: context.studyId })}>{t('discard')}</Button>
           <Button size="sm" onClick={() => publish.execute({ studyId: context.studyId })}>{t('publish')}</Button>
         </div>
@@ -174,13 +181,27 @@ export function CrfEditor({ context, definition, changes, worst, libraryVariable
             key={sequence.id}
             sequence={sequence}
             edits={editsFor(sequence, index)}
-            libraryVariables={libraryVariables}
+            libraryVariables={library.variables}
             knownCodes={knownCodes}
           />
         ))}
-        <Button variant="outline" className="gap-2" onClick={addSequence}>
-          <Plus className="h-4 w-4" />{t('addSequence')}
-        </Button>
+        <div className="flex flex-wrap items-center gap-2">
+          <Button variant="outline" className="gap-2" onClick={addSequence}>
+            <Plus className="h-4 w-4" />{t('addSequence')}
+          </Button>
+          {library.blocks.length === 0 ? null : (
+            <SingleSelect
+              className="w-72"
+              placeholder={t('insertBlock')}
+              options={library.blocks.map((block) => ({ value: block.id, label: block.name }))}
+              value=""
+              onChange={(value) => {
+                const block = library.blocks.find((entry) => entry.id === value)
+                if (block) setDraft([...draft, block.definition as SequenceDefinition])
+              }}
+            />
+          )}
+        </div>
       </section>
 
       <FieldDialog

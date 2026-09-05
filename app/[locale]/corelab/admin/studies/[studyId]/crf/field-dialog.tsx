@@ -32,7 +32,7 @@ export function FieldDialog({ field, onClose, onSave }: FieldDialogProps) {
         </DialogHeader>
         <div className="space-y-3">
           <div className="space-y-2">
-            <Label htmlFor="field-name">{t('sequenceName')}</Label>
+            <Label htmlFor="field-name">{t('fieldName')}</Label>
             <Input id="field-name" value={current.name} onChange={(event) => setDraft({ ...current, name: event.target.value })} />
           </div>
           <div className="flex items-center gap-2">
@@ -76,7 +76,7 @@ export function FieldDialog({ field, onClose, onSave }: FieldDialogProps) {
           ) : null}
         </div>
         <DialogFooter>
-          <Button onClick={() => onSave(current)}>{t('save')}</Button>
+          <Button onClick={() => onSave(current)}>{t('apply')}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

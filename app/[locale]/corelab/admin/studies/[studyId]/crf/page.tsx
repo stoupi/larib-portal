@@ -5,7 +5,7 @@ import { applicationLink } from '@/lib/application-link'
 import { canAdminApp } from '@/lib/permissions'
 import { prisma } from '@/lib/prisma'
 import { draftImpact, getDraft } from '@/lib/services/corelab/crf-editor'
-import { listValueSets, listVariables } from '@/lib/services/corelab/library'
+import { listBlocks, listValueSets, listVariables } from '@/lib/services/corelab/library'
 import { CrfEditor } from './crf-editor'
 
 type PageParams = { params: Promise<{ locale: 'en' | 'fr'; studyId: string }> }
@@ -16,11 +16,12 @@ export default async function StudyCrfEditorPage({ params }: PageParams) {
   if (!canAdminApp(session.user, 'CORELAB')) redirect(applicationLink(locale, '/corelab'))
 
   const t = await getTranslations({ locale, namespace: 'corelab.library.editor' })
-  const [draft, impact, variables, valueSets, published] = await Promise.all([
+  const [draft, impact, variables, valueSets, blocks, published] = await Promise.all([
     getDraft(studyId),
     draftImpact(studyId),
     listVariables(),
     listValueSets(),
+    listBlocks('SEQUENCE'),
     prisma.corelabCrfVersion.findFirst({
       where: { studyId, publishedAt: { not: null } },
       select: { number: true },
@@ -37,6 +38,7 @@ export default async function StudyCrfEditorPage({ params }: PageParams) {
         <p className="mt-1 text-sm text-text-secondary">{t('subtitle')}</p>
       </div>
       <CrfEditor
+        key={draft?.id ?? 'no-draft'}
         context={{
           studyId,
           draftNumber: draft?.number ?? null,
@@ -46,13 +48,16 @@ export default async function StudyCrfEditorPage({ params }: PageParams) {
         definition={draft?.definition ?? []}
         changes={impact?.changes ?? []}
         worst={impact?.worst ?? 'HARMLESS'}
-        libraryVariables={variables.map((variable) => ({
-          id: variable.id,
-          code: variable.code,
-          name: variable.name,
-          type: variable.type,
-          options: (itemsOf.get(variable.valueSet?.id ?? '') ?? []).map((item) => item.label),
-        }))}
+        library={{
+          variables: variables.map((variable) => ({
+            id: variable.id,
+            code: variable.code,
+            name: variable.name,
+            type: variable.type,
+            options: (itemsOf.get(variable.valueSet?.id ?? '') ?? []).map((item) => item.label),
+          })),
+          blocks: blocks.map((block) => ({ id: block.id, name: block.name, definition: block.definition })),
+        }}
       />
     </div>
   )

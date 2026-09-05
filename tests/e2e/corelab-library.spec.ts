@@ -47,9 +47,24 @@ test('a draft CRF measures its impact before publication', async ({ page }) => {
   await expect(page.getByTestId('impact')).toBeVisible({ timeout: 60000 })
   await expect(page.getByText(/no change against the published version/i)).toBeVisible()
 
+  await expect(page.getByTestId('sequence-cine')).toBeVisible()
   await page.getByRole('button', { name: /add a sequence/i }).click()
-  await page.getByText(/from the library/i).first().click()
+  const created = page.getByTestId('sequence-sequence_2')
+  await expect(created).toBeVisible()
+  await expect(created.getByLabel(/section name/i)).toHaveCount(1)
+  await created.getByRole('button', { name: /add a section/i }).click()
+  await expect(created.getByLabel(/section name/i)).toHaveCount(2)
+
+  await created.getByText(/from the library/i).first().click()
   await page.getByRole('option', { name: 'LV EDV' }).click()
+  await page.keyboard.press('Escape')
+  await expect(created.getByRole('listitem').filter({ hasText: 'LV EDV' })).toBeVisible()
+
+  await created.getByRole('button', { name: /^edit$/i }).click()
+  await page.getByRole('dialog').getByRole('switch').click()
+  await page.getByRole('dialog').getByRole('button', { name: /^apply$/i }).click()
+  await expect(created.getByRole('listitem').filter({ hasText: 'numeric · *' })).toBeVisible()
+
   await page.getByRole('button', { name: /save the draft/i }).click()
   await expect(page.getByTestId('worst-impact')).toBeVisible({ timeout: 60000 })
 

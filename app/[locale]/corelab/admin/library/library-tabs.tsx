@@ -13,6 +13,7 @@ import { SingleSelect } from '@/components/ui/single-select'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { saveValueSetAction, saveVariableAction } from '../actions-library'
+import { BlockDialog } from './block-dialog'
 import type { LibraryBlock, LibraryVariable, ValueSet } from '@/lib/services/corelab/library'
 
 type Tab = 'valueSets' | 'variables' | 'blocks'
@@ -270,6 +271,9 @@ export function LibraryTabs({ valueSets, variables, blocks }: LibraryTabsProps) 
 
       {tab === 'blocks' ? (
         <section className="rounded-2xl border border-border bg-white p-6">
+          <div className="mb-4 flex justify-end">
+            <BlockDialog />
+          </div>
           {blocks.length === 0 ? (
             <p className="text-sm text-text-secondary">{t('emptyBlocks')}</p>
           ) : (

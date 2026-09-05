@@ -53,7 +53,7 @@ export function SequenceCard({ sequence, edits, libraryVariables, knownCodes }: 
   const [pick, setPick] = useState<Record<string, string>>({})
 
   return (
-    <div className="rounded-2xl border border-border bg-white p-5">
+    <div className="rounded-2xl border border-border bg-white p-5" data-testid={`sequence-${sequence.id}`}>
       <div className="flex items-center gap-2">
         <Input
           className="max-w-xs"

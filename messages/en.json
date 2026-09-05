@@ -2939,8 +2939,12 @@
         "promote": "Add to the library",
         "promoted": "Variable added to the library.",
         "edit": "Edit",
-        "insertBlock": "Insert a library sequence"
-      }
+        "insertBlock": "Insert a library sequence",
+        "fieldName": "Variable name",
+        "apply": "Apply"
+      },
+      "blockDefinition": "Definition (JSON)",
+      "invalidJson": "The JSON is invalid."
     }
   }
 }
