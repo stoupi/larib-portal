@@ -10,13 +10,14 @@
 
 ---
 
-## État d'avancement au 2 septembre 2026
+## État d'avancement au 5 septembre 2026
 
 | Lot | État | Référence |
 |---|---|---|
 | 0 | Clos | `01-lot0-securiser.md` |
 | 1 | Clos après revue de cohérence Portal | `02-lot1-droits-dates.md` et `docs/superpowers/specs/2026-09-02-corelab-lot1-closure-design.md` |
 | 2 à 9 | Clos | Plans correspondants dans ce dossier |
+| 10 | À faire — consolidation après revue (7 bugs, 8 écarts au plan, 4 améliorations) | `11-lot10-consolidation.md` |
 
 La clôture fonctionnelle `fc2a5ce` a été publiée sur `origin/main` le 2 septembre 2026
 après une validation complète verte. Un nouvel agent peut commencer le lot 2 après
@@ -56,6 +57,7 @@ avoir vérifié que son checkout contient cette clôture et le présent relevé 
 | 7 | Relecture, arbitrage, reprise, discordance | `08-lot7-relecture.md` | 6 | oui |
 | 8 | Export, journal, rappels, clôture | `09-lot8-export-audit-cloture.md` | 7 | non (livrable pendant la formation des lecteurs) |
 | 9 | Bibliothèque et éditeur de CRF | `10-lot9-bibliotheque.md` | 8 | non (deuxième étude) |
+| 10 | Consolidation : bugs, écarts, améliorations | `11-lot10-consolidation.md` | 9 | oui (bugs 10.1 à 10.7 avant la mise en production) |
 
 Les lots 5 et 4 peuvent être menés en parallèle par deux sessions **à condition** d'utiliser deux worktrees (voir `[[concurrent-sessions-shared-worktree]]`). Sinon, dans l'ordre.
 
