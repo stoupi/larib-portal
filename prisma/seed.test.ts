@@ -418,6 +418,13 @@ async function main() {
 		],
 	});
 
+	await prisma.corelabTrainingCompletion.createMany({
+		data: [corelabPiUser.id, corelabMemberUser.id, corelabReader2User.id].flatMap((userId) => [
+			{ userId, moduleId: coreModule.id, moduleVersion: 1 },
+			{ userId, moduleId: studyQuizModule.id, moduleVersion: 1, score: 100 },
+		]),
+	});
+
 	const goldStandard = {
 		'1': {
 			cine: {
