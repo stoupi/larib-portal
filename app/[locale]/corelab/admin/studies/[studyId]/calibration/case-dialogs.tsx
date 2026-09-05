@@ -64,7 +64,11 @@ export function CaseDialogs({ studyId, cases, readers }: { studyId: string; case
       setSelectedReaders([])
       router.refresh()
     },
-    onError: ({ error }) => toast.error(error.serverError === 'READER_NOT_IN_CALIBRATION' ? t('assignHelp') : t('error')),
+    onError: ({ error }) => {
+      if (error.serverError === 'READER_NOT_IN_CALIBRATION') return toast.error(t('assignHelp'))
+      if (error.serverError === 'REFERENCE_NOT_SIGNED') return toast.error(t('referenceNotSigned'))
+      toast.error(t('error'))
+    },
   })
 
   function toggle(list: string[], value: string): string[] {

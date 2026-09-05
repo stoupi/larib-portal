@@ -2507,7 +2507,8 @@
       "fail": "Échec",
       "decided": "Décision enregistrée.",
       "noSubmission": "Ce lecteur n'a encore rien soumis.",
-      "error": "L'opération a échoué."
+      "error": "L'opération a échoué.",
+      "referenceNotSigned": "La référence de ce cas n'est pas signée : signez-la avant d'assigner."
     },
     "capability": {
       "canRead": "Lire",

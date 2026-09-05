@@ -436,6 +436,18 @@ async function main() {
 			goldStandard, goldStandardUserId: corelabPiUser.id,
 		},
 	});
+	const goldSignature = await prisma.corelabSignature.create({
+		data: {
+			userId: corelabPiUser.id, role: 'REFERENCE_AUTHOR', reason: 'Seeded reference',
+			entityType: 'gold_standard', entityId: calibrationCase.id, studyId: mirStudy.id,
+		},
+		select: { id: true },
+	});
+	await prisma.corelabCalibrationCase.update({
+		where: { id: calibrationCase.id },
+		data: { goldStandardSignatureId: goldSignature.id },
+		select: { id: true },
+	});
 	const mirSite = await prisma.corelabSite.findFirstOrThrow({ where: { studyId: mirStudy.id, code: 'CHU-DIJ-1' }, select: { id: true } });
 	for (let index = 1; index <= 6; index += 1) {
 		await prisma.corelabPatient.create({

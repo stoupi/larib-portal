@@ -2509,7 +2509,8 @@
       "fail": "Fail",
       "decided": "Decision recorded.",
       "noSubmission": "This reader has not submitted anything yet.",
-      "error": "The operation failed."
+      "error": "The operation failed.",
+      "referenceNotSigned": "This case's reference is not signed: sign it before assigning."
     },
     "capability": {
       "canRead": "Read",

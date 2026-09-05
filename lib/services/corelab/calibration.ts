@@ -137,6 +137,11 @@ export async function assignCases(
   const refused = userIds.filter((userId) => !allowed.has(userId))
   if (refused.length > 0) throw new Error('READER_NOT_IN_CALIBRATION')
 
+  const unsigned = await prisma.corelabCalibrationCase.count({
+    where: { id: { in: caseIds }, goldStandardSignatureId: null },
+  })
+  if (unsigned > 0) throw new Error('REFERENCE_NOT_SIGNED')
+
   let created = 0
   for (const caseId of caseIds) {
     for (const userId of userIds) {
