@@ -12,7 +12,7 @@ import { SingleSelect } from '@/components/ui/single-select'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Link } from '@/app/i18n/navigation'
-import { saveDraftAssignmentsAction, validateAssignmentsAction } from '../../../actions-assignment'
+import { saveDraftAssignmentsAction, setReviewerAction, validateAssignmentsAction } from '../../../actions-assignment'
 import { canValidateDraft } from '@/lib/corelab/assignment/rules'
 import type { CohortPatient } from '@/lib/services/corelab/cohort'
 
@@ -49,6 +49,14 @@ export function PatientsTable({ studyId, patients, readers, reviewers, readOnly 
   const save = useAction(saveDraftAssignmentsAction, {
     onSuccess: () => {
       toast.success(t('saved'))
+      router.refresh()
+    },
+    onError: () => toast.error(t('error')),
+  })
+
+  const setReviewer = useAction(setReviewerAction, {
+    onSuccess: () => {
+      toast.success(t('reviewerSet'))
       router.refresh()
     },
     onError: () => toast.error(t('error')),
@@ -164,11 +172,18 @@ export function PatientsTable({ studyId, patients, readers, reviewers, readOnly 
                   <TableCell>
                     <SingleSelect
                       className="w-40"
-                      disabled={locked}
+                      disabled={readOnly}
                       placeholder={t('none')}
                       options={reviewers.filter((person) => !taken.includes(person.value))}
                       value={draft?.reviewer ?? ''}
-                      onChange={(value) => update(patient.id, { reviewer: value })}
+                      onChange={(value) => {
+                        if (locked) {
+                          setDrafts((current) => ({ ...current, [patient.id]: { ...current[patient.id], reviewer: value } }))
+                          setReviewer.execute({ studyId, patientId: patient.id, userId: value || null })
+                          return
+                        }
+                        update(patient.id, { reviewer: value })
+                      }}
                     />
                     {patient.reviewerMissing ? (
                       <span className="ml-2 rounded-md border border-red-200 bg-red-50 px-1.5 py-0.5 text-[11px] text-red-700">

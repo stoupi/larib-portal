@@ -2630,7 +2630,8 @@
         "comingSoon": "Le formulaire de lecture arrive au prochain lot.",
         "back": "Retour à mes lectures",
         "pending": "{count} lectures en attente"
-      }
+      },
+      "reviewerSet": "Relecteur enregistré."
     },
     "reading": {
       "title": "Lecture : {code}",

@@ -2632,7 +2632,8 @@
         "comingSoon": "The reading form arrives in the next release.",
         "back": "Back to my readings",
         "pending": "{count} pending readings"
-      }
+      },
+      "reviewerSet": "Reviewer saved."
     },
     "reading": {
       "title": "Reading: {code}",
