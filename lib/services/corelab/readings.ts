@@ -7,7 +7,7 @@ import { extractValues } from '@/lib/corelab/import/excel'
 import { r2GetObject } from '@/lib/services/r2-s3'
 import { assertStudyOpenForAssignment, getCurrentCrfVersion } from './studies'
 import { listSlots } from './documents'
-import { sendCorelabAssignmentEmail } from '@/lib/services/email'
+import { sendCorelabReviewEmail } from '@/lib/services/email'
 import type { CrfDefinition } from '@/lib/corelab/crf/schema'
 import type { ExamValues, FieldChange, ReadingValues } from '@/types/corelab'
 import type { CorelabSequenceFlagCategory, Prisma } from '@/app/generated/prisma'
@@ -328,16 +328,13 @@ export async function notifyReviewerIfReady(patientId: string, origin: string): 
     select: { id: true },
   })
 
-  await sendCorelabAssignmentEmail({
+  await sendCorelabReviewEmail({
+    kind: 'REVIEW_READY',
     to: reviewer.user.email,
-    readerName: [reviewer.user.firstName, reviewer.user.lastName].filter(Boolean).join(' ').trim() || reviewer.user.email,
+    personName: [reviewer.user.firstName, reviewer.user.lastName].filter(Boolean).join(' ').trim() || reviewer.user.email,
     studyName: patient.study.name,
-    studyCode: patient.study.code,
-    patientCount: 1,
-    examCount: patient.exams.length,
     dueDate: dueDate.toISOString().slice(0, 10),
-    pace: null,
-    readingsUrl: `${origin}/en/corelab/studies/${patient.study.id}/readings`,
+    url: `${origin}/en/corelab/studies/${patient.study.id}/reviews`,
   })
 
   return { notified: true }

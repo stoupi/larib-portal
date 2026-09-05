@@ -18,6 +18,7 @@ import {
   type RecapStatusValue,
 } from '@/lib/publications/recap'
 import type { AcceptedPaper } from '@/lib/publications/accepted-recap'
+import { renderCorelabReviewEmail, type ReviewEmailParams } from '@/lib/email/corelab-review-template'
 
 export async function sendWelcomeEmail(params: WelcomeEmailParams): Promise<{ id: string } | { error: string }>
 {
@@ -1050,6 +1051,19 @@ export async function sendCorelabAssignmentEmail(params: CorelabAssignmentMailPa
   if (!apiKey) return { ok: false }
   const fromEmail = process.env.RESEND_FROM || 'noreply@your-domain.com'
   const { subject, text, html } = renderCorelabAssignmentEmail(params)
+  const res = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ from: `Larib Portal <${fromEmail}>`, to: [params.to], subject, text, html }),
+  })
+  return { ok: res.ok }
+}
+
+export async function sendCorelabReviewEmail(params: ReviewEmailParams & { to: string }): Promise<{ ok: boolean }> {
+  const apiKey = process.env.RESEND_API_KEY
+  if (!apiKey) return { ok: false }
+  const fromEmail = process.env.RESEND_FROM || 'noreply@your-domain.com'
+  const { subject, text, html } = renderCorelabReviewEmail(params)
   const res = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },

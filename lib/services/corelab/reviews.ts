@@ -2,7 +2,7 @@ import { prisma } from '@/lib/prisma'
 import { toJsonValue } from '@/lib/corelab/crf/json'
 import { compareReadings, comparedKey, finalValueFor, reviewComplete, type ComparedField, type DecisionType } from '@/lib/corelab/review/compare'
 import { assertStudyOpenForPatient, getCurrentCrfVersion } from './studies'
-import { sendCorelabAssignmentEmail } from '@/lib/services/email'
+import { sendCorelabReviewEmail } from '@/lib/services/email'
 import type { CrfDefinition, DiscordanceThreshold } from '@/lib/corelab/crf/schema'
 import type { ReadingValues } from '@/types/corelab'
 import type { Prisma } from '@/app/generated/prisma'
@@ -184,16 +184,13 @@ export async function requestRework(
     select: { user: { select: { firstName: true, lastName: true, email: true } } },
   })
   for (const reader of readers) {
-    await sendCorelabAssignmentEmail({
+    await sendCorelabReviewEmail({
+      kind: 'REWORK_REQUESTED',
       to: reader.user.email,
-      readerName: [reader.user.firstName, reader.user.lastName].filter(Boolean).join(' ').trim() || reader.user.email,
+      personName: [reader.user.firstName, reader.user.lastName].filter(Boolean).join(' ').trim() || reader.user.email,
       studyName: study.name,
-      studyCode: study.code,
-      patientCount: 1,
-      examCount: context.patient.exams.length,
-      dueDate: new Date().toISOString().slice(0, 10),
-      pace: null,
-      readingsUrl: `${origin}/en/corelab/studies/${study.id}/readings`,
+      dueDate: null,
+      url: `${origin}/en/corelab/studies/${study.id}/readings`,
     })
   }
 
