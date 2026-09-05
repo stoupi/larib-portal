@@ -65,6 +65,7 @@ export function ReviewClient({ context, rows, initialDecisions, readers, sequenc
   const router = useRouter()
   const [decisions, setDecisions] = useState(initialDecisions)
   const [onlyDiscordances, setOnlyDiscordances] = useState(true)
+  const [activeSequenceId, setActiveSequenceId] = useState<string | null>(null)
   const [signing, setSigning] = useState(false)
   const [reworking, setReworking] = useState(false)
   const [reworkSelection, setReworkSelection] = useState<Record<string, boolean>>({})
@@ -98,7 +99,9 @@ export function ReviewClient({ context, rows, initialDecisions, readers, sequenc
     () => rows.filter((row) => (row.level === 'MINOR' || row.level === 'MAJOR') && !decisions[row.key]),
     [rows, decisions],
   )
-  const visible = onlyDiscordances ? rows.filter((row) => row.level === 'MINOR' || row.level === 'MAJOR') : rows
+  const visible = rows
+    .filter((row) => !onlyDiscordances || row.level === 'MINOR' || row.level === 'MAJOR')
+    .filter((row) => activeSequenceId === null || row.sequenceId === activeSequenceId)
 
   function decide(row: ComparedRow, decision: DecisionType, customValue?: unknown) {
     setDecisions((current) => ({ ...current, [row.key]: { decision, customValue: customValue ?? null } }))
@@ -151,10 +154,15 @@ export function ReviewClient({ context, rows, initialDecisions, readers, sequenc
               (row) => row.sequenceId === sequence.id && (row.level === 'MINOR' || row.level === 'MAJOR'),
             ).length
             return (
-              <div key={sequence.id} className="flex items-center justify-between rounded-lg px-3 py-2 text-sm">
-                <span className="text-text-primary">{sequence.name}</span>
-                <span className={discordances > 0 ? 'text-amber-700' : 'text-text-secondary'}>{discordances}</span>
-              </div>
+              <button
+                key={sequence.id}
+                type="button"
+                onClick={() => setActiveSequenceId(activeSequenceId === sequence.id ? null : sequence.id)}
+                className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm ${activeSequenceId === sequence.id ? 'bg-navy-700 text-white' : 'text-text-primary'}`}
+              >
+                <span>{sequence.name}</span>
+                <span className={activeSequenceId === sequence.id ? '' : discordances > 0 ? 'text-amber-700' : 'text-text-secondary'}>{discordances}</span>
+              </button>
             )
           })}
         </nav>
