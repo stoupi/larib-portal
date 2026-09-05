@@ -32,7 +32,7 @@ const MEMBER_STUDY_SELECT = {
   certificationPhase: true,
   calibrationStatus: true,
   study: {
-    select: { id: true, code: true, name: true, phase: true, modalities: true },
+    select: { id: true, code: true, name: true, phase: true, modalities: true, closedAt: true },
   },
 } satisfies Prisma.CorelabStudyMembershipSelect
 

@@ -23,6 +23,7 @@ type PatientsTableProps = {
   studyId: string
   patients: CohortPatient[]
   readers: Person[]
+  readOnly?: boolean
   reviewers: Person[]
 }
 
@@ -36,7 +37,7 @@ function initialDraft(patient: CohortPatient): Draft {
   }
 }
 
-export function PatientsTable({ studyId, patients, readers, reviewers }: PatientsTableProps) {
+export function PatientsTable({ studyId, patients, readers, reviewers, readOnly = false }: PatientsTableProps) {
   const t = useTranslations('corelab.patients')
   const router = useRouter()
   const [drafts, setDrafts] = useState<Record<string, Draft>>(
@@ -96,7 +97,9 @@ export function PatientsTable({ studyId, patients, readers, reviewers }: Patient
   return (
     <>
       <div className="flex justify-end">
-        <Button disabled={!anyValidDraft} onClick={() => setValidating(true)}>{t('validate')}</Button>
+        {readOnly ? null : (
+          <Button disabled={!anyValidDraft} onClick={() => setValidating(true)}>{t('validate')}</Button>
+        )}
       </div>
 
       <div className="mt-4 overflow-x-auto">
@@ -116,7 +119,7 @@ export function PatientsTable({ studyId, patients, readers, reviewers }: Patient
           <TableBody>
             {patients.map((patient) => {
               const draft = drafts[patient.id]
-              const locked = patient.status !== 'UNASSIGNED'
+              const locked = readOnly || patient.status !== 'UNASSIGNED'
               const taken = [draft?.reader1, draft?.reader2].filter(Boolean)
               return (
                 <TableRow key={patient.id} data-testid={`patient-${patient.code}`}>

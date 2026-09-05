@@ -53,12 +53,15 @@ test('a closed study refuses every write, not only in the interface', async ({ p
   await expect(page.getByText(/study closed on/i)).toBeVisible({ timeout: 60000 })
 
   await page.goto(`/en/corelab/admin/studies/${studyId}/team`, { timeout: 60000 })
-  await page.getByText(/pick a core lab account/i).click()
-  await page.getByRole('option', { name: /corelab-reader-2@/ }).click()
-  await page.keyboard.press('Escape')
-  await page.getByRole('button', { name: /add to study/i }).click()
-  await expect(page.getByText(/operation failed/i)).toBeVisible({ timeout: 30000 })
+  await expect(page.getByRole('button', { name: /add to study/i })).toHaveCount(0)
+  await page.goto(`/en/corelab/admin/studies/${studyId}/patients`, { timeout: 60000 })
+  await expect(page.getByRole('button', { name: /validate and send/i })).toHaveCount(0)
 
   await page.goto(`/en/corelab/admin/studies/${studyId}/export`, { timeout: 60000 })
   await expect(page.getByText(/readings_long/i).first()).toBeVisible({ timeout: 60000 })
+
+  await page.context().clearCookies()
+  await login(page, 'corelab-reader-1@larib-portal.test')
+  await page.goto('/en/corelab', { timeout: 60000 })
+  await expect(page.getByRole('link', { name: /^view$/i }).first()).toBeVisible({ timeout: 60000 })
 })

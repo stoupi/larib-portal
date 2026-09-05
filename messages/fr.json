@@ -2084,7 +2084,9 @@
       "calibrationAdmin": "Calibration de l'étude",
       "calibrationAdminHelp": "Saisir les références et certifier les lecteurs.",
       "documents": "Documents de l'étude",
-      "documentsHelp": "Protocole, charte et pièces de référence."
+      "documentsHelp": "Protocole, charte et pièces de référence.",
+      "consultStudy": "Consulter",
+      "closedNotice": "Étude clôturée le {date} : vos lectures restent consultables."
     },
     "admin": {
       "title": "Administration Core Lab",

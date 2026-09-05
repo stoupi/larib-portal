@@ -41,7 +41,7 @@ export function StudyCards({ memberships }: { memberships: MemberStudy[] }) {
                 href={`/corelab/studies/${membership.study.id}`}
                 className="inline-flex items-center gap-2 text-[13px] font-semibold uppercase tracking-wider text-coral-600"
               >
-                {t('home.openStudy')}
+                {membership.study.phase === 'CLOSED' ? t('home.consultStudy') : t('home.openStudy')}
                 <ArrowRight className="h-4 w-4" />
               </Link>
             </div>

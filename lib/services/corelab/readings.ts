@@ -29,7 +29,7 @@ const READING_SELECT = {
       studyId: true,
       readingMode: true,
       site: { select: { code: true } },
-      study: { select: { id: true, code: true, name: true, reviewDeadlineDays: true } },
+      study: { select: { id: true, code: true, name: true, phase: true, reviewDeadlineDays: true } },
       exams: { select: { id: true, index: true, modality: true, examDate: true, timeLabel: true }, orderBy: { index: 'asc' } },
     },
   },
@@ -102,7 +102,7 @@ export async function getReadingForUser(assignmentId: string, userId: string): P
     flags,
     documents,
     slots,
-    editable: EDITABLE.includes(assignment.status),
+    editable: EDITABLE.includes(assignment.status) && assignment.patient.study.phase !== 'CLOSED',
   }
 }
 
@@ -300,7 +300,7 @@ export async function notifyReviewerIfReady(patientId: string, origin: string): 
     where: { id: patientId },
     select: {
       studyId: true,
-      study: { select: { id: true, code: true, name: true, reviewDeadlineDays: true } },
+      study: { select: { id: true, code: true, name: true, phase: true, reviewDeadlineDays: true } },
       exams: { select: { id: true } },
       assignments: {
         select: { id: true, role: true, status: true, user: { select: { firstName: true, lastName: true, email: true } } },

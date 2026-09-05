@@ -29,7 +29,9 @@ export default async function StudyTeamPage({ params }: PageParams) {
         <p className="mt-1 max-w-3xl text-sm text-text-secondary">{t('subtitle')}</p>
       </section>
 
-      <AddMemberForm studyId={study.id} candidates={candidates} showProductionNotice={study.phase === 'PRODUCTION'} />
+      {study.phase === 'CLOSED' ? null : (
+        <AddMemberForm studyId={study.id} candidates={candidates} showProductionNotice={study.phase === 'PRODUCTION'} />
+      )}
 
       <section className="rounded-2xl border border-border bg-white p-6">
         <TeamTable studyId={study.id} members={members} />

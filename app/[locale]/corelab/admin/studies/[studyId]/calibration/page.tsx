@@ -32,6 +32,7 @@ export default async function StudyCalibrationPage({ params }: PageParams) {
   const tCapability = await getTranslations({ locale, namespace: 'corelab.capability' })
   const study = await getStudy(studyId)
   if (!study) notFound()
+  const closed = study.phase === 'CLOSED'
 
   const [cases, readers, crfVersion, authors] = await Promise.all([
     listCases(studyId),
@@ -68,11 +69,13 @@ export default async function StudyCalibrationPage({ params }: PageParams) {
       <section className="rounded-2xl border border-border bg-white p-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 className="text-lg font-semibold text-text-primary">{t('casesTitle')}</h2>
-          <CaseDialogs
-            studyId={studyId}
-            cases={cases.map((entry) => ({ id: entry.id, code: entry.code }))}
-            readers={eligibleReaders.map((reader) => ({ id: reader.userId, label: readerName(reader.user) }))}
-          />
+          {closed ? null : (
+            <CaseDialogs
+              studyId={studyId}
+              cases={cases.map((entry) => ({ id: entry.id, code: entry.code }))}
+              readers={eligibleReaders.map((reader) => ({ id: reader.userId, label: readerName(reader.user) }))}
+            />
+          )}
         </div>
 
         <div className="mt-4 overflow-x-auto">
@@ -114,7 +117,7 @@ export default async function StudyCalibrationPage({ params }: PageParams) {
                           caseId={calibrationCase.id}
                           value={calibrationCase.goldStandardUserId}
                           authors={authorOptions}
-                          disabled={Boolean(calibrationCase.goldStandardSignatureId)}
+                          disabled={closed || Boolean(calibrationCase.goldStandardSignatureId)}
                         />
                       </TableCell>
                       <TableCell className="text-text-secondary">

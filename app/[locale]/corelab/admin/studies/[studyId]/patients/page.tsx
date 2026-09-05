@@ -26,6 +26,7 @@ export default async function StudyPatientsPage({ params }: PageParams) {
   const t = await getTranslations({ locale, namespace: 'corelab.patients' })
   const study = await getStudy(studyId)
   if (!study) notFound()
+  const closed = study.phase === 'CLOSED'
 
   const [patients, members, load] = await Promise.all([
     listPatients(studyId),
@@ -50,16 +51,18 @@ export default async function StudyPatientsPage({ params }: PageParams) {
           <h2 className="text-lg font-semibold text-text-primary">{t('title')}</h2>
           <p className="mt-1 text-sm text-text-secondary">{t('subtitle')}</p>
         </div>
-        <Button asChild variant="outline">
-          <Link href={`/corelab/admin/studies/${studyId}/cohort/import`}>{t('importCohort')}</Link>
-        </Button>
+        {closed ? null : (
+          <Button asChild variant="outline">
+            <Link href={`/corelab/admin/studies/${studyId}/cohort/import`}>{t('importCohort')}</Link>
+          </Button>
+        )}
       </div>
 
       <section className="rounded-2xl border border-border bg-white p-6">
         {patients.length === 0 ? (
           <p className="text-sm text-text-secondary">{t('empty')}</p>
         ) : (
-          <PatientsTable studyId={studyId} patients={patients} readers={readers} reviewers={reviewers} />
+          <PatientsTable studyId={studyId} patients={patients} readers={readers} reviewers={reviewers} readOnly={closed} />
         )}
       </section>
 

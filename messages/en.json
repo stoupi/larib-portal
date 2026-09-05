@@ -2086,7 +2086,9 @@
       "calibrationAdmin": "Study calibration",
       "calibrationAdminHelp": "Author the references and certify the readers.",
       "documents": "Study documents",
-      "documentsHelp": "Protocol, charter and reference files."
+      "documentsHelp": "Protocol, charter and reference files.",
+      "consultStudy": "View",
+      "closedNotice": "Study closed on {date}: your readings stay available."
     },
     "admin": {
       "title": "Core Lab administration",

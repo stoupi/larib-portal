@@ -27,7 +27,7 @@ export default async function ReaderStudyPage({ params }: PageParams) {
       canAuthorReference: true,
       canCertify: true,
       certificationPhase: true,
-      study: { select: { name: true, code: true, phase: true, modalities: true } },
+      study: { select: { name: true, code: true, phase: true, modalities: true, closedAt: true } },
     },
   })
   if (!membership) notFound()
@@ -47,6 +47,14 @@ export default async function ReaderStudyPage({ params }: PageParams) {
         </div>
 
         <PhaseTrack phase={membership.canRead ? membership.certificationPhase : null} />
+
+        {membership.study.closedAt ? (
+          <p className="rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
+            {t('home.closedNotice', {
+              date: new Intl.DateTimeFormat(locale, { dateStyle: 'long', timeZone: 'UTC' }).format(membership.study.closedAt),
+            })}
+          </p>
+        ) : null}
 
         {membership.canAuthorReference || membership.canCertify ? (
           <section className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border bg-white p-6">
