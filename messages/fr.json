@@ -2080,7 +2080,11 @@
       "empty": "Aucune étude ne vous est encore attribuée. Le data manager vous ajoutera à l'équipe d'une étude.",
       "readerSubtitle": "Votre stade est propre à chaque étude : la production ne s'ouvre qu'une fois la calibration validée.",
       "openStudy": "Ouvrir l'étude",
-      "yourRole": "Votre rôle"
+      "yourRole": "Votre rôle",
+      "calibrationAdmin": "Calibration de l'étude",
+      "calibrationAdminHelp": "Saisir les références et certifier les lecteurs.",
+      "documents": "Documents de l'étude",
+      "documentsHelp": "Protocole, charte et pièces de référence."
     },
     "admin": {
       "title": "Administration Core Lab",

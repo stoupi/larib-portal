@@ -1,7 +1,6 @@
 import { prisma } from '@/lib/prisma'
 import { r2GetSignedDownloadUrl, r2PutObject } from '@/lib/services/r2-s3'
 import archiver from 'archiver'
-import { PassThrough } from 'node:stream'
 import {
   CALIBRATION_HEADERS, calibrationRows, longRows, reviewDecisionRows, toCsv, wideRows,
   type CalibrationExportRow, type ExportInput, type ExportValues,
@@ -192,26 +191,33 @@ export async function previewExport(studyId: string, kind: CorelabExportKind, li
 }
 
 async function buildArchive(studyId: string, input: ExportInput): Promise<{ buffer: Buffer; rowCount: number }> {
-  const archive = archiver('zip', { zlib: { level: 9 } })
-  const stream = new PassThrough()
-  const chunks: Buffer[] = []
-  stream.on('data', (chunk: Buffer) => chunks.push(chunk))
-  archive.pipe(stream)
-
   const long = shape('READINGS_LONG', input)
   const wide = shape('READINGS_WIDE', input)
   const decisions = shape('REVIEW_DECISIONS', input)
   const calibration = calibrationRows(await calibrationExportRows(studyId))
+  const auditCsv = await exportAuditCsv({ studyId, pageSize: 5000 })
+
+  const archive = archiver('zip', { zlib: { level: 9 } })
+  const chunks: Buffer[] = []
+  archive.on('data', (chunk: Buffer) => chunks.push(chunk))
+
+  // Archiver is itself a readable stream: consuming it directly avoids a
+  // PassThrough that never emits `end` when nothing else drains it.
+  const finished = new Promise<void>((resolve, reject) => {
+    archive.on('end', () => resolve())
+    archive.on('error', reject)
+    archive.on('warning', reject)
+  })
 
   archive.append(toCsv(long.headers, long.rows), { name: 'readings-long.csv' })
   archive.append(toCsv(wide.headers, wide.rows), { name: 'readings-wide.csv' })
   archive.append(toCsv(decisions.headers, decisions.rows), { name: 'review-decisions.csv' })
   archive.append(toCsv(CALIBRATION_HEADERS, calibration), { name: 'calibration.csv' })
   archive.append(JSON.stringify(input.definition, null, 2), { name: `crf-v${input.crfVersion}.json` })
-  archive.append(await exportAuditCsv({ studyId, pageSize: 5000 }), { name: 'audit.csv' })
+  archive.append(auditCsv, { name: 'audit.csv' })
 
-  await archive.finalize()
-  await new Promise((resolve) => stream.on('end', resolve))
+  void archive.finalize()
+  await finished
   return { buffer: Buffer.concat(chunks), rowCount: long.rowCount }
 }
 

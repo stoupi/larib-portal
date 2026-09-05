@@ -519,6 +519,16 @@ export const AUDITED_MODELS: Readonly<Record<string, AuditedModelConfig>> = {
     ignoredFields: [...BOOKKEEPING_FIELDS, 'definition'],
     referenceFields: {},
   },
+  CorelabExport: {
+    entity: 'CORELAB_EXPORT',
+    auditedFields: ['studyId', 'kind', 'fileName', 'fileKey', 'rowCount', 'requestedById'],
+    labelFields: ['fileName'],
+    buildLabel: (record) => joinLabel([text(record, 'kind'), text(record, 'fileName')]),
+    articleIdField: null,
+    studyIdField: 'studyId',
+    ignoredFields: [...BOOKKEEPING_FIELDS],
+    referenceFields: {},
+  },
 }
 
 export function auditConfigFor(model: string): AuditedModelConfig | null {

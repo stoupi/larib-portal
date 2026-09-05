@@ -48,6 +48,18 @@ export default async function ReaderStudyPage({ params }: PageParams) {
 
         <PhaseTrack phase={membership.canRead ? membership.certificationPhase : null} />
 
+        {membership.canAuthorReference || membership.canCertify ? (
+          <section className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border bg-white p-6">
+            <div>
+              <h2 className="text-base font-semibold text-text-primary">{t('home.calibrationAdmin')}</h2>
+              <p className="mt-0.5 text-sm text-text-secondary">{t('home.calibrationAdminHelp')}</p>
+            </div>
+            <Button asChild variant="outline">
+              <Link href={`/corelab/admin/studies/${studyId}/calibration`}>{t('calibration.title')}</Link>
+            </Button>
+          </section>
+        ) : null}
+
         {membership.canAdjudicate ? (
           <section className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border bg-white p-6">
             <div>
@@ -96,9 +108,17 @@ export default async function ReaderStudyPage({ params }: PageParams) {
               <Link href={`/corelab/studies/${studyId}/training`}>{t('training.open')}</Link>
             </Button>
           </section>
-        ) : (
-          <p className="text-sm text-text-secondary">{t('study.comingSoon')}</p>
-        )}
+        ) : null}
+
+        <section className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border bg-white p-6">
+          <div>
+            <h2 className="text-base font-semibold text-text-primary">{t('home.documents')}</h2>
+            <p className="mt-0.5 text-sm text-text-secondary">{t('home.documentsHelp')}</p>
+          </div>
+          <Button asChild variant="outline">
+            <Link href={`/corelab/studies/${studyId}/documents`}>{t('home.documents')}</Link>
+          </Button>
+        </section>
       </div>
     </div>
   )

@@ -16,6 +16,21 @@ type PageParams = {
   searchParams: Promise<Record<string, string | undefined>>
 }
 
+// Opaque cuids carry no meaning for a reader; the object column already names the row.
+function readableChanges(
+  action: string,
+  changes: Array<{ field: string; oldLabel: string | null; newLabel: string | null; oldValue: string | null; newValue: string | null }>,
+): string[] {
+  return changes
+    .filter((change) => !/Id$/.test(change.field) && change.field !== 'fileKey')
+    .map((change) => {
+      const before = change.oldLabel ?? change.oldValue
+      const after = change.newLabel ?? change.newValue ?? '—'
+      if (action === 'CREATE' || before === null) return `${change.field}: ${after}`
+      return `${change.field}: ${before} → ${after}`
+    })
+}
+
 const ACTION_STYLE: Record<string, string> = {
   CREATE: 'border-emerald-200 bg-emerald-50 text-emerald-700',
   UPDATE: 'border-amber-200 bg-amber-50 text-amber-800',
@@ -99,11 +114,7 @@ export default async function CorelabAuditPage({ params, searchParams }: PagePar
                       </span>
                     </TableCell>
                     <TableCell className="max-w-md text-xs text-text-secondary">
-                      {event.changes.length === 0
-                        ? '—'
-                        : event.changes
-                            .map((change) => `${change.field}: ${change.oldLabel ?? change.oldValue ?? '—'} → ${change.newLabel ?? change.newValue ?? '—'}`)
-                            .join(' · ')}
+                      {readableChanges(event.action, event.changes).join(' · ') || '—'}
                     </TableCell>
                     <TableCell className="text-text-secondary">{event.ipAddress || '—'}</TableCell>
                   </TableRow>

@@ -2082,7 +2082,11 @@
       "empty": "No study is assigned to you yet. A data manager will add you to a study team.",
       "readerSubtitle": "Your stage is specific to each study: production only opens once calibration is approved.",
       "openStudy": "Open study",
-      "yourRole": "Your role"
+      "yourRole": "Your role",
+      "calibrationAdmin": "Study calibration",
+      "calibrationAdminHelp": "Author the references and certify the readers.",
+      "documents": "Study documents",
+      "documentsHelp": "Protocol, charter and reference files."
     },
     "admin": {
       "title": "Core Lab administration",

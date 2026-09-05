@@ -98,3 +98,16 @@ describe('corelab registry', () => {
     expect(auditConfigFor('CorelabStudy')?.studyIdField).toBe('id')
   })
 })
+
+describe('corelab audit coverage', () => {
+  it('registers every CoreLab entity that the audit screen lists', () => {
+    const registered = new Set(Object.values(AUDITED_MODELS).map((config) => config.entity))
+    for (const entity of [
+      'CORELAB_STUDY', 'CORELAB_MEMBERSHIP', 'CORELAB_SIGNATURE', 'CORELAB_PATIENT',
+      'CORELAB_READING_VALUE', 'CORELAB_READING_SUBMISSION', 'CORELAB_REVIEW_DECISION',
+      'CORELAB_EXPORT', 'CORELAB_VALUE_SET', 'CORELAB_LIBRARY_VARIABLE',
+    ]) {
+      expect(registered.has(entity as never)).toBe(true)
+    }
+  })
+})
