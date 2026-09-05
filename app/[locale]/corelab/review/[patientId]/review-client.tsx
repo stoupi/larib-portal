@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { Fragment, useMemo, useState } from 'react'
 import { useAction } from 'next-safe-action/hooks'
 import { useTranslations } from 'next-intl'
 import { useRouter } from '@/app/i18n/navigation'
@@ -14,8 +14,11 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { FocusShell } from '../../components/crf/focus-shell'
 import { SignatureDialog } from '../../components/signature-dialog'
+import { SegmentComparison } from '../../components/crf/segment-comparison'
 import { requestReworkAction, saveDecisionsAction, signReviewAction } from '../../actions-review'
 import type { DecisionType } from '@/lib/corelab/review/compare'
+import type { FieldDefinition } from '@/lib/corelab/crf/schema'
+import type { SegmentValues } from '@/types/corelab'
 
 export type ComparedRow = {
   key: string
@@ -32,6 +35,8 @@ export type ComparedRow = {
   level: 'OK' | 'MINOR' | 'MAJOR' | 'NOT_COMPARED'
   average: number | null
   discordantSegments: number | null
+  discordantSegmentIds: number[]
+  field: FieldDefinition
 }
 
 type ReviewClientProps = {
@@ -179,7 +184,8 @@ export function ReviewClient({ context, rows, initialDecisions, readers, sequenc
           </TableHeader>
           <TableBody>
             {visible.map((row) => (
-              <TableRow key={row.key} data-testid={`compared-${row.fieldId}`}>
+              <Fragment key={row.key}>
+              <TableRow data-testid={`compared-${row.fieldId}`}>
                 <TableCell>
                   <span className="font-medium text-text-primary">{row.fieldName}</span>
                   <span className="block text-xs text-text-secondary">{row.sequenceName}</span>
@@ -238,6 +244,21 @@ export function ReviewClient({ context, rows, initialDecisions, readers, sequenc
                 </TableCell>
                 <TableCell className="text-text-primary" data-testid={`final-${row.fieldId}`}>{finalValueOf(row)}</TableCell>
               </TableRow>
+              {row.discordantSegments !== null ? (
+                <TableRow>
+                  <TableCell colSpan={5}>
+                    <SegmentComparison
+                      field={row.field}
+                      sides={[
+                        { label: t('reader1'), value: row.r1 as SegmentValues | undefined },
+                        { label: t('reader2'), value: row.r2 as SegmentValues | undefined },
+                      ]}
+                      highlight={row.discordantSegmentIds}
+                    />
+                  </TableCell>
+                </TableRow>
+              ) : null}
+              </Fragment>
             ))}
           </TableBody>
         </Table>

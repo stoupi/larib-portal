@@ -33,6 +33,9 @@ test('the reviewer settles the discordances, asks for a rework and signs the pat
   await expect(page.getByTestId('level-lvef')).toHaveText('Minor')
   await expect(page.getByTestId('level-lv_measurable')).toHaveText('Major')
   await expect(page.getByTestId('pending-count')).toHaveText(/2 discordances/)
+  await page.getByRole('button', { name: /all fields/i }).click()
+  await expect(page.getByRole('group', { name: 'Wall motion' })).toHaveCount(2)
+  await page.getByRole('button', { name: /discordances only/i }).click()
 
   await page.getByTestId('compared-lvef').getByRole('combobox').click()
   await page.getByRole('option', { name: 'Average' }).click()

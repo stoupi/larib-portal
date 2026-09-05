@@ -44,6 +44,8 @@ export default async function ReviewPage({ params }: PageParams) {
     level: entry.level,
     average: entry.average,
     discordantSegments: entry.segmentDiff?.count ?? null,
+    discordantSegmentIds: entry.segmentDiff?.discordant ?? [],
+    field: entry.field,
   }))
 
   const initialDecisions = Object.fromEntries(

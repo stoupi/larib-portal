@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { Fragment, useState } from 'react'
 import { useAction } from 'next-safe-action/hooks'
 import { useTranslations } from 'next-intl'
 import { useRouter } from '@/app/i18n/navigation'
@@ -12,6 +12,8 @@ import { FocusShell } from '@/app/[locale]/corelab/components/crf/focus-shell'
 import { SignatureDialog } from '@/app/[locale]/corelab/components/signature-dialog'
 import { decideCalibrationAction } from '@/app/[locale]/corelab/actions-calibration'
 import { comparisonTotals, type ComparisonRow } from '@/lib/corelab/calibration/comparison'
+import { SegmentComparison } from '../../../../../components/crf/segment-comparison'
+import type { SegmentValues } from '@/types/corelab'
 
 type Decision = 'CERTIFY' | 'ADDITIONAL_CASES' | 'FAIL'
 
@@ -109,7 +111,8 @@ export function ReviewClient({ context, cases, initialComments }: ReviewClientPr
               </TableHeader>
               <TableBody>
                 {visibleRows.map((row) => (
-                  <TableRow key={row.key}>
+                  <Fragment key={row.key}>
+                  <TableRow>
                     <TableCell>
                       <span className="font-medium text-text-primary">{row.fieldName}</span>
                       <span className="block text-xs text-text-secondary">{row.sequenceName}</span>
@@ -136,6 +139,21 @@ export function ReviewClient({ context, cases, initialComments }: ReviewClientPr
                       />
                     </TableCell>
                   </TableRow>
+                  {row.discordantSegments !== null ? (
+                    <TableRow>
+                      <TableCell colSpan={6}>
+                        <SegmentComparison
+                          field={row.field}
+                          sides={[
+                            { label: tReader('mine'), value: row.readerValue as SegmentValues | undefined },
+                            { label: tReader('gold'), value: row.goldValue as SegmentValues | undefined },
+                          ]}
+                          highlight={row.discordantSegmentIds}
+                        />
+                      </TableCell>
+                    </TableRow>
+                  ) : null}
+                  </Fragment>
                 ))}
               </TableBody>
             </Table>

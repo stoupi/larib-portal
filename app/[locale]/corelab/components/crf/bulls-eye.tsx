@@ -12,9 +12,10 @@ type BullsEyeProps = {
   value: SegmentValues | undefined
   onChange: (segments: SegmentValues) => void
   readOnly: boolean
+  highlight?: number[]
 }
 
-export function BullsEye({ field, value, onChange, readOnly }: BullsEyeProps) {
+export function BullsEye({ field, value, onChange, readOnly, highlight }: BullsEyeProps) {
   const t = useTranslations('corelab.form')
   const options = useMemo(() => field.options ?? [], [field.options])
   const segmentCount = field.segmentCount === 16 ? 16 : 17
@@ -72,8 +73,8 @@ export function BullsEye({ field, value, onChange, readOnly }: BullsEyeProps) {
               <path
                 d={shape.path}
                 fill={colour.fill}
-                stroke={colour.border}
-                strokeWidth={1.5}
+                stroke={highlight?.includes(shape.segment) ? '#d61f55' : colour.border}
+                strokeWidth={highlight?.includes(shape.segment) ? 3 : 1.5}
                 role="button"
                 aria-label={t('segment', { number: shape.segment })}
                 className={readOnly ? '' : 'cursor-pointer'}

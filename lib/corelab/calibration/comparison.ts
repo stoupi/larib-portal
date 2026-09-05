@@ -1,6 +1,6 @@
 import { compareToGoldStandard, type ToleranceVerdict } from '@/lib/corelab/crf/tolerance'
 import { compareSegmentMaps } from '@/lib/corelab/crf/segments'
-import type { CrfDefinition } from '@/lib/corelab/crf/schema'
+import type { CrfDefinition, FieldDefinition } from '@/lib/corelab/crf/schema'
 import type { ReadingValues, SegmentValues } from '@/types/corelab'
 
 export type ComparisonRow = {
@@ -15,6 +15,8 @@ export type ComparisonRow = {
   goldValue: unknown
   verdict: ToleranceVerdict
   discordantSegments: number | null
+  discordantSegmentIds: number[]
+  field: FieldDefinition
 }
 
 export function buildComparison(
@@ -34,7 +36,16 @@ export function buildComparison(
           if (readerValue === null && goldValue === null) continue
 
           const isSegment = field.type.startsWith('segment_')
+          const segmentDiff = isSegment
+            ? compareSegmentMaps(
+                readerValue as SegmentValues | undefined,
+                goldValue as SegmentValues | undefined,
+                field.segmentCount === 16 ? 16 : 17,
+              )
+            : null
           rows.push({
+            field,
+            discordantSegmentIds: segmentDiff?.discordant ?? [],
             key: `${examId}.${sequence.id}.${field.id}`,
             examId,
             sequenceId: sequence.id,
@@ -47,13 +58,7 @@ export function buildComparison(
             verdict: isSegment
               ? { delta: null, withinTolerance: true, rule: 'not_compared' }
               : compareToGoldStandard(field, readerValue, goldValue),
-            discordantSegments: isSegment
-              ? compareSegmentMaps(
-                  readerValue as SegmentValues | undefined,
-                  goldValue as SegmentValues | undefined,
-                  field.segmentCount === 16 ? 16 : 17,
-                ).count
-              : null,
+            discordantSegments: segmentDiff?.count ?? null,
           })
         }
       }
