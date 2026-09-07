@@ -1,132 +1,210 @@
-/* App shell: sidebar, role switcher, router, feedback channel. */
+/* App shell.
+   The portal sidebar lists the portal's applications and nothing else; the
+   module hangs its own navbar at the top of the content area, and its
+   second-level tabs under it — the pattern CoreLab uses
+   (app/[locale]/corelab/admin/components/admin-nav.tsx and study-tabs.tsx). */
 
 const ROLES = {
-  COORDINATOR: { label: 'Coordinateur', detail: 'Dr Théo Pezel — administre le module', person: 'tp' },
-  SENIOR: { label: 'Imageur senior', detail: 'A. Bernard — déclare et consulte', person: 'ab' },
-  FELLOW: { label: 'Fellow', detail: 'L. Aubry — déclare et consulte', person: 'la' }
+  COORDINATOR: { label: 'Coordinateur', person: 'tp' },
+  SENIOR: { label: 'Imageur senior', person: 'ab' },
+  FELLOW: { label: 'Fellow', person: 'la' }
 }
 
-const NAV = {
+/* Coordinator: two levels, as in CoreLab. Everyone else: one. */
+const SECTIONS = {
   COORDINATOR: [
-    { section: 'Cycle mensuel', items: [
-      { id: 'campagnes', label: 'Campagnes', glyph: 'planning' },
-      { id: 'vacations', label: 'Charger les vacations', glyph: 'upload' },
-      { id: 'suivi', label: 'Suivi des réponses', glyph: 'users' },
-      { id: 'revue', label: 'Revue du planning', glyph: 'calendar' },
-      { id: 'rapport', label: 'Rapport du moteur', glyph: 'wand' },
-      { id: 'publication', label: 'Publier et diffuser', glyph: 'send' }
+    { id: 'coordination', label: 'Coordination', tabs: [
+      { id: 'campagnes', label: 'Campagnes' },
+      { id: 'vacations', label: 'Vacations du mois' },
+      { id: 'suivi', label: 'Suivi des réponses' },
+      { id: 'revue', label: 'Revue du planning' },
+      { id: 'rapport', label: 'Rapport du moteur' },
+      { id: 'publication', label: 'Publication' }
     ]},
-    { section: 'Mon activité', items: [
-      { id: 'dispos', label: 'Mes disponibilités', glyph: 'check' },
-      { id: 'monmois', label: 'Mon mois', glyph: 'clock' },
-      { id: 'compteurs', label: 'Compteurs et équité', glyph: 'chart' },
-      { id: 'echanges', label: 'Échanges', glyph: 'swap' }
+    { id: 'activite', label: 'Mon activité', tabs: [
+      { id: 'dispos', label: 'Mes disponibilités' },
+      { id: 'monmois', label: 'Mon mois' },
+      { id: 'compteurs', label: 'Compteurs et équité' },
+      { id: 'echanges', label: 'Échanges' }
     ]},
-    { section: 'Administration', items: [
-      { id: 'parametres', label: 'Paramètres du module', glyph: 'settings' }
+    { id: 'admin', label: 'Administration', tabs: [
+      { id: 'parametres', label: 'Paramètres du module' },
+      { id: 'retours', label: 'Retours et anomalies' }
     ]}
   ],
   SENIOR: [
-    { section: 'Mon activité', items: [
-      { id: 'dispos', label: 'Mes disponibilités', glyph: 'check' },
-      { id: 'monmois', label: 'Mon mois', glyph: 'calendar' },
-      { id: 'compteurs', label: 'Compteurs et équité', glyph: 'chart' },
-      { id: 'echanges', label: 'Échanges', glyph: 'swap' }
+    { id: 'activite', label: null, tabs: [
+      { id: 'dispos', label: 'Mes disponibilités' },
+      { id: 'monmois', label: 'Mon mois' },
+      { id: 'compteurs', label: 'Compteurs et équité' },
+      { id: 'echanges', label: 'Échanges' },
+      { id: 'retours', label: 'Retours et anomalies' }
     ]}
   ],
   FELLOW: [
-    { section: 'Mon activité', items: [
-      { id: 'dispos', label: 'Mes disponibilités', glyph: 'check' },
-      { id: 'monmois', label: 'Mon mois', glyph: 'calendar' },
-      { id: 'compteurs', label: 'Compteurs et équité', glyph: 'chart' },
-      { id: 'echanges', label: 'Échanges', glyph: 'swap' }
+    { id: 'activite', label: null, tabs: [
+      { id: 'dispos', label: 'Mes disponibilités' },
+      { id: 'monmois', label: 'Mon mois' },
+      { id: 'compteurs', label: 'Compteurs et équité' },
+      { id: 'echanges', label: 'Échanges' },
+      { id: 'retours', label: 'Retours et anomalies' }
     ]}
   ]
 }
 
 const VIEW_TITLES = {
-  campagnes: 'Campagnes', vacations: 'Charger les vacations', suivi: 'Suivi des réponses',
-  revue: 'Revue du planning', rapport: 'Rapport du moteur', publication: 'Publier et diffuser',
+  campagnes: 'Campagnes', vacations: 'Vacations du mois', suivi: 'Suivi des réponses',
+  revue: 'Revue du planning', rapport: 'Rapport du moteur', publication: 'Publication',
   parametres: 'Paramètres du module', dispos: 'Mes disponibilités', monmois: 'Mon mois',
   compteurs: 'Compteurs et équité', echanges: 'Échanges', retours: 'Retours et anomalies'
 }
 
+function sections() {
+  return SECTIONS[S.role]
+}
+
 function allowedViews() {
   const list = []
-  NAV[S.role].forEach((group) => group.items.forEach((item) => list.push(item.id)))
-  list.push('retours')
+  sections().forEach((section) => section.tabs.forEach((tab) => list.push(tab.id)))
   return list
 }
 
-function sidebarHtml() {
-  const me = viewer()
-  const groups = NAV[S.role]
-  const feedbackCount = FEEDBACK.items.length
+function sectionOf(viewId) {
+  return sections().find((section) => section.tabs.some((tab) => tab.id === viewId)) || sections()[0]
+}
 
-  return `<aside style="display:flex;flex-direction:column;width:256px;flex-shrink:0;background:${T.navy700};color:#fff;height:100vh;position:sticky;top:0">
+/* ---- Portal chrome --------------------------------------------------- */
+
+const PORTAL_APPS = [
+  { label: 'Best of Larib', glyph: 'cap' },
+  { label: 'Congés', glyph: 'calendar' },
+  { label: 'Publications', glyph: 'book' },
+  { label: 'CoreLab', glyph: 'heart' },
+  { label: 'Planning imagerie', glyph: 'planning', active: true }
+]
+
+function portalNavItem(label, glyph, options) {
+  const on = Boolean(options && options.active)
+  const admin = Boolean(options && options.admin)
+  return `<div style="position:relative;display:flex;align-items:center;gap:12px;padding:8px 12px;border-radius:12px;font-size:14px;font-weight:500;background:${on ? T.navy600 : 'transparent'};color:${on ? '#fff' : T.navy100}">
+    ${on ? `<span style="position:absolute;left:0;top:50%;width:4px;height:24px;margin-top:-12px;border-radius:0 4px 4px 0;background:${T.coral500}"></span>` : ''}
+    ${icon(glyph, on ? T.coral400 : T.navy200, 16)}
+    <span style="display:flex;flex:1;align-items:center;gap:6px">${label}${admin ? icon('shield', T.coral400, 14) : ''}</span>
+  </div>`
+}
+
+function portalSidebar() {
+  const me = viewer()
+  const isCoordinator = S.role === 'COORDINATOR'
+
+  return `<aside style="display:flex;flex-direction:column;width:256px;flex-shrink:0;background:${T.navy700};color:#fff;position:sticky;top:40px;height:calc(100vh - 40px)">
     <div style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:20px 24px;text-align:center">
       <svg width="40" height="40" viewBox="0 0 40 40" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M20 34s-13-8.2-13-17a7 7 0 0 1 13-3.7A7 7 0 0 1 33 17c0 8.8-13 17-13 17z"></path>
         <path d="M6 20h7l2.5-5 4 10 3-5H34"></path>
       </svg>
       <span style="font-size:13px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase">Larib Portal</span>
-      <span style="font-size:11px;color:${T.navy200}">Planning imagerie</span>
     </div>
 
-    <div style="padding:0 12px 12px">
-      <p style="margin:0 0 8px;padding:0 12px;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:${T.navy300}">Je suis connecté comme</p>
-      <div style="display:flex;flex-direction:column;gap:4px">
-        ${Object.keys(ROLES).map((key) => {
-          const on = key === S.role
-          const role = ROLES[key]
-          const person = SENIORS.concat(FELLOWS).find((entry) => entry.id === role.person)
-          return `<button type="button" data-act="set-role" data-arg="${key}" style="display:flex;align-items:center;gap:10px;width:100%;min-height:44px;border:1px solid ${on ? T.coral500 : 'transparent'};border-radius:10px;background:${on ? T.navy600 : 'transparent'};padding:7px 10px;font-family:inherit;cursor:pointer;text-align:left">
-            <span style="display:flex;align-items:center;justify-content:center;width:28px;height:28px;flex-shrink:0;border-radius:999px;background:${on ? T.coral500 : T.navy600};color:#fff;font-size:10px;font-weight:700">${person.initials}</span>
-            <span style="flex:1;min-width:0">
-              <span style="display:block;font-size:13px;font-weight:${on ? 600 : 500};color:${on ? '#fff' : T.navy100}">${role.label}</span>
-              <span style="display:block;font-size:11px;color:${T.navy200};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${person.name}</span>
-            </span>
-          </button>`
-        }).join('')}
-      </div>
-    </div>
-
-    <nav style="display:flex;flex-direction:column;gap:20px;flex:1;overflow-y:auto;padding:8px 12px 16px;border-top:1px solid ${T.navy600}">
-      ${groups.map((group) => `<div>
-        <p style="margin:12px 0 8px;padding:0 12px;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:${T.navy300}">${group.section}</p>
-        <div style="display:flex;flex-direction:column;gap:4px">
-          ${group.items.map((item) => {
-            const on = item.id === S.view
-            return `<button type="button" data-nav="${item.id}" style="position:relative;display:flex;align-items:center;gap:12px;width:100%;min-height:40px;border:none;border-radius:12px;background:${on ? T.navy600 : 'transparent'};padding:8px 12px;font-family:inherit;font-size:14px;font-weight:500;color:${on ? '#fff' : T.navy100};cursor:pointer;text-align:left">
-              ${on ? `<span style="position:absolute;left:0;top:50%;width:4px;height:24px;margin-top:-12px;border-radius:0 4px 4px 0;background:${T.coral500}"></span>` : ''}
-              ${icon(item.glyph, on ? T.coral400 : T.navy200, 16)}
-              <span style="flex:1;min-width:0">${item.label}</span>
-            </button>`
-          }).join('')}
-        </div>
-      </div>`).join('')}
-
+    <nav style="display:flex;flex-direction:column;gap:24px;flex:1;overflow-y:auto;padding:16px 12px">
       <div>
-        <p style="margin:12px 0 8px;padding:0 12px;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:${T.navy300}">Recette</p>
-        <button type="button" data-nav="retours" style="position:relative;display:flex;align-items:center;gap:12px;width:100%;min-height:40px;border:none;border-radius:12px;background:${S.view === 'retours' ? T.navy600 : 'transparent'};padding:8px 12px;font-family:inherit;font-size:14px;font-weight:500;color:${S.view === 'retours' ? '#fff' : T.navy100};cursor:pointer;text-align:left">
-          ${S.view === 'retours' ? `<span style="position:absolute;left:0;top:50%;width:4px;height:24px;margin-top:-12px;border-radius:0 4px 4px 0;background:${T.coral500}"></span>` : ''}
-          ${icon('alert', S.view === 'retours' ? T.coral400 : T.navy200, 16)}
-          <span style="flex:1;min-width:0">Retours et anomalies</span>
-          ${feedbackCount ? `<span style="display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;border-radius:999px;background:${T.coral500};padding:0 6px;font-size:11px;font-weight:700;color:#fff">${feedbackCount}</span>` : ''}
-        </button>
+        <p style="margin:0 0 8px;padding:0 12px;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:${T.navy300}">Vue d’ensemble</p>
+        <div style="display:flex;flex-direction:column;gap:4px">${portalNavItem('Tableau de bord', 'dashboard')}</div>
       </div>
+      <div>
+        <p style="margin:0 0 8px;padding:0 12px;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:${T.navy300}">Applications</p>
+        <div style="display:flex;flex-direction:column;gap:4px">
+          ${PORTAL_APPS.map((app) => portalNavItem(app.label, app.glyph, { active: app.active })).join('')}
+        </div>
+      </div>
+      ${isCoordinator ? `<div>
+        <p style="margin:0 0 8px;padding:0 12px;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:${T.navy300}">Administration</p>
+        <div style="display:flex;flex-direction:column;gap:4px">
+          ${portalNavItem('Planning imagerie', 'planning', { admin: true })}
+          ${portalNavItem('Utilisateurs', 'users')}
+        </div>
+      </div>` : ''}
     </nav>
 
     <div style="border-top:1px solid ${T.navy600};padding:12px">
-      <div style="display:flex;align-items:center;gap:12px;padding:8px 12px;border-radius:12px;background:${T.navy600}">
-        ${avatar(me.initials, T.coral500, '#fff', 32)}
-        <span style="display:flex;flex-direction:column;flex:1;min-width:0">
-          <span style="font-size:14px;font-weight:500;color:#fff">${me.short}</span>
-          <span style="font-size:12px;color:${T.navy200}">${me.role}</span>
-        </span>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;align-items:center;gap:12px;padding:8px 12px;border-radius:12px;font-size:14px;font-weight:500;color:${T.navy100}">
+          ${icon('globe', T.navy200, 16)}<span style="flex:1">Langue</span><span style="color:${T.navy200}">FR</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;padding:8px 12px;border-radius:12px;background:${T.navy600}">
+          ${avatar(me.initials, T.coral500, '#fff', 32)}
+          <span style="display:flex;flex-direction:column;flex:1;min-width:0">
+            <span style="font-size:14px;font-weight:500;color:#fff">${me.short}</span>
+            <span style="font-size:12px;color:${T.navy200}">${me.role}</span>
+          </span>
+          ${icon('chevronUp', T.navy200, 16)}
+        </div>
       </div>
     </div>
   </aside>`
+}
+
+/* ---- Module chrome --------------------------------------------------- */
+
+const NAV_ITEM = 'display:inline-flex;height:100%;align-items:center;padding:0 14px;font-family:inherit;font-size:14px;border:none;background:transparent;cursor:pointer;white-space:nowrap'
+const TAB_ITEM = 'display:inline-flex;align-items:center;padding:8px 14px;font-family:inherit;font-size:14px;border:none;background:transparent;cursor:pointer;white-space:nowrap'
+const ACTIVE_UNDERLINE = `font-weight:600;color:${T.text};box-shadow:inset 0 -2px 0 ${T.coral600}`
+
+function moduleNavbar() {
+  const groups = sections()
+  const current = sectionOf(S.view)
+  const single = groups.length === 1
+
+  const items = single
+    ? groups[0].tabs.map((tab) => ({ id: tab.id, label: tab.label, active: tab.id === S.view }))
+    : groups.map((group) => ({ id: group.tabs[0].id, label: group.label, active: group.id === current.id }))
+
+  return `<div style="display:flex;height:56px;align-items:center;gap:24px;flex-shrink:0;border-bottom:1px solid ${T.line};background:${T.surface};padding:0 32px">
+    <span style="display:inline-flex;align-items:center;gap:8px;flex-shrink:0;font-size:12px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;color:${T.text2}">
+      ${icon('planning', T.coral500, 14)}Planning imagerie
+    </span>
+    <span style="height:20px;width:1px;flex-shrink:0;background:${T.line}"></span>
+    <nav style="display:flex;height:100%;align-items:center;gap:4px;overflow-x:auto">
+      ${items.map((item) => `<button type="button" data-nav="${item.id}" style="${NAV_ITEM};${item.active ? ACTIVE_UNDERLINE : 'color:' + T.text2}">${item.label}</button>`).join('')}
+    </nav>
+    <span style="flex:1"></span>
+    <span style="display:inline-flex;align-items:center;gap:8px;flex-shrink:0;font-size:13px;color:${T.text2}">
+      ${icon('calendar', T.gray400, 15)}Campagne d’octobre 2026
+    </span>
+  </div>`
+}
+
+function moduleTabs() {
+  const groups = sections()
+  if (groups.length === 1) return ''
+  const current = sectionOf(S.view)
+  return `<nav style="display:flex;flex-wrap:wrap;align-items:center;gap:4px;border-bottom:1px solid ${T.line};margin-bottom:24px">
+    ${current.tabs.map((tab) => `<button type="button" data-nav="${tab.id}" style="${TAB_ITEM};${tab.id === S.view ? ACTIVE_UNDERLINE : 'color:' + T.text2}">${tab.label}</button>`).join('')}
+  </nav>`
+}
+
+/* ---- Prototype bar (not part of the product) ------------------------- */
+
+function labBar() {
+  const feedbackCount = FEEDBACK.items.length
+  return `<div style="position:sticky;top:0;z-index:30;display:flex;align-items:center;gap:16px;height:40px;flex-shrink:0;background:${T.gray900};color:#fff;padding:0 16px">
+    <span style="display:inline-flex;align-items:center;gap:7px;flex-shrink:0;font-size:11px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:${T.gray400}">
+      ${icon('wand', T.coral400, 13)}Prototype
+    </span>
+    <span style="height:16px;width:1px;background:${T.gray700}"></span>
+    <span style="flex-shrink:0;font-size:12px;color:${T.gray400}">Je suis</span>
+    <div style="display:flex;gap:3px;padding:3px;border-radius:9px;background:rgba(255,255,255,0.07)">
+      ${Object.keys(ROLES).map((key) => {
+        const on = key === S.role
+        const person = SENIORS.concat(FELLOWS).find((entry) => entry.id === ROLES[key].person)
+        return `<button type="button" data-act="set-role" data-arg="${key}" title="${esc(person.name)}" style="border:none;border-radius:7px;background:${on ? T.coral600 : 'transparent'};padding:4px 11px;font-family:inherit;font-size:12px;font-weight:${on ? 600 : 500};color:${on ? '#fff' : T.gray300};cursor:pointer;white-space:nowrap">${ROLES[key].label}</button>`
+      }).join('')}
+    </div>
+    <span style="flex:1;min-width:0;font-size:12px;color:${T.gray500};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Données fictives — seul le Dr Pezel vient du cahier des charges</span>
+    <button type="button" data-nav="retours" style="display:inline-flex;align-items:center;gap:6px;flex-shrink:0;border:none;border-radius:8px;background:rgba(255,255,255,0.07);padding:5px 10px;font-family:inherit;font-size:12px;font-weight:500;color:#dde2e9;cursor:pointer">
+      ${icon('alert', T.gray400, 13)}Retours${feedbackCount ? ' · ' + feedbackCount : ''}
+    </button>
+  </div>`
 }
 
 /* ---- Feedback -------------------------------------------------------- */
@@ -172,14 +250,15 @@ async function initFeedback() {
       (snapshot) => {
         FEEDBACK.items = snapshot.docs.map((document) => {
           const body = document.data() || {}
+          const text = (value) => (typeof value === 'string' ? value : '')
           return {
             id: document.id,
-            kind: typeof body.kind === 'string' ? body.kind : 'IDEA',
-            view: typeof body.view === 'string' ? body.view : '',
-            role: typeof body.role === 'string' ? body.role : '',
-            author: typeof body.author === 'string' ? body.author : '',
-            text: typeof body.text === 'string' ? body.text : '',
-            createdAt: typeof body.createdAt === 'string' ? body.createdAt : ''
+            kind: text(body.kind) || 'IDEA',
+            view: text(body.view),
+            role: text(body.role),
+            author: text(body.author),
+            text: text(body.text),
+            createdAt: text(body.createdAt)
           }
         })
         render()
@@ -211,7 +290,7 @@ async function sendFeedback() {
   if (FEEDBACK.db) {
     try {
       await FEEDBACK.db.collection('feedback').doc(id).set(entry)
-      toast('Retour envoyé. Il est visible dans « Retours et anomalies ».')
+      toast('Retour envoyé. Il apparaît dans « Retours et anomalies ».')
     } catch (error) {
       toast('Envoi impossible pour le moment. Votre texte est conservé.')
       FEEDBACK.sending = false
@@ -294,7 +373,7 @@ VIEWS.retours = () => {
       'Retours et anomalies',
       FEEDBACK.db
         ? 'Tout ce qui est signalé ici remonte à l’équipe de développement, avec l’écran et le rôle d’où le retour a été émis.'
-        : 'Le stockage partagé n’est pas disponible sur cette vue : les retours listés ci-dessous sont conservés sur cet appareil uniquement.',
+        : 'Le stockage partagé n’est pas disponible sur cette vue : les retours ci-dessous sont conservés sur cet appareil uniquement.',
       button({ label: 'Signaler quelque chose', variant: 'primary', icon: 'send', act: 'feedback-open' })
     )}
 
@@ -314,7 +393,7 @@ VIEWS.retours = () => {
       ${sectionHead('Ce qui a été signalé', `<span style="font-size:13px;color:${T.text2}">du plus récent au plus ancien</span>`)}
       ${items.length === 0 ? `<div style="padding:40px 24px;text-align:center">
         <p style="margin:0;font-size:15px;font-weight:500;color:${T.text}">Rien n’a encore été signalé.</p>
-        <p style="margin:6px auto 0;max-width:520px;font-size:13px;color:${T.text2};line-height:1.55">Parcourez les écrans en changeant de rôle dans la colonne de gauche. Dès que quelque chose vous surprend, cliquez sur « Signaler quelque chose » en bas à droite : l’écran et le rôle sont joints automatiquement.</p>
+        <p style="margin:6px auto 0;max-width:520px;font-size:13px;color:${T.text2};line-height:1.55">Parcourez les écrans en changeant de rôle dans la barre noire du haut. Dès que quelque chose vous surprend, cliquez sur « Signaler quelque chose » en bas à droite : l’écran et le rôle sont joints automatiquement.</p>
       </div>` : items.map((entry) => `<div style="display:flex;align-items:flex-start;gap:14px;padding:16px 20px;border-bottom:1px solid ${T.gray100}">
         <span style="flex-shrink:0;margin-top:2px">${badge(KIND_LABELS[entry.kind] || 'Retour', KIND_TONES[entry.kind] || 'neutral')}</span>
         <span style="flex:1;min-width:0">
@@ -353,7 +432,7 @@ function toast(message) {
 
 function toastHtml() {
   if (!S.toast) return ''
-  return `<div style="position:fixed;top:20px;right:24px;z-index:60;display:flex;align-items:flex-start;gap:10px;max-width:420px;border:1px solid ${T.line};border-radius:12px;background:${T.surface};box-shadow:${T.shadowMd};padding:12px 16px">
+  return `<div style="position:fixed;top:56px;right:24px;z-index:60;display:flex;align-items:flex-start;gap:10px;max-width:420px;border:1px solid ${T.line};border-radius:12px;background:${T.surface};box-shadow:${T.shadowMd};padding:12px 16px">
     ${icon('info', T.navy500, 16)}
     <span style="flex:1;font-size:13px;color:${T.gray700};line-height:1.45">${esc(S.toast)}</span>
   </div>`
@@ -368,9 +447,12 @@ function banner() {
       S.role === 'FELLOW'
         ? 'Un fellow ne voit que ses propres disponibilités et les compteurs de sa promotion.'
         : 'Un senior ne voit que ses propres disponibilités et les compteurs des seniors.'
-    } Les écrans de coordination ne lui sont pas accessibles.</span>
+    } Les écrans de coordination ne lui sont pas accessibles, et la section Administration disparaît de la barre latérale.</span>
   </div>`
 }
+
+const APP_GRADIENT_CSS =
+  'background-color:#f5f7fa;background-image:radial-gradient(58% 52% at 10% 4%, rgba(214,31,85,0.10), transparent 60%),radial-gradient(52% 48% at 92% 12%, rgba(236,59,104,0.08), transparent 62%),radial-gradient(60% 60% at 84% 96%, rgba(214,31,85,0.07), transparent 60%),radial-gradient(48% 54% at 2% 94%, rgba(255,182,198,0.12), transparent 60%)'
 
 function render() {
   const allowed = allowedViews()
@@ -378,12 +460,21 @@ function render() {
   const view = VIEWS[S.view] || VIEWS.campagnes
 
   document.getElementById('app').innerHTML =
-    `<div style="display:flex;min-height:100vh;background:${T.app}">
-       ${sidebarHtml()}
-       <main style="flex:1;min-width:0;${APP_GRADIENT_CSS};padding:32px 32px 96px">
-         ${banner()}
-         ${view()}
-       </main>
+    `<div style="display:flex;flex-direction:column;min-height:100vh;background:${T.app}">
+       ${labBar()}
+       <div style="display:flex;flex:1;min-height:0">
+         ${portalSidebar()}
+         <div style="display:flex;flex-direction:column;flex:1;min-width:0">
+           ${moduleNavbar()}
+           <main style="flex:1;min-width:0;${APP_GRADIENT_CSS};padding:32px 32px 96px">
+             <div style="max-width:1400px;margin:0 auto">
+               ${moduleTabs()}
+               ${banner()}
+               ${view()}
+             </div>
+           </main>
+         </div>
+       </div>
      </div>
      ${feedbackButton()}
      ${feedbackPanel()}
@@ -398,9 +489,6 @@ function render() {
   }
 }
 
-const APP_GRADIENT_CSS =
-  'background-color:#f5f7fa;background-image:radial-gradient(58% 52% at 10% 4%, rgba(214,31,85,0.10), transparent 60%),radial-gradient(52% 48% at 92% 12%, rgba(236,59,104,0.08), transparent 62%),radial-gradient(60% 60% at 84% 96%, rgba(214,31,85,0.07), transparent 60%),radial-gradient(48% 54% at 2% 94%, rgba(255,182,198,0.12), transparent 60%)'
-
 const ACTIONS = {
   toast: (arg) => { if (arg) toast(arg) },
   noop: () => {},
@@ -409,8 +497,7 @@ const ACTIONS = {
 
   'set-role': (arg) => {
     S.role = arg
-    const allowed = allowedViews()
-    if (allowed.indexOf(S.view) === -1) S.view = allowed[0]
+    if (allowedViews().indexOf(S.view) === -1) S.view = allowedViews()[0]
     S.swapShiftId = null
   },
 
@@ -470,7 +557,7 @@ const ACTIONS = {
     const order = ['UNAVAILABLE', 'AVAILABLE', 'PREFERRED']
     const current = availabilityOf(me.id, arg)
     setAvailability(me.id, arg, order[(order.indexOf(current) + 1) % order.length])
-    S.submissions[me.id] = S.submissions[me.id] === 'DECLINED_MONTH' ? 'IN_PROGRESS' : S.submissions[me.id]
+    if (S.submissions[me.id] === 'DECLINED_MONTH') S.submissions[me.id] = 'IN_PROGRESS'
     regenerate()
   },
   'bulk-day': (arg) => {
@@ -504,10 +591,8 @@ const ACTIONS = {
     if (S.submissions[me.id] === 'DECLINED_MONTH') {
       S.submissions[me.id] = 'IN_PROGRESS'
     } else {
-      S.submissions[me.id] = 'DECLINED_MONTH'
       SLOTS.forEach((slot) => setAvailability(me.id, slot.id, 'UNAVAILABLE'))
       S.submissions[me.id] = 'DECLINED_MONTH'
-      regenerate()
       toast('Vous êtes déclaré indisponible sur tout le mois. Aucune vacation ne vous sera attribuée.')
     }
     regenerate()
