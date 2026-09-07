@@ -1,6 +1,9 @@
 import { prisma } from '@/lib/prisma'
 import { toJsonValue } from '@/lib/corelab/crf/json'
-import { fieldDefinitionSchema, sectionDefinitionSchema, sequenceDefinitionSchema, type FieldDefinition } from '@/lib/corelab/crf/schema'
+import type { FieldDefinition } from '@/lib/corelab/crf/schema'
+import { sectionDefinitionSchema, sequenceDefinitionSchema } from '@/lib/corelab/crf/schema'
+import { variableToFieldDefinition } from '@/lib/corelab/library/params'
+import { variableUsage } from '@/lib/corelab/library/blocks'
 import type { CorelabLibraryBlockKind, CorelabModality, Prisma } from '@/app/generated/prisma'
 
 const VALUE_SET_SELECT = {
@@ -146,25 +149,15 @@ export async function saveBlock(
 }
 
 // Inserting from the library copies: the study CRF never points back at it.
-export function variableToField(variable: LibraryVariable, items: Array<{ code: string; label: string; colour: string | null }>): FieldDefinition {
-  const params = (variable.params ?? {}) as Record<string, unknown>
-  const candidate = {
-    id: variable.code,
-    name: variable.name,
-    type: variable.type,
-    required: params.required === true,
-    ...(typeof params.unit === 'string' ? { unit: params.unit } : {}),
-    ...(typeof params.min === 'number' ? { min: params.min } : {}),
-    ...(typeof params.max === 'number' ? { max: params.max } : {}),
-    ...(typeof params.segmentCount === 'number' ? { segmentCount: params.segmentCount } : {}),
-    ...(params.calibrationTolerance ? { calibrationTolerance: params.calibrationTolerance } : {}),
-    ...(params.scale ? { scale: params.scale } : {}),
-    ...(items.length > 0
-      ? {
-          options: items.map((item) => item.label),
-          optionColours: Object.fromEntries(items.filter((item) => item.colour).map((item) => [item.label, item.colour as string])),
-        }
-      : {}),
-  }
-  return fieldDefinitionSchema.parse(candidate)
+export function variableToField(
+  variable: LibraryVariable,
+  items: Array<{ code: string; label: string; colour: string | null }>,
+): FieldDefinition {
+  return variableToFieldDefinition(variable, items)
+}
+
+export async function listVariablesWithUsage(): Promise<Array<LibraryVariable & { usedIn: Array<{ code: string; name: string }> }>> {
+  const [variables, blocks] = await Promise.all([listVariables(), listBlocks()])
+  const usage = variableUsage(blocks)
+  return variables.map((variable) => ({ ...variable, usedIn: usage.get(variable.code) ?? [] }))
 }
