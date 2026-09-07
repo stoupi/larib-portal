@@ -1,6 +1,6 @@
 import { prisma } from '@/lib/prisma'
 import { toJsonValue } from '@/lib/corelab/crf/json'
-import { crfDefinitionSchema, parseCrfDefinition, type CrfDefinition } from '@/lib/corelab/crf/schema'
+import { draftDefinitionSchema, parseDraftDefinition, type CrfDefinition } from '@/lib/corelab/crf/schema'
 import { assertLockedIdsKept, diffVersions, worstImpact, type VersionChange } from '@/lib/corelab/crf/diff-versions'
 import { assertStudyOpen } from './studies'
 
@@ -28,8 +28,8 @@ export async function getDraft(studyId: string): Promise<DraftVersion | null> {
   return {
     id: draft.id,
     number: draft.number,
-    definition: parseCrfDefinition(draft.definition),
-    basedOn: published ? { number: published.number, definition: parseCrfDefinition(published.definition) } : null,
+    definition: parseDraftDefinition(draft.definition),
+    basedOn: published ? { number: published.number, definition: parseDraftDefinition(published.definition) } : null,
   }
 }
 
@@ -65,7 +65,7 @@ export async function saveDraft(studyId: string, definition: unknown): Promise<v
   })
   await prisma.corelabCrfVersion.update({
     where: { id: draft.id },
-    data: { definition: toJsonValue(crfDefinitionSchema.parse(definition)) },
+    data: { definition: toJsonValue(draftDefinitionSchema.parse(definition)) },
     select: { id: true },
   })
 }

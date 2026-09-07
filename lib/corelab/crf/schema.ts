@@ -86,6 +86,14 @@ export function parseCrfDefinition(value: unknown): CrfDefinition {
   return crfDefinitionSchema.parse(value)
 }
 
+// A draft starts empty on a study that has no published CRF yet: only publishing
+// requires a sequence, so reading one back must not apply that rule.
+export const draftDefinitionSchema = z.array(sequenceDefinitionSchema)
+
+export function parseDraftDefinition(value: unknown): CrfDefinition {
+  return draftDefinitionSchema.parse(value)
+}
+
 export function findField(definition: CrfDefinition, sequenceId: string, fieldId: string): FieldDefinition | null {
   const sequence = definition.find((candidate) => candidate.id === sequenceId)
   if (!sequence) return null

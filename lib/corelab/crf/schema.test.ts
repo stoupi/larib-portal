@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { crfDefinitionSchema, findField } from './schema'
+import { crfDefinitionSchema, findField, parseDraftDefinition } from './schema'
 import { MIR_DIJON_CRF_V1 } from './mir-dijon-v1'
 
 describe('crfDefinitionSchema', () => {
@@ -23,5 +23,15 @@ describe('crfDefinitionSchema', () => {
   })
   it('finds a field by sequence and id', () => {
     expect(findField(MIR_DIJON_CRF_V1.sequences, 'cine', 'lvef')?.type).toBe('numeric')
+  })
+})
+
+describe('parseDraftDefinition', () => {
+  it('accepts the empty draft a study without a published CRF starts from', () => {
+    expect(parseDraftDefinition([])).toEqual([])
+  })
+
+  it('still refuses a malformed sequence', () => {
+    expect(() => parseDraftDefinition([{ id: 'seq' }])).toThrow()
   })
 })

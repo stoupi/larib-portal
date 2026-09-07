@@ -71,3 +71,36 @@ test('a draft CRF measures its impact before publication', async ({ page }) => {
   await page.getByRole('button', { name: /discard the draft/i }).click()
   await expect(page.getByRole('button', { name: /start a draft/i })).toBeVisible({ timeout: 60000 })
 })
+
+test('a study created without a CRF opens its editor, keeps an empty draft and publishes', async ({ page }) => {
+  await login(page, 'corelab-admin@larib-portal.test')
+  await page.goto('/en/corelab/admin/studies', { timeout: 60000 })
+  await page.getByRole('button', { name: /new study/i }).click()
+
+  await page.getByLabel('Code', { exact: true }).fill('2026-09-Fresh')
+  await page.getByLabel(/study name/i).fill('Fresh study')
+  await page.getByRole('button', { name: /create study/i }).click()
+  await expect(page.getByText(/only takes capitals, digits and hyphens/i)).toBeVisible()
+  await expect(page.getByText(/2026-09-FRESH/)).toBeVisible()
+
+  await page.getByLabel('Code', { exact: true }).fill('2026-09-FRESH')
+  await page.getByRole('button', { name: /create study/i }).click()
+  await page.waitForURL(/\/corelab\/admin\/studies\/[^/]+$/, { timeout: 60000 })
+  const studyId = page.url().split('/').pop() ?? ''
+
+  await page.goto(`/en/corelab/admin/studies/${studyId}/crf`, { timeout: 60000 })
+  await page.getByRole('button', { name: /start a draft/i }).click()
+  await expect(page.getByTestId('impact')).toBeVisible({ timeout: 60000 })
+
+  await page.reload()
+  await expect(page.getByRole('button', { name: /add a sequence/i })).toBeVisible({ timeout: 60000 })
+
+  await page.getByRole('button', { name: /add a sequence/i }).click()
+  const created = page.getByTestId('sequence-sequence_1')
+  await created.getByText(/from the library/i).first().click()
+  await page.getByRole('option', { name: 'LVEF' }).click()
+  await page.keyboard.press('Escape')
+  await page.getByRole('button', { name: /save the draft/i }).click()
+  await page.getByRole('button', { name: /publish the version/i }).click()
+  await expect(page.getByText(/published version: v1/i)).toBeVisible({ timeout: 60000 })
+})
