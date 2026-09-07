@@ -111,9 +111,9 @@ export function BlocksPane({ blocks }: BlocksPaneProps) {
           <SummaryStrip
             hint={t('readerPreview')}
             items={[
-              { value: String(summary.fields), label: t('variablesLabel') },
-              { value: String(summary.required), label: t('requiredLabel') },
-              { value: String(summary.thresholds), label: t('thresholdLabel') },
+              { value: String(summary.fields), label: t('variablesLabel', { count: summary.fields }) },
+              { value: String(summary.required), label: t('requiredLabel', { count: summary.required }) },
+              { value: String(summary.thresholds), label: t('thresholdLabel', { count: summary.thresholds }) },
             ]}
           />
           {dangling.length > 0 ? (
@@ -124,7 +124,7 @@ export function BlocksPane({ blocks }: BlocksPaneProps) {
               </WarningNote>
             </div>
           ) : null}
-          <div className="px-3 pb-4 pt-1">
+          <div className="max-h-[calc(100vh-16rem)] overflow-y-auto px-3 pb-4 pt-1">
             {sections.map((section) => (
               <div key={section.id}>
                 {sections.length > 1 ? (

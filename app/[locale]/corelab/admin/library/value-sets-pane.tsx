@@ -84,8 +84,8 @@ export function ValueSetsPane({ valueSets }: ValueSetsPaneProps) {
           <SummaryStrip
             hint={coloured.length > 0 ? t('renderedOnBullseye') : t('renderedAsChips')}
             items={[
-              { value: String(draft.items.length), label: t('valuesLabel') },
-              { value: String(valueSet._count.variables), label: t('usedByLabel') },
+              { value: String(draft.items.length), label: t('valuesLabel', { count: draft.items.length }) },
+              { value: String(valueSet._count.variables), label: t('usedByLabel', { count: valueSet._count.variables }) },
             ]}
           />
           <div className="px-5 pb-2 pt-4">

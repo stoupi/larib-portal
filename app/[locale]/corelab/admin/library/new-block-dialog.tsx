@@ -140,9 +140,9 @@ export function NewBlockDialog({ variables, valueSets }: NewBlockDialogProps) {
 
           <div className="overflow-hidden rounded-xl border border-border">
             <div className="flex items-center gap-3 bg-navy-800 px-4 py-2.5 text-xs text-navy-200">
-              <span><strong className="font-semibold text-white">{fields.length}</strong> {t('variablesLabel')}</span>
+              <span><strong className="font-semibold text-white">{fields.length}</strong> {t('variablesLabel', { count: fields.length })}</span>
               <span className="text-navy-400">·</span>
-              <span><strong className="font-semibold text-white">{fields.filter((field) => field.required).length}</strong> {t('requiredLabel')}</span>
+              <span><strong className="font-semibold text-white">{fields.filter((field) => field.required).length}</strong> {t('requiredLabel', { count: fields.filter((field) => field.required).length })}</span>
               <span className="ml-auto text-navy-300">{t('readerPreview')}</span>
             </div>
             {fields.length === 0 ? (

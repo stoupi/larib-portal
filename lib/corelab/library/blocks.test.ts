@@ -55,15 +55,25 @@ describe('readBlockDefinition', () => {
 })
 
 describe('variableUsage', () => {
-  it('lists the blocks a variable appears in, counting a block once', () => {
+  it('counts the sections of a sequence, not the sequence that contains them', () => {
     const usage = variableUsage([
-      { code: 'lge', name: 'LGE', definition: sequence },
-      { code: 'lge_lv', name: 'LGE — LV', definition: sequence.sections[1] },
-      { code: 'broken', name: 'Broken', definition: { id: 'x' } },
+      { id: '1', code: 'lge', name: 'LGE', kind: 'SEQUENCE', definition: sequence },
+      { id: '2', code: 'lge_availability', name: 'LGE — Availability', kind: 'SECTION', definition: sequence.sections[0] },
+      { id: '3', code: 'lge_lv', name: 'LGE — LV', kind: 'SECTION', definition: sequence.sections[1] },
     ])
-    expect(usage.get('lge_presence')).toEqual([{ code: 'lge', name: 'LGE' }, { code: 'lge_lv', name: 'LGE — LV' }])
-    expect(usage.get('lge_available')).toEqual([{ code: 'lge', name: 'LGE' }])
+    expect(usage.get('lge_presence')).toEqual([{ code: 'lge_lv', name: 'LGE — LV' }])
+    expect(usage.get('lge_available')).toEqual([{ code: 'lge_availability', name: 'LGE — Availability' }])
     expect(usage.get('nothing')).toBeUndefined()
+  })
+
+  it('falls back to the sequence when none of its sections is a block', () => {
+    const usage = variableUsage([{ id: '1', code: 'lge', name: 'LGE', kind: 'SEQUENCE', definition: sequence }])
+    expect(usage.get('lge_presence')).toEqual([{ code: 'lge', name: 'LGE' }])
+  })
+
+  it('skips a block whose definition cannot be read', () => {
+    const usage = variableUsage([{ id: '1', code: 'broken', name: 'Broken', kind: 'SECTION', definition: { id: 'x' } }])
+    expect(usage.size).toBe(0)
   })
 })
 
@@ -75,8 +85,9 @@ describe('groupBlocks', () => {
     { id: '4', code: 'loose', name: 'Loose section', kind: 'SECTION' as const, definition: { id: 'loose', name: 'Loose', fields: sequence.sections[0].fields } },
   ]
 
-  it('files each section under the sequence whose definition holds it', () => {
-    const groups = groupBlocks(entries)
+  it('files each section under the sequence whose definition holds it, in the sequence order', () => {
+    const shuffled = [entries[0], entries[2], entries[1], entries[3]]
+    const groups = groupBlocks(shuffled)
     expect(groups[0].sequence?.code).toBe('lge')
     expect(groups[0].sections.map((section) => section.code)).toEqual(['lge_availability', 'lge_lv'])
   })

@@ -52,11 +52,13 @@ export function readBlockDefinition(raw: unknown): BlockDefinition | null {
   return section.success ? section.data : null
 }
 
-export type BlockRef = { code: string; name: string; definition: unknown }
+// A sequence whose sections are blocks of their own is a container, not a second use.
+export function variableUsage(blocks: BlockEntry[]): Map<string, Array<{ code: string; name: string }>> {
+  const homes = groupBlocks(blocks).flatMap((group) =>
+    group.sections.length > 0 ? group.sections : (group.sequence ? [group.sequence] : []))
 
-export function variableUsage(blocks: BlockRef[]): Map<string, Array<{ code: string; name: string }>> {
   const usage = new Map<string, Array<{ code: string; name: string }>>()
-  for (const block of blocks) {
+  for (const block of homes) {
     const definition = readBlockDefinition(block.definition)
     if (!definition) continue
     for (const field of fieldsOf(definition)) {
@@ -84,8 +86,10 @@ export function groupBlocks(blocks: BlockEntry[]): BlockGroup[] {
 
   const groups = sequences.map((sequence) => {
     const definition = readBlockDefinition(sequence.definition)
-    const owned = new Set(definition ? sectionsOf(definition).map((section) => slug(section.id)) : [])
-    const children = sections.filter((section) => owned.has(section.code))
+    const order = definition ? sectionsOf(definition).map((section) => slug(section.id)) : []
+    const children = sections
+      .filter((section) => order.includes(section.code))
+      .sort((left, right) => order.indexOf(left.code) - order.indexOf(right.code))
     for (const child of children) taken.add(child.code)
     return { sequence, sections: children }
   })

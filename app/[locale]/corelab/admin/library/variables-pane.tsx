@@ -54,6 +54,8 @@ export function VariablesPane({ variables, valueSets }: VariablesPaneProps) {
     (active.types === null || (active.types as readonly string[]).includes(variable.type))
     && (needle === '' || variable.name.toLowerCase().includes(needle) || variable.code.includes(needle)))
 
+  const shared = shown.filter((variable) => variable.usedIn.length > 1).length
+  const orphans = shown.filter((variable) => variable.usedIn.length === 0).length
   const current = variables.find((variable) => variable.code === code) ?? shown[0] ?? variables[0] ?? null
   const storedField = current ? fieldOf(current) : null
   const field = current ? draft[current.code] ?? storedField : null
@@ -112,12 +114,12 @@ export function VariablesPane({ variables, valueSets }: VariablesPaneProps) {
           <SummaryStrip
             hint={t('readerPreview')}
             items={[
-              { value: String(shown.length), label: t('shownLabel') },
-              { value: String(shown.filter((variable) => variable.usedIn.length > 1).length), label: t('sharedLabel') },
-              { value: String(shown.filter((variable) => variable.usedIn.length === 0).length), label: t('orphanLabel') },
+              { value: String(shown.length), label: t('shownLabel', { count: shown.length }) },
+              { value: String(shared), label: t('sharedLabel', { count: shared }) },
+              { value: String(orphans), label: t('orphanLabel', { count: orphans }) },
             ]}
           />
-          <div className="px-3 pb-4 pt-1">
+          <div className="max-h-[calc(100vh-16rem)] overflow-y-auto px-3 pb-4 pt-1">
             {shown.map((variable) => {
               const preview = fieldOf(variable)
               if (!preview) return null
@@ -135,9 +137,6 @@ export function VariablesPane({ variables, valueSets }: VariablesPaneProps) {
                   )}
                 >
                   <FieldPreview key={variable.id} field={preview} />
-                  {variable.usedIn.length > 1 ? (
-                    <p className="pb-2 text-[11px] text-success-600">{t('usedInBlocks', { count: variable.usedIn.length })}</p>
-                  ) : null}
                 </div>
               )
             })}
