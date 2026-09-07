@@ -262,14 +262,14 @@ VIEWS.monmois = () => {
           ${sectionHead(
             plan.period.label + ' — ' + plural(mine.length, 'vacation') + ' pour moi',
             `<span style="display:flex;align-items:center;gap:12px">
-              ${segmented([{ id: 'mine', label: 'Mes vacations' }, { id: 'all', label: 'Tout le mois' }], onlyMine ? 'mine' : 'all', 'month-filter')}
+              ${segmented([{ id: 'mine', label: 'Mes vacations' }, { id: 'all', label: 'Toutes les vacations' }], onlyMine ? 'mine' : 'all', 'month-filter')}
               ${calendarControls(plan, weekAct, 'set-scope')}
             </span>`
           )}
           ${halfDayHeads('180px')}
           ${weekSlots.length === 0 ? `<div style="padding:36px 24px;text-align:center">
             <p style="margin:0;font-size:14px;font-weight:500;color:${T.text}">Aucune vacation pour vous ${isMonthScope() ? 'ce mois-ci' : 'cette semaine'}.</p>
-            <p style="margin:6px 0 0;font-size:13px;color:${T.text2}">Passez à « Tout le mois » pour voir celles de l’équipe${isMonthScope() ? '' : ', ou changez de semaine'}.</p>
+            <p style="margin:6px 0 0;font-size:13px;color:${T.text2}">Passez à « Toutes les vacations » pour voir celles de l’équipe${isMonthScope() ? '' : ', ou changez de semaine'}.</p>
           </div>` : ''}
           ${calendarRows(weekSlots, {
             renderSlot,
