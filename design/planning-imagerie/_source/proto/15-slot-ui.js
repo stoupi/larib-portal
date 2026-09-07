@@ -103,3 +103,56 @@ function gridLegend(trailing) {
     ${trailing ? `<span style="margin-left:auto">${trailing}</span>` : ''}
   </div>`
 }
+
+/* The cycle in one strip. Two months run at once and that is exactly what
+   confuses people, so every doctor-facing screen says which is which. */
+function workflowBanner(context) {
+  const collecting = !S.published
+  const cards = [
+    {
+      tag: 'Ce mois-ci',
+      title: LIVE.label,
+      line: 'Votre planning est publié depuis le ' + PUBLISHED.publishedOn + '. C’est le mois que vous travaillez.',
+      glyph: 'calendar',
+      tone: 'success',
+      here: context === 'monmois',
+      nav: 'monmois',
+      cta: 'Voir mon mois'
+    },
+    {
+      tag: 'Le mois prochain',
+      title: TARGET.label,
+      line: collecting
+        ? 'Recueil des disponibilités ouvert jusqu’au 15 septembre. Sans réponse, aucune vacation ne vous sera attribuée.'
+        : 'Planning publié en version ' + S.planVersion + '. Il prend effet au 1er octobre.',
+      glyph: collecting ? 'clockAlert' : 'check',
+      tone: collecting ? 'warning' : 'success',
+      here: context === 'dispos',
+      nav: 'dispos',
+      cta: 'Déclarer mes disponibilités'
+    }
+  ]
+
+  return `<section style="display:flex;align-items:stretch;gap:0;border:1px solid ${T.line};border-radius:16px;background:${T.surface};box-shadow:${T.shadowXs};overflow:hidden;margin-bottom:20px">
+    <div style="display:flex;flex-direction:column;justify-content:center;gap:2px;flex-shrink:0;background:${T.gray900};padding:16px 20px;min-width:158px">
+      <span style="font-size:11px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:${T.gray400}">Nous sommes le</span>
+      <span style="font-size:16px;font-weight:700;color:#fff">7 septembre 2026</span>
+      <span style="font-size:11px;color:${T.gray400}">deux mois se chevauchent</span>
+    </div>
+    ${cards.map((card, position) => {
+      const tone = TONES[card.tone]
+      return `<div style="display:flex;align-items:center;gap:14px;flex:1;min-width:0;padding:16px 20px;background:${card.here ? tone.bg : T.surface};${position ? 'border-left:1px solid ' + T.line : ''}">
+        <span style="display:flex;align-items:center;justify-content:center;width:38px;height:38px;flex-shrink:0;border-radius:11px;background:${tone.bg};border:1px solid ${tone.border}">${icon(card.glyph, tone.fg, 18)}</span>
+        <span style="flex:1;min-width:0">
+          <span style="display:flex;align-items:center;gap:8px">
+            <span style="font-size:11px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;color:${T.text3}">${card.tag}</span>
+            <span style="font-size:14px;font-weight:700;color:${T.text}">${card.title}</span>
+            ${card.here ? badge('vous y êtes', card.tone) : ''}
+          </span>
+          <span style="display:block;margin-top:3px;font-size:12px;color:${T.text2};line-height:1.45">${card.line}</span>
+        </span>
+        ${card.here ? '' : `<button type="button" data-nav="${card.nav}" style="display:inline-flex;align-items:center;gap:6px;flex-shrink:0;height:32px;border:1px solid ${T.line};border-radius:9px;background:${T.surface};padding:0 12px;font-family:inherit;font-size:12px;font-weight:500;color:${T.gray700};cursor:pointer;white-space:nowrap">${card.cta}${icon('arrowRight', T.gray400, 13)}</button>`}
+      </div>`
+    }).join('')}
+  </section>`
+}

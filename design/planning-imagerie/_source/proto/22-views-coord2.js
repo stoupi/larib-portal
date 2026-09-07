@@ -1,7 +1,7 @@
 /* Review, engine report, publication, settings. */
 
-function weekSegments(act) {
-  return segmented(WEEKS.map((week) => ({ id: String(week), label: 'S' + week })), String(S.week), act)
+function weekSegments(weeks, active, act) {
+  return segmented(weeks.map((week) => ({ id: String(week), label: 'S' + week })), String(active), act)
 }
 
 function currentSlot() {
@@ -106,7 +106,7 @@ VIEWS.revue = () => {
       <section style="${CARD};flex:1;min-width:0;overflow:hidden">
         ${sectionHead(
           'Grille mensuelle',
-          `<span style="display:flex;align-items:center;gap:12px"><span style="font-size:13px;color:${T.text2}">${plural(weekSlots.length, 'vacation')} cette semaine</span>${weekSegments('set-week')}</span>`
+          `<span style="display:flex;align-items:center;gap:12px"><span style="font-size:13px;color:${T.text2}">${plural(weekSlots.length, 'vacation')} cette semaine</span>${weekSegments(WEEKS, S.week, 'set-week')}</span>`
         )}
         ${halfDayHeads('180px')}
         ${dayNumbers.map((dayNumber, position) => {

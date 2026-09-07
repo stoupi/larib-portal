@@ -95,7 +95,7 @@ VIEWS.campagnes = () => {
       'Planning d’imagerie cardiaque',
       'Campagnes mensuelles de vacations IRM et scanner — Bergère, Blomet, Lariboisière',
       button({ label: 'Paramètres', variant: 'outline', icon: 'settings', nav: 'parametres' }) +
-      button({ label: 'Nouvelle campagne', variant: 'primary', icon: 'plus', act: 'toast', arg: 'La création de campagne n’est pas maquettée ici.' })
+      button({ label: 'Nouvelle campagne', variant: 'primary', icon: 'plus', nav: 'nouvelle-campagne' })
     )}
 
     <div style="display:flex;gap:24px;align-items:flex-start">

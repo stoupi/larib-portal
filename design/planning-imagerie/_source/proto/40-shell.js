@@ -47,7 +47,8 @@ const VIEW_TITLES = {
   campagnes: 'Campagnes', vacations: 'Vacations', suivi: 'Suivi des réponses',
   revue: 'Revue du planning', rapport: 'Rapport du moteur', publication: 'Publication',
   parametres: 'Paramètres', dispos: 'Mes disponibilités', monmois: 'Mon mois',
-  compteurs: 'Compteurs et équité', echanges: 'Échanges', retours: 'Retours et anomalies'
+  compteurs: 'Compteurs et équité', echanges: 'Échanges', retours: 'Retours et anomalies',
+  'nouvelle-campagne': 'Nouvelle campagne'
 }
 
 const canAdmin = () => S.role === 'COORDINATOR'
@@ -59,12 +60,17 @@ function currentSpace() {
 /** `retours` is the prototype's own screen: reachable, but in no product menu. */
 function allowedViews() {
   const list = SPACES.app.items.map((item) => item.id)
-  if (canAdmin()) SPACES.admin.items.forEach((item) => list.push(item.id))
+  if (canAdmin()) {
+    SPACES.admin.items.forEach((item) => list.push(item.id))
+    /* An action, not a tab: reachable from Campagnes, absent from the menu. */
+    list.push('nouvelle-campagne')
+  }
   list.push('retours')
   return list
 }
 
 function spaceOf(viewId) {
+  if (viewId === 'nouvelle-campagne') return 'admin'
   if (SPACES.admin.items.some((item) => item.id === viewId)) return 'admin'
   return 'app'
 }
@@ -496,6 +502,19 @@ const ACTIONS = {
   },
 
   'set-week': (arg) => { S.week = Number(arg) },
+  'set-live-week': (arg) => { S.liveWeek = Number(arg) },
+  'set-month': (arg) => { S.monthView = arg },
+
+  'campaign-month': (arg) => { NEW_CAMPAIGN.target = arg },
+  'campaign-auto': () => { NEW_CAMPAIGN.autoTransition = !NEW_CAMPAIGN.autoTransition },
+  'campaign-source': (arg) => { NEW_CAMPAIGN.source = arg },
+  'create-campaign': (arg) => {
+    const option = monthOptions().find((entry) => entry.id === arg)
+    TAKEN_MONTHS.push(arg)
+    S.view = NEW_CAMPAIGN.source === 'import' ? 'vacations' : 'campagnes'
+    toast('Campagne de ' + option.label.toLowerCase() + ' créée au statut brouillon. ' +
+      (NEW_CAMPAIGN.source === 'duplicate' ? 'Les vacations ont été reportées depuis octobre.' : 'Chargez maintenant ses vacations.'))
+  },
   'pick-slot': (arg) => { S.slotId = arg },
   'toggle-lock': (arg) => {
     S.locks[arg] = !S.locks[arg]

@@ -4,20 +4,23 @@ VIEWS.compteurs = () => {
   const isFellow = S.role === 'FELLOW'
   const me = viewer()
   const population = isFellow ? FELLOWS : SENIORS
-  const plan = isFellow ? S.fellowAssignments : S.assignments
+  /* RG-30: counters reflect the last published version, never a proposal —
+     so they read September, not the October plan still under review. */
+  const live = planFor('sep')
+  const plan = isFellow ? live.fellows : live.seniors
 
   const monthRows = population.map((person) => {
-    const mine = SLOTS.filter((slot) => plan[slot.id] === person.id)
+    const mine = live.slots.filter((slot) => plan[slot.id] === person.id)
     const irm = mine.filter((slot) => slot.modality === 'IRM').length
     const morning = mine.filter((slot) => slot.halfDay === 'MORNING').length
-    const withCoordinator = isFellow ? mine.filter((slot) => S.assignments[slot.id] === 'tp').length : 0
-    const doubles = !isFellow && person.coordinator ? doubleShifts() : 0
+    const withCoordinator = isFellow ? mine.filter((slot) => live.seniors[slot.id] === 'tp').length : 0
+    const doubles = !isFellow && person.coordinator ? doubleShiftsIn(live.seniors, live.slots) : 0
     const byCenter = {}
     Object.keys(CENTERS).forEach((key) => { byCenter[key] = mine.filter((slot) => slot.center === key).length })
     return {
       person, total: mine.length, irm, ct: mine.length - irm, morning,
       afternoon: mine.length - morning, withCoordinator, doubles, byCenter,
-      declared: declaredCount(person.id)
+      declared: declaredCount(person.id, live.slots)
     }
   })
 
@@ -134,12 +137,12 @@ VIEWS.compteurs = () => {
 
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
       ${segmented([
-        { id: 'month', label: 'Octobre 2026' },
+        { id: 'month', label: live.period.label },
         { id: 'year', label: 'Cumul annuel' },
         { id: 'rolling', label: '12 mois glissants' }
       ], S.countersPeriod, 'counters-period')}
       <span style="font-size:13px;color:${T.text2}">${
-        S.countersPeriod === 'month' ? 'campagne d’octobre 2026, après échanges validés'
+        S.countersPeriod === 'month' ? 'planning publié de ' + live.period.lower + ', après échanges validés'
         : S.countersPeriod === 'year' ? 'cumul depuis le 1er janvier 2026'
         : 'douze derniers mois glissants'
       }</span>
@@ -262,8 +265,10 @@ VIEWS.echanges = () => {
   const me = viewer()
   const isFellow = S.role === 'FELLOW'
   const population = isFellow ? FELLOWS : SENIORS
-  const plan = isFellow ? S.fellowAssignments : S.assignments
-  const mine = SLOTS.filter((slot) => plan[slot.id] === me.id)
+  /* Swaps only exist on a published plan, so they run on the live month. */
+  const live = planFor('sep')
+  const plan = isFellow ? live.fellows : live.seniors
+  const mine = live.slots.filter((slot) => plan[slot.id] === me.id)
 
   const picked = mine.find((slot) => slot.id === S.swapShiftId) || mine[0]
   const isExchange = S.swapKind === 'EXCHANGE'
@@ -275,11 +280,11 @@ VIEWS.echanges = () => {
 
   const counts = {}
   population.forEach((person) => {
-    counts[person.id] = SLOTS.filter((slot) => plan[slot.id] === person.id).length
+    counts[person.id] = live.slots.filter((slot) => plan[slot.id] === person.id).length
   })
 
   const candidates = compatible.slice(0, 4).map((person) => {
-    const theirSlots = SLOTS.filter((slot) => plan[slot.id] === person.id && isFree(availabilityOf(me.id, slot.id)))
+    const theirSlots = live.slots.filter((slot) => plan[slot.id] === person.id && isFree(availabilityOf(me.id, slot.id)))
     const offer = theirSlots[0]
     return { person, offer, hasOffer: Boolean(offer) }
   }).filter((entry) => (isExchange ? entry.hasOffer : true))
@@ -292,11 +297,11 @@ VIEWS.echanges = () => {
 
   const inbox = (() => {
     const partner = population.find((person) => person.id !== me.id && counts[person.id] > 0)
-    const theirs = partner ? SLOTS.filter((slot) => plan[slot.id] === partner.id)[0] : null
+    const theirs = partner ? live.slots.filter((slot) => plan[slot.id] === partner.id)[0] : null
     const ours = mine[1] || mine[0]
     if (!partner || !theirs || !ours) return []
     const giver = population.find((person) => person.id !== me.id && person.id !== partner.id && counts[person.id] > 0)
-    const gift = giver ? SLOTS.filter((slot) => plan[slot.id] === giver.id)[0] : null
+    const gift = giver ? live.slots.filter((slot) => plan[slot.id] === giver.id)[0] : null
     const entries = [{
       person: partner, kind: 'Permutation', when: 'hier 18:42',
       inSlot: theirs, outSlot: ours,
@@ -337,10 +342,12 @@ VIEWS.echanges = () => {
 
   return `
     ${pageHeader(
-      'Échanges de vacations — Octobre 2026',
-      'Ajustez entre pairs sans repasser par le coordinateur. Tout est tracé et les compteurs se recalculent automatiquement.',
+      'Échanges de vacations — ' + live.period.label,
+      'Sur le planning publié du mois en cours. Ajustez entre pairs sans repasser par le coordinateur : tout est tracé et les compteurs se recalculent.',
       ''
     )}
+
+    ${workflowBanner('echanges')}
 
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
       <div style="display:flex;gap:4px;padding:4px;border-radius:12px;background:${T.gray100}">

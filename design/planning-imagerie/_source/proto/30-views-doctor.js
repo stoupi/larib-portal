@@ -40,10 +40,12 @@ VIEWS.dispos = () => {
 
   return `
     ${pageHeader(
-      'Mes disponibilités — Octobre 2026',
-      'Recueil ouvert jusqu’au 15 septembre à 23h59. Vous pouvez revenir modifier votre saisie autant de fois que nécessaire.',
+      'Mes disponibilités — ' + TARGET.label,
+      'Vous préparez le mois prochain. Recueil ouvert jusqu’au 15 septembre à 23h59, modifiable autant de fois que nécessaire.',
       button({ label: 'Vue liste', variant: 'outline', icon: 'filter', act: 'toast', arg: 'La vue liste triable est prévue pour la saisie rapide sur téléphone.' })
     )}
+
+    ${workflowBanner('dispos')}
 
     <section style="${CARD};display:flex;align-items:center;gap:20px;padding:16px 24px;margin-bottom:16px">
       ${[
@@ -74,7 +76,7 @@ VIEWS.dispos = () => {
 
     <div style="display:flex;gap:20px;align-items:flex-start">
       <section style="${CARD};flex:1;min-width:0;overflow:hidden">
-        ${sectionHead('Octobre 2026 — ' + plural(SLOTS.length, 'vacation') + ' proposées', weekSegments('set-week'))}
+        ${sectionHead(TARGET.label + ' — ' + plural(SLOTS.length, 'vacation') + ' proposées', weekSegments(WEEKS, S.week, 'set-week'))}
         ${halfDayHeads('180px')}
         ${dayNumbers.map((dayNumber, position) => {
           const daySlots = weekSlots.filter((slot) => slot.dayNumber === dayNumber)
@@ -145,24 +147,20 @@ VIEWS.dispos = () => {
 VIEWS.monmois = () => {
   const me = viewer()
   const isFellow = S.role === 'FELLOW'
-  const plan = isFellow ? S.fellowAssignments : S.assignments
-  const mine = SLOTS.filter((slot) => plan[slot.id] === me.id)
-
-  const tests = {
-    all: () => true,
-    irm: (slot) => slot.modality === 'IRM',
-    ct: (slot) => slot.modality === 'Scanner',
-    pezel: (slot) => S.assignments[slot.id] === 'tp'
-  }
-  const filter = S.monthFilter === 'pezel' && !isFellow ? 'all' : S.monthFilter
-  const visible = mine.filter(tests[filter] || tests.all)
+  const months = readableMonths()
+  const chosen = months.some((month) => month.id === S.monthView) ? S.monthView : months[0].id
+  const plan = planFor(chosen)
+  const mine = plan.slots.filter((slot) => (isFellow ? plan.fellows : plan.seniors)[slot.id] === me.id)
 
   const irm = mine.filter((slot) => slot.modality === 'IRM').length
-  const withCoordinator = mine.filter((slot) => S.assignments[slot.id] === 'tp').length
+  const withCoordinator = mine.filter((slot) => plan.seniors[slot.id] === 'tp').length
+  const population = isFellow ? FELLOWS : SENIORS
+  const held = plan.slots.filter((slot) => (isFellow ? plan.fellows : plan.seniors)[slot.id]).length
+  const average = Math.round((held / population.length) * 10) / 10
 
   const mentorCounts = {}
   mine.forEach((slot) => {
-    const seniorId = S.assignments[slot.id]
+    const seniorId = plan.seniors[slot.id]
     if (!seniorId || seniorId === me.id) return
     mentorCounts[seniorId] = (mentorCounts[seniorId] || 0) + 1
   })
@@ -171,26 +169,76 @@ VIEWS.monmois = () => {
     .sort((left, right) => right.count - left.count)
   const mentorPeak = mentors.length ? mentors[0].count : 1
 
-  const next = mine[0]
-  const population = isFellow ? FELLOWS : SENIORS
-  const populationAverage = Math.round((Object.keys(plan).filter((key) => plan[key]).length / population.length) * 10) / 10
+  /* The next one still ahead of today, else simply the first of the month. */
+  const upcoming = mine.filter((slot) => slot.date >= TODAY)
+  const next = upcoming[0] || mine[0]
 
   const summary = [
-    { label: 'Vacations du mois', value: mine.length, detail: 'moyenne de la population : ' + String(populationAverage).replace('.', ','), glyph: 'calendar' },
+    { label: 'Mes vacations', value: mine.length, detail: 'moyenne de la population : ' + String(average).replace('.', ','), glyph: 'calendar' },
     { label: 'IRM cardiaque', value: irm, detail: 'sur ' + mine.length + ' vacations', glyph: 'heart' },
     { label: 'Scanner cardiaque', value: mine.length - irm, detail: 'sur ' + mine.length + ' vacations', glyph: 'ct' },
-    { label: isFellow ? 'Avec le Dr Pezel' : 'Doubles vacations', value: isFellow ? withCoordinator : '—', detail: isFellow ? 'objectif F3, équité d’encadrement' : 'réservé au coordinateur', glyph: 'users' }
+    isFellow
+      ? { label: 'Avec le Dr Pezel', value: withCoordinator, detail: 'objectif F3, équité d’encadrement', glyph: 'users' }
+      : { label: 'À venir', value: upcoming.length, detail: 'sur ' + mine.length + ' ce mois-ci', glyph: 'clock' }
   ]
+
+  const weekSlots = plan.slots.filter((slot) => slot.week === plan.week)
+  const dayNumbers = weekSlots.reduce((list, slot) => (list.indexOf(slot.dayNumber) === -1 ? list.concat(slot.dayNumber) : list), []).sort((left, right) => left - right)
+  const weekAct = chosen === 'sep' ? 'set-live-week' : 'set-week'
+
+  const renderSlot = (slot) => {
+    const ownerId = (isFellow ? plan.fellows : plan.seniors)[slot.id]
+    const isMine = ownerId === me.id
+    const partnerId = isFellow ? plan.seniors[slot.id] : plan.fellows[slot.id]
+    const partner = partnerId ? (isFellow ? SENIORS : FELLOWS).find((entry) => entry.id === partnerId) : null
+    const owner = ownerId ? population.find((entry) => entry.id === ownerId) : null
+    const past = slot.date < TODAY
+
+    if (isMine) {
+      const trailing = `<span style="display:inline-flex;align-items:center;gap:7px;flex-shrink:0">
+        ${partner ? avatar(partner.initials, partner.coordinator ? T.navy50 : T.gray100, partner.coordinator ? T.navy600 : T.gray600, 26) : ''}
+        <span style="display:inline-flex;align-items:center;gap:5px;border-radius:999px;background:${past ? T.gray100 : T.okBg};padding:4px 10px 4px 7px">
+          ${icon(past ? 'check' : 'star', past ? T.text2 : T.ok700, 13)}
+          <span style="font-size:11px;font-weight:600;color:${past ? T.text2 : T.ok700}">${past ? 'Faite' : 'Ma vacation'}</span>
+        </span>
+      </span>`
+      return slotRow(slot, {
+        trailing,
+        bg: past ? T.gray25 : T.okBg,
+        border: past ? T.line : T.okBorder,
+        secondary: partner ? 'avec ' + partner.name : null
+      })
+    }
+
+    /* Everyone else's vacations stay visible but recede, so the month reads
+       as a team calendar without competing with your own. */
+    const trailing = `<span style="display:inline-flex;align-items:center;gap:7px;flex-shrink:0;opacity:0.75">
+      ${owner ? avatar(owner.initials, T.gray100, T.text3, 24) : icon('minus', T.gray300, 14)}
+      <span style="font-size:12px;color:${T.text3};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:120px">${owner ? owner.name : 'non pourvue'}</span>
+    </span>`
+    return slotRow(slot, { trailing, bg: T.surface, border: T.gray100, subdued: true })
+  }
 
   return `
     ${pageHeader(
-      'Mon mois — Octobre 2026',
-      S.published
-        ? 'Planning publié en version ' + S.planVersion + '. Les échanges entre pairs sont ouverts jusqu’à la veille de chaque vacation.'
-        : 'Le planning n’est pas encore publié. Ce que vous voyez est la proposition en cours de revue par le coordinateur.',
+      'Mon mois — ' + plan.period.label,
+      plan.id === 'sep'
+        ? 'Planning publié le ' + plan.publishedOn + ' en version ' + plan.version + '. Les échanges sont ouverts jusqu’à la veille de chaque vacation.'
+        : (plan.published
+          ? 'Planning publié en version ' + plan.version + '. Les échanges sont ouverts.'
+          : 'Le planning n’est pas encore publié : voici la proposition en cours de revue.'),
       button({ label: 'Exporter en PDF', variant: 'outline', icon: 'download', act: 'toast', arg: 'Un PDF paysage d’une page serait produit.' }) +
       button({ label: 'Proposer un échange', icon: 'swap', nav: 'echanges' })
     )}
+
+    ${workflowBanner('monmois')}
+
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
+      ${segmented(months.map((month) => ({ id: month.id, label: month.label })), chosen, 'set-month')}
+      <span style="font-size:13px;color:${T.text2}">${months.find((month) => month.id === chosen).note === 'mois en cours'
+        ? 'le mois que vous travaillez en ce moment'
+        : 'le mois que vous préparez'}</span>
+    </div>
 
     <div style="display:flex;gap:20px;align-items:flex-start">
       <div style="display:flex;flex-direction:column;gap:20px;flex:1;min-width:0">
@@ -204,49 +252,48 @@ VIEWS.monmois = () => {
         </div>
 
         <section style="${CARD};overflow:hidden">
-          ${sectionHead('Mes vacations', segmented(
-            [{ id: 'all', label: 'Toutes' }, { id: 'irm', label: 'IRM' }, { id: 'ct', label: 'Scanner' }]
-              /* Co-presence with the coordinator is a fellow counter (§7.8). */
-              .concat(isFellow ? [{ id: 'pezel', label: 'Avec Dr Pezel' }] : []),
-            filter, 'month-filter'))}
-          ${mine.length === 0 ? `<p style="margin:0;padding:24px 20px;font-size:14px;color:${T.text2}">Aucune vacation ce mois-ci. Vos disponibilités déclarées n’ont pas permis d’affectation, ou vous n’avez pas encore répondu.</p>` : `
-            ${tableHead([
-              { label: 'Date', width: '196px' },
-              { label: 'Vacation', width: '1fr' },
-              { label: isFellow ? 'Senior sur le créneau' : 'Fellow sur le créneau', width: '208px' },
-              { label: 'Statut', width: '116px', align: 'right' }
-            ])}
-            ${visible.map((slot) => {
-              const partnerId = isFellow ? S.assignments[slot.id] : S.fellowAssignments[slot.id]
-              const partner = partnerId ? (isFellow ? SENIORS : FELLOWS).find((entry) => entry.id === partnerId) : null
-              const isNext = next && slot.id === next.id
-              return `<div style="display:grid;grid-template-columns:196px 1fr 208px 116px;align-items:center;gap:0;border-bottom:1px solid ${T.gray100};padding:12px 20px;background:${isNext ? T.gray25 : T.surface}">
-                <span style="padding-right:12px">
-                  <span style="display:block;font-size:14px;font-weight:500;color:${T.text};text-transform:capitalize">${WEEKDAYS[slot.weekday]} ${slot.dayNumber === 1 ? '1er' : slot.dayNumber} octobre</span>
-                  <span style="display:block;font-size:12px;color:${T.text2}">${slot.halfDay === 'MORNING' ? 'matin' : 'après-midi'}</span>
-                </span>
-                <span style="display:flex;align-items:center;gap:10px;padding-right:12px">
-                  <span style="width:3px;height:26px;flex-shrink:0;border-radius:2px;background:${CENTERS[slot.center].color}"></span>
-                  <span style="flex:1;min-width:0">
-                    <span style="display:block;font-size:14px;color:${T.text}">${CENTERS[slot.center].label}</span>
-                    <span style="display:block;font-size:12px;color:${T.text2}">${slot.modality} cardiaque</span>
-                  </span>
-                </span>
-                <span style="display:flex;align-items:center;gap:9px;padding-right:12px">
-                  ${partner ? avatar(partner.initials, partner.coordinator ? T.navy50 : T.gray100, partner.coordinator ? T.navy600 : T.gray600, 26) : ''}
-                  <span style="flex:1;min-width:0;font-size:13px;color:${partner ? T.gray700 : T.text3};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${partner ? partner.name : 'personne affectée'}</span>
-                </span>
-                <span style="display:flex;justify-content:flex-end">${badge(isNext ? 'À venir' : S.published ? 'Publiée' : 'Proposition', isNext ? 'info' : S.published ? 'neutral' : 'warning')}</span>
-              </div>`
-            }).join('')}
-            ${footnote(filter === 'all'
-              ? 'Les compteurs reflètent toujours la dernière version publiée, jamais une proposition non publiée (RG-30).'
-              : plural(visible.length, 'vacation') + ' sur ' + mine.length + ' correspondent à ce filtre.')}
-          `}
+          ${sectionHead(
+            plan.period.label + ' — ' + plural(mine.length, 'vacation') + ' pour moi',
+            `<span style="display:flex;align-items:center;gap:12px"><span style="font-size:13px;color:${T.text2}">${plural(weekSlots.length, 'vacation')} cette semaine</span>${weekSegments(plan.weeks, plan.week, weekAct)}</span>`
+          )}
+          ${halfDayHeads('180px')}
+          ${dayNumbers.map((dayNumber, position) => {
+            const daySlots = weekSlots.filter((slot) => slot.dayNumber === dayNumber)
+            const morning = daySlots.filter((slot) => slot.halfDay === 'MORNING')
+            const afternoon = daySlots.filter((slot) => slot.halfDay === 'AFTERNOON')
+            const mineHere = daySlots.filter((slot) => (isFellow ? plan.fellows : plan.seniors)[slot.id] === me.id).length
+            const today = daySlots[0].date.getTime() === TODAY.getTime()
+            const empty = `<span style="display:flex;align-items:center;min-height:46px;font-size:12px;color:${T.gray300};padding-left:8px">Aucune vacation</span>`
+            return `<div style="display:grid;grid-template-columns:180px 1fr 1fr;gap:0;border-bottom:1px solid ${T.gray100};padding:14px 20px;background:${today ? T.infoBg : position % 2 ? T.gray25 : T.surface}">
+              ${dayCell(daySlots, `<span style="font-size:12px;color:${mineHere ? T.ok700 : T.text3}">${mineHere ? plural(mineHere, 'vacation') + ' pour moi' : 'rien pour moi'}</span>${today ? `<span style="font-size:11px;font-weight:600;color:${T.info}">aujourd’hui</span>` : ''}`)}
+              <div style="display:flex;flex-direction:column;gap:7px;padding-right:12px">${morning.length ? morning.map(renderSlot).join('') : empty}</div>
+              <div style="display:flex;flex-direction:column;gap:7px">${afternoon.length ? afternoon.map(renderSlot).join('') : empty}</div>
+            </div>`
+          }).join('')}
+          ${gridLegend(`<span style="display:inline-flex;align-items:center;gap:10px">
+            <span style="display:inline-flex;align-items:center;gap:5px;border-radius:999px;background:${T.okBg};padding:3px 9px 3px 6px">${icon('star', T.ok700, 13)}<span style="font-size:11px;font-weight:600;color:${T.ok700}">Mes vacations</span></span>
+            <span style="font-size:12px;color:${T.text3}">les autres restent visibles, en retrait</span>
+          </span>`)}
         </section>
       </div>
 
       <aside style="display:flex;flex-direction:column;gap:16px;width:372px;flex-shrink:0">
+        ${next ? `<section style="${CARD};padding:20px 24px">
+          <h3 style="margin:0 0 12px;font-size:15px;font-weight:600;color:${T.text}">${next.date >= TODAY ? 'Prochaine vacation' : 'Première du mois'}</h3>
+          <div style="border:1px solid ${T.infoBorder};border-radius:12px;background:${T.infoBg};padding:14px 16px">
+            <p style="margin:0;font-size:13px;font-weight:600;color:${T.info};text-transform:capitalize">${slotWhen(next)}</p>
+            <p style="margin:6px 0 0;font-size:15px;font-weight:600;color:${T.text}">${CENTERS[next.center].label} · ${MODALITIES[next.modality].full}</p>
+            ${(function () {
+              const partnerId = isFellow ? plan.seniors[next.id] : plan.fellows[next.id]
+              const partner = partnerId ? (isFellow ? SENIORS : FELLOWS).find((entry) => entry.id === partnerId) : null
+              return partner ? `<p style="margin:4px 0 0;font-size:13px;color:${T.gray600}">Avec ${partner.name}.</p>` : ''
+            })()}
+          </div>
+          <div style="display:flex;gap:8px;margin-top:12px">
+            ${button({ label: 'Céder cette vacation', variant: 'outline', nav: 'echanges', style: 'flex:1;font-size:13px' })}
+          </div>
+        </section>` : ''}
+
         <section style="${CARD};padding:20px 24px;border-left:4px solid ${T.navy500}">
           <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
             ${icon('calendar', T.navy500, 18)}
@@ -257,24 +304,7 @@ VIEWS.monmois = () => {
             <span style="flex:1;min-width:0;font-size:12px;color:${T.text2};font-family:ui-monospace,SFMono-Regular,Menlo,monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">…/planning/me/calendar.ics?t=8f21…</span>
             <button type="button" data-act="toast" data-arg="Lien copié. Ce flux ne contient que vos propres vacations." style="display:flex;align-items:center;justify-content:center;width:28px;height:28px;flex-shrink:0;border:1px solid ${T.line};border-radius:8px;background:${T.surface};cursor:pointer;padding:0">${icon('copy', T.gray600, 14)}</button>
           </div>
-          <p style="margin:10px 0 0;font-size:12px;color:${T.text3};line-height:1.45">Ce flux ne contient que vos propres vacations.</p>
         </section>
-
-        ${next ? `<section style="${CARD};padding:20px 24px">
-          <h3 style="margin:0 0 12px;font-size:15px;font-weight:600;color:${T.text}">Prochaine vacation</h3>
-          <div style="border:1px solid ${T.infoBorder};border-radius:12px;background:${T.infoBg};padding:14px 16px">
-            <p style="margin:0;font-size:13px;font-weight:600;color:${T.info};text-transform:capitalize">${slotWhen(next)}</p>
-            <p style="margin:6px 0 0;font-size:15px;font-weight:600;color:${T.text}">${CENTERS[next.center].label} · ${next.modality} cardiaque</p>
-            ${(() => {
-              const partnerId = isFellow ? S.assignments[next.id] : S.fellowAssignments[next.id]
-              const partner = partnerId ? (isFellow ? SENIORS : FELLOWS).find((entry) => entry.id === partnerId) : null
-              return partner ? `<p style="margin:4px 0 0;font-size:13px;color:${T.gray600}">Avec ${partner.name}.</p>` : ''
-            })()}
-          </div>
-          <div style="display:flex;gap:8px;margin-top:12px">
-            ${button({ label: 'Céder cette vacation', variant: 'outline', nav: 'echanges', style: 'flex:1;font-size:13px' })}
-          </div>
-        </section>` : ''}
 
         ${isFellow && mentors.length ? `<section style="${CARD};padding:20px 24px">
           <h3 style="margin:0 0 14px;font-size:15px;font-weight:600;color:${T.text}">Mon encadrement ce mois-ci</h3>
@@ -293,7 +323,7 @@ VIEWS.monmois = () => {
           <div style="display:flex;flex-direction:column;gap:8px">
             ${[
               { label: 'Mes vacations en PDF', detail: 'Une page, format paysage', glyph: 'file', color: T.dangerText },
-              { label: 'Planning complet de l’équipe', detail: 'Toutes les vacations d’octobre 2026', glyph: 'sheet', color: T.ok700 },
+              { label: 'Planning complet de l’équipe', detail: 'Toutes les vacations de ' + plan.period.lower, glyph: 'sheet', color: T.ok700 },
               { label: 'Fichier calendrier ICS', detail: 'Import ponctuel, sans mise à jour automatique', glyph: 'download', color: T.navy500 }
             ].map((item) => `<button type="button" data-act="toast" data-arg="${esc(item.label + ' — export non simulé dans le prototype.')}" style="display:flex;align-items:center;gap:10px;min-height:44px;border:1px solid ${T.line};border-radius:10px;background:${T.surface};padding:10px 12px;font-family:inherit;cursor:pointer;text-align:left">
               ${icon(item.glyph, item.color, 16)}

@@ -76,7 +76,18 @@ const scripted = [
   ['swap-tab', 'outbox'],
   ['settings-tab', 'solver'],
   ['import-method', 'manual'],
-  ['diff-version', 'v1']
+  ['diff-version', 'v1'],
+  ['set-live-week', '38'],
+  ['set-month', 'sep'],
+  ['campaign-month', '2026-12'],
+  ['campaign-source', 'import'],
+  ['campaign-auto', null],
+  ['create-campaign', '2026-12'],
+  ['set-role', 'SENIOR'],
+  ['set-month', 'oct'],
+  ['set-role', 'COORDINATOR'],
+  ['set-space', 'app'],
+  ['set-space', 'admin']
 ]
 
 for (const [name, arg] of scripted) {
