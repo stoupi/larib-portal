@@ -157,6 +157,8 @@ export function variableToField(variable: LibraryVariable, items: Array<{ code: 
     ...(typeof params.min === 'number' ? { min: params.min } : {}),
     ...(typeof params.max === 'number' ? { max: params.max } : {}),
     ...(typeof params.segmentCount === 'number' ? { segmentCount: params.segmentCount } : {}),
+    ...(params.calibrationTolerance ? { calibrationTolerance: params.calibrationTolerance } : {}),
+    ...(params.scale ? { scale: params.scale } : {}),
     ...(items.length > 0
       ? {
           options: items.map((item) => item.label),

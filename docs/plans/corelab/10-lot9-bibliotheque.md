@@ -10,6 +10,8 @@
 
 **Modèles à ajouter :** `CorelabValueSet`, `CorelabValueSetItem { code, label, colour, order }`, `CorelabLibraryVariable { modality, type, params, valueSetId? }`, `CorelabLibraryBlock { kind SECTION|SEQUENCE, modality, definition }`. Le CRF d'une étude reste un JSON par version ; l'éditeur écrit une **version brouillon** (`publishedAt = null`) puis la publie.
 
+**Déjà en place :** modèles Prisma, service `lib/services/corelab/library.ts`, écran `/corelab/admin/library`, et l'amorçage du contenu CMR — `lib/corelab/crf/library-extract.ts` déplie un CRF en jeux de valeurs / variables / blocs (nom des jeux de valeurs et couleurs dans `lib/corelab/crf/mir-dijon-v1/value-sets.ts`), `npm run corelab:seed-library` l'écrit en base de façon idempotente. Reste l'éditeur de CRF lui‑même.
+
 **Points durs à traiter dans le découpage :**
 1. Extension du schéma Zod de définition : `scale` (crans, rendu), `valueSetId` optionnel sur les catégorielles et segmentaires, couleurs par option.
 2. Comparaison de deux versions (`lib/corelab/crf/diff-versions.ts`) classant chaque changement : sans conséquence (libellé, borne élargie), crée un manque (nouvelle variable requise), casse une lecture (type changé, option retirée utilisée).

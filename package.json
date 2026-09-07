@@ -23,7 +23,8 @@
     "test:check-passwords": "tsx scripts/check-test-passwords.ts",
     "audit:submissions": "tsx scripts/audit-in-submission.ts",
     "logbook:seed": "tsx scripts/seed-publications-logbook.ts",
-    "corelab:seed-mir": "tsx scripts/corelab/seed-mir-dijon.ts"
+    "corelab:seed-mir": "tsx scripts/corelab/seed-mir-dijon.ts",
+    "corelab:seed-library": "tsx scripts/corelab/seed-library-mir.ts"
   },
   "dependencies": {
     "@ai-sdk/google": "^1.2.19",
