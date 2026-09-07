@@ -32,14 +32,20 @@ VIEWS.revue = () => {
     const holder = holderId ? SENIORS.find((person) => person.id === holderId) : null
     const isPicked = slot.id === picked.id
     const locked = Boolean(S.locks[slot.id])
-    return `<div data-act="pick-slot" data-arg="${slot.id}" style="display:flex;align-items:center;gap:10px;border:1px solid ${isPicked ? T.coral500 : holder ? T.line : T.dangerBorder};border-left:3px solid ${CENTERS[slot.center].color};border-radius:10px;background:${isPicked ? T.coral50 : holder ? T.surface : T.dangerBg};padding:7px 10px;cursor:pointer">
-      <span style="display:flex;flex-direction:column;min-width:92px;flex-shrink:0">
-        <span style="font-size:12px;font-weight:600;color:${T.gray700}">${CENTERS[slot.center].label}</span>
-        <span style="font-size:11px;color:${T.text2}">${slot.modality}</span>
-      </span>
-      <span style="flex:1;min-width:0;font-size:13px;font-weight:500;color:${holder ? T.text : T.dangerText};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${holder ? holder.name : 'Place non pourvue'}</span>
-      <span style="flex-shrink:0">${locked ? icon('lock', T.text2, 14) : holder ? '' : icon('alert', T.dangerText, 14)}</span>
-    </div>`
+    const trailing = `<span style="display:inline-flex;align-items:center;gap:7px;flex-shrink:0;max-width:190px">
+      ${holder
+        ? avatar(holder.initials, holder.coordinator ? T.navy50 : T.gray100, holder.coordinator ? T.navy600 : T.gray600, 26) +
+          `<span style="font-size:13px;font-weight:500;color:${T.text};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${holder.name}</span>`
+        : `<span style="display:inline-flex;align-items:center;gap:5px;border-radius:999px;background:${T.dangerBg};padding:4px 10px 4px 7px">${icon('alert', T.dangerText, 13)}<span style="font-size:11px;font-weight:600;color:${T.dangerText}">Non pourvue</span></span>`}
+      ${locked ? icon('lock', T.text2, 14) : ''}
+    </span>`
+    return slotRow(slot, {
+      trailing,
+      bg: isPicked ? T.coral50 : holder ? T.surface : T.dangerBg,
+      border: isPicked ? T.coral500 : holder ? T.line : T.dangerBorder,
+      act: 'pick-slot',
+      arg: slot.id
+    })
   }
 
   const equityRows = active
@@ -102,27 +108,21 @@ VIEWS.revue = () => {
           'Grille mensuelle',
           `<span style="display:flex;align-items:center;gap:12px"><span style="font-size:13px;color:${T.text2}">${plural(weekSlots.length, 'vacation')} cette semaine</span>${weekSegments('set-week')}</span>`
         )}
-        ${tableHead([{ label: 'Jour', width: '132px' }, { label: 'Matin', width: '1fr' }, { label: 'Après-midi', width: '1fr' }])}
-        ${dayNumbers.map((dayNumber) => {
+        ${halfDayHeads('180px')}
+        ${dayNumbers.map((dayNumber, position) => {
           const daySlots = weekSlots.filter((slot) => slot.dayNumber === dayNumber)
           const morning = daySlots.filter((slot) => slot.halfDay === 'MORNING')
           const afternoon = daySlots.filter((slot) => slot.halfDay === 'AFTERNOON')
           const gaps = daySlots.filter((slot) => !S.assignments[slot.id]).length
           const holdsPicked = daySlots.some((slot) => slot.id === picked.id)
-          return `<div style="display:grid;grid-template-columns:132px 1fr 1fr;gap:0;border-bottom:1px solid ${T.gray100};padding:12px 20px;background:${holdsPicked ? T.gray25 : T.surface}">
-            <div style="padding-right:12px">
-              <p style="margin:0;font-size:14px;font-weight:600;color:${T.text};text-transform:capitalize">${WEEKDAYS[daySlots[0].weekday]}</p>
-              <p style="margin:1px 0 0;font-size:13px;color:${T.text2}">${dayNumber === 1 ? '1er' : dayNumber} octobre</p>
-              <p style="margin:4px 0 0;font-size:11px;color:${gaps ? T.dangerText : T.text3}">${gaps ? plural(gaps, 'place') + ' non pourvue' + (gaps > 1 ? 's' : '') : plural(daySlots.length, 'vacation')}</p>
-            </div>
-            <div style="display:flex;flex-direction:column;gap:6px;padding-right:10px">${morning.length ? morning.map(renderSlot).join('') : `<span style="font-size:12px;color:${T.gray300}">—</span>`}</div>
-            <div style="display:flex;flex-direction:column;gap:6px">${afternoon.length ? afternoon.map(renderSlot).join('') : `<span style="font-size:12px;color:${T.gray300}">—</span>`}</div>
+          const empty = `<span style="display:flex;align-items:center;min-height:46px;font-size:12px;color:${T.gray300};padding-left:8px">Aucune vacation</span>`
+          return `<div style="display:grid;grid-template-columns:180px 1fr 1fr;gap:0;border-bottom:1px solid ${T.gray100};padding:14px 20px;background:${holdsPicked ? T.coral50 : position % 2 ? T.gray25 : T.surface}">
+            ${dayCell(daySlots, `<span style="font-size:12px;color:${gaps ? T.dangerText : T.text3}">${gaps ? plural(gaps, 'place') + ' non pourvue' + (gaps > 1 ? 's' : '') : plural(daySlots.length, 'vacation')}</span>`)}
+            <div style="display:flex;flex-direction:column;gap:7px;padding-right:12px">${morning.length ? morning.map(renderSlot).join('') : empty}</div>
+            <div style="display:flex;flex-direction:column;gap:7px">${afternoon.length ? afternoon.map(renderSlot).join('') : empty}</div>
           </div>`
         }).join('')}
-        <div style="display:flex;align-items:center;gap:20px;padding:14px 20px;font-size:12px;color:${T.text2}">
-          ${Object.keys(CENTERS).map((key) => `<span style="display:flex;align-items:center;gap:6px"><span style="width:3px;height:14px;border-radius:2px;background:${CENTERS[key].color}"></span>${CENTERS[key].label}</span>`).join('')}
-          <span style="display:flex;align-items:center;gap:6px;margin-left:auto">${icon('lock', T.text2, 14)}affectation verrouillée, conservée à la régénération</span>
-        </div>
+        ${gridLegend(`<span style="display:inline-flex;align-items:center;gap:6px;font-size:12px;color:${T.text2}">${icon('lock', T.text2, 14)}verrouillée, conservée à la régénération</span>`)}
       </section>
 
       <aside style="display:flex;flex-direction:column;gap:16px;width:384px;flex-shrink:0">

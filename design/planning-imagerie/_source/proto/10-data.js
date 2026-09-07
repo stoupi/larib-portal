@@ -110,8 +110,9 @@ const CARRY = { tp: 0, ab: 0, cd: 2, fl: -1, mn: 1, sr: -2, jv: 0, ml: 0 }
 
 const S = {
   role: 'COORDINATOR',
+  /** 'app' = /planning, 'admin' = /planning/admin — two sidebar entries. */
+  space: 'admin',
   view: 'campagnes',
-  device: 'desktop',
   campaignId: 'oct-2026',
   /** availability[personId][slotId] = 'AVAILABLE' | 'PREFERRED' | 'UNAVAILABLE' | 'NONE' */
   availability: {},

@@ -23,16 +23,11 @@ VIEWS.dispos = () => {
   const renderSlot = (slot) => {
     const status = availabilityOf(me.id, slot.id)
     const skin = AVAIL_SKINS[status]
-    return `<div data-act="cycle" data-arg="${slot.id}" style="display:flex;align-items:center;gap:10px;min-height:44px;border:1px solid ${skin.border};border-left:3px solid ${CENTERS[slot.center].color};border-radius:10px;background:${skin.bg};padding:7px 10px;cursor:pointer">
-      <span style="display:flex;flex-direction:column;flex:1;min-width:0">
-        <span style="font-size:12px;font-weight:600;color:${T.gray700}">${CENTERS[slot.center].label}</span>
-        <span style="font-size:11px;color:${T.text2}">${slot.modality}</span>
-      </span>
-      <span style="display:inline-flex;align-items:center;gap:5px;flex-shrink:0;border-radius:999px;background:${skin.pillBg};padding:3px 9px 3px 6px">
-        ${icon(skin.glyph, skin.pillFg, 13)}
-        <span style="font-size:11px;font-weight:600;color:${skin.pillFg}">${skin.label}</span>
-      </span>
-    </div>`
+    const pill = `<span style="display:inline-flex;align-items:center;gap:5px;flex-shrink:0;border-radius:999px;background:${skin.pillBg};padding:4px 10px 4px 7px">
+      ${icon(skin.glyph, skin.pillFg, 13)}
+      <span style="font-size:11px;font-weight:600;color:${skin.pillFg}">${skin.label}</span>
+    </span>`
+    return slotRow(slot, { trailing: pill, bg: skin.bg, border: skin.border, act: 'cycle', arg: slot.id })
   }
 
   const quickActions = [
@@ -80,29 +75,28 @@ VIEWS.dispos = () => {
     <div style="display:flex;gap:20px;align-items:flex-start">
       <section style="${CARD};flex:1;min-width:0;overflow:hidden">
         ${sectionHead('Octobre 2026 — ' + plural(SLOTS.length, 'vacation') + ' proposées', weekSegments('set-week'))}
-        ${tableHead([{ label: 'Jour', width: '132px' }, { label: 'Matin', width: '1fr' }, { label: 'Après-midi', width: '1fr' }])}
-        ${dayNumbers.map((dayNumber) => {
+        ${halfDayHeads('180px')}
+        ${dayNumbers.map((dayNumber, position) => {
           const daySlots = weekSlots.filter((slot) => slot.dayNumber === dayNumber)
           const morning = daySlots.filter((slot) => slot.halfDay === 'MORNING')
           const afternoon = daySlots.filter((slot) => slot.halfDay === 'AFTERNOON')
           const allAvailable = daySlots.every((slot) => availabilityOf(me.id, slot.id) === 'AVAILABLE')
-          return `<div style="display:grid;grid-template-columns:132px 1fr 1fr;gap:0;border-bottom:1px solid ${T.gray100};padding:12px 20px">
-            <div style="padding-right:12px">
-              <p style="margin:0;font-size:14px;font-weight:600;color:${T.text};text-transform:capitalize">${WEEKDAYS[daySlots[0].weekday]}</p>
-              <p style="margin:1px 0 0;font-size:13px;color:${T.text2}">${dayNumber === 1 ? '1er' : dayNumber} octobre</p>
-              <button type="button" data-act="bulk-day" data-arg="${dayNumber}|${allAvailable ? 'UNAVAILABLE' : 'AVAILABLE'}" style="margin-top:6px;border:1px solid ${T.line};border-radius:8px;background:${T.surface};padding:4px 8px;font-family:inherit;font-size:11px;font-weight:500;color:${T.gray600};cursor:pointer">Toute la journée</button>
-            </div>
-            <div style="display:flex;flex-direction:column;gap:6px;padding-right:10px">${morning.length ? morning.map(renderSlot).join('') : `<span style="font-size:12px;color:${T.gray300}">—</span>`}</div>
-            <div style="display:flex;flex-direction:column;gap:6px">${afternoon.length ? afternoon.map(renderSlot).join('') : `<span style="font-size:12px;color:${T.gray300}">—</span>`}</div>
+          const open = daySlots.filter((slot) => isFree(availabilityOf(me.id, slot.id))).length
+          const empty = `<span style="display:flex;align-items:center;min-height:46px;font-size:12px;color:${T.gray300};padding-left:8px">Aucune vacation</span>`
+          return `<div style="display:grid;grid-template-columns:180px 1fr 1fr;gap:0;border-bottom:1px solid ${T.gray100};padding:14px 20px;background:${position % 2 ? T.gray25 : T.surface}">
+            ${dayCell(daySlots, `<span style="font-size:12px;color:${open ? T.ok700 : T.text3}">${open ? plural(open, 'créneau') + ' retenu' + (open > 1 ? 's' : '') : 'rien de retenu'}</span>
+              <button type="button" data-act="bulk-day" data-arg="${dayNumber}|${allAvailable ? 'UNAVAILABLE' : 'AVAILABLE'}" style="margin-top:2px;border:1px solid ${T.line};border-radius:8px;background:${T.surface};padding:5px 9px;font-family:inherit;font-size:11px;font-weight:500;color:${T.gray600};cursor:pointer;white-space:nowrap">${allAvailable ? 'Tout retirer' : 'Toute la journée'}</button>`)}
+            <div style="display:flex;flex-direction:column;gap:7px;padding-right:12px">${morning.length ? morning.map(renderSlot).join('') : empty}</div>
+            <div style="display:flex;flex-direction:column;gap:7px">${afternoon.length ? afternoon.map(renderSlot).join('') : empty}</div>
           </div>`
         }).join('')}
-        <div style="display:flex;align-items:center;gap:16px;padding:14px 20px;font-size:12px;color:${T.text2}">
-          <span>Un clic fait défiler les trois états :</span>
+        ${gridLegend(`<span style="display:inline-flex;align-items:center;gap:8px">
+          <span style="font-size:11px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;color:${T.text3}">Un clic fait défiler</span>
           ${['UNAVAILABLE', 'AVAILABLE', 'PREFERRED'].map((key) => {
             const skin = AVAIL_SKINS[key]
             return `<span style="display:inline-flex;align-items:center;gap:5px;border-radius:999px;background:${skin.pillBg};padding:3px 9px 3px 6px">${icon(skin.glyph, skin.pillFg, 13)}<span style="font-size:11px;font-weight:600;color:${skin.pillFg}">${skin.label}</span></span>`
           }).join('')}
-        </div>
+        </span>`)}
       </section>
 
       <aside style="display:flex;flex-direction:column;gap:16px;width:340px;flex-shrink:0">
@@ -160,7 +154,8 @@ VIEWS.monmois = () => {
     ct: (slot) => slot.modality === 'Scanner',
     pezel: (slot) => S.assignments[slot.id] === 'tp'
   }
-  const visible = mine.filter(tests[S.monthFilter] || tests.all)
+  const filter = S.monthFilter === 'pezel' && !isFellow ? 'all' : S.monthFilter
+  const visible = mine.filter(tests[filter] || tests.all)
 
   const irm = mine.filter((slot) => slot.modality === 'IRM').length
   const withCoordinator = mine.filter((slot) => S.assignments[slot.id] === 'tp').length
@@ -209,12 +204,11 @@ VIEWS.monmois = () => {
         </div>
 
         <section style="${CARD};overflow:hidden">
-          ${sectionHead('Mes vacations', segmented([
-            { id: 'all', label: 'Toutes' },
-            { id: 'irm', label: 'IRM' },
-            { id: 'ct', label: 'Scanner' },
-            { id: 'pezel', label: 'Avec Dr Pezel' }
-          ], S.monthFilter, 'month-filter'))}
+          ${sectionHead('Mes vacations', segmented(
+            [{ id: 'all', label: 'Toutes' }, { id: 'irm', label: 'IRM' }, { id: 'ct', label: 'Scanner' }]
+              /* Co-presence with the coordinator is a fellow counter (§7.8). */
+              .concat(isFellow ? [{ id: 'pezel', label: 'Avec Dr Pezel' }] : []),
+            filter, 'month-filter'))}
           ${mine.length === 0 ? `<p style="margin:0;padding:24px 20px;font-size:14px;color:${T.text2}">Aucune vacation ce mois-ci. Vos disponibilités déclarées n’ont pas permis d’affectation, ou vous n’avez pas encore répondu.</p>` : `
             ${tableHead([
               { label: 'Date', width: '196px' },
@@ -245,7 +239,7 @@ VIEWS.monmois = () => {
                 <span style="display:flex;justify-content:flex-end">${badge(isNext ? 'À venir' : S.published ? 'Publiée' : 'Proposition', isNext ? 'info' : S.published ? 'neutral' : 'warning')}</span>
               </div>`
             }).join('')}
-            ${footnote(S.monthFilter === 'all'
+            ${footnote(filter === 'all'
               ? 'Les compteurs reflètent toujours la dernière version publiée, jamais une proposition non publiée (RG-30).'
               : plural(visible.length, 'vacation') + ' sur ' + mine.length + ' correspondent à ce filtre.')}
           `}

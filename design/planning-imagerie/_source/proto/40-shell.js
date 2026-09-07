@@ -1,8 +1,7 @@
 /* App shell.
    The portal sidebar lists the portal's applications and nothing else; the
-   module hangs its own navbar at the top of the content area, and its
-   second-level tabs under it — the pattern CoreLab uses
-   (app/[locale]/corelab/admin/components/admin-nav.tsx and study-tabs.tsx). */
+   module hangs its own navbar at the top of its content area — the pattern of
+   app/[locale]/corelab/admin/components/admin-nav.tsx. */
 
 const ROLES = {
   COORDINATOR: { label: 'Coordinateur', person: 'tp' },
@@ -10,67 +9,64 @@ const ROLES = {
   FELLOW: { label: 'Fellow', person: 'la' }
 }
 
-/* Coordinator: two levels, as in CoreLab. Everyone else: one. */
-const SECTIONS = {
-  COORDINATOR: [
-    { id: 'coordination', label: 'Coordination', tabs: [
-      { id: 'campagnes', label: 'Campagnes' },
-      { id: 'vacations', label: 'Vacations du mois' },
-      { id: 'suivi', label: 'Suivi des réponses' },
-      { id: 'revue', label: 'Revue du planning' },
-      { id: 'rapport', label: 'Rapport du moteur' },
-      { id: 'publication', label: 'Publication' }
-    ]},
-    { id: 'activite', label: 'Mon activité', tabs: [
+/* Two spaces, two sidebar entries, two routes — exactly as CoreLab splits
+   /corelab from /corelab/admin. The coordination screens are administration:
+   they belong under the sidebar's Administration entry, never under the
+   application entry every doctor sees. */
+const SPACES = {
+  app: {
+    id: 'app',
+    navLabel: 'Planning imagerie',
+    navGlyph: 'planning',
+    route: '/planning',
+    items: [
       { id: 'dispos', label: 'Mes disponibilités' },
       { id: 'monmois', label: 'Mon mois' },
       { id: 'compteurs', label: 'Compteurs et équité' },
       { id: 'echanges', label: 'Échanges' }
-    ]},
-    { id: 'admin', label: 'Administration', tabs: [
-      { id: 'parametres', label: 'Paramètres du module' },
-      { id: 'retours', label: 'Retours et anomalies' }
-    ]}
-  ],
-  SENIOR: [
-    { id: 'activite', label: null, tabs: [
-      { id: 'dispos', label: 'Mes disponibilités' },
-      { id: 'monmois', label: 'Mon mois' },
-      { id: 'compteurs', label: 'Compteurs et équité' },
-      { id: 'echanges', label: 'Échanges' },
-      { id: 'retours', label: 'Retours et anomalies' }
-    ]}
-  ],
-  FELLOW: [
-    { id: 'activite', label: null, tabs: [
-      { id: 'dispos', label: 'Mes disponibilités' },
-      { id: 'monmois', label: 'Mon mois' },
-      { id: 'compteurs', label: 'Compteurs et équité' },
-      { id: 'echanges', label: 'Échanges' },
-      { id: 'retours', label: 'Retours et anomalies' }
-    ]}
-  ]
+    ]
+  },
+  admin: {
+    id: 'admin',
+    navLabel: 'Administration',
+    navGlyph: 'shield',
+    route: '/planning/admin',
+    items: [
+      { id: 'campagnes', label: 'Campagnes' },
+      { id: 'vacations', label: 'Vacations' },
+      { id: 'suivi', label: 'Suivi des réponses' },
+      { id: 'revue', label: 'Revue du planning' },
+      { id: 'rapport', label: 'Rapport du moteur' },
+      { id: 'publication', label: 'Publication' },
+      { id: 'parametres', label: 'Paramètres' }
+    ]
+  }
 }
 
 const VIEW_TITLES = {
-  campagnes: 'Campagnes', vacations: 'Vacations du mois', suivi: 'Suivi des réponses',
+  campagnes: 'Campagnes', vacations: 'Vacations', suivi: 'Suivi des réponses',
   revue: 'Revue du planning', rapport: 'Rapport du moteur', publication: 'Publication',
-  parametres: 'Paramètres du module', dispos: 'Mes disponibilités', monmois: 'Mon mois',
+  parametres: 'Paramètres', dispos: 'Mes disponibilités', monmois: 'Mon mois',
   compteurs: 'Compteurs et équité', echanges: 'Échanges', retours: 'Retours et anomalies'
 }
 
-function sections() {
-  return SECTIONS[S.role]
+const canAdmin = () => S.role === 'COORDINATOR'
+
+function currentSpace() {
+  return SPACES[S.space === 'admin' && canAdmin() ? 'admin' : 'app']
 }
 
+/** `retours` is the prototype's own screen: reachable, but in no product menu. */
 function allowedViews() {
-  const list = []
-  sections().forEach((section) => section.tabs.forEach((tab) => list.push(tab.id)))
+  const list = SPACES.app.items.map((item) => item.id)
+  if (canAdmin()) SPACES.admin.items.forEach((item) => list.push(item.id))
+  list.push('retours')
   return list
 }
 
-function sectionOf(viewId) {
-  return sections().find((section) => section.tabs.some((tab) => tab.id === viewId)) || sections()[0]
+function spaceOf(viewId) {
+  if (SPACES.admin.items.some((item) => item.id === viewId)) return 'admin'
+  return 'app'
 }
 
 /* ---- Portal chrome --------------------------------------------------- */
@@ -86,16 +82,20 @@ const PORTAL_APPS = [
 function portalNavItem(label, glyph, options) {
   const on = Boolean(options && options.active)
   const admin = Boolean(options && options.admin)
-  return `<div style="position:relative;display:flex;align-items:center;gap:12px;padding:8px 12px;border-radius:12px;font-size:14px;font-weight:500;background:${on ? T.navy600 : 'transparent'};color:${on ? '#fff' : T.navy100}">
+  const space = options && options.space
+  const hook = space ? ` data-act="set-space" data-arg="${space}"` : ''
+  const tag = space ? 'button' : 'div'
+  return `<${tag} type="button"${hook} style="position:relative;display:flex;align-items:center;gap:12px;width:100%;border:none;padding:8px 12px;border-radius:12px;font-family:inherit;font-size:14px;font-weight:500;text-align:left;background:${on ? T.navy600 : 'transparent'};color:${on ? '#fff' : T.navy100};cursor:${space ? 'pointer' : 'default'}">
     ${on ? `<span style="position:absolute;left:0;top:50%;width:4px;height:24px;margin-top:-12px;border-radius:0 4px 4px 0;background:${T.coral500}"></span>` : ''}
     ${icon(glyph, on ? T.coral400 : T.navy200, 16)}
     <span style="display:flex;flex:1;align-items:center;gap:6px">${label}${admin ? icon('shield', T.coral400, 14) : ''}</span>
-  </div>`
+  </${tag}>`
 }
 
 function portalSidebar() {
   const me = viewer()
   const isCoordinator = S.role === 'COORDINATOR'
+  const space = currentSpace().id
 
   return `<aside style="display:flex;flex-direction:column;width:256px;flex-shrink:0;background:${T.navy700};color:#fff;position:sticky;top:40px;height:calc(100vh - 40px)">
     <div style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:20px 24px;text-align:center">
@@ -114,13 +114,13 @@ function portalSidebar() {
       <div>
         <p style="margin:0 0 8px;padding:0 12px;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:${T.navy300}">Applications</p>
         <div style="display:flex;flex-direction:column;gap:4px">
-          ${PORTAL_APPS.map((app) => portalNavItem(app.label, app.glyph, { active: app.active })).join('')}
+          ${PORTAL_APPS.map((app) => portalNavItem(app.label, app.glyph, app.active ? { active: space === 'app', space: 'app' } : {})).join('')}
         </div>
       </div>
       ${isCoordinator ? `<div>
         <p style="margin:0 0 8px;padding:0 12px;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:${T.navy300}">Administration</p>
         <div style="display:flex;flex-direction:column;gap:4px">
-          ${portalNavItem('Planning imagerie', 'planning', { admin: true })}
+          ${portalNavItem('Planning imagerie', 'planning', { admin: true, space: 'admin', active: space === 'admin' })}
           ${portalNavItem('Utilisateurs', 'users')}
         </div>
       </div>` : ''}
@@ -151,36 +151,20 @@ const TAB_ITEM = 'display:inline-flex;align-items:center;padding:8px 14px;font-f
 const ACTIVE_UNDERLINE = `font-weight:600;color:${T.text};box-shadow:inset 0 -2px 0 ${T.coral600}`
 
 function moduleNavbar() {
-  const groups = sections()
-  const current = sectionOf(S.view)
-  const single = groups.length === 1
-
-  const items = single
-    ? groups[0].tabs.map((tab) => ({ id: tab.id, label: tab.label, active: tab.id === S.view }))
-    : groups.map((group) => ({ id: group.tabs[0].id, label: group.label, active: group.id === current.id }))
-
+  const space = currentSpace()
   return `<div style="display:flex;height:56px;align-items:center;gap:24px;flex-shrink:0;border-bottom:1px solid ${T.line};background:${T.surface};padding:0 32px">
     <span style="display:inline-flex;align-items:center;gap:8px;flex-shrink:0;font-size:12px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;color:${T.text2}">
-      ${icon('planning', T.coral500, 14)}Planning imagerie
+      ${icon(space.navGlyph, T.coral500, 14)}${space.navLabel}
     </span>
     <span style="height:20px;width:1px;flex-shrink:0;background:${T.line}"></span>
     <nav style="display:flex;height:100%;align-items:center;gap:4px;overflow-x:auto">
-      ${items.map((item) => `<button type="button" data-nav="${item.id}" style="${NAV_ITEM};${item.active ? ACTIVE_UNDERLINE : 'color:' + T.text2}">${item.label}</button>`).join('')}
+      ${space.items.map((item) => `<button type="button" data-nav="${item.id}" style="${NAV_ITEM};${item.id === S.view ? ACTIVE_UNDERLINE : 'color:' + T.text2}">${item.label}</button>`).join('')}
     </nav>
     <span style="flex:1"></span>
     <span style="display:inline-flex;align-items:center;gap:8px;flex-shrink:0;font-size:13px;color:${T.text2}">
-      ${icon('calendar', T.gray400, 15)}Campagne d’octobre 2026
+      ${icon('calendar', T.gray400, 15)}Campagne d\u2019octobre 2026
     </span>
   </div>`
-}
-
-function moduleTabs() {
-  const groups = sections()
-  if (groups.length === 1) return ''
-  const current = sectionOf(S.view)
-  return `<nav style="display:flex;flex-wrap:wrap;align-items:center;gap:4px;border-bottom:1px solid ${T.line};margin-bottom:24px">
-    ${current.tabs.map((tab) => `<button type="button" data-nav="${tab.id}" style="${TAB_ITEM};${tab.id === S.view ? ACTIVE_UNDERLINE : 'color:' + T.text2}">${tab.label}</button>`).join('')}
-  </nav>`
 }
 
 /* ---- Prototype bar (not part of the product) ------------------------- */
@@ -468,7 +452,6 @@ function render() {
            ${moduleNavbar()}
            <main style="flex:1;min-width:0;${APP_GRADIENT_CSS};padding:32px 32px 96px">
              <div style="max-width:1400px;margin:0 auto">
-               ${moduleTabs()}
                ${banner()}
                ${view()}
              </div>
@@ -497,8 +480,19 @@ const ACTIONS = {
 
   'set-role': (arg) => {
     S.role = arg
-    if (allowedViews().indexOf(S.view) === -1) S.view = allowedViews()[0]
+    if (!canAdmin()) S.space = 'app'
+    if (allowedViews().indexOf(S.view) === -1) S.view = currentSpace().items[0].id
+    if (S.view !== 'retours' && spaceOf(S.view) !== currentSpace().id) S.view = currentSpace().items[0].id
     S.swapShiftId = null
+  },
+
+  'set-space': (arg) => {
+    if (arg === 'admin' && !canAdmin()) {
+      toast('Seul le coordinateur accède à l\u2019administration du module.')
+      return
+    }
+    S.space = arg
+    S.view = currentSpace().items[0].id
   },
 
   'set-week': (arg) => { S.week = Number(arg) },

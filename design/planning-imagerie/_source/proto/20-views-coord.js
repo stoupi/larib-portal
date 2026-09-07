@@ -357,6 +357,8 @@ places_senior;places_fellow;commentaire
 }
 
 VIEWS.suivi = () => {
+  const counts = seniorCounts()
+  const withPlan = SENIORS.filter((person) => counts[person.id] > 0).length
   const submitted = SENIORS.filter((person) => S.submissions[person.id] === 'SUBMITTED').length
   const declarations = SENIORS.reduce((total, person) => total + declaredCount(person.id), 0)
   const places = SLOTS.reduce((total, slot) => total + slot.seniorCapacity, 0)
@@ -375,7 +377,14 @@ VIEWS.suivi = () => {
     { label: 'Réponses validées', value: submitted + ' / ' + SENIORS.length, detail: '1 en cours, 1 sans réponse, 1 indisponible sur tout le mois', glyph: 'check', color: T.ok700 },
     { label: 'Places à pourvoir', value: String(places), detail: SLOTS.length + ' vacations, une place senior chacune', glyph: 'calendar', color: T.navy500 },
     { label: 'Déclarations reçues', value: String(declarations), detail: 'soit ' + (Math.round((declarations / places) * 10) / 10).toString().replace('.', ',') + ' candidats par place en moyenne', glyph: 'chart', color: T.navy500 },
-    { label: 'Créneaux sans volontaire', value: String(ORPHANS.length), detail: 'la place restera vide, la cause sera tracée', glyph: 'alert', color: T.dangerText }
+    { label: 'Créneaux sans volontaire', value: String(ORPHANS.length), detail: 'la place restera vide, la cause sera tracée', glyph: 'alert', color: T.dangerText },
+    {
+      label: S.published ? 'Plannings finalisés' : 'Plannings en attente',
+      value: withPlan + ' / ' + SENIORS.length,
+      detail: S.published ? 'diffusés le 18 septembre, version ' + S.planVersion : 'aucun n’est diffusé tant que vous n’avez pas publié',
+      glyph: S.published ? 'check' : 'clock',
+      color: S.published ? T.ok700 : T.warnText
+    }
   ]
 
   const allWeights = [
@@ -402,7 +411,7 @@ VIEWS.suivi = () => {
       button({ label: 'Lancer la génération', variant: 'primary', icon: 'wand', act: 'generate' })
     )}
 
-    <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-bottom:20px">
+    <div style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:16px;margin-bottom:20px">
       ${headline.map((stat) => `<div style="${CARD};padding:18px 20px">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">${icon(stat.glyph, stat.color, 16)}<p style="margin:0;font-size:12px;font-weight:500;color:${T.text2}">${stat.label}</p></div>
         <p style="margin:0;font-size:28px;font-weight:700;color:${stat.color === T.dangerText ? T.dangerText : T.text};line-height:1;font-variant-numeric:tabular-nums">${stat.value}</p>
@@ -412,37 +421,62 @@ VIEWS.suivi = () => {
 
     <div style="display:flex;gap:20px;align-items:flex-start">
       <section style="${CARD};flex:1;min-width:0;overflow:hidden">
-        ${sectionHead('Suivi des réponses', `<span style="display:flex;align-items:center;gap:10px">${segmented([{ id: 'all', label: 'Tout le monde' }, { id: 'pending', label: 'À relancer' }], S.suiviFilter, 'suivi-filter')}${button({ label: 'Relancer', variant: 'outline', icon: 'mail', act: 'remind-all', style: 'height:32px;font-size:13px' })}</span>`)}
+        ${sectionHead(
+          'Où en est chacun',
+          `<span style="display:flex;align-items:center;gap:10px">
+            <span style="font-size:13px;color:${T.text2}">${S.published ? 'planning publié en v' + S.planVersion + ' le 18 septembre' : 'planning encore en proposition v' + S.planVersion}</span>
+            ${segmented([{ id: 'all', label: 'Tout le monde' }, { id: 'pending', label: 'À relancer' }], S.suiviFilter, 'suivi-filter')}
+            ${button({ label: 'Relancer', variant: 'outline', icon: 'mail', act: 'remind-all', style: 'height:32px;font-size:13px' })}
+          </span>`
+        )}
         ${tableHead([
           { label: 'Personne', width: '1fr' },
-          { label: 'Statut', width: '176px' },
-          { label: 'Déclarées', width: '96px', align: 'right' },
-          { label: 'Dernière ouverture', width: '132px', align: 'right' },
-          { label: 'Relances', width: '104px', align: 'right' }
+          { label: 'Réponse', width: '166px' },
+          { label: 'Déclarées', width: '92px', align: 'right' },
+          { label: 'Vacations', width: '96px', align: 'right' },
+          { label: 'Son planning', width: '212px' }
         ])}
         ${visible.map((person) => {
           const status = S.submissions[person.id]
           const skin = statusStyles[status]
           const pending = isPending(person)
           const declared = declaredCount(person.id)
-          return `<div style="display:grid;grid-template-columns:1fr 176px 96px 132px 104px;align-items:center;gap:0;border-bottom:1px solid ${T.gray100};padding:11px 20px;background:${pending ? '#fffdf9' : T.surface}">
+          const assigned = counts[person.id]
+
+          /* What the person actually holds, and whether it is final (RG-30:
+             counters reflect the published version, never a proposal). */
+          let planLabel = 'Aucune vacation'
+          let planTone = 'neutral'
+          let planNote = status === 'DECLINED_MONTH' ? 'indisponible ce mois' : 'rien à diffuser'
+          if (assigned > 0) {
+            planLabel = S.published ? 'Finalisé · v' + S.planVersion : 'Proposition · v' + S.planVersion
+            planTone = S.published ? 'success' : 'warning'
+            planNote = S.published ? 'diffusé le 18 septembre' : 'pas encore diffusé'
+          }
+
+          return `<div style="display:grid;grid-template-columns:1fr 166px 92px 96px 212px;align-items:center;gap:0;border-bottom:1px solid ${T.gray100};padding:11px 20px;background:${pending ? '#fffdf9' : T.surface}">
             <span style="display:flex;align-items:center;gap:10px;min-width:0;padding-right:12px">
               ${avatar(person.initials, status === 'SUBMITTED' ? T.gray100 : T.warnBg, status === 'SUBMITTED' ? T.gray600 : T.warnText)}
               <span style="flex:1;min-width:0">
                 <span style="display:block;font-size:14px;font-weight:500;color:${T.text}">${person.name}</span>
-                <span style="display:block;font-size:12px;color:${T.text3}">${person.role}</span>
+                <span style="display:block;font-size:12px;color:${T.text3}">formulaire vu ${LAST_OPENED[person.id]}${REMINDERS[person.id] ? ' · ' + plural(REMINDERS[person.id], 'relance') : ''}</span>
               </span>
             </span>
             <span>${badge(skin.label, skin.tone)}</span>
             <span style="text-align:right;font-size:14px;color:${declared > 0 && declared < 6 ? T.warnText : T.gray700};font-variant-numeric:tabular-nums">${status === 'DECLINED_MONTH' ? '—' : declared}</span>
-            <span style="text-align:right;font-size:13px;color:${T.text2}">${LAST_OPENED[person.id]}</span>
-            <span style="display:flex;align-items:center;justify-content:flex-end;gap:8px">
-              <span style="font-size:13px;color:${T.text2};font-variant-numeric:tabular-nums">${REMINDERS[person.id]}</span>
-              <button type="button" data-act="${pending ? 'remind' : 'toast'}" data-arg="${pending ? person.id : 'Les disponibilités individuelles ne sont visibles que du coordinateur (RG-05).'}" style="display:flex;align-items:center;justify-content:center;width:28px;height:28px;border:1px solid ${T.line};border-radius:8px;background:${T.surface};cursor:pointer;padding:0">${icon(pending ? 'mail' : 'eye', T.text2, 14)}</button>
+            <span style="text-align:right;font-size:14px;font-weight:600;color:${assigned ? T.text : T.gray300};font-variant-numeric:tabular-nums">${assigned || '—'}</span>
+            <span style="display:flex;align-items:center;gap:10px">
+              <span style="flex:1;min-width:0">
+                ${badge(planLabel, planTone)}
+                <span style="display:block;margin-top:3px;font-size:11px;color:${T.text3}">${planNote}</span>
+              </span>
+              <button type="button" data-act="${pending ? 'remind' : 'toast'}" data-arg="${pending ? person.id : 'Les disponibilités individuelles ne sont visibles que du coordinateur (RG-05).'}" style="display:flex;align-items:center;justify-content:center;width:28px;height:28px;flex-shrink:0;border:1px solid ${T.line};border-radius:8px;background:${T.surface};cursor:pointer;padding:0">${icon(pending ? 'mail' : 'eye', T.text2, 14)}</button>
             </span>
           </div>`
         }).join('')}
-        ${footnote('La dernière ouverture du formulaire distingue un défaut de réception d’un défaut de réponse. Une absence de réponse vaut indisponibilité totale (RG-21).')}
+        ${footnote(S.published
+          ? 'Le planning a été diffusé : chaque personne a reçu ses vacations en clair, le planning complet et son fichier calendrier. Toute modification ultérieure créera une nouvelle version (RG-12).'
+          : 'Tant que le planning n’est pas publié, personne n’a reçu ses vacations. Les compteurs affichés ici reflètent la proposition en cours de revue, pas un planning diffusé (RG-30).')}
       </section>
 
       <aside style="display:flex;flex-direction:column;gap:16px;width:412px;flex-shrink:0">
