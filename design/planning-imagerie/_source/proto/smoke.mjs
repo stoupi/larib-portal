@@ -87,7 +87,12 @@ const scripted = [
   ['set-month', 'oct'],
   ['set-role', 'COORDINATOR'],
   ['set-space', 'app'],
-  ['set-space', 'admin']
+  ['set-space', 'admin'],
+  ['set-scope', 'month'],
+  ['month-filter', 'all'],
+  ['month-filter', 'mine'],
+  ['swap-from', null],
+  ['set-scope', 'week']
 ]
 
 for (const [name, arg] of scripted) {

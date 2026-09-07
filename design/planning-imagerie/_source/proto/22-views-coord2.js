@@ -24,8 +24,7 @@ VIEWS.revue = () => {
   const pool = availableSeniors(picked.id)
   const excluded = SENIORS.filter((person) => pool.indexOf(person) === -1)
 
-  const weekSlots = SLOTS.filter((slot) => slot.week === S.week)
-  const dayNumbers = weekSlots.reduce((list, slot) => (list.indexOf(slot.dayNumber) === -1 ? list.concat(slot.dayNumber) : list), []).sort((left, right) => left - right)
+  const shown = scopedSlots(SLOTS, S.week)
 
   const renderSlot = (slot) => {
     const holderId = S.assignments[slot.id]
@@ -106,22 +105,18 @@ VIEWS.revue = () => {
       <section style="${CARD};flex:1;min-width:0;overflow:hidden">
         ${sectionHead(
           'Grille mensuelle',
-          `<span style="display:flex;align-items:center;gap:12px"><span style="font-size:13px;color:${T.text2}">${plural(weekSlots.length, 'vacation')} cette semaine</span>${weekSegments(WEEKS, S.week, 'set-week')}</span>`
+          calendarControls({ weeks: WEEKS, week: S.week }, 'set-week', 'set-scope', plural(shown.length, 'vacation') + ' affichées')
         )}
         ${halfDayHeads('180px')}
-        ${dayNumbers.map((dayNumber, position) => {
-          const daySlots = weekSlots.filter((slot) => slot.dayNumber === dayNumber)
-          const morning = daySlots.filter((slot) => slot.halfDay === 'MORNING')
-          const afternoon = daySlots.filter((slot) => slot.halfDay === 'AFTERNOON')
-          const gaps = daySlots.filter((slot) => !S.assignments[slot.id]).length
-          const holdsPicked = daySlots.some((slot) => slot.id === picked.id)
-          const empty = `<span style="display:flex;align-items:center;min-height:46px;font-size:12px;color:${T.gray300};padding-left:8px">Aucune vacation</span>`
-          return `<div style="display:grid;grid-template-columns:180px 1fr 1fr;gap:0;border-bottom:1px solid ${T.gray100};padding:14px 20px;background:${holdsPicked ? T.coral50 : position % 2 ? T.gray25 : T.surface}">
-            ${dayCell(daySlots, `<span style="font-size:12px;color:${gaps ? T.dangerText : T.text3}">${gaps ? plural(gaps, 'place') + ' non pourvue' + (gaps > 1 ? 's' : '') : plural(daySlots.length, 'vacation')}</span>`)}
-            <div style="display:flex;flex-direction:column;gap:7px;padding-right:12px">${morning.length ? morning.map(renderSlot).join('') : empty}</div>
-            <div style="display:flex;flex-direction:column;gap:7px">${afternoon.length ? afternoon.map(renderSlot).join('') : empty}</div>
-          </div>`
-        }).join('')}
+        ${calendarRows(shown, {
+          renderSlot,
+          rowBg: (daySlots, position) =>
+            daySlots.some((slot) => slot.id === picked.id) ? T.coral50 : position % 2 ? T.gray25 : T.surface,
+          dayExtra: (daySlots) => {
+            const gaps = daySlots.filter((slot) => !S.assignments[slot.id]).length
+            return `<span style="font-size:12px;color:${gaps ? T.dangerText : T.text3}">${gaps ? plural(gaps, 'place') + ' non pourvue' + (gaps > 1 ? 's' : '') : plural(daySlots.length, 'vacation')}</span>`
+          }
+        })}
         ${gridLegend(`<span style="display:inline-flex;align-items:center;gap:6px;font-size:12px;color:${T.text2}">${icon('lock', T.text2, 14)}verrouillée, conservée à la régénération</span>`)}
       </section>
 

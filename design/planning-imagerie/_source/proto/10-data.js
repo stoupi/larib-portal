@@ -159,6 +159,8 @@ const S = {
   swapTab: 'inbox',
   swapShiftId: null,
   swapKind: 'EXCHANGE',
+  /** 'week' = one week at a time, 'month' = the whole month in one grid. */
+  calendarScope: 'week',
   /** 'mine' = my vacations only, 'all' = the whole team's month. */
   monthFilter: 'mine',
   suiviFilter: 'all',

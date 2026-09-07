@@ -503,6 +503,7 @@ const ACTIONS = {
 
   'set-week': (arg) => { S.week = Number(arg) },
   'set-live-week': (arg) => { S.liveWeek = Number(arg) },
+  'set-scope': (arg) => { S.calendarScope = arg },
   'set-month': (arg) => { S.monthView = arg },
 
   'campaign-month': (arg) => { NEW_CAMPAIGN.target = arg },

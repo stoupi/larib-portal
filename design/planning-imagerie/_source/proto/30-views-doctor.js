@@ -17,8 +17,7 @@ VIEWS.dispos = () => {
   const average = Math.round((SLOTS.length / population.length) * 10) / 10
   const submitted = S.submissions[me.id] === 'SUBMITTED'
 
-  const weekSlots = SLOTS.filter((slot) => slot.week === S.week)
-  const dayNumbers = weekSlots.reduce((list, slot) => (list.indexOf(slot.dayNumber) === -1 ? list.concat(slot.dayNumber) : list), []).sort((left, right) => left - right)
+  const shown = scopedSlots(SLOTS, S.week)
 
   const renderSlot = (slot) => {
     const status = availabilityOf(me.id, slot.id)
@@ -76,22 +75,21 @@ VIEWS.dispos = () => {
 
     <div style="display:flex;gap:20px;align-items:flex-start">
       <section style="${CARD};flex:1;min-width:0;overflow:hidden">
-        ${sectionHead(TARGET.label + ' — ' + plural(SLOTS.length, 'vacation') + ' proposées', weekSegments(WEEKS, S.week, 'set-week'))}
+        ${sectionHead(
+          TARGET.label + ' — ' + plural(SLOTS.length, 'vacation') + ' proposées',
+          calendarControls({ weeks: WEEKS, week: S.week }, 'set-week', 'set-scope', plural(shown.length, 'vacation') + ' affichées')
+        )}
         ${halfDayHeads('180px')}
-        ${dayNumbers.map((dayNumber, position) => {
-          const daySlots = weekSlots.filter((slot) => slot.dayNumber === dayNumber)
-          const morning = daySlots.filter((slot) => slot.halfDay === 'MORNING')
-          const afternoon = daySlots.filter((slot) => slot.halfDay === 'AFTERNOON')
-          const allAvailable = daySlots.every((slot) => availabilityOf(me.id, slot.id) === 'AVAILABLE')
-          const open = daySlots.filter((slot) => isFree(availabilityOf(me.id, slot.id))).length
-          const empty = `<span style="display:flex;align-items:center;min-height:46px;font-size:12px;color:${T.gray300};padding-left:8px">Aucune vacation</span>`
-          return `<div style="display:grid;grid-template-columns:180px 1fr 1fr;gap:0;border-bottom:1px solid ${T.gray100};padding:14px 20px;background:${position % 2 ? T.gray25 : T.surface}">
-            ${dayCell(daySlots, `<span style="font-size:12px;color:${open ? T.ok700 : T.text3}">${open ? plural(open, 'créneau') + ' retenu' + (open > 1 ? 's' : '') : 'rien de retenu'}</span>
-              <button type="button" data-act="bulk-day" data-arg="${dayNumber}|${allAvailable ? 'UNAVAILABLE' : 'AVAILABLE'}" style="margin-top:2px;border:1px solid ${T.line};border-radius:8px;background:${T.surface};padding:5px 9px;font-family:inherit;font-size:11px;font-weight:500;color:${T.gray600};cursor:pointer;white-space:nowrap">${allAvailable ? 'Tout retirer' : 'Toute la journée'}</button>`)}
-            <div style="display:flex;flex-direction:column;gap:7px;padding-right:12px">${morning.length ? morning.map(renderSlot).join('') : empty}</div>
-            <div style="display:flex;flex-direction:column;gap:7px">${afternoon.length ? afternoon.map(renderSlot).join('') : empty}</div>
-          </div>`
-        }).join('')}
+        ${calendarRows(shown, {
+          renderSlot,
+          rowBg: (daySlots, position) => (position % 2 ? T.gray25 : T.surface),
+          dayExtra: (daySlots) => {
+            const allAvailable = daySlots.every((slot) => availabilityOf(me.id, slot.id) === 'AVAILABLE')
+            const open = daySlots.filter((slot) => isFree(availabilityOf(me.id, slot.id))).length
+            return `<span style="font-size:12px;color:${open ? T.ok700 : T.text3}">${open ? plural(open, 'créneau') + ' retenu' + (open > 1 ? 's' : '') : 'rien de retenu'}</span>
+              <button type="button" data-act="bulk-day" data-arg="${daySlots[0].dayNumber}|${allAvailable ? 'UNAVAILABLE' : 'AVAILABLE'}" style="margin-top:2px;border:1px solid ${T.line};border-radius:8px;background:${T.surface};padding:5px 9px;font-family:inherit;font-size:11px;font-weight:500;color:${T.gray600};cursor:pointer;white-space:nowrap">${allAvailable ? 'Tout retirer' : 'Toute la journée'}</button>`
+          }
+        })}
         ${gridLegend(`<span style="display:inline-flex;align-items:center;gap:8px">
           <span style="font-size:11px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;color:${T.text3}">Un clic fait défiler</span>
           ${['UNAVAILABLE', 'AVAILABLE', 'PREFERRED'].map((key) => {
@@ -184,9 +182,8 @@ VIEWS.monmois = () => {
 
   const holderOf = (slot) => (isFellow ? plan.fellows : plan.seniors)[slot.id]
   const onlyMine = S.monthFilter !== 'all'
-  const weekAll = plan.slots.filter((slot) => slot.week === plan.week)
-  const weekSlots = onlyMine ? weekAll.filter((slot) => holderOf(slot) === me.id) : weekAll
-  const dayNumbers = weekSlots.reduce((list, slot) => (list.indexOf(slot.dayNumber) === -1 ? list.concat(slot.dayNumber) : list), []).sort((left, right) => left - right)
+  const inScope = scopedSlots(plan.slots, plan.week)
+  const weekSlots = onlyMine ? inScope.filter((slot) => holderOf(slot) === me.id) : inScope
   const weekAct = chosen === 'sep' ? 'set-live-week' : 'set-week'
 
   const renderSlot = (slot) => {
@@ -266,27 +263,24 @@ VIEWS.monmois = () => {
             plan.period.label + ' — ' + plural(mine.length, 'vacation') + ' pour moi',
             `<span style="display:flex;align-items:center;gap:12px">
               ${segmented([{ id: 'mine', label: 'Mes vacations' }, { id: 'all', label: 'Tout le mois' }], onlyMine ? 'mine' : 'all', 'month-filter')}
-              ${weekSegments(plan.weeks, plan.week, weekAct)}
+              ${calendarControls(plan, weekAct, 'set-scope')}
             </span>`
           )}
           ${halfDayHeads('180px')}
-          ${dayNumbers.length === 0 ? `<div style="padding:36px 24px;text-align:center">
-            <p style="margin:0;font-size:14px;font-weight:500;color:${T.text}">Aucune vacation pour vous cette semaine.</p>
-            <p style="margin:6px 0 0;font-size:13px;color:${T.text2}">Choisissez une autre semaine, ou passez à « Tout le mois » pour voir celles de l’équipe.</p>
+          ${weekSlots.length === 0 ? `<div style="padding:36px 24px;text-align:center">
+            <p style="margin:0;font-size:14px;font-weight:500;color:${T.text}">Aucune vacation pour vous ${isMonthScope() ? 'ce mois-ci' : 'cette semaine'}.</p>
+            <p style="margin:6px 0 0;font-size:13px;color:${T.text2}">Passez à « Tout le mois » pour voir celles de l’équipe${isMonthScope() ? '' : ', ou changez de semaine'}.</p>
           </div>` : ''}
-          ${dayNumbers.map((dayNumber, position) => {
-            const daySlots = weekSlots.filter((slot) => slot.dayNumber === dayNumber)
-            const morning = daySlots.filter((slot) => slot.halfDay === 'MORNING')
-            const afternoon = daySlots.filter((slot) => slot.halfDay === 'AFTERNOON')
-            const mineHere = daySlots.filter((slot) => holderOf(slot) === me.id).length
-            const today = daySlots[0].date.getTime() === TODAY.getTime()
-            const empty = `<span style="display:flex;align-items:center;min-height:46px;font-size:12px;color:${T.gray300};padding-left:8px">Aucune vacation</span>`
-            return `<div style="display:grid;grid-template-columns:180px 1fr 1fr;gap:0;border-bottom:1px solid ${T.gray100};padding:14px 20px;background:${today ? T.infoBg : position % 2 ? T.gray25 : T.surface}">
-              ${dayCell(daySlots, `<span style="font-size:12px;color:${mineHere ? T.ok700 : T.text3}">${mineHere ? plural(mineHere, 'vacation') + ' pour moi' : 'rien pour moi'}</span>${today ? `<span style="font-size:11px;font-weight:600;color:${T.info}">aujourd’hui</span>` : ''}`)}
-              <div style="display:flex;flex-direction:column;gap:7px;padding-right:12px">${morning.length ? morning.map(renderSlot).join('') : empty}</div>
-              <div style="display:flex;flex-direction:column;gap:7px">${afternoon.length ? afternoon.map(renderSlot).join('') : empty}</div>
-            </div>`
-          }).join('')}
+          ${calendarRows(weekSlots, {
+            renderSlot,
+            rowBg: (daySlots, position) =>
+              daySlots[0].date.getTime() === TODAY.getTime() ? T.infoBg : position % 2 ? T.gray25 : T.surface,
+            dayExtra: (daySlots) => {
+              const mineHere = daySlots.filter((slot) => holderOf(slot) === me.id).length
+              const today = daySlots[0].date.getTime() === TODAY.getTime()
+              return `<span style="font-size:12px;color:${mineHere ? T.coral700 : T.text3}">${mineHere ? plural(mineHere, 'vacation') + ' pour moi' : 'rien pour moi'}</span>${today ? `<span style="font-size:11px;font-weight:600;color:${T.info}">aujourd’hui</span>` : ''}`
+            }
+          })}
           ${gridLegend(`<span style="display:inline-flex;align-items:center;gap:10px">
             <span style="display:inline-flex;align-items:center;gap:5px;border-radius:999px;background:${T.coral100};padding:3px 9px 3px 6px">${icon('star', T.coral700, 13)}<span style="font-size:11px;font-weight:600;color:${T.coral700}">Mes vacations</span></span>
             <span style="font-size:12px;color:${T.text3}">${onlyMine ? 'les autres sont masquées' : 'les autres restent visibles, en retrait'} · cliquez l’une des vôtres pour la céder ou l’échanger</span>

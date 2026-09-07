@@ -156,3 +156,68 @@ function workflowBanner(context) {
     }).join('')}
   </section>`
 }
+
+/* ---- Calendar body, shared by the three weekly grids ------------------ */
+
+const scopeSegments = (act) =>
+  segmented([{ id: 'week', label: 'Semaine' }, { id: 'month', label: 'Mois entier' }], S.calendarScope, act)
+
+const isMonthScope = () => S.calendarScope === 'month'
+
+/** Slots to draw: one week, or the whole month. */
+function scopedSlots(slots, week) {
+  return isMonthScope() ? slots : slots.filter((slot) => slot.week === week)
+}
+
+/** Week / month switch, plus the week picker when it still means something. */
+function calendarControls(plan, weekAct, scopeAct, countLabel) {
+  return `<span style="display:flex;align-items:center;gap:12px">
+    ${countLabel ? `<span style="font-size:13px;color:${T.text2}">${countLabel}</span>` : ''}
+    ${scopeSegments(scopeAct)}
+    ${isMonthScope() ? '' : weekSegments(plan.weeks, plan.week, weekAct)}
+  </span>`
+}
+
+function weekDivider(week) {
+  return `<div style="display:flex;align-items:center;gap:10px;padding:9px 20px;background:${T.navy50};border-bottom:1px solid ${T.line}">
+    <span style="font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:${T.navy600}">Semaine ${week}</span>
+    <span style="flex:1;height:1px;background:${T.navy100}"></span>
+  </div>`
+}
+
+/**
+ * Day rows for a set of slots, already ordered by date.
+ * @param {Array} slots
+ * @param {{renderSlot: Function, dayExtra: Function, rowBg?: Function,
+ *          dayWidth?: string, emptyLabel?: string}} options
+ */
+function calendarRows(slots, options) {
+  const days = []
+  slots.forEach((slot) => {
+    const last = days[days.length - 1]
+    if (last && last[0].dayNumber === slot.dayNumber) last.push(slot)
+    else days.push([slot])
+  })
+
+  const width = options.dayWidth || '180px'
+  const empty = `<span style="display:flex;align-items:center;min-height:46px;font-size:12px;color:${T.gray300};padding-left:8px">${options.emptyLabel || 'Aucune vacation'}</span>`
+  let seenWeek = null
+
+  return days
+    .map((daySlots, position) => {
+      let divider = ''
+      if (isMonthScope() && daySlots[0].week !== seenWeek) {
+        seenWeek = daySlots[0].week
+        divider = weekDivider(seenWeek)
+      }
+      const morning = daySlots.filter((slot) => slot.halfDay === 'MORNING')
+      const afternoon = daySlots.filter((slot) => slot.halfDay === 'AFTERNOON')
+      const background = options.rowBg ? options.rowBg(daySlots, position) : position % 2 ? T.gray25 : T.surface
+      return divider + `<div style="display:grid;grid-template-columns:${width} 1fr 1fr;gap:0;border-bottom:1px solid ${T.gray100};padding:14px 20px;background:${background}">
+        ${dayCell(daySlots, options.dayExtra(daySlots))}
+        <div style="display:flex;flex-direction:column;gap:7px;padding-right:12px">${morning.length ? morning.map(options.renderSlot).join('') : empty}</div>
+        <div style="display:flex;flex-direction:column;gap:7px">${afternoon.length ? afternoon.map(options.renderSlot).join('') : empty}</div>
+      </div>`
+    })
+    .join('')
+}
