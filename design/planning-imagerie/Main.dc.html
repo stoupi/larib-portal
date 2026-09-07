@@ -1,0 +1,491 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&display=swap">
+  <style>
+    *{ box-sizing: border-box; }
+    body { margin: 0; font-family: 'Inter Tight', system-ui, -apple-system, 'Segoe UI', sans-serif; }
+    a { color: #173d6e; text-decoration: none; }
+    a:hover { color: #122f54; text-decoration: underline; }
+  </style>
+</helmet>
+
+<div style="display: flex; width: 1440px; height: 980px; background: #ffffff; color: #141a22">
+
+  <aside style="display: flex; flex-direction: column; width: 256px; flex-shrink: 0; background: #122f54; color: #ffffff">
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 20px 24px; text-align: center">
+      <svg width="40" height="40" viewBox="0 0 40 40" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20 34s-13-8.2-13-17a7 7 0 0 1 13-3.7A7 7 0 0 1 33 17c0 8.8-13 17-13 17z"></path>
+        <path d="M6 20h7l2.5-5 4 10 3-5H34"></path>
+      </svg>
+      <span style="font-size: 13px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase">Larib Portal</span>
+    </div>
+
+    <nav style="display: flex; flex-direction: column; gap: 24px; flex: 1; overflow: hidden; padding: 16px 12px">
+      <div>
+        <p style="margin: 0 0 8px; padding: 0 12px; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #7197c2">Vue d'ensemble</p>
+        <div style="display: flex; flex-direction: column; gap: 4px">
+          <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #d6e0ee">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1"></rect><rect x="14" y="3" width="7" height="5" rx="1"></rect><rect x="14" y="12" width="7" height="9" rx="1"></rect><rect x="3" y="16" width="7" height="5" rx="1"></rect></svg>
+            <span>Tableau de bord</span>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <p style="margin: 0 0 8px; padding: 0 12px; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #7197c2">Applications</p>
+        <div style="display: flex; flex-direction: column; gap: 4px">
+          <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #d6e0ee">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10 12 5 2 10l10 5 10-5z"></path><path d="M6 12v5c0 1 2.7 2.5 6 2.5s6-1.5 6-2.5v-5"></path></svg>
+            <span>Best of Larib</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #d6e0ee">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg>
+            <span>Congés</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #d6e0ee">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+            <span>Publications</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #d6e0ee">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 5.6a5.5 5.5 0 0 0-8.8 1.4 5.5 5.5 0 0 0-8.8-1.4c-2.4 2.4-2 6.2.4 8.6L12 21l7.6-6.8c2.4-2.4 3.6-6.2.4-8.6z"></path></svg>
+            <span>CoreLab</span>
+          </div>
+          <div style="position: relative; display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; background: #173d6e; color: #ffffff">
+            <span style="position: absolute; left: 0; top: 50%; width: 4px; height: 24px; margin-top: -12px; border-radius: 0 4px 4px 0; background: #ec3b68"></span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f55c83" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 10h18M8 3v4M16 3v4"></path><path d="M8 14h3M8 17.5h3M14 14h2"></path></svg>
+            <span>Planning imagerie</span>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <p style="margin: 0 0 8px; padding: 0 12px; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #7197c2">Administration</p>
+        <div style="display: flex; flex-direction: column; gap: 4px">
+          <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #d6e0ee">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg>
+            <span style="display: flex; flex: 1; align-items: center; gap: 6px">Planning imagerie
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#f55c83" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+            </span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #d6e0ee">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.9"></path></svg>
+            <span>Utilisateurs</span>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <div style="border-top: 1px solid #173d6e; padding: 12px">
+      <div style="display: flex; flex-direction: column; gap: 8px">
+        <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #d6e0ee">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20z"></path></svg>
+          <span style="flex: 1">Langue</span>
+          <span style="color: #aac0dc">FR</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; background: #173d6e">
+          <span style="display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 999px; background: #ec3b68; color: #ffffff; font-size: 13px; font-weight: 600">TP</span>
+          <span style="display: flex; flex-direction: column; flex: 1; min-width: 0">
+            <span style="font-size: 14px; font-weight: 500; color: #ffffff">Théo</span>
+            <span style="font-size: 12px; color: #aac0dc">Coordinateur</span>
+          </span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"></path></svg>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <main style="flex: 1; min-width: 0; overflow: hidden; background-color: #f5f7fa; background-image: radial-gradient(58% 52% at 10% 4%, rgba(214,31,85,0.10), transparent 60%), radial-gradient(52% 48% at 92% 12%, rgba(236,59,104,0.08), transparent 62%), radial-gradient(60% 60% at 84% 96%, rgba(214,31,85,0.07), transparent 60%), radial-gradient(48% 54% at 2% 94%, rgba(255,182,198,0.12), transparent 60%); padding: 32px">
+
+    <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; margin-bottom: 24px">
+      <div style="border-left: 4px solid #ec3b68; padding-left: 16px">
+        <h1 style="margin: 0; font-size: 30px; font-weight: 700; line-height: 1.15; color: #141a22">Planning d'imagerie cardiaque</h1>
+        <p style="margin: 4px 0 0; font-size: 15px; color: #6b7685">Campagnes mensuelles de vacations IRM et scanner — Bergère, Blomet, Lariboisière</p>
+      </div>
+      <div style="display: flex; gap: 8px; flex-shrink: 0">
+        <button type="button" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 36px; padding: 0 16px; border: 1px solid #dde2e9; border-radius: 10px; background: #ffffff; box-shadow: 0 1px 2px rgba(16,28,48,0.06); font-family: inherit; font-size: 14px; font-weight: 500; color: #363f4c; cursor: pointer">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9c.14.5.55.9 1.1 1H21a2 2 0 1 1 0 4h-.09c-.55.1-.96.5-1.1 1z"></path></svg>
+          Paramètres
+        </button>
+        <button type="button" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 36px; padding: 0 16px; border: none; border-radius: 10px; background: #d61f55; box-shadow: 0 1px 2px rgba(16,28,48,0.06); font-family: inherit; font-size: 14px; font-weight: 500; color: #ffffff; cursor: pointer">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"></path></svg>
+          Nouvelle campagne
+        </button>
+      </div>
+    </div>
+
+    <div style="display: flex; gap: 24px; align-items: flex-start">
+
+      <div style="display: flex; flex-direction: column; gap: 20px; flex: 1; min-width: 0">
+
+        <section style="border: 1px solid #dde2e9; border-radius: 16px; background: #ffffff; box-shadow: 0 1px 3px rgba(16,28,48,0.08), 0 1px 2px rgba(16,28,48,0.04); padding: 24px">
+          <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 20px">
+            <div>
+              <div style="display: flex; align-items: center; gap: 10px">
+                <h2 style="margin: 0; font-size: 18px; font-weight: 600; color: #141a22">{{selected.monthLabel}}</h2>
+                <span style="display: inline-flex; align-items: center; border-radius: 10px; border: 1px solid {{selected.statusBorder}}; background: {{selected.statusBg}}; color: {{selected.statusText}}; padding: 2px 8px; font-size: 12px; font-weight: 500">{{selected.statusLabel}}</span>
+              </div>
+              <p style="margin: 6px 0 0; font-size: 14px; color: #6b7685">{{selected.summary}}</p>
+            </div>
+            <button type="button" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 36px; padding: 0 16px; border: none; border-radius: 10px; background: linear-gradient(to bottom right, #122f54, #0a1b30); box-shadow: 0 1px 2px rgba(16,28,48,0.06); font-family: inherit; font-size: 14px; font-weight: 500; color: #ffffff; cursor: pointer; flex-shrink: 0">
+              {{selected.primaryAction}}
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+            </button>
+          </div>
+
+          <div style="display: flex; align-items: flex-start; gap: 0">
+            <sc-for list="{{selected.steps}}" as="step" hint-placeholder-count="6">
+              <div style="display: flex; flex-direction: column; gap: 8px; flex: 1; min-width: 0">
+                <div style="display: flex; align-items: center; gap: 0">
+                  <span style="height: 2px; flex: 1; background: {{step.leftLine}}"></span>
+                  <span style="display: flex; align-items: center; justify-content: center; width: 26px; height: 26px; flex-shrink: 0; border-radius: 999px; border: 2px solid {{step.dotBorder}}; background: {{step.dotBg}}; color: {{step.dotFg}}; font-size: 11px; font-weight: 600">{{step.index}}</span>
+                  <span style="height: 2px; flex: 1; background: {{step.rightLine}}"></span>
+                </div>
+                <div style="padding: 0 6px; text-align: center">
+                  <p style="margin: 0; font-size: 12px; font-weight: 600; color: {{step.labelColor}}; line-height: 1.3">{{step.label}}</p>
+                  <p style="margin: 2px 0 0; font-size: 11px; color: #9aa5b3">{{step.deadline}}</p>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </section>
+
+        <section style="border: 1px solid #dde2e9; border-radius: 16px; background: #ffffff; box-shadow: 0 1px 3px rgba(16,28,48,0.08), 0 1px 2px rgba(16,28,48,0.04); overflow: hidden">
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 20px 24px 16px">
+            <h2 style="margin: 0; font-size: 16px; font-weight: 600; color: #141a22">Campagnes</h2>
+            <div style="display: flex; gap: 4px; padding: 4px; border-radius: 12px; background: #eceff3">
+              <sc-for list="{{tabs}}" as="tab" hint-placeholder-count="3">
+                <button type="button" onClick="{{tab.pick}}" style="border: none; border-radius: 8px; background: {{tab.bg}}; box-shadow: {{tab.shadow}}; padding: 5px 12px; font-family: inherit; font-size: 13px; font-weight: 500; color: {{tab.fg}}; cursor: pointer">{{tab.label}}</button>
+              </sc-for>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 150px 176px 1fr 1fr 116px 40px; gap: 0; padding: 0 24px 8px; border-bottom: 1px solid #dde2e9">
+            <span style="font-size: 12px; font-weight: 500; color: #6b7685">Mois cible</span>
+            <span style="font-size: 12px; font-weight: 500; color: #6b7685">Statut</span>
+            <span style="font-size: 12px; font-weight: 500; color: #6b7685">Réponses seniors</span>
+            <span style="font-size: 12px; font-weight: 500; color: #6b7685">Réponses fellows</span>
+            <span style="font-size: 12px; font-weight: 500; color: #6b7685; text-align: right">Vacations</span>
+            <span></span>
+          </div>
+
+          <sc-for list="{{campaigns}}" as="row" hint-placeholder-count="5">
+            <div onClick="{{row.pick}}" style="display: grid; grid-template-columns: 150px 176px 1fr 1fr 116px 40px; align-items: center; gap: 0; padding: 12px 24px; border-bottom: 1px solid #eceff3; background: {{row.bg}}; cursor: pointer">
+              <span style="display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: {{row.weight}}; color: #141a22">
+                <span style="width: 3px; height: 18px; border-radius: 999px; background: {{row.marker}}"></span>
+                {{row.monthLabel}}
+              </span>
+              <span>
+                <span style="display: inline-flex; align-items: center; border-radius: 10px; border: 1px solid {{row.statusBorder}}; background: {{row.statusBg}}; color: {{row.statusText}}; padding: 2px 8px; font-size: 12px; font-weight: 500">{{row.statusLabel}}</span>
+              </span>
+              <span style="display: flex; align-items: center; gap: 10px; padding-right: 24px">
+                <span style="position: relative; flex: 1; height: 6px; border-radius: 999px; background: #eceff3; overflow: hidden">
+                  <span style="position: absolute; left: 0; top: 0; bottom: 0; width: {{row.seniorPct}}; border-radius: 999px; background: {{row.seniorColor}}"></span>
+                </span>
+                <span style="font-size: 13px; color: #4d5765; font-variant-numeric: tabular-nums; white-space: nowrap">{{row.seniorLabel}}</span>
+              </span>
+              <span style="display: flex; align-items: center; gap: 10px; padding-right: 24px">
+                <span style="position: relative; flex: 1; height: 6px; border-radius: 999px; background: #eceff3; overflow: hidden">
+                  <span style="position: absolute; left: 0; top: 0; bottom: 0; width: {{row.fellowPct}}; border-radius: 999px; background: {{row.fellowColor}}"></span>
+                </span>
+                <span style="font-size: 13px; color: #4d5765; font-variant-numeric: tabular-nums; white-space: nowrap">{{row.fellowLabel}}</span>
+              </span>
+              <span style="font-size: 14px; color: #363f4c; text-align: right; font-variant-numeric: tabular-nums">{{row.slots}}</span>
+              <span style="display: flex; justify-content: flex-end">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9aa5b3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"></path></svg>
+              </span>
+            </div>
+          </sc-for>
+
+          <div style="padding: 14px 24px; font-size: 13px; color: #9aa5b3">{{countLabel}}</div>
+        </section>
+      </div>
+
+      <aside style="display: flex; flex-direction: column; gap: 16px; width: 316px; flex-shrink: 0">
+
+        <section style="border: 1px solid #dde2e9; border-radius: 16px; background: #ffffff; box-shadow: 0 1px 3px rgba(16,28,48,0.08), 0 1px 2px rgba(16,28,48,0.04); padding: 20px 24px">
+          <h3 style="margin: 0 0 14px; font-size: 15px; font-weight: 600; color: #141a22">{{selected.monthLabel}} en chiffres</h3>
+          <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
+            <sc-for list="{{selected.stats}}" as="stat" hint-placeholder-count="4">
+              <div style="border: 1px solid #eceff3; border-radius: 12px; background: #fafbfc; padding: 12px">
+                <p style="margin: 0; font-size: 22px; font-weight: 600; color: #141a22; font-variant-numeric: tabular-nums">{{stat.value}}</p>
+                <p style="margin: 2px 0 0; font-size: 12px; color: #6b7685; line-height: 1.3">{{stat.label}}</p>
+              </div>
+            </sc-for>
+          </div>
+        </section>
+
+        <section style="border: 1px solid #dde2e9; border-radius: 16px; background: #ffffff; box-shadow: 0 1px 3px rgba(16,28,48,0.08), 0 1px 2px rgba(16,28,48,0.04); padding: 20px 24px">
+          <h3 style="margin: 0 0 12px; font-size: 15px; font-weight: 600; color: #141a22">À traiter</h3>
+          <div style="display: flex; flex-direction: column; gap: 10px">
+            <sc-for list="{{selected.alerts}}" as="alert" hint-placeholder-count="3">
+              <div style="display: flex; align-items: flex-start; gap: 10px; border: 1px solid {{alert.border}}; border-radius: 12px; background: {{alert.bg}}; padding: 10px 12px">
+                <span style="display: flex; align-items: center; justify-content: center; width: 18px; height: 18px; flex-shrink: 0; margin-top: 1px">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="{{alert.fg}}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01"></path><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"></path></svg>
+                </span>
+                <span style="flex: 1; min-width: 0">
+                  <span style="display: block; font-size: 13px; font-weight: 500; color: {{alert.fg}}">{{alert.title}}</span>
+                  <span style="display: block; margin-top: 2px; font-size: 12px; color: #6b7685; line-height: 1.4">{{alert.detail}}</span>
+                </span>
+              </div>
+            </sc-for>
+          </div>
+        </section>
+
+        <section style="border: 1px solid #dde2e9; border-radius: 16px; background: #ffffff; box-shadow: 0 1px 3px rgba(16,28,48,0.08), 0 1px 2px rgba(16,28,48,0.04); padding: 20px 24px">
+          <h3 style="margin: 0 0 12px; font-size: 15px; font-weight: 600; color: #141a22">Journal de campagne</h3>
+          <div style="display: flex; flex-direction: column; gap: 14px">
+            <sc-for list="{{selected.journal}}" as="entry" hint-placeholder-count="4">
+              <div style="display: flex; gap: 12px">
+                <span style="display: flex; flex-direction: column; align-items: center; flex-shrink: 0; padding-top: 4px">
+                  <span style="width: 8px; height: 8px; border-radius: 999px; background: {{entry.dot}}"></span>
+                  <span style="width: 1px; flex: 1; background: #dde2e9"></span>
+                </span>
+                <span style="flex: 1; min-width: 0; padding-bottom: 2px">
+                  <span style="display: block; font-size: 13px; color: #363f4c; line-height: 1.4">{{entry.text}}</span>
+                  <span style="display: block; margin-top: 2px; font-size: 11px; color: #9aa5b3">{{entry.when}}</span>
+                </span>
+              </div>
+            </sc-for>
+          </div>
+        </section>
+      </aside>
+    </div>
+  </main>
+</div>
+</x-dc>
+
+<script data-dc-script data-props='{"accent":{"editor":"color","default":"#ec3b68","options":["#ec3b68","#d61f55","#1f4b86","#d97706"],"section":"Th&#232;me"}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { tab: 'active', selectedId: 'oct-2026' };
+  }
+
+  statusStyle(kind) {
+    const map = {
+      neutral: { bg: '#eceff3', border: '#dde2e9', text: '#4d5765' },
+      info:    { bg: '#EFF6FF', border: '#BFDBFE', text: '#2563EB' },
+      warning: { bg: '#FFF3E9', border: '#FDBA74', text: '#EA580C' },
+      success: { bg: '#ECFDF5', border: '#A7F3D0', text: '#047857' },
+      navy:    { bg: '#173d6e', border: '#173d6e', text: '#ffffff' }
+    };
+    return map[kind] || map.neutral;
+  }
+
+  data() {
+    return [
+      {
+        id: 'oct-2026', monthLabel: 'Octobre 2026', kind: 'warning', statusLabel: 'Recueil seniors ouvert',
+        stepIndex: 2, slots: 46, seniorDone: 5, seniorTotal: 7, fellowDone: 0, fellowTotal: 5, group: 'active',
+        summary: 'Recueil ouvert depuis le 5 septembre — clôture le 15 septembre à 23h59.',
+        primaryAction: 'Voir le suivi des réponses',
+        stats: [
+          { value: '46', label: 'vacations chargées' },
+          { value: '51', label: 'places à pourvoir' },
+          { value: '6,6', label: 'vacations / senior en moyenne' },
+          { value: '3', label: 'créneaux sans aucun volontaire' }
+        ],
+        alerts: [
+          { kind: 'warning', title: '2 seniors n’ont pas répondu', detail: 'C. Dumont et J. Vidal — dernière relance envoyée le 10 septembre.' },
+          { kind: 'danger', title: '3 créneaux sans volontaire', detail: 'Blomet scanner des 13, 20 et 27 octobre, après-midi.' },
+          { kind: 'info', title: 'Recueil fellows non ouvert', detail: 'Il s’ouvrira à la publication du planning senior (RG-06).' }
+        ],
+        journal: [
+          { dot: '#ec3b68', text: 'Relance automatique envoyée à 2 seniors', when: 'Aujourd’hui, 08:00' },
+          { dot: '#173d6e', text: 'S. Rousseau a validé ses disponibilités', when: 'Hier, 21:14' },
+          { dot: '#173d6e', text: 'Recueil des seniors ouvert, 7 liens personnels envoyés', when: '5 septembre, 07:00' },
+          { dot: '#9aa5b3', text: '46 vacations importées depuis vacations-octobre.csv', when: '2 septembre, 17:32' }
+        ]
+      },
+      {
+        id: 'sep-2026', monthLabel: 'Septembre 2026', kind: 'success', statusLabel: 'Publié, échanges ouverts',
+        stepIndex: 6, slots: 44, seniorDone: 7, seniorTotal: 7, fellowDone: 5, fellowTotal: 5, group: 'active',
+        summary: 'Les deux plannings sont publiés. Les échanges entre pairs sont ouverts jusqu’au 30 septembre.',
+        primaryAction: 'Ouvrir le planning publié',
+        stats: [
+          { value: '44', label: 'vacations planifiées' },
+          { value: '0', label: 'place non pourvue' },
+          { value: '1', label: 'écart max entre seniors' },
+          { value: '4', label: 'échanges en attente' }
+        ],
+        alerts: [
+          { kind: 'warning', title: '2 échanges à valider', detail: 'A. Bernard ↔ F. Leroy, et une cession de M. Nguyen.' },
+          { kind: 'info', title: 'Clôture prévue le 30 septembre', detail: 'Les compteurs seront consolidés automatiquement.' }
+        ],
+        journal: [
+          { dot: '#173d6e', text: 'Échange validé entre S. Rousseau et A. Bernard', when: '3 septembre, 11:02' },
+          { dot: '#ec3b68', text: 'Planning fellows publié, version 1', when: '27 août, 16:40' },
+          { dot: '#ec3b68', text: 'Planning seniors publié, version 2', when: '19 août, 09:15' },
+          { dot: '#9aa5b3', text: 'Campagne créée', when: '1 août, 10:20' }
+        ]
+      },
+      {
+        id: 'nov-2026', monthLabel: 'Novembre 2026', kind: 'neutral', statusLabel: 'Brouillon',
+        stepIndex: 1, slots: 0, seniorDone: 0, seniorTotal: 7, fellowDone: 0, fellowTotal: 5, group: 'active',
+        summary: 'Aucune vacation chargée. La campagne peut être dupliquée depuis octobre.',
+        primaryAction: 'Charger les vacations',
+        stats: [
+          { value: '0', label: 'vacations chargées' },
+          { value: '—', label: 'places à pourvoir' },
+          { value: '7', label: 'seniors actifs' },
+          { value: '5', label: 'fellows actifs' }
+        ],
+        alerts: [
+          { kind: 'info', title: 'Rien à charger pour l’instant', detail: 'Dupliquez octobre ou importez un fichier CSV.' }
+        ],
+        journal: [
+          { dot: '#9aa5b3', text: 'Campagne créée', when: '6 septembre, 14:05' }
+        ]
+      },
+      {
+        id: 'aou-2026', monthLabel: 'Août 2026', kind: 'neutral', statusLabel: 'Clôturée',
+        stepIndex: 6, slots: 38, seniorDone: 7, seniorTotal: 7, fellowDone: 4, fellowTotal: 5, group: 'closed',
+        summary: 'Campagne clôturée, compteurs consolidés le 31 août.',
+        primaryAction: 'Consulter les compteurs',
+        stats: [
+          { value: '38', label: 'vacations réalisées' },
+          { value: '2', label: 'places non pourvues' },
+          { value: '2', label: 'écart max entre seniors' },
+          { value: '6', label: 'doubles vacations' }
+        ],
+        alerts: [
+          { kind: 'info', title: 'Dettes d’équité reportées', detail: 'C. Dumont +2, F. Leroy −1 : pris en compte par l’objectif G4.' }
+        ],
+        journal: [
+          { dot: '#9aa5b3', text: 'Campagne clôturée, compteurs consolidés', when: '31 août, 23:59' }
+        ]
+      },
+      {
+        id: 'jul-2026', monthLabel: 'Juillet 2026', kind: 'neutral', statusLabel: 'Clôturée',
+        stepIndex: 6, slots: 31, seniorDone: 6, seniorTotal: 7, fellowDone: 4, fellowTotal: 5, group: 'closed',
+        summary: 'Campagne clôturée, compteurs consolidés le 31 juillet.',
+        primaryAction: 'Consulter les compteurs',
+        stats: [
+          { value: '31', label: 'vacations réalisées' },
+          { value: '4', label: 'places non pourvues' },
+          { value: '3', label: 'écart max entre seniors' },
+          { value: '2', label: 'doubles vacations' }
+        ],
+        alerts: [
+          { kind: 'warning', title: 'Mois d’été sous-doté', detail: '4 places acquittées non pourvues, motif saisi par le coordinateur.' }
+        ],
+        journal: [
+          { dot: '#9aa5b3', text: 'Campagne clôturée, compteurs consolidés', when: '31 juillet, 23:59' }
+        ]
+      }
+    ];
+  }
+
+  steps(activeIndex) {
+    const labels = [
+      { label: 'Chargement', deadline: 'avant le 3' },
+      { label: 'Recueil seniors', deadline: 'du 5 au 15' },
+      { label: 'Planning seniors', deadline: 'le 16 au 18' },
+      { label: 'Recueil fellows', deadline: 'du 18 au 24' },
+      { label: 'Planning fellows', deadline: 'le 25 au 27' },
+      { label: 'Échanges, clôture', deadline: 'fin du mois' }
+    ];
+    return labels.map((entry, position) => {
+      const number = position + 1;
+      const done = number < activeIndex;
+      const current = number === activeIndex;
+      return {
+        index: String(number),
+        label: entry.label,
+        deadline: entry.deadline,
+        dotBg: current ? '#ec3b68' : done ? '#173d6e' : '#ffffff',
+        dotBorder: current ? '#ec3b68' : done ? '#173d6e' : '#dde2e9',
+        dotFg: current || done ? '#ffffff' : '#9aa5b3',
+        labelColor: current ? '#141a22' : done ? '#4d5765' : '#9aa5b3',
+        leftLine: position === 0 ? 'transparent' : number <= activeIndex ? '#173d6e' : '#dde2e9',
+        rightLine: position === labels.length - 1 ? 'transparent' : number < activeIndex ? '#173d6e' : '#dde2e9'
+      };
+    });
+  }
+
+  renderVals() {
+    const accent = this.props.accent ?? '#ec3b68';
+    const all = this.data();
+    const tabDefs = [
+      { id: 'active', label: 'En cours' },
+      { id: 'closed', label: 'Clôturées' },
+      { id: 'all', label: 'Toutes' }
+    ];
+
+    const tabs = tabDefs.map((tab) => ({
+      label: tab.label,
+      bg: this.state.tab === tab.id ? '#ffffff' : 'transparent',
+      fg: this.state.tab === tab.id ? '#141a22' : '#6b7685',
+      shadow: this.state.tab === tab.id ? '0 1px 2px rgba(16,28,48,0.06)' : 'none',
+      pick: () => this.setState({ tab: tab.id })
+    }));
+
+    const visible = all.filter((entry) => this.state.tab === 'all' || entry.group === this.state.tab);
+    const selected = all.find((entry) => entry.id === this.state.selectedId) || visible[0] || all[0];
+
+    const campaigns = visible.map((entry) => {
+      const tone = this.statusStyle(entry.kind);
+      const isSelected = entry.id === selected.id;
+      const seniorRatio = entry.seniorTotal ? entry.seniorDone / entry.seniorTotal : 0;
+      const fellowRatio = entry.fellowTotal ? entry.fellowDone / entry.fellowTotal : 0;
+      return {
+        monthLabel: entry.monthLabel,
+        statusLabel: entry.statusLabel,
+        statusBg: tone.bg,
+        statusBorder: tone.border,
+        statusText: tone.text,
+        slots: entry.slots ? String(entry.slots) : '—',
+        seniorPct: Math.round(seniorRatio * 100) + '%',
+        fellowPct: Math.round(fellowRatio * 100) + '%',
+        seniorColor: seniorRatio === 1 ? '#16a34a' : seniorRatio > 0 ? accent : '#c4ccd6',
+        fellowColor: fellowRatio === 1 ? '#16a34a' : fellowRatio > 0 ? accent : '#c4ccd6',
+        seniorLabel: entry.seniorDone + '/' + entry.seniorTotal,
+        fellowLabel: entry.fellowDone + '/' + entry.fellowTotal,
+        bg: isSelected ? '#fafbfc' : '#ffffff',
+        weight: isSelected ? '600' : '500',
+        marker: isSelected ? accent : 'transparent',
+        pick: () => this.setState({ selectedId: entry.id })
+      };
+    });
+
+    const alertTone = {
+      warning: { bg: '#FFF3E9', border: '#FDBA74', fg: '#EA580C' },
+      danger: { bg: '#FEF2F2', border: '#FECACA', fg: '#DC2626' },
+      info: { bg: '#EFF6FF', border: '#BFDBFE', fg: '#2563EB' }
+    };
+
+    const tone = this.statusStyle(selected.kind);
+
+    return {
+      tabs,
+      campaigns,
+      countLabel: visible.length + ' campagne' + (visible.length > 1 ? 's' : '') + ' affichée' + (visible.length > 1 ? 's' : ''),
+      selected: {
+        monthLabel: selected.monthLabel,
+        statusLabel: selected.statusLabel,
+        statusBg: tone.bg,
+        statusBorder: tone.border,
+        statusText: tone.text,
+        summary: selected.summary,
+        primaryAction: selected.primaryAction,
+        steps: this.steps(selected.stepIndex),
+        stats: selected.stats,
+        journal: selected.journal,
+        alerts: selected.alerts.map((alert) => {
+          const paint = alertTone[alert.kind] || alertTone.info;
+          return { title: alert.title, detail: alert.detail, bg: paint.bg, border: paint.border, fg: paint.fg };
+        })
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,366 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&display=swap">
+  <style>
+    *{ box-sizing: border-box; }
+    body { margin: 0; font-family: 'Inter Tight', system-ui, -apple-system, 'Segoe UI', sans-serif; }
+    a { color: #173d6e; text-decoration: none; }
+    a:hover { color: #122f54; text-decoration: underline; }
+  </style>
+</helmet>
+
+<div style="display: flex; width: 1440px; height: 1160px; background: #ffffff; color: #141a22">
+<aside style="display: flex; flex-direction: column; width: 256px; flex-shrink: 0; background: #122f54; color: #ffffff">
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 20px 24px; text-align: center">
+      <svg width="40" height="40" viewBox="0 0 40 40" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20 34s-13-8.2-13-17a7 7 0 0 1 13-3.7A7 7 0 0 1 33 17c0 8.8-13 17-13 17z"></path>
+        <path d="M6 20h7l2.5-5 4 10 3-5H34"></path>
+      </svg>
+      <span style="font-size: 13px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase">Larib Portal</span>
+    </div>
+
+    <nav style="display: flex; flex-direction: column; gap: 24px; flex: 1; overflow: hidden; padding: 16px 12px">
+      <div>
+        <p style="margin: 0 0 8px; padding: 0 12px; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #7197c2">Vue d'ensemble</p>
+        <div style="display: flex; flex-direction: column; gap: 4px">
+          <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #d6e0ee">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1"></rect><rect x="14" y="3" width="7" height="5" rx="1"></rect><rect x="14" y="12" width="7" height="9" rx="1"></rect><rect x="3" y="16" width="7" height="5" rx="1"></rect></svg>
+            <span style="display: flex; flex: 1; align-items: center; gap: 6px">Tableau de bord</span>
+          </div>
+        </div>
+      </div>
+      <div>
+        <p style="margin: 0 0 8px; padding: 0 12px; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #7197c2">Applications</p>
+        <div style="display: flex; flex-direction: column; gap: 4px">
+          <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #d6e0ee">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10 12 5 2 10l10 5 10-5z"></path><path d="M6 12v5c0 1 2.7 2.5 6 2.5s6-1.5 6-2.5v-5"></path></svg>
+            <span style="display: flex; flex: 1; align-items: center; gap: 6px">Best of Larib</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #d6e0ee">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg>
+            <span style="display: flex; flex: 1; align-items: center; gap: 6px">Congés</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #d6e0ee">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+            <span style="display: flex; flex: 1; align-items: center; gap: 6px">Publications</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #d6e0ee">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 5.6a5.5 5.5 0 0 0-8.8 1.4 5.5 5.5 0 0 0-8.8-1.4c-2.4 2.4-2 6.2.4 8.6L12 21l7.6-6.8c2.4-2.4 3.6-6.2.4-8.6z"></path></svg>
+            <span style="display: flex; flex: 1; align-items: center; gap: 6px">CoreLab</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #d6e0ee">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 10h18M8 3v4M16 3v4"></path><path d="M8 14h3M8 17.5h3M14 14h2"></path></svg>
+            <span style="display: flex; flex: 1; align-items: center; gap: 6px">Planning imagerie</span>
+          </div>
+        </div>
+      </div>
+      <div>
+        <p style="margin: 0 0 8px; padding: 0 12px; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #7197c2">Administration</p>
+        <div style="display: flex; flex-direction: column; gap: 4px">
+          <div style="position: relative; display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; background: #173d6e; color: #ffffff">
+            <span style="position: absolute; left: 0; top: 50%; width: 4px; height: 24px; margin-top: -12px; border-radius: 0 4px 4px 0; background: #ec3b68"></span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f55c83" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 10h18M8 3v4M16 3v4"></path><path d="M8 14h3M8 17.5h3M14 14h2"></path></svg>
+            <span style="display: flex; flex: 1; align-items: center; gap: 6px">Planning imagerie<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#f55c83" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg></span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #d6e0ee">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.9"></path></svg>
+            <span style="display: flex; flex: 1; align-items: center; gap: 6px">Utilisateurs</span>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <div style="border-top: 1px solid #173d6e; padding: 12px">
+      <div style="display: flex; flex-direction: column; gap: 8px">
+        <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #d6e0ee">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20z"></path></svg>
+          <span style="flex: 1">Langue</span>
+          <span style="color: #aac0dc">FR</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; background: #173d6e">
+          <span style="display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 999px; background: #ec3b68; color: #ffffff; font-size: 13px; font-weight: 600">TP</span>
+          <span style="display: flex; flex-direction: column; flex: 1; min-width: 0">
+            <span style="font-size: 14px; font-weight: 500; color: #ffffff">Théo</span>
+            <span style="font-size: 12px; color: #aac0dc">Coordinateur</span>
+          </span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"></path></svg>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <main style="flex: 1; min-width: 0; overflow: hidden; background-color: #f5f7fa; background-image: radial-gradient(58% 52% at 10% 4%, rgba(214,31,85,0.10), transparent 60%), radial-gradient(52% 48% at 92% 12%, rgba(236,59,104,0.08), transparent 62%), radial-gradient(60% 60% at 84% 96%, rgba(214,31,85,0.07), transparent 60%), radial-gradient(48% 54% at 2% 94%, rgba(255,182,198,0.12), transparent 60%); padding: 32px">
+
+    <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; margin-bottom: 24px">
+      <div style="border-left: 4px solid #ec3b68; padding-left: 16px">
+        <h1 style="margin: 0; font-size: 30px; font-weight: 700; line-height: 1.15; color: #141a22">Rapport de génération — Octobre 2026</h1>
+        <p style="margin: 4px 0 0; font-size: 15px; color: #6b7685">Exécution 3 du moteur, population senior. Ce rapport est descriptif : il ne formule aucune recommandation qui ne dérive pas d’un chiffre présent ici.</p>
+      </div>
+      <div style="display: flex; gap: 8px; flex-shrink: 0"><button type="button" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 36px; padding: 0 16px; border-radius: 10px; box-shadow: 0 1px 2px rgba(16,28,48,0.06); font-family: inherit; font-size: 14px; font-weight: 500; cursor: pointer; border: 1px solid #dde2e9; background: #ffffff; color: #363f4c; "><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"></path><path d="M3 3v6h6"></path><path d="M12 8v4.5l3 1.8"></path></svg>Comparer les versions</button><button type="button" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 36px; padding: 0 16px; border-radius: 10px; box-shadow: 0 1px 2px rgba(16,28,48,0.06); font-family: inherit; font-size: 14px; font-weight: 500; cursor: pointer; border: none; background: linear-gradient(to bottom right, #122f54, #0a1b30); color: #ffffff; "><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>Retour à la revue</button></div>
+    </div>
+
+    <div style="display: flex; gap: 20px; align-items: flex-start">
+
+      <div style="display: flex; flex-direction: column; gap: 20px; flex: 1; min-width: 0">
+
+        <section style="border: 1px solid #dde2e9; border-radius: 16px; background: #ffffff; box-shadow: 0 1px 3px rgba(16,28,48,0.08), 0 1px 2px rgba(16,28,48,0.04); padding: 22px 24px; border-left: 4px solid #1f4b86">
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1f4b86" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 4V2M15 16v-2M8 9h2M20 9h2M17.8 11.8 19 13M17.8 6.2 19 5M3 21l9-9M12.2 6.2 11 5"></path></svg>
+            <h2 style="margin: 0; flex: 1; font-size: 16px; font-weight: 600; color: #141a22">Restitution en langage naturel</h2>
+            <span style="font-size: 12px; color: #9aa5b3">produite à partir des métriques du solveur, jamais l’inverse</span>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 12px">
+            <sc-for list="{{narrative}}" as="paragraph" hint-placeholder-count="5">
+              <p style="margin: 0; font-size: 14px; line-height: 1.6; color: #363f4c">{{paragraph.text}}</p>
+            </sc-for>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px; margin-top: 16px; border-top: 1px solid #eceff3; padding-top: 14px">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9aa5b3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4M12 8h.01"></path></svg>
+            <span style="font-size: 12px; color: #9aa5b3; line-height: 1.45">RG-31 et RG-38 — le moteur d’optimisation et cette couche de restitution sont deux composants séparés. Ce texte ne crée, ne modifie et ne supprime jamais une affectation.</span>
+          </div>
+        </section>
+
+        <section style="border: 1px solid #dde2e9; border-radius: 16px; background: #ffffff; box-shadow: 0 1px 3px rgba(16,28,48,0.08), 0 1px 2px rgba(16,28,48,0.04); overflow: hidden">
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 20px; border-bottom: 1px solid #dde2e9">
+            <h2 style="margin: 0; font-size: 16px; font-weight: 600; color: #141a22">Places non pourvues et cause identifiée</h2>
+            <span style="display: inline-flex; align-items: center; border-radius: 10px; padding: 2px 8px; font-size: 12px; font-weight: 500; border: 1px solid #FECACA; background: #FEF2F2; color: #DC2626">{{unfilledCount}}</span>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 236px 1fr; gap: 0; border-bottom: 1px solid #dde2e9; background: #fafbfc; padding: 8px 20px">
+            <span style="font-size: 12px; font-weight: 500; color: #6b7685">Vacation</span>
+            <span style="font-size: 12px; font-weight: 500; color: #6b7685">Cause déterminée par analyse des entrées</span>
+          </div>
+
+          <sc-for list="{{unfilled}}" as="row" hint-placeholder-count="4">
+            <div style="display: grid; grid-template-columns: 236px 1fr; align-items: flex-start; gap: 0; border-bottom: 1px solid #eceff3; padding: 12px 20px">
+              <span style="display: flex; align-items: flex-start; gap: 10px; padding-right: 16px">
+                <span style="width: 3px; height: 32px; flex-shrink: 0; border-radius: 2px; background: {{row.color}}"></span>
+                <span style="flex: 1; min-width: 0">
+                  <span style="display: block; font-size: 13px; font-weight: 600; color: #141a22">{{row.title}}</span>
+                  <span style="display: block; margin-top: 1px; font-size: 12px; color: #6b7685">{{row.when}}</span>
+                </span>
+              </span>
+              <span>
+                <span style="display: inline-flex; align-items: center; border-radius: 10px; padding: 2px 8px; margin-bottom: 4px; font-size: 12px; font-weight: 500; {{row.tagStyle}}">{{row.tag}}</span>
+                <span style="display: block; font-size: 13px; color: #4d5765; line-height: 1.45">{{row.detail}}</span>
+              </span>
+            </div>
+          </sc-for>
+
+          <p style="margin: 0; padding: 14px 20px; font-size: 12px; color: #9aa5b3; line-height: 1.45">RG-37 — la cause est déterminée par analyse des données d’entrée, jamais par interprétation du solveur.</p>
+        </section>
+
+        <section style="border: 1px solid #dde2e9; border-radius: 16px; background: #ffffff; box-shadow: 0 1px 3px rgba(16,28,48,0.08), 0 1px 2px rgba(16,28,48,0.04); overflow: hidden">
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 20px; border-bottom: 1px solid #dde2e9">
+            <h2 style="margin: 0; font-size: 16px; font-weight: 600; color: #141a22">Comparaison avec la version précédente</h2>
+            <div style="display: flex; gap: 4px; padding: 4px; border-radius: 12px; background: #eceff3">
+              <sc-for list="{{versions}}" as="version" hint-placeholder-count="3">
+                <button type="button" onClick="{{version.pick}}" style="border: none; border-radius: 8px; background: {{version.bg}}; box-shadow: {{version.shadow}}; padding: 5px 12px; font-family: inherit; font-size: 13px; font-weight: 500; color: {{version.fg}}; cursor: pointer">{{version.label}}</button>
+              </sc-for>
+            </div>
+          </div>
+          <div style="padding: 8px 0">
+            <sc-for list="{{diff}}" as="change" hint-placeholder-count="4">
+              <div style="display: flex; align-items: center; gap: 12px; padding: 11px 20px; border-bottom: 1px solid #f5f7fa">
+                <span style="display: flex; flex-shrink: 0">{{change.icon}}</span>
+                <span style="flex: 1; min-width: 0">
+                  <span style="display: block; font-size: 13px; color: #141a22">{{change.title}}</span>
+                  <span style="display: block; margin-top: 1px; font-size: 12px; color: #6b7685">{{change.detail}}</span>
+                </span>
+                <span style="display: inline-flex; align-items: center; border-radius: 10px; padding: 2px 8px; flex-shrink: 0; font-size: 12px; font-weight: 500; {{change.tagStyle}}">{{change.tag}}</span>
+              </div>
+            </sc-for>
+            <p style="margin: 0; padding: 12px 20px 4px; font-size: 12px; color: #9aa5b3">{{diffSummary}}</p>
+          </div>
+        </section>
+      </div>
+
+      <aside style="display: flex; flex-direction: column; gap: 16px; width: 380px; flex-shrink: 0">
+
+        <section style="border: 1px solid #dde2e9; border-radius: 16px; background: #ffffff; box-shadow: 0 1px 3px rgba(16,28,48,0.08), 0 1px 2px rgba(16,28,48,0.04); padding: 18px 20px">
+          <h3 style="margin: 0 0 14px; font-size: 15px; font-weight: 600; color: #141a22">Métriques de sortie</h3>
+          <div style="display: flex; flex-direction: column; gap: 11px">
+            <sc-for list="{{metrics}}" as="metric" hint-placeholder-count="6">
+              <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding-bottom: 10px; border-bottom: 1px solid #f5f7fa">
+                <span style="flex: 1; min-width: 0; font-size: 13px; color: #4d5765; line-height: 1.35">{{metric.label}}</span>
+                <span style="flex-shrink: 0; font-size: 15px; font-weight: 600; color: {{metric.color}}; font-variant-numeric: tabular-nums">{{metric.value}}</span>
+              </div>
+            </sc-for>
+          </div>
+        </section>
+
+        <section style="border: 1px solid #dde2e9; border-radius: 16px; background: #ffffff; box-shadow: 0 1px 3px rgba(16,28,48,0.08), 0 1px 2px rgba(16,28,48,0.04); padding: 18px 20px">
+          <h3 style="margin: 0 0 12px; font-size: 15px; font-weight: 600; color: #141a22">Répartition obtenue</h3>
+          <div style="display: flex; flex-direction: column; gap: 9px">
+            <sc-for list="{{spread}}" as="person" hint-placeholder-count="7">
+              <div style="display: flex; align-items: center; gap: 10px">
+                <span style="width: 92px; flex-shrink: 0; font-size: 13px; color: #363f4c; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{person.name}}</span>
+                <span style="position: relative; flex: 1; height: 16px; border-radius: 5px; background: #f5f7fa; overflow: hidden">
+                  <span style="position: absolute; left: 0; top: 0; bottom: 0; width: {{person.pct}}; border-radius: 5px; background: {{person.color}}"></span>
+                </span>
+                <span style="width: 20px; flex-shrink: 0; text-align: right; font-size: 13px; font-weight: 600; color: #141a22; font-variant-numeric: tabular-nums">{{person.count}}</span>
+              </div>
+            </sc-for>
+          </div>
+          <p style="margin: 12px 0 0; font-size: 12px; color: #9aa5b3; line-height: 1.45">{{spreadNote}}</p>
+        </section>
+
+        <section style="border: 1px solid #dde2e9; border-radius: 16px; background: #ffffff; box-shadow: 0 1px 3px rgba(16,28,48,0.08), 0 1px 2px rgba(16,28,48,0.04); padding: 18px 20px">
+          <h3 style="margin: 0 0 12px; font-size: 15px; font-weight: 600; color: #141a22">Reproductibilité</h3>
+          <div style="display: flex; flex-direction: column; gap: 10px">
+            <sc-for list="{{reproducibility}}" as="row" hint-placeholder-count="4">
+              <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 12px">
+                <span style="flex-shrink: 0; font-size: 13px; color: #6b7685">{{row.label}}</span>
+                <span style="flex: 1; min-width: 0; text-align: right; font-size: 12px; color: #363f4c; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; overflow: hidden; text-overflow: ellipsis">{{row.value}}</span>
+              </div>
+            </sc-for>
+          </div>
+          <div style="display: flex; align-items: flex-start; gap: 8px; margin-top: 14px; border-top: 1px solid #eceff3; padding-top: 12px">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#047857" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>
+            <span style="flex: 1; font-size: 12px; color: #6b7685; line-height: 1.45">Deux exécutions partageant cette empreinte, ces poids et cette graine produisent exactement le même planning (RG-36, critère A04).</span>
+          </div>
+          <button type="button" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%; height: 36px; margin-top: 14px; border: 1px solid #dde2e9; border-radius: 10px; background: #ffffff; font-family: inherit; font-size: 13px; font-weight: 500; color: #363f4c; cursor: pointer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7"></path><path d="M21 3v6h-6"></path></svg>Rejouer avec une autre graine
+          </button>
+        </section>
+      </aside>
+    </div>
+  </main>
+</div>
+</x-dc>
+
+<script data-dc-script data-props='{}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { version: 'v2' };
+  }
+
+  glyph(path, color, size) {
+    return '<svg width="' + (size || 16) + '" height="' + (size || 16) + '" viewBox="0 0 24 24" fill="none" stroke="' + color + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + path + '</svg>';
+  }
+
+  renderVals() {
+    const narrative = [
+      { text: '48 places pourvues sur 51. Les trois places vides portent toutes sur le scanner de Blomet, les mardis après-midi : aucun senior ne s’est déclaré disponible sur ces créneaux.' },
+      { text: 'L’écart maximal entre seniors est de 2 vacations, pour une cible de 6,6. C. Dumont reçoit 4 vacations, soit 2,6 de moins que la moyenne, parce qu’elle n’avait déclaré que 4 disponibilités : sa cible est plafonnée par ce nombre et aucune dette d’équité ne lui est imputée.' },
+      { text: 'S. Rousseau reçoit 9 vacations, soit 2,4 de plus que la moyenne. Il avait déclaré 24 disponibilités et portait un crédit d’équité de 2 vacations reporté d’août, que l’objectif G4 a résorbé.' },
+      { text: '6 doubles vacations ont été formées pour le coordinateur, sur 8 demi-journées où une IRM et un scanner coexistent sur le même centre. Les deux manquantes tombent les 6 et 20 octobre : le coordinateur n’avait déclaré disponible qu’une des deux vacations.' },
+      { text: 'Par rapport à la version 2, trois affectations changent et une place non pourvue a été comblée. Les deux affectations que vous aviez verrouillées sont conservées à l’identique.' }
+    ];
+
+    const unfilled = [
+      {
+        title: 'Blomet · Scanner', when: 'mardi 13 octobre, après-midi', color: '#047857',
+        tag: 'Aucun volontaire',
+        tagStyle: 'border: 1px solid #FECACA; background: #FEF2F2; color: #DC2626',
+        detail: 'Aucune personne ne s’est déclarée disponible sur ce créneau. Une demande de disponibilité exceptionnelle est le seul recours.'
+      },
+      {
+        title: 'Blomet · Scanner', when: 'mardi 20 octobre, après-midi', color: '#047857',
+        tag: 'Aucun volontaire',
+        tagStyle: 'border: 1px solid #FECACA; background: #FEF2F2; color: #DC2626',
+        detail: 'Aucune personne ne s’est déclarée disponible sur ce créneau.'
+      },
+      {
+        title: 'Lariboisière · IRM', when: 'jeudi 22 octobre, après-midi', color: '#b45309',
+        tag: 'Toutes déjà affectées',
+        tagStyle: 'border: 1px solid #FDBA74; background: #FFF3E9; color: #EA580C',
+        detail: 'Les 3 personnes disponibles sur ce créneau sont déjà affectées ailleurs sur la même demi-journée. La contrainte C4 interdit le chevauchement.'
+      }
+    ];
+
+    const metrics = [
+      { label: 'Taux de couverture', value: '94 %', color: '#EA580C' },
+      { label: 'Places non pourvues', value: '3', color: '#DC2626' },
+      { label: 'Écart maximal d’équité', value: '2', color: '#EA580C' },
+      { label: 'Somme des écarts absolus à la cible', value: '9,4', color: '#141a22' },
+      { label: 'Doubles vacations du coordinateur', value: '6 / 8', color: '#047857' },
+      { label: 'Créneaux prioritaires honorés', value: '14 / 17', color: '#141a22' },
+      { label: 'Dépassements hebdomadaires', value: '1', color: '#EA580C' },
+      { label: 'Score de la fonction objectif', value: '4 218', color: '#141a22' }
+    ];
+
+    const roster = [
+      { name: 'S. Rousseau', count: 9 },
+      { name: 'Théo Pezel', count: 8, coordinator: true },
+      { name: 'A. Bernard', count: 8 },
+      { name: 'F. Leroy', count: 7 },
+      { name: 'M. Nguyen', count: 6 },
+      { name: 'J. Vidal', count: 6 },
+      { name: 'C. Dumont', count: 4 }
+    ];
+    const target = 6.6;
+
+    const spread = roster.map((person) => ({
+      name: person.name,
+      count: String(person.count),
+      pct: Math.round((person.count / 11) * 100) + '%',
+      color: person.coordinator ? '#1f4b86' : Math.abs(person.count - target) >= 2 ? '#d97706' : '#3f6aa3'
+    }));
+
+    const versionDefs = [
+      { id: 'v1', label: 'vs v1' },
+      { id: 'v2', label: 'vs v2' },
+      { id: 'none', label: 'Aucune' }
+    ];
+
+    const versions = versionDefs.map((entry) => ({
+      label: entry.label,
+      bg: this.state.version === entry.id ? '#ffffff' : 'transparent',
+      fg: this.state.version === entry.id ? '#141a22' : '#6b7685',
+      shadow: this.state.version === entry.id ? '0 1px 2px rgba(16,28,48,0.06)' : 'none',
+      pick: () => this.setState({ version: entry.id })
+    }));
+
+    const plusGlyph = this.glyph('<path d="M12 5v14M5 12h14"></path>', '#047857', 15);
+    const swapGlyph = this.glyph('<path d="M7 4 3 8l4 4"></path><path d="M3 8h13a4 4 0 0 1 0 8h-1"></path><path d="m17 20 4-4-4-4"></path>', '#2563EB', 15);
+    const lockGlyph = this.glyph('<rect x="4" y="10" width="16" height="11" rx="2"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path>', '#6b7685', 15);
+
+    const diffSets = {
+      v2: [
+        { icon: swapGlyph, title: 'Bergère · IRM, lundi 5 octobre matin', detail: 'M. Nguyen remplace F. Leroy', tag: 'Changement', tagStyle: 'border: 1px solid #BFDBFE; background: #EFF6FF; color: #2563EB' },
+        { icon: swapGlyph, title: 'Lariboisière · Scanner, jeudi 15 octobre après-midi', detail: 'Théo Pezel remplace A. Bernard, formant une double vacation', tag: 'Changement', tagStyle: 'border: 1px solid #BFDBFE; background: #EFF6FF; color: #2563EB' },
+        { icon: plusGlyph, title: 'Blomet · IRM, mercredi 7 octobre après-midi', detail: 'Place précédemment vide, désormais tenue par J. Vidal', tag: 'Comblée', tagStyle: 'border: 1px solid #A7F3D0; background: #ECFDF5; color: #047857' },
+        { icon: lockGlyph, title: '2 affectations verrouillées', detail: 'Conservées à l’identique, comme à chaque régénération', tag: 'Inchangé', tagStyle: 'border: 1px solid #dde2e9; background: #eceff3; color: #4d5765' }
+      ],
+      v1: [
+        { icon: swapGlyph, title: '11 affectations modifiées', detail: 'La version 1 précédait votre premier arbitrage manuel', tag: 'Changement', tagStyle: 'border: 1px solid #BFDBFE; background: #EFF6FF; color: #2563EB' },
+        { icon: plusGlyph, title: '4 places comblées', detail: 'Le passage du poids G1 de 500 à 1000 a priorisé la couverture', tag: 'Comblée', tagStyle: 'border: 1px solid #A7F3D0; background: #ECFDF5; color: #047857' }
+      ],
+      none: []
+    };
+
+    const diff = diffSets[this.state.version] || [];
+
+    return {
+      narrative,
+      unfilled,
+      unfilledCount: unfilled.length + ' places',
+      metrics,
+      spread,
+      spreadNote: 'Le nombre de vacations attribuées ne peut jamais dépasser le nombre de disponibilités déclarées : c’est la contrainte C1, garantie par construction du modèle.',
+      versions,
+      diff,
+      diffSummary: this.state.version === 'none'
+        ? 'Aucune comparaison affichée.'
+        : diff.length + ' entrées comparées. Ces différences seront reprises telles quelles dans l’email de republication (RG-25).',
+      reproducibility: [
+        { label: 'Empreinte des entrées', value: 'a3f9…c142' },
+        { label: 'Graine', value: '4271' },
+        { label: 'Temps de calcul', value: '2 843 ms' },
+        { label: 'Statut', value: 'SUCCESS, optimum' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

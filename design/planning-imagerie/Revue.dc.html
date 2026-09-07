@@ -1,0 +1,589 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&display=swap">
+  <style>
+    *{ box-sizing: border-box; }
+    body { margin: 0; font-family: 'Inter Tight', system-ui, -apple-system, 'Segoe UI', sans-serif; }
+    a { color: #173d6e; text-decoration: none; }
+    a:hover { color: #122f54; text-decoration: underline; }
+  </style>
+</helmet>
+
+<div style="display: flex; width: 1440px; height: 1180px; background: #ffffff; color: #141a22">
+<aside style="display: flex; flex-direction: column; width: 256px; flex-shrink: 0; background: #122f54; color: #ffffff">
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 20px 24px; text-align: center">
+      <svg width="40" height="40" viewBox="0 0 40 40" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20 34s-13-8.2-13-17a7 7 0 0 1 13-3.7A7 7 0 0 1 33 17c0 8.8-13 17-13 17z"></path>
+        <path d="M6 20h7l2.5-5 4 10 3-5H34"></path>
+      </svg>
+      <span style="font-size: 13px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase">Larib Portal</span>
+    </div>
+
+    <nav style="display: flex; flex-direction: column; gap: 24px; flex: 1; overflow: hidden; padding: 16px 12px">
+      <div>
+        <p style="margin: 0 0 8px; padding: 0 12px; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #7197c2">Vue d'ensemble</p>
+        <div style="display: flex; flex-direction: column; gap: 4px">
+          <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #d6e0ee">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1"></rect><rect x="14" y="3" width="7" height="5" rx="1"></rect><rect x="14" y="12" width="7" height="9" rx="1"></rect><rect x="3" y="16" width="7" height="5" rx="1"></rect></svg>
+            <span style="display: flex; flex: 1; align-items: center; gap: 6px">Tableau de bord</span>
+          </div>
+        </div>
+      </div>
+      <div>
+        <p style="margin: 0 0 8px; padding: 0 12px; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #7197c2">Applications</p>
+        <div style="display: flex; flex-direction: column; gap: 4px">
+          <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #d6e0ee">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10 12 5 2 10l10 5 10-5z"></path><path d="M6 12v5c0 1 2.7 2.5 6 2.5s6-1.5 6-2.5v-5"></path></svg>
+            <span style="display: flex; flex: 1; align-items: center; gap: 6px">Best of Larib</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #d6e0ee">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg>
+            <span style="display: flex; flex: 1; align-items: center; gap: 6px">Congés</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #d6e0ee">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+            <span style="display: flex; flex: 1; align-items: center; gap: 6px">Publications</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #d6e0ee">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 5.6a5.5 5.5 0 0 0-8.8 1.4 5.5 5.5 0 0 0-8.8-1.4c-2.4 2.4-2 6.2.4 8.6L12 21l7.6-6.8c2.4-2.4 3.6-6.2.4-8.6z"></path></svg>
+            <span style="display: flex; flex: 1; align-items: center; gap: 6px">CoreLab</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #d6e0ee">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 10h18M8 3v4M16 3v4"></path><path d="M8 14h3M8 17.5h3M14 14h2"></path></svg>
+            <span style="display: flex; flex: 1; align-items: center; gap: 6px">Planning imagerie</span>
+          </div>
+        </div>
+      </div>
+      <div>
+        <p style="margin: 0 0 8px; padding: 0 12px; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #7197c2">Administration</p>
+        <div style="display: flex; flex-direction: column; gap: 4px">
+          <div style="position: relative; display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; background: #173d6e; color: #ffffff">
+            <span style="position: absolute; left: 0; top: 50%; width: 4px; height: 24px; margin-top: -12px; border-radius: 0 4px 4px 0; background: #ec3b68"></span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f55c83" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 10h18M8 3v4M16 3v4"></path><path d="M8 14h3M8 17.5h3M14 14h2"></path></svg>
+            <span style="display: flex; flex: 1; align-items: center; gap: 6px">Planning imagerie<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#f55c83" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg></span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #d6e0ee">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.9"></path></svg>
+            <span style="display: flex; flex: 1; align-items: center; gap: 6px">Utilisateurs</span>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <div style="border-top: 1px solid #173d6e; padding: 12px">
+      <div style="display: flex; flex-direction: column; gap: 8px">
+        <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #d6e0ee">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20z"></path></svg>
+          <span style="flex: 1">Langue</span>
+          <span style="color: #aac0dc">FR</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; background: #173d6e">
+          <span style="display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 999px; background: #ec3b68; color: #ffffff; font-size: 13px; font-weight: 600">TP</span>
+          <span style="display: flex; flex-direction: column; flex: 1; min-width: 0">
+            <span style="font-size: 14px; font-weight: 500; color: #ffffff">Théo</span>
+            <span style="font-size: 12px; color: #aac0dc">Coordinateur</span>
+          </span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"></path></svg>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <main style="flex: 1; min-width: 0; overflow: hidden; background-color: #f5f7fa; background-image: radial-gradient(58% 52% at 10% 4%, rgba(214,31,85,0.10), transparent 60%), radial-gradient(52% 48% at 92% 12%, rgba(236,59,104,0.08), transparent 62%), radial-gradient(60% 60% at 84% 96%, rgba(214,31,85,0.07), transparent 60%), radial-gradient(48% 54% at 2% 94%, rgba(255,182,198,0.12), transparent 60%); padding: 32px">
+
+    <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; margin-bottom: 24px">
+      <div style="border-left: 4px solid #ec3b68; padding-left: 16px">
+        <h1 style="margin: 0; font-size: 30px; font-weight: 700; line-height: 1.15; color: #141a22">Revue du planning — Octobre 2026</h1>
+        <p style="margin: 4px 0 0; font-size: 15px; color: #6b7685">Population senior. La décision finale vous appartient : rien n’est diffusé avant votre publication.</p>
+      </div>
+      <div style="display: flex; gap: 8px; flex-shrink: 0"><button type="button" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 36px; padding: 0 16px; border-radius: 10px; box-shadow: 0 1px 2px rgba(16,28,48,0.06); font-family: inherit; font-size: 14px; font-weight: 500; cursor: pointer; border: 1px solid #dde2e9; background: #ffffff; color: #363f4c; "><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"></path><path d="M3 3v6h6"></path><path d="M12 8v4.5l3 1.8"></path></svg>Historique des versions</button>
+       <button type="button" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 36px; padding: 0 16px; border-radius: 10px; box-shadow: 0 1px 2px rgba(16,28,48,0.06); font-family: inherit; font-size: 14px; font-weight: 500; cursor: pointer; border: 1px solid #dde2e9; background: #ffffff; color: #363f4c; "><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7"></path><path d="M21 3v6h-6"></path></svg>Régénérer</button>
+       <button type="button" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 36px; padding: 0 16px; border-radius: 10px; box-shadow: 0 1px 2px rgba(16,28,48,0.06); font-family: inherit; font-size: 14px; font-weight: 500; cursor: pointer; border: none; background: #d61f55; color: #ffffff; "><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4 20-7z"></path></svg>Publier le planning</button></div>
+    </div>
+
+    <section style="border: 1px solid #dde2e9; border-radius: 16px; background: #ffffff; box-shadow: 0 1px 3px rgba(16,28,48,0.08), 0 1px 2px rgba(16,28,48,0.04); display: flex; align-items: flex-start; gap: 16px; padding: 18px 24px; margin-bottom: 20px; border-left: 4px solid #1f4b86">
+      <span style="flex-shrink: 0; margin-top: 2px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1f4b86" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 4V2M15 16v-2M8 9h2M20 9h2M17.8 11.8 19 13M17.8 6.2 19 5M3 21l9-9M12.2 6.2 11 5"></path></svg></span>
+      <div style="flex: 1; min-width: 0">
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px">
+          <h2 style="margin: 0; font-size: 15px; font-weight: 600; color: #141a22">Ce que le moteur a produit</h2>
+          <span style="display: inline-flex; align-items: center; border-radius: 10px; padding: 2px 8px; font-size: 12px; font-weight: 500; white-space: nowrap; border: 1px solid #BFDBFE; background: #EFF6FF; color: #2563EB">Proposition v3</span>
+          <span style="font-size: 12px; color: #9aa5b3">graine 4271 · 2,8 s · optimum atteint</span>
+        </div>
+        <p style="margin: 0; font-size: 14px; line-height: 1.55; color: #4d5765">{{narrative}}</p>
+      </div>
+      <button type="button" style="display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 12px; border: 1px solid #dde2e9; border-radius: 10px; background: #ffffff; font-family: inherit; font-size: 13px; font-weight: 500; color: #363f4c; cursor: pointer; flex-shrink: 0">Rapport complet</button>
+    </section>
+
+    <div style="display: flex; gap: 20px; align-items: flex-start">
+
+      <section style="border: 1px solid #dde2e9; border-radius: 16px; background: #ffffff; box-shadow: 0 1px 3px rgba(16,28,48,0.08), 0 1px 2px rgba(16,28,48,0.04); flex: 1; min-width: 0; overflow: hidden">
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 20px; border-bottom: 1px solid #dde2e9">
+          <div style="display: flex; align-items: center; gap: 10px">
+            <h2 style="margin: 0; font-size: 16px; font-weight: 600; color: #141a22">Grille mensuelle</h2>
+            <span style="font-size: 13px; color: #6b7685">{{weekSummary}}</span>
+          </div>
+          <div style="display: flex; gap: 4px; padding: 4px; border-radius: 12px; background: #eceff3">
+            <sc-for list="{{weeks}}" as="week" hint-placeholder-count="5">
+              <button type="button" onClick="{{week.pick}}" style="border: none; border-radius: 8px; background: {{week.bg}}; box-shadow: {{week.shadow}}; padding: 5px 12px; font-family: inherit; font-size: 13px; font-weight: 500; color: {{week.fg}}; cursor: pointer">{{week.label}}</button>
+            </sc-for>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 132px 1fr 1fr; gap: 0; border-bottom: 1px solid #dde2e9; background: #fafbfc; padding: 8px 20px">
+          <span style="font-size: 12px; font-weight: 500; color: #6b7685">Jour</span>
+          <span style="font-size: 12px; font-weight: 500; color: #6b7685">Matin</span>
+          <span style="font-size: 12px; font-weight: 500; color: #6b7685">Après-midi</span>
+        </div>
+
+        <sc-for list="{{days}}" as="day" hint-placeholder-count="5">
+          <div style="display: grid; grid-template-columns: 132px 1fr 1fr; gap: 0; border-bottom: 1px solid #eceff3; padding: 12px 20px; background: {{day.bg}}">
+            <div style="padding-right: 12px">
+              <p style="margin: 0; font-size: 14px; font-weight: 600; color: #141a22">{{day.weekday}}</p>
+              <p style="margin: 1px 0 0; font-size: 13px; color: #6b7685">{{day.dayLabel}}</p>
+              <p style="margin: 4px 0 0; font-size: 11px; color: {{day.noteColor}}">{{day.note}}</p>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 6px; padding-right: 10px">
+              <sc-for list="{{day.morning}}" as="slot" hint-placeholder-count="2">
+                <div onClick="{{slot.pick}}" style="display: flex; align-items: center; gap: 10px; border: 1px solid {{slot.border}}; border-left: 3px solid {{slot.centerColor}}; border-radius: 10px; background: {{slot.bg}}; padding: 7px 10px; cursor: pointer">
+                  <span style="display: flex; flex-direction: column; min-width: 92px; flex-shrink: 0">
+                    <span style="font-size: 12px; font-weight: 600; color: #363f4c">{{slot.center}}</span>
+                    <span style="font-size: 11px; color: #6b7685">{{slot.modality}}</span>
+                  </span>
+                  <span style="flex: 1; min-width: 0; font-size: 13px; font-weight: 500; color: {{slot.assigneeColor}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{slot.assignee}}</span>
+                  <span style="flex-shrink: 0">{{slot.mark}}</span>
+                </div>
+              </sc-for>
+              <sc-if value="{{day.morningEmpty}}" hint-placeholder-val="{{false}}">
+                <span style="font-size: 12px; color: #c4ccd6">—</span>
+              </sc-if>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 6px">
+              <sc-for list="{{day.afternoon}}" as="slot" hint-placeholder-count="2">
+                <div onClick="{{slot.pick}}" style="display: flex; align-items: center; gap: 10px; border: 1px solid {{slot.border}}; border-left: 3px solid {{slot.centerColor}}; border-radius: 10px; background: {{slot.bg}}; padding: 7px 10px; cursor: pointer">
+                  <span style="display: flex; flex-direction: column; min-width: 92px; flex-shrink: 0">
+                    <span style="font-size: 12px; font-weight: 600; color: #363f4c">{{slot.center}}</span>
+                    <span style="font-size: 11px; color: #6b7685">{{slot.modality}}</span>
+                  </span>
+                  <span style="flex: 1; min-width: 0; font-size: 13px; font-weight: 500; color: {{slot.assigneeColor}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{slot.assignee}}</span>
+                  <span style="flex-shrink: 0">{{slot.mark}}</span>
+                </div>
+              </sc-for>
+              <sc-if value="{{day.afternoonEmpty}}" hint-placeholder-val="{{false}}">
+                <span style="font-size: 12px; color: #c4ccd6">—</span>
+              </sc-if>
+            </div>
+          </div>
+        </sc-for>
+
+        <div style="display: flex; align-items: center; gap: 20px; padding: 14px 20px; font-size: 12px; color: #6b7685">
+          <span style="display: flex; align-items: center; gap: 6px"><span style="width: 3px; height: 14px; border-radius: 2px; background: #1f4b86"></span>Bergère</span>
+          <span style="display: flex; align-items: center; gap: 6px"><span style="width: 3px; height: 14px; border-radius: 2px; background: #047857"></span>Blomet</span>
+          <span style="display: flex; align-items: center; gap: 6px"><span style="width: 3px; height: 14px; border-radius: 2px; background: #b45309"></span>Lariboisière</span>
+          <span style="display: flex; align-items: center; gap: 6px; margin-left: auto"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6b7685" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path></svg>affectation verrouillée, conservée à la régénération</span>
+        </div>
+      </section>
+
+      <aside style="display: flex; flex-direction: column; gap: 16px; width: 384px; flex-shrink: 0">
+
+        <section style="border: 1px solid #dde2e9; border-radius: 16px; background: #ffffff; box-shadow: 0 1px 3px rgba(16,28,48,0.08), 0 1px 2px rgba(16,28,48,0.04); overflow: hidden">
+          <div style="border-bottom: 1px solid #dde2e9; background: #fafbfc; padding: 14px 20px">
+            <p style="margin: 0; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #6b7685">Vacation sélectionnée</p>
+            <p style="margin: 4px 0 0; font-size: 15px; font-weight: 600; color: #141a22">{{picked.title}}</p>
+            <p style="margin: 2px 0 0; font-size: 13px; color: #6b7685">{{picked.subtitle}}</p>
+          </div>
+
+          <div style="padding: 14px 20px 8px">
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px">
+              <p style="margin: 0; font-size: 13px; font-weight: 600; color: #141a22">Seniors disponibles sur ce créneau</p>
+              <span style="font-size: 12px; color: #9aa5b3">{{picked.availableCount}}</span>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 6px">
+              <sc-for list="{{picked.available}}" as="person" hint-placeholder-count="3">
+                <div onClick="{{person.assign}}" style="display: flex; align-items: center; gap: 10px; border: 1px solid {{person.border}}; border-radius: 10px; background: {{person.bg}}; padding: 8px 10px; cursor: pointer">
+                  <span style="display: flex; align-items: center; justify-content: center; width: 30px; height: 30px; flex-shrink: 0; border-radius: 999px; background: {{person.avatarBg}}; color: {{person.avatarFg}}; font-size: 11px; font-weight: 600">{{person.initials}}</span>
+                  <span style="flex: 1; min-width: 0">
+                    <span style="display: block; font-size: 13px; font-weight: 500; color: #141a22">{{person.name}}</span>
+                    <span style="display: block; font-size: 11px; color: #6b7685">{{person.counters}}</span>
+                  </span>
+                  <span style="flex-shrink: 0">{{person.mark}}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+
+          <div style="padding: 8px 20px 18px">
+            <div style="border-top: 1px dashed #dde2e9; padding-top: 12px">
+              <p style="margin: 0 0 8px; font-size: 12px; color: #9aa5b3; line-height: 1.45">{{picked.unavailableLabel}}</p>
+              <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px">
+                <sc-for list="{{picked.unavailable}}" as="person" hint-placeholder-count="3">
+                  <span style="display: inline-flex; align-items: center; gap: 5px; border: 1px dashed #dde2e9; border-radius: 999px; background: #fafbfc; padding: 3px 9px; font-size: 12px; color: #9aa5b3">
+                    <span style="width: 5px; height: 5px; border-radius: 999px; background: #c4ccd6"></span>{{person.name}}
+                  </span>
+                </sc-for>
+              </div>
+              <button type="button" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%; height: 36px; border: 1px solid #FDBA74; border-radius: 10px; background: #FFF3E9; font-family: inherit; font-size: 13px; font-weight: 500; color: #EA580C; cursor: pointer">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"></rect><path d="m2 7 10 6 10-6"></path></svg>Demander une disponibilité exceptionnelle
+              </button>
+              <p style="margin: 8px 0 0; font-size: 11px; color: #9aa5b3; line-height: 1.45">RG-24 — l’intéressé doit accepter par email avant que l’affectation devienne possible. Il n’existe aucun autre contournement.</p>
+            </div>
+          </div>
+        </section>
+
+        <section style="border: 1px solid #dde2e9; border-radius: 16px; background: #ffffff; box-shadow: 0 1px 3px rgba(16,28,48,0.08), 0 1px 2px rgba(16,28,48,0.04); padding: 18px 20px">
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 14px">
+            <h3 style="margin: 0; font-size: 15px; font-weight: 600; color: #141a22">Équité en temps réel</h3>
+            <span style="font-size: 12px; color: #6b7685">{{equityHeadline}}</span>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 9px">
+            <sc-for list="{{equity}}" as="person" hint-placeholder-count="7">
+              <div style="display: flex; align-items: center; gap: 10px">
+                <span style="width: 96px; flex-shrink: 0; font-size: 13px; font-weight: {{person.weight}}; color: #363f4c; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{person.name}}</span>
+                <span style="position: relative; flex: 1; height: 18px; border-radius: 6px; background: #f5f7fa; overflow: hidden">
+                  <span style="position: absolute; left: 0; top: 0; bottom: 0; width: {{person.pct}}; border-radius: 6px; background: {{person.color}}"></span>
+                  <span style="position: absolute; left: {{person.targetPct}}; top: 0; bottom: 0; width: 2px; background: #9aa5b3"></span>
+                </span>
+                <span style="width: 22px; flex-shrink: 0; text-align: right; font-size: 13px; font-weight: 600; color: #141a22; font-variant-numeric: tabular-nums">{{person.count}}</span>
+                <span style="width: 30px; flex-shrink: 0; text-align: right; font-size: 12px; color: {{person.gapColor}}; font-variant-numeric: tabular-nums">{{person.gap}}</span>
+              </div>
+            </sc-for>
+          </div>
+          <p style="margin: 12px 0 0; font-size: 11px; color: #9aa5b3">Le trait gris marque la cible du mois, plafonnée par les disponibilités déclarées (RG-35).</p>
+        </section>
+
+        <section style="border: 1px solid #dde2e9; border-radius: 16px; background: #ffffff; box-shadow: 0 1px 3px rgba(16,28,48,0.08), 0 1px 2px rgba(16,28,48,0.04); padding: 18px 20px">
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 12px">
+            <h3 style="margin: 0; font-size: 15px; font-weight: 600; color: #141a22">Alertes</h3>
+            <span style="font-size: 12px; color: #6b7685">{{alertSummary}}</span>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 8px">
+            <sc-for list="{{alerts}}" as="alert" hint-placeholder-count="4">
+              <div style="display: flex; align-items: flex-start; gap: 10px; border: 1px solid {{alert.border}}; border-radius: 12px; background: {{alert.bg}}; padding: 10px 12px">
+                <span style="flex-shrink: 0; margin-top: 1px">{{alert.icon}}</span>
+                <span style="flex: 1; min-width: 0">
+                  <span style="display: block; font-size: 13px; font-weight: 500; color: {{alert.fg}}">{{alert.title}}</span>
+                  <span style="display: block; margin-top: 2px; font-size: 12px; color: #6b7685; line-height: 1.45">{{alert.detail}}</span>
+                </span>
+              </div>
+            </sc-for>
+          </div>
+        </section>
+
+        <section style="border: 1px solid #dde2e9; border-radius: 16px; background: #ffffff; box-shadow: 0 1px 3px rgba(16,28,48,0.08), 0 1px 2px rgba(16,28,48,0.04); padding: 18px 20px">
+          <h3 style="margin: 0 0 12px; font-size: 15px; font-weight: 600; color: #141a22">Doubles vacations du coordinateur</h3>
+          <div style="display: flex; align-items: baseline; gap: 10px; margin-bottom: 10px">
+            <span style="font-size: 32px; font-weight: 700; color: #141a22; line-height: 1; font-variant-numeric: tabular-nums">{{doubleShifts.got}}</span>
+            <span style="font-size: 14px; color: #6b7685">sur {{doubleShifts.possible}} possibles ce mois-ci</span>
+          </div>
+          <span style="display: block; height: 8px; border-radius: 999px; background: #eceff3; overflow: hidden">
+            <span style="display: block; height: 8px; width: {{doubleShifts.pct}}; border-radius: 999px; background: #1f4b86"></span>
+          </span>
+          <p style="margin: 10px 0 0; font-size: 12px; color: #6b7685; line-height: 1.45">{{doubleShifts.detail}}</p>
+        </section>
+      </aside>
+    </div>
+  </main>
+</div>
+</x-dc>
+
+<script data-dc-script data-props='{}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { week: 41, slotId: null, overrides: {} };
+  }
+
+  seniors() {
+    return [
+      { id: 'tp', initials: 'TP', name: 'Théo Pezel', coordinator: true },
+      { id: 'ab', initials: 'AB', name: 'A. Bernard' },
+      { id: 'cd', initials: 'CD', name: 'C. Dumont' },
+      { id: 'fl', initials: 'FL', name: 'F. Leroy' },
+      { id: 'mn', initials: 'MN', name: 'M. Nguyen' },
+      { id: 'sr', initials: 'SR', name: 'S. Rousseau' },
+      { id: 'jv', initials: 'JV', name: 'J. Vidal' }
+    ];
+  }
+
+  centers() {
+    return {
+      BERGERE: { label: 'Bergère', color: '#1f4b86' },
+      BLOMET: { label: 'Blomet', color: '#047857' },
+      LARIBOISIERE: { label: 'Lariboisière', color: '#b45309' }
+    };
+  }
+
+  /** Weekly pattern of vacations, replayed over every working day of October 2026. */
+  pattern() {
+    return {
+      1: [['MORNING', 'BERGERE', 'IRM'], ['MORNING', 'BERGERE', 'Scanner'], ['AFTERNOON', 'LARIBOISIERE', 'IRM']],
+      2: [['MORNING', 'BLOMET', 'Scanner'], ['AFTERNOON', 'BERGERE', 'IRM']],
+      3: [['MORNING', 'LARIBOISIERE', 'IRM'], ['MORNING', 'LARIBOISIERE', 'Scanner'], ['AFTERNOON', 'BLOMET', 'IRM']],
+      4: [['MORNING', 'BERGERE', 'Scanner'], ['AFTERNOON', 'LARIBOISIERE', 'IRM'], ['AFTERNOON', 'LARIBOISIERE', 'Scanner']],
+      5: [['MORNING', 'BLOMET', 'IRM'], ['AFTERNOON', 'BERGERE', 'Scanner']]
+    };
+  }
+
+  /** Deterministic pseudo-random draw, so the mockup is stable across renders. */
+  hash(text) {
+    let value = 7;
+    for (let position = 0; position < text.length; position += 1) {
+      value = (value * 31 + text.charCodeAt(position)) % 100000;
+    }
+    return value;
+  }
+
+  slots() {
+    const pattern = this.pattern();
+    const people = this.seniors();
+    const built = [];
+    for (let dayNumber = 1; dayNumber <= 31; dayNumber += 1) {
+      const date = new Date(Date.UTC(2026, 9, dayNumber));
+      const weekday = date.getUTCDay();
+      if (weekday === 0 || weekday === 6) continue;
+      const entries = pattern[weekday] || [];
+      entries.forEach((entry, position) => {
+        const id = 'd' + dayNumber + '-' + position;
+        const seed = this.hash(id);
+        const unfilled = seed % 17 === 3;
+        let holder = people[seed % people.length];
+        if (entry[1] === 'BERGERE' && entry[0] === 'MORNING' && dayNumber % 7 < 3) holder = people[0];
+        built.push({
+          id,
+          dayNumber,
+          date,
+          halfDay: entry[0],
+          center: entry[1],
+          modality: entry[2],
+          assignee: unfilled ? null : holder.id,
+          locked: seed % 23 === 5
+        });
+      });
+    }
+    return built;
+  }
+
+  isoWeek(date) {
+    const copy = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
+    const day = copy.getUTCDay() || 7;
+    copy.setUTCDate(copy.getUTCDate() + 4 - day);
+    const yearStart = new Date(Date.UTC(copy.getUTCFullYear(), 0, 1));
+    return Math.ceil(((copy - yearStart) / 86400000 + 1) / 7);
+  }
+
+  availabilityFor(slotId) {
+    const people = this.seniors();
+    const seed = this.hash(slotId);
+    const available = [];
+    const unavailable = [];
+    people.forEach((person, position) => {
+      const draw = this.hash(slotId + person.id);
+      if (draw % 10 < 6 || position === 0) available.push(person);
+      else unavailable.push(person);
+    });
+    if (available.length === 0) available.push(people[seed % people.length]);
+    return { available, unavailable };
+  }
+
+  renderVals() {
+    const weekdayNames = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
+    const centers = this.centers();
+    const people = this.seniors();
+    const byId = {};
+    people.forEach((person) => { byId[person.id] = person; });
+
+    const slots = this.slots().map((slot) => {
+      const override = this.state.overrides[slot.id];
+      return Object.assign({}, slot, { assignee: override === undefined ? slot.assignee : override });
+    });
+
+    const weekNumbers = [];
+    slots.forEach((slot) => {
+      const week = this.isoWeek(slot.date);
+      if (weekNumbers.indexOf(week) === -1) weekNumbers.push(week);
+    });
+    weekNumbers.sort((left, right) => left - right);
+
+    const weeks = weekNumbers.map((week) => ({
+      label: 'S' + week,
+      bg: this.state.week === week ? '#ffffff' : 'transparent',
+      fg: this.state.week === week ? '#141a22' : '#6b7685',
+      shadow: this.state.week === week ? '0 1px 2px rgba(16,28,48,0.06)' : 'none',
+      pick: () => this.setState({ week })
+    }));
+
+    const activeWeek = weekNumbers.indexOf(this.state.week) === -1 ? weekNumbers[0] : this.state.week;
+    const weekSlots = slots.filter((slot) => this.isoWeek(slot.date) === activeWeek);
+
+    const currentSlotId = this.state.slotId && slots.some((slot) => slot.id === this.state.slotId)
+      ? this.state.slotId
+      : (weekSlots[0] ? weekSlots[0].id : slots[0].id);
+
+    const lockGlyph = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6b7685" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path></svg>';
+    const warnGlyph = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#DC2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01"></path><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"></path></svg>';
+
+    const decorate = (slot) => {
+      const holder = slot.assignee ? byId[slot.assignee] : null;
+      const isPicked = slot.id === currentSlotId;
+      return {
+        center: centers[slot.center].label,
+        centerColor: centers[slot.center].color,
+        modality: slot.modality,
+        assignee: holder ? holder.name : 'Place non pourvue',
+        assigneeColor: holder ? '#141a22' : '#DC2626',
+        bg: isPicked ? '#fff1f4' : holder ? '#ffffff' : '#FEF2F2',
+        border: isPicked ? '#ec3b68' : holder ? '#dde2e9' : '#FECACA',
+        mark: slot.locked ? lockGlyph : holder ? '' : warnGlyph,
+        pick: () => this.setState({ slotId: slot.id })
+      };
+    };
+
+    const dayNumbers = [];
+    weekSlots.forEach((slot) => {
+      if (dayNumbers.indexOf(slot.dayNumber) === -1) dayNumbers.push(slot.dayNumber);
+    });
+    dayNumbers.sort((left, right) => left - right);
+
+    const days = dayNumbers.map((dayNumber) => {
+      const daySlots = weekSlots.filter((slot) => slot.dayNumber === dayNumber);
+      const date = daySlots[0].date;
+      const morning = daySlots.filter((slot) => slot.halfDay === 'MORNING');
+      const afternoon = daySlots.filter((slot) => slot.halfDay === 'AFTERNOON');
+      const gaps = daySlots.filter((slot) => !slot.assignee).length;
+      const holdsPicked = daySlots.some((slot) => slot.id === currentSlotId);
+      return {
+        weekday: weekdayNames[date.getUTCDay()],
+        dayLabel: dayNumber + ' octobre',
+        note: gaps > 0 ? gaps + ' place non pourvue' : daySlots.length + ' vacations',
+        noteColor: gaps > 0 ? '#DC2626' : '#9aa5b3',
+        bg: holdsPicked ? '#fafbfc' : '#ffffff',
+        morning: morning.map(decorate),
+        afternoon: afternoon.map(decorate),
+        morningEmpty: morning.length === 0,
+        afternoonEmpty: afternoon.length === 0
+      };
+    });
+
+    const picked = slots.find((slot) => slot.id === currentSlotId);
+    const pool = this.availabilityFor(picked.id);
+    const counts = {};
+    people.forEach((person) => { counts[person.id] = 0; });
+    slots.forEach((slot) => { if (slot.assignee) counts[slot.assignee] += 1; });
+
+    const checkGlyph = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#047857" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>';
+
+    const available = pool.available.map((person) => {
+      const isHolder = picked.assignee === person.id;
+      return {
+        initials: person.initials,
+        name: person.name + (person.coordinator ? ' · coordinateur' : ''),
+        counters: counts[person.id] + ' vacations ce mois · ' + (person.coordinator ? 'double vacation autorisée' : 'écart ' + (counts[person.id] - 7 >= 0 ? '+' : '') + (counts[person.id] - 7)),
+        bg: isHolder ? '#ECFDF5' : '#ffffff',
+        border: isHolder ? '#A7F3D0' : '#dde2e9',
+        avatarBg: isHolder ? '#047857' : '#eceff3',
+        avatarFg: isHolder ? '#ffffff' : '#4d5765',
+        mark: isHolder ? checkGlyph : '',
+        assign: () => {
+          const next = Object.assign({}, this.state.overrides);
+          next[picked.id] = isHolder ? null : person.id;
+          this.setState({ overrides: next });
+        }
+      };
+    });
+
+    const total = people.length;
+    const target = Math.round((slots.length / total) * 10) / 10;
+    const equity = people
+      .map((person) => {
+        const count = counts[person.id];
+        const gap = Math.round((count - target) * 10) / 10;
+        return {
+          name: person.name,
+          count: String(count),
+          gap: (gap > 0 ? '+' : '') + gap,
+          gapColor: Math.abs(gap) >= 2 ? '#EA580C' : '#9aa5b3',
+          pct: Math.min(100, Math.round((count / (target * 1.6)) * 100)) + '%',
+          targetPct: Math.round((target / (target * 1.6)) * 100) + '%',
+          color: person.coordinator ? '#1f4b86' : Math.abs(gap) >= 2 ? '#EA580C' : '#3f6aa3',
+          weight: person.coordinator ? '600' : '500'
+        };
+      })
+      .sort((left, right) => Number(right.count) - Number(left.count));
+
+    const unfilled = slots.filter((slot) => !slot.assignee).length;
+    const spread = Math.max.apply(null, people.map((person) => counts[person.id])) - Math.min.apply(null, people.map((person) => counts[person.id]));
+
+    const doubleDays = {};
+    slots.forEach((slot) => {
+      if (slot.assignee !== 'tp') return;
+      const key = slot.dayNumber + '-' + slot.halfDay + '-' + slot.center;
+      doubleDays[key] = (doubleDays[key] || 0) + 1;
+    });
+    const doubles = Object.keys(doubleDays).filter((key) => doubleDays[key] > 1).length;
+
+    const alertTone = {
+      danger: { bg: '#FEF2F2', border: '#FECACA', fg: '#DC2626', glyph: warnGlyph },
+      warning: { bg: '#FFF3E9', border: '#FDBA74', fg: '#EA580C', glyph: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#EA580C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01"></path><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"></path></svg>' },
+      info: { bg: '#EFF6FF', border: '#BFDBFE', fg: '#2563EB', glyph: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4M12 8h.01"></path></svg>' }
+    };
+
+    const rawAlerts = [];
+    if (unfilled > 0) {
+      rawAlerts.push({ kind: 'danger', title: unfilled + ' places non pourvues', detail: 'Bloquant à la publication, sauf acquittement explicite avec motif (RG-26).' });
+    }
+    if (spread > 2) {
+      rawAlerts.push({ kind: 'warning', title: 'Écart d’équité de ' + spread + ' vacations', detail: 'Le seuil d’alerte PARAM-05 est fixé à 2.' });
+    }
+    rawAlerts.push({ kind: 'warning', title: 'C. Dumont n’a reçu aucune affectation', detail: 'Elle avait pourtant déclaré 4 disponibilités.' });
+    rawAlerts.push({ kind: 'info', title: '2 seniors n’ont pas répondu', detail: 'Traités comme indisponibles sur tout le mois (RG-21).' });
+
+    const alerts = rawAlerts.map((alert) => {
+      const tone = alertTone[alert.kind];
+      return { title: alert.title, detail: alert.detail, bg: tone.bg, border: tone.border, fg: tone.fg, icon: tone.glyph };
+    });
+
+    const possibleDoubles = 8;
+
+    return {
+      weeks,
+      days,
+      weekSummary: weekSlots.length + ' vacations cette semaine',
+      narrative:
+        slots.length - unfilled + ' places pourvues sur ' + slots.length + '. L’écart maximal entre seniors est de ' + spread +
+        ' vacations : C. Dumont n’avait déclaré que 4 disponibilités, ce qui plafonne sa cible (RG-35). ' + doubles +
+        ' doubles vacations ont pu être formées pour le coordinateur sur ' + possibleDoubles +
+        ' demi-journées où une IRM et un scanner coexistent sur le même centre.',
+      picked: {
+        title: centers[picked.center].label + ' · ' + picked.modality,
+        subtitle: picked.dayNumber + ' octobre 2026, ' + (picked.halfDay === 'MORNING' ? 'matin' : 'après-midi') + ' · 1 place senior',
+        availableCount: pool.available.length + ' sur ' + people.length,
+        available,
+        unavailable: pool.unavailable.map((person) => ({ name: person.name })),
+        unavailableLabel: pool.unavailable.length === 0
+          ? 'Tout le monde est disponible sur ce créneau.'
+          : 'Non disponibles sur ce créneau — l’interface ne les propose jamais et refuse le glisser-déposer correspondant.'
+      },
+      equity,
+      equityHeadline: 'cible ' + target + ' · écart max ' + spread,
+      alerts,
+      alertSummary: unfilled > 0 ? '1 bloquante' : 'aucune bloquante',
+      doubleShifts: {
+        got: String(doubles),
+        possible: String(possibleDoubles),
+        pct: Math.round((doubles / possibleDoubles) * 100) + '%',
+        detail: 'Objectif S1, poids 200. Les demi-journées manquées le sont parce que le coordinateur n’avait pas déclaré les deux créneaux disponibles.'
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>

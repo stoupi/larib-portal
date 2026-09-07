@@ -1,0 +1,461 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&display=swap">
+  <style>
+    *{ box-sizing: border-box; }
+    body { margin: 0; font-family: 'Inter Tight', system-ui, -apple-system, 'Segoe UI', sans-serif; }
+    a { color: #173d6e; text-decoration: none; }
+    a:hover { color: #122f54; text-decoration: underline; }
+  </style>
+</helmet>
+
+<div style="display: flex; width: 1440px; height: 1120px; background: #ffffff; color: #141a22">
+<aside style="display: flex; flex-direction: column; width: 256px; flex-shrink: 0; background: #122f54; color: #ffffff">
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 20px 24px; text-align: center">
+      <svg width="40" height="40" viewBox="0 0 40 40" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20 34s-13-8.2-13-17a7 7 0 0 1 13-3.7A7 7 0 0 1 33 17c0 8.8-13 17-13 17z"></path>
+        <path d="M6 20h7l2.5-5 4 10 3-5H34"></path>
+      </svg>
+      <span style="font-size: 13px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase">Larib Portal</span>
+    </div>
+
+    <nav style="display: flex; flex-direction: column; gap: 24px; flex: 1; overflow: hidden; padding: 16px 12px">
+      <div>
+        <p style="margin: 0 0 8px; padding: 0 12px; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #7197c2">Vue d'ensemble</p>
+        <div style="display: flex; flex-direction: column; gap: 4px">
+          <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #d6e0ee">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1"></rect><rect x="14" y="3" width="7" height="5" rx="1"></rect><rect x="14" y="12" width="7" height="9" rx="1"></rect><rect x="3" y="16" width="7" height="5" rx="1"></rect></svg>
+            <span style="display: flex; flex: 1; align-items: center; gap: 6px">Tableau de bord</span>
+          </div>
+        </div>
+      </div>
+      <div>
+        <p style="margin: 0 0 8px; padding: 0 12px; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #7197c2">Applications</p>
+        <div style="display: flex; flex-direction: column; gap: 4px">
+          <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #d6e0ee">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10 12 5 2 10l10 5 10-5z"></path><path d="M6 12v5c0 1 2.7 2.5 6 2.5s6-1.5 6-2.5v-5"></path></svg>
+            <span style="display: flex; flex: 1; align-items: center; gap: 6px">Best of Larib</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #d6e0ee">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg>
+            <span style="display: flex; flex: 1; align-items: center; gap: 6px">Congés</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #d6e0ee">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+            <span style="display: flex; flex: 1; align-items: center; gap: 6px">Publications</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #d6e0ee">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 5.6a5.5 5.5 0 0 0-8.8 1.4 5.5 5.5 0 0 0-8.8-1.4c-2.4 2.4-2 6.2.4 8.6L12 21l7.6-6.8c2.4-2.4 3.6-6.2.4-8.6z"></path></svg>
+            <span style="display: flex; flex: 1; align-items: center; gap: 6px">CoreLab</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #d6e0ee">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 10h18M8 3v4M16 3v4"></path><path d="M8 14h3M8 17.5h3M14 14h2"></path></svg>
+            <span style="display: flex; flex: 1; align-items: center; gap: 6px">Planning imagerie</span>
+          </div>
+        </div>
+      </div>
+      <div>
+        <p style="margin: 0 0 8px; padding: 0 12px; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #7197c2">Administration</p>
+        <div style="display: flex; flex-direction: column; gap: 4px">
+          <div style="position: relative; display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; background: #173d6e; color: #ffffff">
+            <span style="position: absolute; left: 0; top: 50%; width: 4px; height: 24px; margin-top: -12px; border-radius: 0 4px 4px 0; background: #ec3b68"></span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f55c83" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 10h18M8 3v4M16 3v4"></path><path d="M8 14h3M8 17.5h3M14 14h2"></path></svg>
+            <span style="display: flex; flex: 1; align-items: center; gap: 6px">Planning imagerie<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#f55c83" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg></span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #d6e0ee">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.9"></path></svg>
+            <span style="display: flex; flex: 1; align-items: center; gap: 6px">Utilisateurs</span>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <div style="border-top: 1px solid #173d6e; padding: 12px">
+      <div style="display: flex; flex-direction: column; gap: 8px">
+        <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #d6e0ee">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20z"></path></svg>
+          <span style="flex: 1">Langue</span>
+          <span style="color: #aac0dc">FR</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; background: #173d6e">
+          <span style="display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 999px; background: #ec3b68; color: #ffffff; font-size: 13px; font-weight: 600">TP</span>
+          <span style="display: flex; flex-direction: column; flex: 1; min-width: 0">
+            <span style="font-size: 14px; font-weight: 500; color: #ffffff">Théo</span>
+            <span style="font-size: 12px; color: #aac0dc">Coordinateur</span>
+          </span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"></path></svg>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <main style="flex: 1; min-width: 0; overflow: hidden; background-color: #f5f7fa; background-image: radial-gradient(58% 52% at 10% 4%, rgba(214,31,85,0.10), transparent 60%), radial-gradient(52% 48% at 92% 12%, rgba(236,59,104,0.08), transparent 62%), radial-gradient(60% 60% at 84% 96%, rgba(214,31,85,0.07), transparent 60%), radial-gradient(48% 54% at 2% 94%, rgba(255,182,198,0.12), transparent 60%); padding: 32px">
+
+    <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; margin-bottom: 24px">
+      <div style="border-left: 4px solid #ec3b68; padding-left: 16px">
+        <h1 style="margin: 0; font-size: 30px; font-weight: 700; line-height: 1.15; color: #141a22">Chargement des vacations — Novembre 2026</h1>
+        <p style="margin: 4px 0 0; font-size: 15px; color: #6b7685">Rien n’est enregistré tant que le fichier comporte une erreur bloquante. Vous validez sur la prévisualisation.</p>
+      </div>
+      <div style="display: flex; gap: 8px; flex-shrink: 0"><button type="button" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 36px; padding: 0 16px; border-radius: 10px; box-shadow: 0 1px 2px rgba(16,28,48,0.06); font-family: inherit; font-size: 14px; font-weight: 500; cursor: pointer; border: none; background: transparent; box-shadow: none; color: #4d5765; ">Annuler</button><button type="button" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 36px; padding: 0 16px; border-radius: 10px; box-shadow: 0 1px 2px rgba(16,28,48,0.06); font-family: inherit; font-size: 14px; font-weight: 500; cursor: pointer; border: none; background: #d61f55; color: #ffffff; "><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>Valider et enregistrer</button></div>
+    </div>
+
+    <div style="display: flex; gap: 20px; align-items: flex-start">
+
+      <div style="display: flex; flex-direction: column; gap: 20px; flex: 1; min-width: 0">
+
+        <section style="border: 1px solid #dde2e9; border-radius: 16px; background: #ffffff; box-shadow: 0 1px 3px rgba(16,28,48,0.08), 0 1px 2px rgba(16,28,48,0.04); overflow: hidden">
+          <div style="display: flex; gap: 0; border-bottom: 1px solid #dde2e9; padding: 0 20px">
+            <sc-for list="{{methods}}" as="method" hint-placeholder-count="3">
+              <button type="button" onClick="{{method.pick}}" style="display: flex; align-items: center; gap: 8px; border: none; border-bottom: 2px solid {{method.underline}}; background: transparent; padding: 14px 16px; font-family: inherit; font-size: 14px; font-weight: {{method.weight}}; color: {{method.fg}}; cursor: pointer">
+                <span style="display: flex">{{method.icon}}</span>{{method.label}}
+              </button>
+            </sc-for>
+          </div>
+
+          <div style="padding: 20px">
+            <p style="margin: 0 0 16px; font-size: 14px; color: #6b7685; line-height: 1.5">{{method.hint}}</p>
+
+            <sc-if value="{{isImport}}" hint-placeholder-val="{{true}}">
+              <div style="display: flex; align-items: center; gap: 16px; border: 1.5px dashed #c4ccd6; border-radius: 14px; background: #fafbfc; padding: 20px 24px">
+                <span style="display: flex; align-items: center; justify-content: center; width: 46px; height: 46px; flex-shrink: 0; border-radius: 14px; background: #eceff3"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#4d5765" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"></path><path d="M14 3v5h5"></path></svg></span>
+                <span style="flex: 1; min-width: 0">
+                  <span style="display: block; font-size: 14px; font-weight: 600; color: #141a22">vacations-novembre-2026.csv</span>
+                  <span style="display: block; margin-top: 2px; font-size: 13px; color: #6b7685">48 lignes lues · UTF-8, séparateur point-virgule · déposé il y a 12 secondes</span>
+                </span>
+                <button type="button" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 36px; padding: 0 16px; border-radius: 10px; box-shadow: 0 1px 2px rgba(16,28,48,0.06); font-family: inherit; font-size: 14px; font-weight: 500; cursor: pointer; border: 1px solid #dde2e9; background: #ffffff; color: #363f4c; flex-shrink: 0"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><path d="m7 9 5-5 5 5M12 4v12"></path></svg>Remplacer le fichier</button>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{isDuplicate}}" hint-placeholder-val="{{false}}">
+              <div style="display: flex; align-items: center; gap: 16px; border: 1px solid #dde2e9; border-radius: 14px; background: #fafbfc; padding: 20px 24px">
+                <span style="display: flex; align-items: center; justify-content: center; width: 46px; height: 46px; flex-shrink: 0; border-radius: 14px; background: #eceff3"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#4d5765" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></span>
+                <span style="flex: 1; min-width: 0">
+                  <span style="display: block; font-size: 14px; font-weight: 600; color: #141a22">Report d’octobre 2026 sur les mêmes jours de semaine</span>
+                  <span style="display: block; margin-top: 2px; font-size: 13px; color: #6b7685">46 vacations reportées · 2 jours fériés français exclus automatiquement, réintégrables un par un</span>
+                </span>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{isManual}}" hint-placeholder-val="{{false}}">
+              <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px">
+                <sc-for list="{{manualFields}}" as="field" hint-placeholder-count="4">
+                  <div>
+                    <p style="margin: 0 0 6px; font-size: 12px; font-weight: 500; color: #4d5765">{{field.label}}</p>
+                    <div style="display: flex; align-items: center; height: 36px; border: 1px solid #dde2e9; border-radius: 10px; background: #ffffff; padding: 0 12px; font-size: 13px; color: {{field.color}}">{{field.value}}</div>
+                  </div>
+                </sc-for>
+              </div>
+              <p style="margin: 14px 0 0; font-size: 13px; color: #6b7685">Saisie récurrente : « tous les mardis matin, IRM, Bergère, pour tout le mois » crée 4 vacations d’un coup.</p>
+            </sc-if>
+
+            <div style="margin-top: 20px; border-top: 1px solid #eceff3; padding-top: 16px">
+              <p style="margin: 0 0 10px; font-size: 13px; font-weight: 600; color: #141a22">La campagne contient déjà 12 vacations. Que faire des nouvelles ?</p>
+              <div style="display: flex; gap: 10px">
+                <sc-for list="{{modes}}" as="mode" hint-placeholder-count="3">
+                  <div onClick="{{mode.pick}}" style="display: flex; align-items: flex-start; gap: 10px; flex: 1; border: 1px solid {{mode.border}}; border-radius: 12px; background: {{mode.bg}}; padding: 12px 14px; cursor: pointer">
+                    <span style="display: flex; align-items: center; justify-content: center; width: 16px; height: 16px; flex-shrink: 0; margin-top: 2px; border: 1.5px solid {{mode.dotBorder}}; border-radius: 999px; background: #ffffff">
+                      <span style="width: 8px; height: 8px; border-radius: 999px; background: {{mode.dotFill}}"></span>
+                    </span>
+                    <span style="flex: 1; min-width: 0">
+                      <span style="display: block; font-size: 13px; font-weight: 600; color: #141a22">{{mode.label}}</span>
+                      <span style="display: block; margin-top: 2px; font-size: 12px; color: #6b7685; line-height: 1.4">{{mode.detail}}</span>
+                    </span>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section style="border: 1px solid #dde2e9; border-radius: 16px; background: #ffffff; box-shadow: 0 1px 3px rgba(16,28,48,0.08), 0 1px 2px rgba(16,28,48,0.04); overflow: hidden">
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 20px; border-bottom: 1px solid #dde2e9">
+            <div style="display: flex; align-items: center; gap: 10px">
+              <h2 style="margin: 0; font-size: 16px; font-weight: 600; color: #141a22">Rapport d’analyse</h2>
+              {{reportBadge}}
+            </div>
+            <span style="font-size: 13px; color: #6b7685">{{reportSummary}}</span>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 64px 1fr 200px; gap: 0; border-bottom: 1px solid #dde2e9; background: #fafbfc; padding: 8px 20px">
+            <span style="font-size: 12px; font-weight: 500; color: #6b7685">Ligne</span>
+            <span style="font-size: 12px; font-weight: 500; color: #6b7685">Constat</span>
+            <span style="font-size: 12px; font-weight: 500; color: #6b7685">Valeur attendue</span>
+          </div>
+
+          <sc-for list="{{findings}}" as="finding" hint-placeholder-count="4">
+            <div style="display: grid; grid-template-columns: 64px 1fr 200px; align-items: flex-start; gap: 0; border-bottom: 1px solid #eceff3; padding: 11px 20px; background: {{finding.bg}}">
+              <span style="display: flex; align-items: center; gap: 6px; font-size: 13px; color: #4d5765; font-variant-numeric: tabular-nums">
+                <span style="display: flex; flex-shrink: 0">{{finding.icon}}</span>{{finding.line}}
+              </span>
+              <span style="padding-right: 16px">
+                <span style="display: block; font-size: 13px; font-weight: 500; color: {{finding.fg}}">{{finding.title}}</span>
+                <span style="display: block; margin-top: 2px; font-size: 12px; color: #6b7685; font-family: ui-monospace, SFMono-Regular, Menlo, monospace">{{finding.raw}}</span>
+              </span>
+              <span style="font-size: 12px; color: #6b7685; line-height: 1.45">{{finding.expected}}</span>
+            </div>
+          </sc-for>
+
+          <div style="display: flex; align-items: center; gap: 10px; padding: 14px 20px">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9aa5b3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4M12 8h.01"></path></svg>
+            <span style="font-size: 12px; color: #9aa5b3; line-height: 1.45">RG-13 à RG-18. Un jour férié est un avertissement non bloquant : la ligne est conservée après confirmation explicite.</span>
+          </div>
+        </section>
+      </div>
+
+      <aside style="display: flex; flex-direction: column; gap: 16px; width: 396px; flex-shrink: 0">
+
+        <section style="border: 1px solid #dde2e9; border-radius: 16px; background: #ffffff; box-shadow: 0 1px 3px rgba(16,28,48,0.08), 0 1px 2px rgba(16,28,48,0.04); overflow: hidden">
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 20px; border-bottom: 1px solid #dde2e9">
+            <h3 style="margin: 0; font-size: 15px; font-weight: 600; color: #141a22">Prévisualisation</h3>
+            <span style="font-size: 12px; color: #6b7685">{{previewSummary}}</span>
+          </div>
+
+          <div style="padding: 14px 16px">
+            <div style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; margin-bottom: 6px">
+              <sc-for list="{{weekdayHeads}}" as="head" hint-placeholder-count="7">
+                <span style="text-align: center; font-size: 11px; font-weight: 500; color: #9aa5b3">{{head.label}}</span>
+              </sc-for>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px">
+              <sc-for list="{{calendar}}" as="cell" hint-placeholder-count="35">
+                <div style="display: flex; flex-direction: column; gap: 3px; min-height: 52px; border: 1px solid {{cell.border}}; border-radius: 8px; background: {{cell.bg}}; padding: 4px 5px">
+                  <span style="font-size: 11px; font-weight: 500; color: {{cell.dayColor}}">{{cell.day}}</span>
+                  <span style="display: flex; flex-wrap: wrap; gap: 2px">
+                    <sc-for list="{{cell.dots}}" as="dot" hint-placeholder-count="2">
+                      <span style="width: 6px; height: 6px; border-radius: 999px; background: {{dot.color}}"></span>
+                    </sc-for>
+                  </span>
+                  <span style="font-size: 10px; color: {{cell.noteColor}}">{{cell.note}}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+
+          <div style="display: flex; flex-wrap: wrap; gap: 12px; border-top: 1px solid #eceff3; padding: 12px 20px; font-size: 12px; color: #6b7685">
+            <span style="display: flex; align-items: center; gap: 6px"><span style="width: 7px; height: 7px; border-radius: 999px; background: #1f4b86"></span>Bergère</span>
+            <span style="display: flex; align-items: center; gap: 6px"><span style="width: 7px; height: 7px; border-radius: 999px; background: #047857"></span>Blomet</span>
+            <span style="display: flex; align-items: center; gap: 6px"><span style="width: 7px; height: 7px; border-radius: 999px; background: #b45309"></span>Lariboisière</span>
+          </div>
+        </section>
+
+        <section style="border: 1px solid #dde2e9; border-radius: 16px; background: #ffffff; box-shadow: 0 1px 3px rgba(16,28,48,0.08), 0 1px 2px rgba(16,28,48,0.04); padding: 18px 20px">
+          <h3 style="margin: 0 0 14px; font-size: 15px; font-weight: 600; color: #141a22">Ce qui sera enregistré</h3>
+          <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
+            <sc-for list="{{stats}}" as="stat" hint-placeholder-count="4">
+              <div style="border: 1px solid #eceff3; border-radius: 12px; background: #fafbfc; padding: 12px">
+                <p style="margin: 0; font-size: 22px; font-weight: 600; color: {{stat.color}}; font-variant-numeric: tabular-nums">{{stat.value}}</p>
+                <p style="margin: 2px 0 0; font-size: 12px; color: #6b7685; line-height: 1.3">{{stat.label}}</p>
+              </div>
+            </sc-for>
+          </div>
+        </section>
+
+        <section style="border: 1px solid #dde2e9; border-radius: 16px; background: #ffffff; box-shadow: 0 1px 3px rgba(16,28,48,0.08), 0 1px 2px rgba(16,28,48,0.04); padding: 18px 20px">
+          <h3 style="margin: 0 0 10px; font-size: 15px; font-weight: 600; color: #141a22">Format attendu</h3>
+          <div style="border: 1px solid #dde2e9; border-radius: 10px; background: #fafbfc; padding: 12px; overflow-x: auto">
+            <pre style="margin: 0; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; line-height: 1.65; color: #4d5765">date;demi_journee;centre;modalite;
+places_senior;places_fellow;commentaire
+2026-11-02;MATIN;BERGERE;IRM;1;1;
+2026-11-02;MATIN;BERGERE;SCANNER;1;1;
+2026-11-03;APRES_MIDI;BLOMET;IRM;1;0;Pas de fellow</pre>
+          </div>
+          <p style="margin: 10px 0 0; font-size: 12px; color: #9aa5b3; line-height: 1.45">Les deux premières lignes illustrent le cas visé par la double vacation : une IRM et un scanner, même jour, même demi-journée, même centre.</p>
+        </section>
+      </aside>
+    </div>
+  </main>
+</div>
+</x-dc>
+
+<script data-dc-script data-props='{}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { method: 'import', mode: 'merge' };
+  }
+
+  glyph(path, color, size) {
+    return '<svg width="' + (size || 16) + '" height="' + (size || 16) + '" viewBox="0 0 24 24" fill="none" stroke="' + color + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + path + '</svg>';
+  }
+
+  renderVals() {
+    const methodDefs = [
+      {
+        id: 'import', label: 'Import de fichier',
+        path: '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><path d="m7 9 5-5 5 5M12 4v12"></path>',
+        hint: 'Fichier CSV ou tableur au format de l’annexe A. Le fichier est analysé intégralement avant tout enregistrement : aucune ligne n’est écrite tant qu’une erreur bloquante subsiste.'
+      },
+      {
+        id: 'duplicate', label: 'Dupliquer le mois précédent',
+        path: '<rect x="9" y="9" width="12" height="12" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>',
+        hint: 'Les vacations sont reportées sur les mêmes jours de semaine. Les jours fériés français sont exclus automatiquement et peuvent être réintégrés un par un.'
+      },
+      {
+        id: 'manual', label: 'Saisie manuelle',
+        path: '<path d="M12 5v14M5 12h14"></path>',
+        hint: 'Saisie unitaire ou récurrente. Les centres et les modalités proviennent de la base : ajouter un centre ne demande aucune modification de code.'
+      }
+    ];
+
+    const method = methodDefs.find((entry) => entry.id === this.state.method) || methodDefs[0];
+
+    const methods = methodDefs.map((entry) => {
+      const active = entry.id === this.state.method;
+      return {
+        label: entry.label,
+        icon: this.glyph(entry.path, active ? '#d61f55' : '#9aa5b3'),
+        underline: active ? '#ec3b68' : 'transparent',
+        fg: active ? '#141a22' : '#6b7685',
+        weight: active ? '600' : '500',
+        pick: () => this.setState({ method: entry.id })
+      };
+    });
+
+    const modeDefs = [
+      { id: 'add', label: 'Ajouter', detail: 'Les 48 lignes s’ajoutent aux 12 existantes. Les doublons seront refusés.' },
+      { id: 'replace', label: 'Remplacer', detail: 'Les 12 vacations existantes sont annulées, puis remplacées.' },
+      { id: 'merge', label: 'Fusionner', detail: 'Les doublons sont ignorés silencieusement, le reste est ajouté.' }
+    ];
+
+    const modes = modeDefs.map((entry) => {
+      const active = entry.id === this.state.mode;
+      return {
+        label: entry.label,
+        detail: entry.detail,
+        bg: active ? '#fff1f4' : '#ffffff',
+        border: active ? '#ec3b68' : '#dde2e9',
+        dotBorder: active ? '#ec3b68' : '#c4ccd6',
+        dotFill: active ? '#ec3b68' : 'transparent',
+        pick: () => this.setState({ mode: entry.id })
+      };
+    });
+
+    const findings = [
+      {
+        kind: 'error', line: '17',
+        title: 'Le centre n’existe pas en base ou est inactif',
+        raw: '2026-11-09;MATIN;BERGERES;IRM;1;1;',
+        expected: 'BERGERE, BLOMET ou LARIBOISIERE. Vous pouvez créer le centre manquant depuis cet écran.'
+      },
+      {
+        kind: 'error', line: '23',
+        title: 'La date n’appartient pas au mois cible',
+        raw: '2026-12-01;APRES_MIDI;BLOMET;SCANNER;1;1;',
+        expected: 'Une date comprise entre le 2026-11-01 et le 2026-11-30.'
+      },
+      {
+        kind: 'error', line: '31',
+        title: 'Demi-journée non reconnue',
+        raw: '2026-11-17;MATINEE;LARIBOISIERE;IRM;1;1;',
+        expected: 'MATIN ou APRES_MIDI. Aucune autre granularité horaire n’est gérée.'
+      },
+      {
+        kind: 'warning', line: '38',
+        title: 'La date est un jour férié français',
+        raw: '2026-11-11;MATIN;BERGERE;SCANNER;1;1;',
+        expected: 'Avertissement non bloquant. La ligne sera conservée si vous la confirmez.'
+      },
+      {
+        kind: 'warning', line: '42',
+        title: 'Doublon avec une vacation déjà chargée',
+        raw: '2026-11-24;MATIN;BLOMET;SCANNER;1;1;',
+        expected: 'Traité selon le mode d’import retenu ci-dessus.'
+      }
+    ];
+
+    const tones = {
+      error: { bg: '#FEF2F2', fg: '#DC2626', icon: this.glyph('<path d="M12 9v4M12 17h.01"></path><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"></path>', '#DC2626', 14) },
+      warning: { bg: '#FFF3E9', fg: '#EA580C', icon: this.glyph('<circle cx="12" cy="12" r="9"></circle><path d="M12 8v4M12 16h.01"></path>', '#EA580C', 14) }
+    };
+
+    const errors = findings.filter((entry) => entry.kind === 'error').length;
+    const warnings = findings.length - errors;
+
+    const centerColors = { BERGERE: '#1f4b86', BLOMET: '#047857', LARIBOISIERE: '#b45309' };
+    const pattern = {
+      1: ['BERGERE', 'BERGERE', 'LARIBOISIERE'],
+      2: ['BLOMET', 'BERGERE'],
+      3: ['LARIBOISIERE', 'LARIBOISIERE', 'BLOMET'],
+      4: ['BERGERE', 'LARIBOISIERE', 'LARIBOISIERE'],
+      5: ['BLOMET', 'BERGERE']
+    };
+
+    const holidays = [11];
+    const calendar = [];
+    const firstWeekday = new Date(Date.UTC(2026, 10, 1)).getUTCDay() || 7;
+    for (let blank = 1; blank < firstWeekday; blank += 1) {
+      calendar.push({ day: '', bg: 'transparent', border: 'transparent', dayColor: 'transparent', dots: [], note: '', noteColor: 'transparent' });
+    }
+    let planned = 0;
+    for (let dayNumber = 1; dayNumber <= 30; dayNumber += 1) {
+      const weekday = new Date(Date.UTC(2026, 10, dayNumber)).getUTCDay();
+      const weekend = weekday === 0 || weekday === 6;
+      const holiday = holidays.indexOf(dayNumber) !== -1;
+      const centers = weekend ? [] : (pattern[weekday] || []);
+      planned += centers.length;
+      calendar.push({
+        day: String(dayNumber),
+        bg: weekend ? '#fafbfc' : holiday ? '#FFF3E9' : '#ffffff',
+        border: holiday ? '#FDBA74' : weekend ? '#f5f7fa' : '#eceff3',
+        dayColor: weekend ? '#c4ccd6' : '#4d5765',
+        dots: centers.map((center) => ({ color: centerColors[center] })),
+        note: holiday ? 'férié' : centers.length ? centers.length + ' vac.' : '',
+        noteColor: holiday ? '#EA580C' : '#9aa5b3'
+      });
+    }
+
+    const weekdayHeads = ['L', 'M', 'M', 'J', 'V', 'S', 'D'].map((label) => ({ label }));
+
+    const manualFields = [
+      { label: 'Date', value: '2026-11-03', color: '#141a22' },
+      { label: 'Demi-journée', value: 'Matin', color: '#141a22' },
+      { label: 'Centre', value: 'Bergère', color: '#141a22' },
+      { label: 'Modalité', value: 'Choisir…', color: '#aeb7c2' }
+    ];
+
+    return {
+      methods,
+      method: { hint: method.hint },
+      isImport: this.state.method === 'import',
+      isDuplicate: this.state.method === 'duplicate',
+      isManual: this.state.method === 'manual',
+      modes,
+      manualFields,
+      findings: findings.map((entry) => {
+        const tone = tones[entry.kind];
+        return {
+          line: entry.line,
+          title: entry.title,
+          raw: entry.raw,
+          expected: entry.expected,
+          bg: tone.bg,
+          fg: tone.fg,
+          icon: tone.icon
+        };
+      }),
+      reportBadge: errors > 0
+        ? '<span style="display: inline-flex; align-items: center; border-radius: 10px; padding: 2px 8px; font-size: 12px; font-weight: 500; border: 1px solid #FECACA; background: #FEF2F2; color: #DC2626">Enregistrement bloqué</span>'
+        : '<span style="display: inline-flex; align-items: center; border-radius: 10px; padding: 2px 8px; font-size: 12px; font-weight: 500; border: 1px solid #A7F3D0; background: #ECFDF5; color: #047857">Prêt à enregistrer</span>',
+      reportSummary: errors + ' erreur' + (errors > 1 ? 's' : '') + ' bloquante' + (errors > 1 ? 's' : '') + ' · ' + warnings + ' avertissement' + (warnings > 1 ? 's' : ''),
+      previewSummary: 'novembre 2026',
+      weekdayHeads,
+      calendar,
+      stats: [
+        { value: '48', label: 'lignes lues', color: '#141a22' },
+        { value: '43', label: 'vacations valides', color: '#047857' },
+        { value: String(errors), label: 'lignes rejetées', color: '#DC2626' },
+        { value: String(warnings), label: 'à confirmer', color: '#EA580C' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

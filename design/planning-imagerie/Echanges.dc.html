@@ -1,0 +1,548 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&display=swap">
+  <style>
+    *{ box-sizing: border-box; }
+    body { margin: 0; font-family: 'Inter Tight', system-ui, -apple-system, 'Segoe UI', sans-serif; }
+    a { color: #173d6e; text-decoration: none; }
+    a:hover { color: #122f54; text-decoration: underline; }
+  </style>
+</helmet>
+
+<div style="display: flex; width: 1440px; height: 1280px; background: #ffffff; color: #141a22">
+<aside style="display: flex; flex-direction: column; width: 256px; flex-shrink: 0; background: #122f54; color: #ffffff">
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 20px 24px; text-align: center">
+      <svg width="40" height="40" viewBox="0 0 40 40" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20 34s-13-8.2-13-17a7 7 0 0 1 13-3.7A7 7 0 0 1 33 17c0 8.8-13 17-13 17z"></path>
+        <path d="M6 20h7l2.5-5 4 10 3-5H34"></path>
+      </svg>
+      <span style="font-size: 13px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase">Larib Portal</span>
+    </div>
+
+    <nav style="display: flex; flex-direction: column; gap: 24px; flex: 1; overflow: hidden; padding: 16px 12px">
+      <div>
+        <p style="margin: 0 0 8px; padding: 0 12px; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #7197c2">Vue d'ensemble</p>
+        <div style="display: flex; flex-direction: column; gap: 4px">
+          <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #d6e0ee">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1"></rect><rect x="14" y="3" width="7" height="5" rx="1"></rect><rect x="14" y="12" width="7" height="9" rx="1"></rect><rect x="3" y="16" width="7" height="5" rx="1"></rect></svg>
+            <span style="display: flex; flex: 1; align-items: center; gap: 6px">Tableau de bord</span>
+          </div>
+        </div>
+      </div>
+      <div>
+        <p style="margin: 0 0 8px; padding: 0 12px; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #7197c2">Applications</p>
+        <div style="display: flex; flex-direction: column; gap: 4px">
+          <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #d6e0ee">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10 12 5 2 10l10 5 10-5z"></path><path d="M6 12v5c0 1 2.7 2.5 6 2.5s6-1.5 6-2.5v-5"></path></svg>
+            <span style="display: flex; flex: 1; align-items: center; gap: 6px">Best of Larib</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #d6e0ee">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg>
+            <span style="display: flex; flex: 1; align-items: center; gap: 6px">Congés</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #d6e0ee">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+            <span style="display: flex; flex: 1; align-items: center; gap: 6px">Publications</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #d6e0ee">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 5.6a5.5 5.5 0 0 0-8.8 1.4 5.5 5.5 0 0 0-8.8-1.4c-2.4 2.4-2 6.2.4 8.6L12 21l7.6-6.8c2.4-2.4 3.6-6.2.4-8.6z"></path></svg>
+            <span style="display: flex; flex: 1; align-items: center; gap: 6px">CoreLab</span>
+          </div>
+          <div style="position: relative; display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; background: #173d6e; color: #ffffff">
+            <span style="position: absolute; left: 0; top: 50%; width: 4px; height: 24px; margin-top: -12px; border-radius: 0 4px 4px 0; background: #ec3b68"></span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f55c83" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 10h18M8 3v4M16 3v4"></path><path d="M8 14h3M8 17.5h3M14 14h2"></path></svg>
+            <span style="display: flex; flex: 1; align-items: center; gap: 6px">Planning imagerie</span>
+          </div>
+        </div>
+      </div>
+      <div>
+        <p style="margin: 0 0 8px; padding: 0 12px; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #7197c2">Administration</p>
+        <div style="display: flex; flex-direction: column; gap: 4px">
+          <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #d6e0ee">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 10h18M8 3v4M16 3v4"></path><path d="M8 14h3M8 17.5h3M14 14h2"></path></svg>
+            <span style="display: flex; flex: 1; align-items: center; gap: 6px">Planning imagerie<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#f55c83" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg></span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #d6e0ee">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.9"></path></svg>
+            <span style="display: flex; flex: 1; align-items: center; gap: 6px">Utilisateurs</span>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <div style="border-top: 1px solid #173d6e; padding: 12px">
+      <div style="display: flex; flex-direction: column; gap: 8px">
+        <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #d6e0ee">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20z"></path></svg>
+          <span style="flex: 1">Langue</span>
+          <span style="color: #aac0dc">FR</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 12px; background: #173d6e">
+          <span style="display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 999px; background: #ec3b68; color: #ffffff; font-size: 13px; font-weight: 600">AB</span>
+          <span style="display: flex; flex-direction: column; flex: 1; min-width: 0">
+            <span style="font-size: 14px; font-weight: 500; color: #ffffff">Alix</span>
+            <span style="font-size: 12px; color: #aac0dc">Imageur senior</span>
+          </span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aac0dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"></path></svg>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <main style="flex: 1; min-width: 0; overflow: hidden; background-color: #f5f7fa; background-image: radial-gradient(58% 52% at 10% 4%, rgba(214,31,85,0.10), transparent 60%), radial-gradient(52% 48% at 92% 12%, rgba(236,59,104,0.08), transparent 62%), radial-gradient(60% 60% at 84% 96%, rgba(214,31,85,0.07), transparent 60%), radial-gradient(48% 54% at 2% 94%, rgba(255,182,198,0.12), transparent 60%); padding: 32px">
+
+    <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; margin-bottom: 24px">
+      <div style="border-left: 4px solid #ec3b68; padding-left: 16px">
+        <h1 style="margin: 0; font-size: 30px; font-weight: 700; line-height: 1.15; color: #141a22">Échanges de vacations — Octobre 2026</h1>
+        <p style="margin: 4px 0 0; font-size: 15px; color: #6b7685">Ajustez entre pairs sans repasser par le coordinateur. Tout est tracé et les compteurs se recalculent automatiquement.</p>
+      </div>
+      
+    </div>
+
+    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px">
+      <div style="display: flex; gap: 4px; padding: 4px; border-radius: 12px; background: #eceff3">
+        <sc-for list="{{tabs}}" as="tab" hint-placeholder-count="3">
+          <button type="button" onClick="{{tab.pick}}" style="display: flex; align-items: center; gap: 8px; border: none; border-radius: 8px; background: {{tab.bg}}; box-shadow: {{tab.shadow}}; padding: 7px 14px; font-family: inherit; font-size: 13px; font-weight: {{tab.weight}}; color: {{tab.fg}}; cursor: pointer">
+            {{tab.label}}
+            <span style="display: inline-flex; align-items: center; justify-content: center; min-width: 18px; height: 18px; border-radius: 999px; background: {{tab.countBg}}; padding: 0 5px; font-size: 11px; font-weight: 600; color: {{tab.countFg}}">{{tab.count}}</span>
+          </button>
+        </sc-for>
+      </div>
+      <span style="font-size: 13px; color: #6b7685">{{tabNote}}</span>
+    </div>
+
+    <div style="display: flex; gap: 20px; align-items: flex-start">
+
+      <div style="display: flex; flex-direction: column; gap: 20px; flex: 1; min-width: 0">
+
+        <sc-if value="{{isCompose}}" hint-placeholder-val="{{true}}">
+          <section style="border: 1px solid #dde2e9; border-radius: 16px; background: #ffffff; box-shadow: 0 1px 3px rgba(16,28,48,0.08), 0 1px 2px rgba(16,28,48,0.04); overflow: hidden">
+            <div style="padding: 18px 20px; border-bottom: 1px solid #dde2e9">
+              <h2 style="margin: 0; font-size: 16px; font-weight: 600; color: #141a22">1 · La vacation dont vous voulez vous défaire</h2>
+            </div>
+            <div style="padding: 8px 0">
+              <sc-for list="{{mine}}" as="shift" hint-placeholder-count="4">
+                <div onClick="{{shift.pick}}" style="display: flex; align-items: center; gap: 12px; padding: 12px 20px; border-bottom: 1px solid #f5f7fa; background: {{shift.bg}}; cursor: pointer">
+                  <span style="display: flex; align-items: center; justify-content: center; width: 16px; height: 16px; flex-shrink: 0; border: 1.5px solid {{shift.dotBorder}}; border-radius: 999px; background: #ffffff">
+                    <span style="width: 8px; height: 8px; border-radius: 999px; background: {{shift.dotFill}}"></span>
+                  </span>
+                  <span style="width: 3px; height: 28px; flex-shrink: 0; border-radius: 2px; background: {{shift.centerColor}}"></span>
+                  <span style="flex: 1; min-width: 0">
+                    <span style="display: block; font-size: 14px; font-weight: 500; color: #141a22">{{shift.title}}</span>
+                    <span style="display: block; margin-top: 1px; font-size: 12px; color: #6b7685">{{shift.when}}</span>
+                  </span>
+                  <span style="display: inline-flex; align-items: center; border-radius: 10px; padding: 2px 8px; flex-shrink: 0; font-size: 12px; font-weight: 500; {{shift.tagStyle}}">{{shift.tag}}</span>
+                </div>
+              </sc-for>
+            </div>
+          </section>
+
+          <section style="border: 1px solid #dde2e9; border-radius: 16px; background: #ffffff; box-shadow: 0 1px 3px rgba(16,28,48,0.08), 0 1px 2px rgba(16,28,48,0.04); overflow: hidden">
+            <div style="padding: 18px 20px; border-bottom: 1px solid #dde2e9">
+              <h2 style="margin: 0; font-size: 16px; font-weight: 600; color: #141a22">2 · Le type de demande</h2>
+            </div>
+            <div style="display: flex; gap: 12px; padding: 18px 20px">
+              <sc-for list="{{kinds}}" as="kind" hint-placeholder-count="2">
+                <div onClick="{{kind.pick}}" style="display: flex; align-items: flex-start; gap: 12px; flex: 1; border: 1px solid {{kind.border}}; border-radius: 12px; background: {{kind.bg}}; padding: 14px 16px; cursor: pointer">
+                  <span style="display: flex; flex-shrink: 0; margin-top: 1px">{{kind.icon}}</span>
+                  <span style="flex: 1; min-width: 0">
+                    <span style="display: block; font-size: 14px; font-weight: 600; color: #141a22">{{kind.label}}</span>
+                    <span style="display: block; margin-top: 3px; font-size: 13px; color: #6b7685; line-height: 1.45">{{kind.detail}}</span>
+                  </span>
+                </div>
+              </sc-for>
+            </div>
+          </section>
+
+          <section style="border: 1px solid #dde2e9; border-radius: 16px; background: #ffffff; box-shadow: 0 1px 3px rgba(16,28,48,0.08), 0 1px 2px rgba(16,28,48,0.04); overflow: hidden">
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 20px; border-bottom: 1px solid #dde2e9">
+              <h2 style="margin: 0; font-size: 16px; font-weight: 600; color: #141a22">3 · Contreparties compatibles</h2>
+              <span style="font-size: 13px; color: #6b7685">{{candidateCount}}</span>
+            </div>
+            <div style="padding: 8px 0">
+              <sc-for list="{{candidates}}" as="candidate" hint-placeholder-count="3">
+                <div style="display: flex; align-items: center; gap: 14px; padding: 14px 20px; border-bottom: 1px solid #f5f7fa">
+                  <span style="display: flex; align-items: center; justify-content: center; width: 34px; height: 34px; flex-shrink: 0; border-radius: 999px; background: #eceff3; color: #4d5765; font-size: 12px; font-weight: 600">{{candidate.initials}}</span>
+                  <span style="flex: 1; min-width: 0">
+                    <span style="display: block; font-size: 14px; font-weight: 500; color: #141a22">{{candidate.name}}</span>
+                    <span style="display: block; margin-top: 2px; font-size: 13px; color: #6b7685; line-height: 1.4">{{candidate.offer}}</span>
+                  </span>
+                  <span style="display: flex; flex-direction: column; align-items: flex-end; gap: 3px; flex-shrink: 0; width: 168px">
+                    <span style="font-size: 12px; color: #9aa5b3">après échange</span>
+                    <span style="display: flex; align-items: center; gap: 8px; font-size: 12px; color: #4d5765">{{candidate.impact}}</span>
+                  </span>
+                  <button type="button" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 36px; padding: 0 16px; border-radius: 10px; box-shadow: 0 1px 2px rgba(16,28,48,0.06); font-family: inherit; font-size: 14px; font-weight: 500; cursor: pointer; border: none; background: linear-gradient(to bottom right, #122f54, #0a1b30); color: #ffffff; flex-shrink: 0; height: 34px; font-size: 13px">Proposer</button>
+                </div>
+              </sc-for>
+            </div>
+            <div style="border-top: 1px dashed #dde2e9; padding: 16px 20px">
+              <p style="margin: 0 0 10px; font-size: 13px; color: #6b7685; line-height: 1.5">{{excludedNote}}</p>
+              <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px">
+                <sc-for list="{{excluded}}" as="person" hint-placeholder-count="3">
+                  <span style="display: inline-flex; align-items: center; gap: 5px; border: 1px dashed #dde2e9; border-radius: 999px; background: #fafbfc; padding: 3px 9px; font-size: 12px; color: #9aa5b3">
+                    <span style="width: 5px; height: 5px; border-radius: 999px; background: #c4ccd6"></span>{{person.name}}
+                  </span>
+                </sc-for>
+              </div>
+              <button type="button" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 36px; border: 1px solid #FDBA74; border-radius: 10px; background: #FFF3E9; padding: 0 16px; font-family: inherit; font-size: 13px; font-weight: 500; color: #EA580C; cursor: pointer">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"></rect><path d="m2 7 10 6 10-6"></path></svg>Solliciter une personne non disponible
+              </button>
+              <p style="margin: 8px 0 0; font-size: 12px; color: #9aa5b3; line-height: 1.45">RG-27 — son acceptation explicite vaut déclaration de disponibilité, enregistrée avec la source SWAP. C’est le pendant entre pairs de la disponibilité exceptionnelle.</p>
+            </div>
+          </section>
+        </sc-if>
+
+        <sc-if value="{{isInbox}}" hint-placeholder-val="{{false}}">
+          <sc-for list="{{inbox}}" as="request" hint-placeholder-count="2">
+            <section style="border: 1px solid #dde2e9; border-radius: 16px; background: #ffffff; box-shadow: 0 1px 3px rgba(16,28,48,0.08), 0 1px 2px rgba(16,28,48,0.04); overflow: hidden">
+              <div style="display: flex; align-items: center; gap: 12px; padding: 16px 20px; border-bottom: 1px solid #dde2e9; background: #fafbfc">
+                <span style="display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; flex-shrink: 0; border-radius: 999px; background: #eceff3; color: #4d5765; font-size: 11px; font-weight: 600">{{request.initials}}</span>
+                <span style="flex: 1; min-width: 0">
+                  <span style="display: block; font-size: 14px; font-weight: 600; color: #141a22">{{request.title}}</span>
+                  <span style="display: block; font-size: 12px; color: #6b7685">{{request.when}}</span>
+                </span>
+                <span style="display: inline-flex; align-items: center; border-radius: 10px; padding: 2px 8px; flex-shrink: 0; font-size: 12px; font-weight: 500; {{request.tagStyle}}">{{request.tag}}</span>
+              </div>
+
+              <div style="display: grid; grid-template-columns: 1fr 44px 1fr; align-items: center; gap: 0; padding: 18px 20px">
+                <div style="border: 1px solid #dde2e9; border-radius: 12px; background: #ffffff; padding: 13px 15px">
+                  <p style="margin: 0; font-size: 11px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: #9aa5b3">{{request.leftLabel}}</p>
+                  <p style="margin: 6px 0 0; font-size: 14px; font-weight: 600; color: #141a22">{{request.leftTitle}}</p>
+                  <p style="margin: 2px 0 0; font-size: 13px; color: #6b7685">{{request.leftWhen}}</p>
+                </div>
+                <div style="display: flex; align-items: center; justify-content: center">{{request.arrow}}</div>
+                <div style="border: 1px solid #dde2e9; border-radius: 12px; background: #ffffff; padding: 13px 15px">
+                  <p style="margin: 0; font-size: 11px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: #9aa5b3">{{request.rightLabel}}</p>
+                  <p style="margin: 6px 0 0; font-size: 14px; font-weight: 600; color: {{request.rightColor}}">{{request.rightTitle}}</p>
+                  <p style="margin: 2px 0 0; font-size: 13px; color: #6b7685">{{request.rightWhen}}</p>
+                </div>
+              </div>
+
+              <div style="margin: 0 20px; border: 1px solid #eceff3; border-radius: 12px; background: #fafbfc; padding: 14px 16px">
+                <p style="margin: 0 0 10px; font-size: 12px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: #9aa5b3">Impact sur les compteurs, avant décision</p>
+                <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
+                  <sc-for list="{{request.impact}}" as="row" hint-placeholder-count="2">
+                    <div style="display: flex; align-items: center; gap: 10px; border: 1px solid #dde2e9; border-radius: 10px; background: #ffffff; padding: 9px 12px">
+                      <span style="flex: 1; min-width: 0; font-size: 13px; color: #363f4c">{{row.name}}</span>
+                      <span style="flex-shrink: 0; font-size: 13px; color: #9aa5b3; font-variant-numeric: tabular-nums">{{row.before}}</span>
+                      <span style="flex-shrink: 0; display: flex">{{row.arrow}}</span>
+                      <span style="flex-shrink: 0; font-size: 13px; font-weight: 600; color: {{row.color}}; font-variant-numeric: tabular-nums">{{row.after}}</span>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+
+              <sc-if value="{{request.hasMessage}}" hint-placeholder-val="{{true}}">
+                <p style="margin: 14px 20px 0; border-left: 3px solid #dde2e9; padding-left: 12px; font-size: 13px; color: #4d5765; line-height: 1.5">{{request.message}}</p>
+              </sc-if>
+
+              <div style="display: flex; align-items: center; gap: 10px; padding: 18px 20px">
+                <span style="flex: 1; font-size: 12px; color: #9aa5b3">{{request.expiry}}</span>
+                <button type="button" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 36px; padding: 0 16px; border-radius: 10px; box-shadow: 0 1px 2px rgba(16,28,48,0.06); font-family: inherit; font-size: 14px; font-weight: 500; cursor: pointer; border: 1px solid #dde2e9; background: #ffffff; color: #363f4c; font-size: 13px">Refuser</button>
+                <button type="button" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 36px; padding: 0 16px; border-radius: 10px; box-shadow: 0 1px 2px rgba(16,28,48,0.06); font-family: inherit; font-size: 14px; font-weight: 500; cursor: pointer; border: none; background: #d61f55; color: #ffffff; font-size: 13px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>Accepter</button>
+              </div>
+            </section>
+          </sc-for>
+        </sc-if>
+
+        <sc-if value="{{isOutbox}}" hint-placeholder-val="{{false}}">
+          <section style="border: 1px solid #dde2e9; border-radius: 16px; background: #ffffff; box-shadow: 0 1px 3px rgba(16,28,48,0.08), 0 1px 2px rgba(16,28,48,0.04); overflow: hidden">
+            <div style="padding: 18px 20px; border-bottom: 1px solid #dde2e9">
+              <h2 style="margin: 0; font-size: 16px; font-weight: 600; color: #141a22">Mes demandes envoyées</h2>
+            </div>
+            <div style="padding: 8px 0">
+              <sc-for list="{{outbox}}" as="request" hint-placeholder-count="4">
+                <div style="display: flex; align-items: center; gap: 14px; padding: 14px 20px; border-bottom: 1px solid #f5f7fa">
+                  <span style="display: flex; flex-shrink: 0">{{request.icon}}</span>
+                  <span style="flex: 1; min-width: 0">
+                    <span style="display: block; font-size: 14px; font-weight: 500; color: #141a22">{{request.title}}</span>
+                    <span style="display: block; margin-top: 2px; font-size: 13px; color: #6b7685; line-height: 1.4">{{request.detail}}</span>
+                  </span>
+                  <span style="flex-shrink: 0; font-size: 12px; color: #9aa5b3">{{request.when}}</span>
+                  <span style="display: inline-flex; align-items: center; border-radius: 10px; padding: 2px 8px; flex-shrink: 0; font-size: 12px; font-weight: 500; {{request.tagStyle}}">{{request.tag}}</span>
+                </div>
+              </sc-for>
+            </div>
+          </section>
+        </sc-if>
+      </div>
+
+      <aside style="display: flex; flex-direction: column; gap: 16px; width: 348px; flex-shrink: 0">
+
+        <section style="border: 1px solid #dde2e9; border-radius: 16px; background: #ffffff; box-shadow: 0 1px 3px rgba(16,28,48,0.08), 0 1px 2px rgba(16,28,48,0.04); padding: 20px 24px; border-left: 4px solid #1f4b86">
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1f4b86" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4M12 8h.01"></path></svg>
+            <h3 style="margin: 0; font-size: 15px; font-weight: 600; color: #141a22">Ce que le système refuse</h3>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 10px">
+            <sc-for list="{{rules}}" as="rule" hint-placeholder-count="3">
+              <div style="display: flex; align-items: flex-start; gap: 9px">
+                <span style="display: inline-flex; align-items: center; justify-content: center; width: 34px; flex-shrink: 0; margin-top: 1px; border-radius: 5px; background: #eef2f8; padding: 1px 0; font-size: 10px; font-weight: 700; color: #1f4b86">{{rule.code}}</span>
+                <span style="flex: 1; min-width: 0; font-size: 12px; color: #4d5765; line-height: 1.45">{{rule.text}}</span>
+              </div>
+            </sc-for>
+          </div>
+        </section>
+
+        <section style="border: 1px solid #dde2e9; border-radius: 16px; background: #ffffff; box-shadow: 0 1px 3px rgba(16,28,48,0.08), 0 1px 2px rgba(16,28,48,0.04); padding: 20px 24px">
+          <h3 style="margin: 0 0 12px; font-size: 15px; font-weight: 600; color: #141a22">Circuit d’un échange</h3>
+          <div style="display: flex; flex-direction: column; gap: 14px">
+            <sc-for list="{{flow}}" as="step" hint-placeholder-count="5">
+              <div style="display: flex; gap: 12px">
+                <span style="display: flex; flex-direction: column; align-items: center; flex-shrink: 0; padding-top: 2px">
+                  <span style="display: flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 999px; background: {{step.dotBg}}; color: {{step.dotFg}}; font-size: 10px; font-weight: 600">{{step.index}}</span>
+                  <span style="width: 1px; flex: 1; background: #dde2e9"></span>
+                </span>
+                <span style="flex: 1; min-width: 0; padding-bottom: 3px">
+                  <span style="display: block; font-size: 13px; font-weight: 500; color: #141a22">{{step.title}}</span>
+                  <span style="display: block; margin-top: 2px; font-size: 12px; color: #6b7685; line-height: 1.45">{{step.detail}}</span>
+                </span>
+              </div>
+            </sc-for>
+          </div>
+        </section>
+
+        <section style="border: 1px solid #dde2e9; border-radius: 16px; background: #ffffff; box-shadow: 0 1px 3px rgba(16,28,48,0.08), 0 1px 2px rgba(16,28,48,0.04); padding: 20px 24px">
+          <h3 style="margin: 0 0 12px; font-size: 15px; font-weight: 600; color: #141a22">Mes compteurs si tout est validé</h3>
+          <div style="display: flex; flex-direction: column; gap: 10px">
+            <sc-for list="{{projection}}" as="row" hint-placeholder-count="3">
+              <div style="display: flex; align-items: center; gap: 10px">
+                <span style="flex: 1; min-width: 0; font-size: 13px; color: #4d5765">{{row.label}}</span>
+                <span style="flex-shrink: 0; font-size: 13px; color: #9aa5b3; font-variant-numeric: tabular-nums">{{row.before}}</span>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#c4ccd6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+                <span style="flex-shrink: 0; font-size: 14px; font-weight: 600; color: {{row.color}}; font-variant-numeric: tabular-nums">{{row.after}}</span>
+              </div>
+            </sc-for>
+          </div>
+        </section>
+      </aside>
+    </div>
+  </main>
+</div>
+</x-dc>
+
+<script data-dc-script data-props='{}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { tab: 'compose', shiftId: 's2', kind: 'EXCHANGE' };
+  }
+
+  glyph(path, color, size) {
+    return '<svg width="' + (size || 16) + '" height="' + (size || 16) + '" viewBox="0 0 24 24" fill="none" stroke="' + color + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + path + '</svg>';
+  }
+
+  myShifts() {
+    return [
+      { id: 's1', title: 'Bergère · IRM cardiaque', when: 'lundi 5 octobre, matin', center: '#1f4b86', status: 'free' },
+      { id: 's2', title: 'Blomet · IRM cardiaque', when: 'mercredi 7 octobre, après-midi', center: '#047857', status: 'free' },
+      { id: 's3', title: 'Bergère · Scanner cardiaque', when: 'jeudi 15 octobre, matin', center: '#1f4b86', status: 'pending' },
+      { id: 's4', title: 'Lariboisière · IRM cardiaque', when: 'jeudi 22 octobre, après-midi', center: '#b45309', status: 'locked' }
+    ];
+  }
+
+  renderVals() {
+    const tabDefs = [
+      { id: 'compose', label: 'Proposer', count: 4 },
+      { id: 'inbox', label: 'Reçues', count: 2 },
+      { id: 'outbox', label: 'Envoyées', count: 4 }
+    ];
+
+    const tabs = tabDefs.map((entry) => {
+      const active = entry.id === this.state.tab;
+      return {
+        label: entry.label,
+        count: String(entry.count),
+        bg: active ? '#ffffff' : 'transparent',
+        fg: active ? '#141a22' : '#6b7685',
+        weight: active ? '600' : '500',
+        shadow: active ? '0 1px 2px rgba(16,28,48,0.06)' : 'none',
+        countBg: active ? '#ec3b68' : '#dde2e9',
+        countFg: active ? '#ffffff' : '#6b7685',
+        pick: () => this.setState({ tab: entry.id })
+      };
+    });
+
+    const statusTags = {
+      free: { tag: 'Échangeable', style: 'border: 1px solid #dde2e9; background: #eceff3; color: #4d5765' },
+      pending: { tag: 'Demande en cours', style: 'border: 1px solid #FDBA74; background: #FFF3E9; color: #EA580C' },
+      locked: { tag: 'Échanges fermés', style: 'border: 1px solid #dde2e9; background: #eceff3; color: #9aa5b3' }
+    };
+
+    const shifts = this.myShifts();
+    const selected = shifts.find((shift) => shift.id === this.state.shiftId) || shifts[0];
+
+    const mine = shifts.map((shift) => {
+      const active = shift.id === selected.id;
+      const tone = statusTags[shift.status];
+      return {
+        title: shift.title,
+        when: shift.when,
+        centerColor: shift.center,
+        bg: active ? '#fff1f4' : '#ffffff',
+        dotBorder: active ? '#ec3b68' : '#c4ccd6',
+        dotFill: active ? '#ec3b68' : 'transparent',
+        tag: tone.tag,
+        tagStyle: tone.style,
+        pick: () => this.setState({ shiftId: shift.id })
+      };
+    });
+
+    const kindDefs = [
+      {
+        id: 'EXCHANGE', label: 'Permutation',
+        detail: 'Vous cédez cette vacation et en reprenez une de votre pair en contrepartie.',
+        path: '<path d="M7 4 3 8l4 4"></path><path d="M3 8h13a4 4 0 0 1 0 8h-1"></path><path d="m17 20 4-4-4-4"></path>'
+      },
+      {
+        id: 'GIVEAWAY', label: 'Cession',
+        detail: 'Vous cédez cette vacation sans contrepartie. Votre compteur baisse d’une unité.',
+        path: '<path d="M5 12h14M13 6l6 6-6 6"></path>'
+      }
+    ];
+
+    const kinds = kindDefs.map((entry) => {
+      const active = entry.id === this.state.kind;
+      return {
+        label: entry.label,
+        detail: entry.detail,
+        icon: this.glyph(entry.path, active ? '#d61f55' : '#9aa5b3', 18),
+        bg: active ? '#fff1f4' : '#ffffff',
+        border: active ? '#ec3b68' : '#dde2e9'
+      };
+    });
+    kinds.forEach((kind, position) => { kind.pick = () => this.setState({ kind: kindDefs[position].id }); });
+
+    const isExchange = this.state.kind === 'EXCHANGE';
+    const upGlyph = this.glyph('<path d="M12 19V5M6 11l6-6 6 6"></path>', '#2563EB', 13);
+    const downGlyph = this.glyph('<path d="M12 5v14M6 13l6 6 6-6"></path>', '#EA580C', 13);
+    const arrowGlyph = this.glyph('<path d="M5 12h14M13 6l6 6-6 6"></path>', '#c4ccd6', 13);
+
+    const candidateDefs = [
+      {
+        initials: 'MN', name: 'M. Nguyen',
+        offer: isExchange ? 'vous propose Lariboisière · Scanner, mardi 20 octobre matin' : 'reprendrait votre vacation sans contrepartie',
+        mine: isExchange ? '8 → 8' : '8 → 7', theirs: isExchange ? '6 → 6' : '6 → 7'
+      },
+      {
+        initials: 'JV', name: 'J. Vidal',
+        offer: isExchange ? 'vous propose Bergère · IRM, vendredi 30 octobre après-midi' : 'reprendrait votre vacation sans contrepartie',
+        mine: isExchange ? '8 → 8' : '8 → 7', theirs: isExchange ? '6 → 6' : '6 → 7'
+      },
+      {
+        initials: 'FL', name: 'F. Leroy',
+        offer: isExchange ? 'vous propose Blomet · Scanner, mardi 13 octobre matin' : 'reprendrait votre vacation sans contrepartie',
+        mine: isExchange ? '8 → 8' : '8 → 7', theirs: isExchange ? '7 → 7' : '7 → 8'
+      }
+    ];
+
+    const candidates = candidateDefs.map((entry) => ({
+      initials: entry.initials,
+      name: entry.name,
+      offer: entry.offer,
+      impact: 'vous ' + entry.mine + ' · ' + entry.initials + ' ' + entry.theirs
+    }));
+
+    const inbox = [
+      {
+        initials: 'SR', title: 'S. Rousseau vous propose une permutation', when: 'reçue hier à 18:42',
+        tag: 'En attente de votre réponse', tagStyle: 'border: 1px solid #FDBA74; background: #FFF3E9; color: #EA580C',
+        leftLabel: 'Il vous cède', leftTitle: 'Lariboisière · Scanner', leftWhen: 'jeudi 15 octobre, après-midi',
+        rightLabel: 'Vous lui cédez', rightTitle: 'Bergère · Scanner', rightWhen: 'jeudi 15 octobre, matin', rightColor: '#141a22',
+        arrow: this.glyph('<path d="M7 4 3 8l4 4"></path><path d="M3 8h13a4 4 0 0 1 0 8h-1"></path><path d="m17 20 4-4-4-4"></path>', '#9aa5b3', 22),
+        hasMessage: true,
+        message: '« Je dois être à Lariboisière le matin ce jeudi-là pour une réunion de service. Ça t’arrange ? »',
+        expiry: 'Expire le 22 septembre, ou la veille de la vacation si elle survient avant.',
+        impact: [
+          { name: 'Vous', before: '8', after: '8', color: '#4d5765', arrow: arrowGlyph },
+          { name: 'S. Rousseau', before: '9', after: '9', color: '#4d5765', arrow: arrowGlyph }
+        ]
+      },
+      {
+        initials: 'CD', title: 'C. Dumont vous cède une vacation', when: 'reçue il y a 3 jours',
+        tag: 'En attente de votre réponse', tagStyle: 'border: 1px solid #FDBA74; background: #FFF3E9; color: #EA580C',
+        leftLabel: 'Elle vous cède', leftTitle: 'Bergère · IRM', leftWhen: 'lundi 26 octobre, matin',
+        rightLabel: 'En contrepartie', rightTitle: 'Aucune', rightWhen: 'cession simple', rightColor: '#9aa5b3',
+        arrow: this.glyph('<path d="M5 12h14M13 6l6 6-6 6"></path>', '#9aa5b3', 22),
+        hasMessage: false,
+        message: '',
+        expiry: 'Expire demain.',
+        impact: [
+          { name: 'Vous', before: '8', after: '9', color: '#2563EB', arrow: upGlyph },
+          { name: 'C. Dumont', before: '4', after: '3', color: '#EA580C', arrow: downGlyph }
+        ]
+      }
+    ];
+
+    const outbox = [
+      {
+        icon: this.glyph('<circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path>', '#EA580C', 18),
+        title: 'Permutation proposée à M. Nguyen', detail: 'Bergère · Scanner du 15 octobre contre Lariboisière · IRM du 20 octobre',
+        when: 'il y a 2 jours', tag: 'En attente', tagStyle: 'border: 1px solid #FDBA74; background: #FFF3E9; color: #EA580C'
+      },
+      {
+        icon: this.glyph('<path d="M20 6 9 17l-5-5"></path>', '#047857', 18),
+        title: 'Cession acceptée par J. Vidal', detail: 'Blomet · IRM du 7 octobre après-midi',
+        when: 'il y a 4 jours', tag: 'À valider par le coordinateur', tagStyle: 'border: 1px solid #BFDBFE; background: #EFF6FF; color: #2563EB'
+      },
+      {
+        icon: this.glyph('<path d="M20 6 9 17l-5-5"></path>', '#047857', 18),
+        title: 'Permutation validée avec F. Leroy', detail: 'Compteurs recalculés, nouvelle version de planning créée',
+        when: 'le 3 septembre', tag: 'Validé', tagStyle: 'border: 1px solid #A7F3D0; background: #ECFDF5; color: #047857'
+      },
+      {
+        icon: this.glyph('<path d="M18 6 6 18M6 6l12 12"></path>', '#6b7685', 18),
+        title: 'Demande devenue sans objet', detail: 'Un autre échange validé portait sur la même affectation',
+        when: 'le 1er septembre', tag: 'Caduque', tagStyle: 'border: 1px solid #dde2e9; background: #eceff3; color: #4d5765'
+      }
+    ];
+
+    return {
+      tabs,
+      tabNote: this.state.tab === 'compose'
+        ? 'Échanges ouverts jusqu’à la veille de chaque vacation.'
+        : this.state.tab === 'inbox'
+          ? '2 demandes attendent votre réponse.'
+          : '1 en attente, 1 à valider par le coordinateur.',
+      isCompose: this.state.tab === 'compose',
+      isInbox: this.state.tab === 'inbox',
+      isOutbox: this.state.tab === 'outbox',
+      mine,
+      kinds,
+      candidates,
+      candidateCount: candidates.length + ' personnes sur 7',
+      excluded: [{ name: 'Théo Pezel' }, { name: 'S. Rousseau' }, { name: 'C. Dumont' }],
+      excludedNote: 'Ces seniors n’apparaissent pas : ils n’ont pas déclaré de disponibilité sur ' + selected.title.toLowerCase() + ' du ' + selected.when + '.',
+      inbox,
+      outbox,
+      rules: [
+        { code: 'RG-27', text: 'Une contrepartie ne peut être proposée qu’à une personne ayant déclaré une disponibilité sur le créneau concerné.' },
+        { code: 'RG-28', text: 'Une permutation qui vous affecterait deux fois sur la même demi-journée est refusée à l’émission.' },
+        { code: 'PARAM-16', text: 'Les échanges se ferment automatiquement la veille de la vacation concernée.' },
+        { code: '§12', text: 'Si deux demandes portent sur la même affectation, la première validée rend les autres caduques et leurs émetteurs sont prévenus.' }
+      ],
+      flow: [
+        { index: '1', title: 'Vous envoyez la demande', dotBg: '#ec3b68', dotFg: '#ffffff', detail: 'Avec un message libre si vous le souhaitez.' },
+        { index: '2', title: 'Votre pair reçoit un email et une notification', dotBg: '#eceff3', dotFg: '#6b7685', detail: 'Son écran de réponse affiche l’impact sur vos deux compteurs avant décision.' },
+        { index: '3', title: 'Il accepte ou refuse', dotBg: '#eceff3', dotFg: '#6b7685', detail: 'En cas de refus, vous êtes informé et la demande est close.' },
+        { index: '4', title: 'Le coordinateur valide', dotBg: '#eceff3', dotFg: '#6b7685', detail: 'Requis par défaut (PARAM-07), désactivable par le coordinateur.' },
+        { index: '5', title: 'Une nouvelle version de planning est créée', dotBg: '#eceff3', dotFg: '#6b7685', detail: 'Compteurs recalculés, confirmation aux deux intéressés et au coordinateur.' }
+      ],
+      projection: [
+        { label: 'Vacations du mois', before: '8', after: '8', color: '#4d5765' },
+        { label: 'IRM cardiaque', before: '5', after: '4', color: '#EA580C' },
+        { label: 'Scanner cardiaque', before: '3', after: '4', color: '#2563EB' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>
