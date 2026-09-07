@@ -615,6 +615,11 @@ const ACTIONS = {
   'counters-period': (arg) => { S.countersPeriod = arg },
   'swap-tab': (arg) => { S.swapTab = arg },
   'swap-shift': (arg) => { S.swapShiftId = arg },
+  'swap-from': (arg) => {
+    S.swapShiftId = arg
+    S.swapTab = 'compose'
+    S.view = 'echanges'
+  },
   'swap-kind': (arg) => { S.swapKind = arg },
 
   'feedback-open': () => { FEEDBACK.open = true },

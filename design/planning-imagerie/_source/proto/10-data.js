@@ -159,7 +159,8 @@ const S = {
   swapTab: 'inbox',
   swapShiftId: null,
   swapKind: 'EXCHANGE',
-  monthFilter: 'all',
+  /** 'mine' = my vacations only, 'all' = the whole team's month. */
+  monthFilter: 'mine',
   suiviFilter: 'all',
   showAllWeights: false,
   diffVersion: 'v2',

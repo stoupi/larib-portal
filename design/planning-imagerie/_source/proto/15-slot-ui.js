@@ -134,10 +134,10 @@ function workflowBanner(context) {
   ]
 
   return `<section style="display:flex;align-items:stretch;gap:0;border:1px solid ${T.line};border-radius:16px;background:${T.surface};box-shadow:${T.shadowXs};overflow:hidden;margin-bottom:20px">
-    <div style="display:flex;flex-direction:column;justify-content:center;gap:2px;flex-shrink:0;background:${T.gray900};padding:16px 20px;min-width:158px">
-      <span style="font-size:11px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:${T.gray400}">Nous sommes le</span>
+    <div style="display:flex;flex-direction:column;justify-content:center;gap:2px;flex-shrink:0;background:${T.coral600};padding:16px 20px;min-width:158px">
+      <span style="font-size:11px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:${T.coral100}">Nous sommes le</span>
       <span style="font-size:16px;font-weight:700;color:#fff">7 septembre 2026</span>
-      <span style="font-size:11px;color:${T.gray400}">deux mois se chevauchent</span>
+      <span style="font-size:11px;color:${T.coral100}">deux mois se chevauchent</span>
     </div>
     ${cards.map((card, position) => {
       const tone = TONES[card.tone]

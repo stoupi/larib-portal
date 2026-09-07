@@ -182,7 +182,10 @@ VIEWS.monmois = () => {
       : { label: 'À venir', value: upcoming.length, detail: 'sur ' + mine.length + ' ce mois-ci', glyph: 'clock' }
   ]
 
-  const weekSlots = plan.slots.filter((slot) => slot.week === plan.week)
+  const holderOf = (slot) => (isFellow ? plan.fellows : plan.seniors)[slot.id]
+  const onlyMine = S.monthFilter !== 'all'
+  const weekAll = plan.slots.filter((slot) => slot.week === plan.week)
+  const weekSlots = onlyMine ? weekAll.filter((slot) => holderOf(slot) === me.id) : weekAll
   const dayNumbers = weekSlots.reduce((list, slot) => (list.indexOf(slot.dayNumber) === -1 ? list.concat(slot.dayNumber) : list), []).sort((left, right) => left - right)
   const weekAct = chosen === 'sep' ? 'set-live-week' : 'set-week'
 
@@ -195,18 +198,25 @@ VIEWS.monmois = () => {
     const past = slot.date < TODAY
 
     if (isMine) {
+      /* Coral is the portal's identity accent — the same one on your avatar.
+         Green is reserved for success, which a vacation is not. */
+      const swappable = plan.published && !past
       const trailing = `<span style="display:inline-flex;align-items:center;gap:7px;flex-shrink:0">
         ${partner ? avatar(partner.initials, partner.coordinator ? T.navy50 : T.gray100, partner.coordinator ? T.navy600 : T.gray600, 26) : ''}
-        <span style="display:inline-flex;align-items:center;gap:5px;border-radius:999px;background:${past ? T.gray100 : T.okBg};padding:4px 10px 4px 7px">
-          ${icon(past ? 'check' : 'star', past ? T.text2 : T.ok700, 13)}
-          <span style="font-size:11px;font-weight:600;color:${past ? T.text2 : T.ok700}">${past ? 'Faite' : 'Ma vacation'}</span>
+        <span style="display:inline-flex;align-items:center;gap:5px;border-radius:999px;background:${past ? T.gray100 : T.coral100};padding:4px 10px 4px 7px">
+          ${icon(past ? 'check' : 'star', past ? T.text2 : T.coral700, 13)}
+          <span style="font-size:11px;font-weight:600;color:${past ? T.text2 : T.coral700}">${past ? 'Faite' : 'Ma vacation'}</span>
         </span>
+        ${swappable ? `<span title="Céder ou échanger cette vacation" style="display:flex;align-items:center;justify-content:center;width:30px;height:30px;border:1px solid ${T.coral200};border-radius:9px;background:${T.surface}">${icon('swap', T.coral600, 15)}</span>` : ''}
       </span>`
       return slotRow(slot, {
         trailing,
-        bg: past ? T.gray25 : T.okBg,
-        border: past ? T.line : T.okBorder,
-        secondary: partner ? 'avec ' + partner.name : null
+        bg: past ? T.gray25 : T.coral50,
+        border: past ? T.line : T.coral200,
+        secondary: partner ? 'avec ' + partner.name : null,
+        /* Any vacation is actionable, not just the next one. */
+        act: swappable ? 'swap-from' : undefined,
+        arg: swappable ? slot.id : undefined
       })
     }
 
@@ -254,14 +264,21 @@ VIEWS.monmois = () => {
         <section style="${CARD};overflow:hidden">
           ${sectionHead(
             plan.period.label + ' — ' + plural(mine.length, 'vacation') + ' pour moi',
-            `<span style="display:flex;align-items:center;gap:12px"><span style="font-size:13px;color:${T.text2}">${plural(weekSlots.length, 'vacation')} cette semaine</span>${weekSegments(plan.weeks, plan.week, weekAct)}</span>`
+            `<span style="display:flex;align-items:center;gap:12px">
+              ${segmented([{ id: 'mine', label: 'Mes vacations' }, { id: 'all', label: 'Tout le mois' }], onlyMine ? 'mine' : 'all', 'month-filter')}
+              ${weekSegments(plan.weeks, plan.week, weekAct)}
+            </span>`
           )}
           ${halfDayHeads('180px')}
+          ${dayNumbers.length === 0 ? `<div style="padding:36px 24px;text-align:center">
+            <p style="margin:0;font-size:14px;font-weight:500;color:${T.text}">Aucune vacation pour vous cette semaine.</p>
+            <p style="margin:6px 0 0;font-size:13px;color:${T.text2}">Choisissez une autre semaine, ou passez à « Tout le mois » pour voir celles de l’équipe.</p>
+          </div>` : ''}
           ${dayNumbers.map((dayNumber, position) => {
             const daySlots = weekSlots.filter((slot) => slot.dayNumber === dayNumber)
             const morning = daySlots.filter((slot) => slot.halfDay === 'MORNING')
             const afternoon = daySlots.filter((slot) => slot.halfDay === 'AFTERNOON')
-            const mineHere = daySlots.filter((slot) => (isFellow ? plan.fellows : plan.seniors)[slot.id] === me.id).length
+            const mineHere = daySlots.filter((slot) => holderOf(slot) === me.id).length
             const today = daySlots[0].date.getTime() === TODAY.getTime()
             const empty = `<span style="display:flex;align-items:center;min-height:46px;font-size:12px;color:${T.gray300};padding-left:8px">Aucune vacation</span>`
             return `<div style="display:grid;grid-template-columns:180px 1fr 1fr;gap:0;border-bottom:1px solid ${T.gray100};padding:14px 20px;background:${today ? T.infoBg : position % 2 ? T.gray25 : T.surface}">
@@ -271,8 +288,8 @@ VIEWS.monmois = () => {
             </div>`
           }).join('')}
           ${gridLegend(`<span style="display:inline-flex;align-items:center;gap:10px">
-            <span style="display:inline-flex;align-items:center;gap:5px;border-radius:999px;background:${T.okBg};padding:3px 9px 3px 6px">${icon('star', T.ok700, 13)}<span style="font-size:11px;font-weight:600;color:${T.ok700}">Mes vacations</span></span>
-            <span style="font-size:12px;color:${T.text3}">les autres restent visibles, en retrait</span>
+            <span style="display:inline-flex;align-items:center;gap:5px;border-radius:999px;background:${T.coral100};padding:3px 9px 3px 6px">${icon('star', T.coral700, 13)}<span style="font-size:11px;font-weight:600;color:${T.coral700}">Mes vacations</span></span>
+            <span style="font-size:12px;color:${T.text3}">${onlyMine ? 'les autres sont masquées' : 'les autres restent visibles, en retrait'} · cliquez l’une des vôtres pour la céder ou l’échanger</span>
           </span>`)}
         </section>
       </div>
@@ -290,7 +307,7 @@ VIEWS.monmois = () => {
             })()}
           </div>
           <div style="display:flex;gap:8px;margin-top:12px">
-            ${button({ label: 'Céder cette vacation', variant: 'outline', nav: 'echanges', style: 'flex:1;font-size:13px' })}
+            ${button({ label: 'Céder ou échanger celle-ci', variant: 'outline', icon: 'swap', act: 'swap-from', arg: next.id, style: 'flex:1;font-size:13px' })}
           </div>
         </section>` : ''}
 
