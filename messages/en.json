@@ -2313,7 +2313,9 @@
         "reset": "Reset",
         "changes": "Changes emitted: {count}",
         "noCrf": "This study has no published CRF yet."
-      }
+      },
+      "seriesHint": "Several series possible",
+      "seriesSelected": "{count} of {total} selected"
     },
     "training": {
       "title": "My training",

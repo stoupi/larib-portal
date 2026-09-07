@@ -3,7 +3,7 @@
 import { useMemo, useRef, useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { bullsEyeShapes } from '@/lib/corelab/crf/bullseye-geometry'
-import { segmentColour } from '@/lib/corelab/crf/segment-colours'
+import { resolveSegmentColour } from '@/lib/corelab/crf/segment-colours'
 import type { FieldDefinition } from '@/lib/corelab/crf/schema'
 import type { SegmentValues } from '@/types/corelab'
 
@@ -67,7 +67,8 @@ export function BullsEye({ field, value, onChange, readOnly, highlight }: BullsE
       >
         {shapes.map((shape) => {
           const raw = segments[String(shape.segment)]
-          const colour = segmentColour(options.indexOf(typeof raw === 'string' ? raw : ''))
+          const label = typeof raw === 'string' ? raw : ''
+          const colour = resolveSegmentColour(options.indexOf(label), field.optionColours?.[label])
           return (
             <g key={shape.segment}>
               <path
@@ -107,7 +108,7 @@ export function BullsEye({ field, value, onChange, readOnly, highlight }: BullsE
         <p className="max-w-xs text-xs text-text-secondary">{mode === 'brush' ? t('brushHelp') : t('cycleHelp')}</p>
         <div className="flex flex-col gap-1">
           {options.map((option, index) => {
-            const colour = segmentColour(index)
+            const colour = resolveSegmentColour(index, field.optionColours?.[option])
             const selected = option === brushOption
             return (
               <button

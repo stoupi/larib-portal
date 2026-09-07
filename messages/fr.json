@@ -2311,7 +2311,9 @@
         "reset": "Réinitialiser",
         "changes": "Modifications émises : {count}",
         "noCrf": "Cette étude n'a pas encore de CRF publié."
-      }
+      },
+      "seriesHint": "Plusieurs séries possibles",
+      "seriesSelected": "{count} sur {total} sélectionnées"
     },
     "training": {
       "title": "Ma formation",

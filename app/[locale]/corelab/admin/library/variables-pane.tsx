@@ -39,7 +39,10 @@ export function VariablesPane({ variables, valueSets }: VariablesPaneProps) {
     [valueSets],
   )
 
+  // The list shows the edit in progress, so a default or a bound is judged on the preview.
   function fieldOf(variable: LibraryVariableWithUsage): FieldDefinition | null {
+    const pending = draft[variable.code]
+    if (pending) return pending
     const items = itemsOf.get(variable.valueSet?.id ?? '')?.items ?? []
     try {
       return variableToFieldDefinition(variable, items)
@@ -126,17 +129,17 @@ export function VariablesPane({ variables, valueSets }: VariablesPaneProps) {
               return (
                 <div
                   key={variable.id}
-                  role="button"
-                  tabIndex={0}
                   data-testid={`variable-${variable.code}`}
-                  onClick={() => setCode(variable.code)}
-                  onKeyDown={(event) => { if (event.key === 'Enter') setCode(variable.code) }}
+                  onFocusCapture={() => setCode(variable.code)}
                   className={cn(
-                    'cursor-pointer rounded-lg px-2.5 hover:bg-gray-25',
+                    'rounded-lg px-2.5 hover:bg-gray-25 [&_[data-slot=field-name]]:cursor-pointer',
                     variable.code === current?.code ? 'bg-gray-25 shadow-[inset_2px_0_0_var(--color-coral-600)]' : '',
                   )}
+                  onClick={(event) => {
+                    if ((event.target as HTMLElement).closest('[data-slot=field-name]')) setCode(variable.code)
+                  }}
                 >
-                  <FieldPreview key={variable.id} field={preview} />
+                  <FieldPreview key={`${variable.id}-${JSON.stringify(preview.defaultValue)}`} field={preview} />
                 </div>
               )
             })}

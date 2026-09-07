@@ -11,8 +11,7 @@ async function login(page: Page, email: string, locale: 'en' | 'fr' = 'en') {
 }
 
 async function selectOption(page: Page, fieldId: string, option: string) {
-  await page.locator(`[data-field="${fieldId}"]`).locator('button').first().click()
-  await page.getByRole('option', { name: option, exact: true }).click()
+  await page.locator(`[data-field="${fieldId}"]`).getByRole('radio', { name: option, exact: true }).click()
 }
 
 async function studyId(page: Page): Promise<string> {
@@ -88,9 +87,7 @@ test('a reader trains, calibrates and is certified, then reaches production', as
   await page.getByRole('button', { name: /sign and submit/i }).click()
   await expect(page.getByText(/missing required fields/i)).toBeVisible()
 
-  await page.locator('[data-field="series_availability"]').locator('button').first().click()
-  await page.getByRole('option', { name: /^SAX, not selected/ }).click()
-  await page.keyboard.press('Escape')
+  await page.locator('[data-field="series_availability"]').getByRole('button', { name: 'SAX', exact: true }).click()
   await selectOption(page, 'artefacts_grade', '0')
   for (const field of [
     'wall_motion_abnormalities', 'wall_motion_global', 'asynchronism',

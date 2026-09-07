@@ -15,7 +15,7 @@ export function LibraryLayout({ rail, main, inspector }: { rail: ReactNode; main
 
 export function RailHeader({ title, count }: { title: string; count: string }) {
   return (
-    <div className="flex items-baseline justify-between gap-2 bg-coral-600 px-4 py-3">
+    <div className="flex items-baseline justify-between gap-2 bg-gradient-to-b from-coral-500 to-coral-600 px-4 py-3">
       <span className="text-[11px] font-semibold uppercase tracking-[0.03em] text-white">{title}</span>
       <span className="text-xs text-coral-100">{count}</span>
     </div>
@@ -57,7 +57,7 @@ export function RailButton({
 
 export function PaneHeader({ title, code, badges, action }: { title: string; code?: string; badges?: string[]; action?: ReactNode }) {
   return (
-    <header className="flex items-start justify-between gap-4 bg-coral-600 px-5 py-4">
+    <header className="flex items-start justify-between gap-4 bg-gradient-to-b from-coral-500 to-coral-600 px-5 py-4">
       <div className="min-w-0">
         <div className="flex flex-wrap items-center gap-2">
           <h2 className="text-lg font-semibold tracking-[-0.01em] text-white">{title}</h2>
@@ -92,7 +92,7 @@ export function SummaryStrip({ items, hint }: { items: Array<{ value: string; la
 
 export function InspectorHeader({ kind, title, subtitle }: { kind: string; title: string; subtitle?: string }) {
   return (
-    <header className="bg-coral-600 px-4 py-3.5">
+    <header className="bg-gradient-to-b from-coral-500 to-coral-600 px-4 py-3.5">
       <div className="text-[11px] font-semibold uppercase tracking-[0.03em] text-coral-100">{kind}</div>
       <div className="mt-0.5 text-base font-semibold leading-tight text-white">{title}</div>
       {subtitle ? <div className="mt-0.5 font-mono text-xs text-coral-100">{subtitle}</div> : null}

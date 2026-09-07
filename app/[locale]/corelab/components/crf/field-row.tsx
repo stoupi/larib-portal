@@ -40,7 +40,7 @@ export function FieldRow({ field, value, onChange, readOnly }: FieldRowProps) {
 
   return (
     <div className="flex flex-col gap-2 border-b border-border py-3 last:border-b-0 md:flex-row md:items-start md:justify-between">
-      <div className="md:w-1/3">
+      <div data-slot="field-name" className="md:w-1/3">
         <div className="flex items-center gap-2">
           <span className="text-sm font-medium text-text-primary">{field.name}</span>
           {value ? (

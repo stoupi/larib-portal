@@ -133,17 +133,17 @@ export function BlocksPane({ blocks }: BlocksPaneProps) {
                 {section.fields.map((field) => (
                   <div
                     key={field.id}
-                    role="button"
-                    tabIndex={0}
                     data-testid={`block-field-${field.id}`}
-                    onClick={() => setFieldId(field.id)}
-                    onKeyDown={(event) => { if (event.key === 'Enter') setFieldId(field.id) }}
+                    onFocusCapture={() => setFieldId(field.id)}
                     className={cn(
-                      'cursor-pointer rounded-lg px-2.5 hover:bg-gray-25',
+                      'rounded-lg px-2.5 hover:bg-gray-25 [&_[data-slot=field-name]]:cursor-pointer',
                       field.id === selected?.id ? 'bg-gray-25 shadow-[inset_2px_0_0_var(--color-coral-600)]' : '',
                     )}
+                    onClick={(event) => {
+                      if ((event.target as HTMLElement).closest('[data-slot=field-name]')) setFieldId(field.id)
+                    }}
                   >
-                    <FieldPreview key={`${block.id}-${field.id}`} field={field} />
+                    <FieldPreview key={`${block.id}-${field.id}-${JSON.stringify(field.defaultValue)}`} field={field} />
                   </div>
                 ))}
               </div>
