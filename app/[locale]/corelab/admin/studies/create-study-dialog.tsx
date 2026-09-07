@@ -15,6 +15,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { createStudyAction } from '../actions'
+import { codeProblem } from '@/lib/corelab/studies/code'
 
 const FormSchema = z.object({
   code: z.string().trim().min(2).max(50).regex(/^[A-Z0-9-]+$/),
@@ -35,6 +36,9 @@ export function CreateStudyDialog() {
     resolver: zodResolver(FormSchema),
     defaultValues: { code: '', name: '', description: '', maxExamsPerPatient: 2, reviewDeadlineDays: 14 },
   })
+
+  const typedCode = form.watch('code')
+  const codeIssue = form.formState.errors.code || form.formState.isSubmitted ? codeProblem(typedCode ?? '') : null
 
   const action = useAction(createStudyAction, {
     onSuccess: ({ data }) => {
@@ -75,9 +79,15 @@ export function CreateStudyDialog() {
           <div className="space-y-2">
             <Label htmlFor="study-code">{t('code')}</Label>
             <Input id="study-code" {...form.register('code')} placeholder="MIR-DJ-2024" />
-            <p className={form.formState.errors.code ? 'text-xs text-red-600' : 'text-xs text-text-secondary'}>
-              {t('codeHelp')}
-            </p>
+            {codeIssue ? (
+              <p className="text-xs text-red-600">
+                {codeIssue.kind === 'TOO_SHORT'
+                  ? t('codeTooShort')
+                  : t('codeCharacters', { suggestion: codeIssue.suggestion })}
+              </p>
+            ) : (
+              <p className="text-xs text-text-secondary">{t('codeHelp')}</p>
+            )}
           </div>
           <div className="space-y-2">
             <Label htmlFor="study-name">{t('name')}</Label>

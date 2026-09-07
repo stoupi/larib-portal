@@ -2153,7 +2153,9 @@
       "cancel": "Annuler",
       "created": "Étude créée.",
       "error": "L'étude n'a pas pu être créée.",
-      "nameRequired": "Deux caractères au minimum."
+      "nameRequired": "Deux caractères au minimum.",
+      "codeTooShort": "Le code fait au moins deux caractères.",
+      "codeCharacters": "Le code n'accepte que des majuscules, des chiffres et des tirets. Essayez {suggestion}."
     },
     "tabs": {
       "config": "Configuration",

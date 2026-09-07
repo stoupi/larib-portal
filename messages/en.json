@@ -2155,7 +2155,9 @@
       "cancel": "Cancel",
       "created": "Study created.",
       "error": "The study could not be created.",
-      "nameRequired": "Two characters minimum."
+      "nameRequired": "Two characters minimum.",
+      "codeTooShort": "A code is at least two characters long.",
+      "codeCharacters": "A code only takes capitals, digits and hyphens. Try {suggestion}."
     },
     "tabs": {
       "config": "Configuration",
