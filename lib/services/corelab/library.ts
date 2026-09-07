@@ -156,7 +156,9 @@ export function variableToField(
   return variableToFieldDefinition(variable, items)
 }
 
-export async function listVariablesWithUsage(): Promise<Array<LibraryVariable & { usedIn: Array<{ code: string; name: string }> }>> {
+export type LibraryVariableWithUsage = LibraryVariable & { usedIn: Array<{ code: string; name: string }> }
+
+export async function listVariablesWithUsage(): Promise<LibraryVariableWithUsage[]> {
   const [variables, blocks] = await Promise.all([listVariables(), listBlocks()])
   const usage = variableUsage(blocks)
   return variables.map((variable) => ({ ...variable, usedIn: usage.get(variable.code) ?? [] }))

@@ -617,7 +617,29 @@ async function main() {
 			{ code: 'wall_motion_segments', name: 'Wall motion segments', modality: 'CMR', type: 'segment_categorical', params: { segmentCount: 17, required: true }, valueSetId: wallMotionSet.id },
 		],
 	});
-	console.log('✅ Created CoreLab library: 1 value set, 3 variables');
+	await prisma.corelabLibraryBlock.create({
+		data: {
+			code: 'cine_lv',
+			name: 'Cine — Left Ventricle',
+			kind: 'SECTION',
+			modality: 'CMR',
+			definition: {
+				id: 'cine_lv',
+				name: 'Left Ventricle',
+				fields: [
+					{ id: 'lv_measurable', name: 'LV Measurable', type: 'boolean', required: true, defaultValue: true },
+					{
+						id: 'lvef', name: 'LVEF', type: 'numeric', required: true, unit: '%', min: 10, max: 80,
+						conditionalOn: { fieldId: 'lv_measurable', value: true },
+						calibrationTolerance: { absolute: 5, relativePercent: 8 },
+						discordanceThreshold: { minorPercent: 5, majorPercent: 10 },
+					},
+					{ id: 'lv_edv', name: 'LV EDV', type: 'numeric', required: true, unit: 'mL', min: 30, max: 350 },
+				],
+			},
+		},
+	});
+	console.log('✅ Created CoreLab library: 1 value set, 3 variables, 1 block');
 
 	console.log('✅ Created CoreLab training and calibration:', coreModule.title, studyQuizModule.title, calibrationCase.code);
 

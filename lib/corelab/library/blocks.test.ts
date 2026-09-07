@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { blockSummary, danglingConditions, readBlockDefinition, sectionsOf, variableUsage } from './blocks'
+import { blockSummary, danglingConditions, groupBlocks, readBlockDefinition, sectionsOf, variableUsage } from './blocks'
 import type { SequenceDefinition } from '@/lib/corelab/crf/schema'
 
 const sequence: SequenceDefinition = {
@@ -64,5 +64,30 @@ describe('variableUsage', () => {
     expect(usage.get('lge_presence')).toEqual([{ code: 'lge', name: 'LGE' }, { code: 'lge_lv', name: 'LGE — LV' }])
     expect(usage.get('lge_available')).toEqual([{ code: 'lge', name: 'LGE' }])
     expect(usage.get('nothing')).toBeUndefined()
+  })
+})
+
+describe('groupBlocks', () => {
+  const entries = [
+    { id: '1', code: 'lge', name: 'LGE', kind: 'SEQUENCE' as const, definition: sequence },
+    { id: '2', code: 'lge_availability', name: 'LGE — Availability', kind: 'SECTION' as const, definition: sequence.sections[0] },
+    { id: '3', code: 'lge_lv', name: 'LGE — LV LGE', kind: 'SECTION' as const, definition: sequence.sections[1] },
+    { id: '4', code: 'loose', name: 'Loose section', kind: 'SECTION' as const, definition: { id: 'loose', name: 'Loose', fields: sequence.sections[0].fields } },
+  ]
+
+  it('files each section under the sequence whose definition holds it', () => {
+    const groups = groupBlocks(entries)
+    expect(groups[0].sequence?.code).toBe('lge')
+    expect(groups[0].sections.map((section) => section.code)).toEqual(['lge_availability', 'lge_lv'])
+  })
+
+  it('keeps a section belonging to no sequence in its own group', () => {
+    const groups = groupBlocks(entries)
+    expect(groups[1].sequence).toBeNull()
+    expect(groups[1].sections.map((section) => section.code)).toEqual(['loose'])
+  })
+
+  it('adds no group when every section has a home', () => {
+    expect(groupBlocks(entries.slice(0, 3))).toHaveLength(1)
   })
 })

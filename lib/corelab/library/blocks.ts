@@ -68,3 +68,28 @@ export function variableUsage(blocks: BlockRef[]): Map<string, Array<{ code: str
   }
   return usage
 }
+
+export type BlockEntry = { id: string; code: string; name: string; kind: 'SECTION' | 'SEQUENCE'; definition: unknown }
+export type BlockGroup = { sequence: BlockEntry | null; sections: BlockEntry[] }
+
+function slug(value: string): string {
+  return value.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '')
+}
+
+// Blocks are stored flat; a section belongs to the sequence whose definition holds it.
+export function groupBlocks(blocks: BlockEntry[]): BlockGroup[] {
+  const sequences = blocks.filter((block) => block.kind === 'SEQUENCE')
+  const sections = blocks.filter((block) => block.kind === 'SECTION')
+  const taken = new Set<string>()
+
+  const groups = sequences.map((sequence) => {
+    const definition = readBlockDefinition(sequence.definition)
+    const owned = new Set(definition ? sectionsOf(definition).map((section) => slug(section.id)) : [])
+    const children = sections.filter((section) => owned.has(section.code))
+    for (const child of children) taken.add(child.code)
+    return { sequence, sections: children }
+  })
+
+  const orphans = sections.filter((section) => !taken.has(section.code))
+  return orphans.length > 0 ? [...groups, { sequence: null, sections: orphans }] : groups
+}
