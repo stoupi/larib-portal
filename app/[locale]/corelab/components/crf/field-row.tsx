@@ -17,6 +17,7 @@ type FieldRowProps = {
   value: FieldValue | undefined
   onChange: (value: FieldValue | null) => void
   readOnly: boolean
+  preview?: boolean
 }
 
 const SOURCE_STYLE: Record<FieldValue['source'], string> = {
@@ -25,7 +26,7 @@ const SOURCE_STYLE: Record<FieldValue['source'], string> = {
   MODIFIED: 'border-amber-200 bg-amber-50 text-amber-800',
 }
 
-export function FieldRow({ field, value, onChange, readOnly }: FieldRowProps) {
+export function FieldRow({ field, value, onChange, readOnly, preview = false }: FieldRowProps) {
   const t = useTranslations('corelab.form')
 
   function emit(raw: unknown) {
@@ -43,7 +44,7 @@ export function FieldRow({ field, value, onChange, readOnly }: FieldRowProps) {
       <div data-slot="field-name" className="md:w-1/3">
         <div className="flex items-center gap-2">
           <span className="text-sm font-medium text-text-primary">{field.name}</span>
-          {value ? (
+          {preview ? null : value ? (
             <span data-testid={`source-${field.id}`} className={`rounded-md border px-1.5 py-0.5 text-[11px] ${SOURCE_STYLE[value.source]}`}>
               {t(`source.${value.source}`)}
             </span>
@@ -86,14 +87,14 @@ export function FieldRow({ field, value, onChange, readOnly }: FieldRowProps) {
             />
           )}
         </div>
-        <FlagMenu
+        {preview ? null : <FlagMenu
           flag={value?.flag ?? null}
           flagNote={value?.flagNote ?? null}
           disabled={readOnly}
           onChange={(flag, flagNote) =>
             onChange({ value: value?.value ?? null, source: value?.source ?? 'MANUAL', flag, flagNote })
           }
-        />
+        />}
       </div>
     </div>
   )

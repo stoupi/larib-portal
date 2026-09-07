@@ -4,7 +4,9 @@ import { ToggleGroupItem } from '@/components/ui/toggle-group'
 import { cn } from '@/lib/utils'
 
 // A selected value must read across the room: the pale toggle state hid it.
-const CHIP = 'cursor-pointer rounded-[10px] border border-line bg-gray-25 text-text-secondary'
+// ToggleGroupItem sizes items to share one row; a wrapping chip must keep its own width.
+const CHIP = 'flex-none min-w-fit cursor-pointer rounded-[10px] first:rounded-[10px] last:rounded-[10px]'
+  + ' border border-line bg-gray-25 text-text-secondary'
   + ' data-[state=on]:border-navy-700 data-[state=on]:bg-navy-700 data-[state=on]:font-semibold data-[state=on]:text-white'
   + ' hover:bg-gray-50 data-[state=on]:hover:bg-navy-700'
 

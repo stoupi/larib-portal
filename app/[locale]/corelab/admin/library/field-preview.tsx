@@ -12,5 +12,5 @@ function initialValue(field: FieldDefinition): FieldValue | undefined {
 
 export function FieldPreview({ field }: { field: FieldDefinition }) {
   const [value, setValue] = useState<FieldValue | undefined>(() => initialValue(field))
-  return <FieldRow field={field} value={value} onChange={(next) => setValue(next ?? undefined)} readOnly={false} />
+  return <FieldRow preview field={field} value={value} onChange={(next) => setValue(next ?? undefined)} readOnly={false} />
 }
