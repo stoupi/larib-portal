@@ -19,6 +19,11 @@ export const fieldDefinitionSchema = z.object({
   defaultValue: z.unknown().optional(),
   calibrationTolerance: z.object({ absolute: z.number().nonnegative(), relativePercent: z.number().nonnegative() }).optional(),
   discordanceThreshold: z.object({ minorPercent: z.number().nonnegative(), majorPercent: z.number().nonnegative() }).optional(),
+  guidance: z.object({
+    level: z.enum(['INFO', 'WARNING']),
+    text: z.string().max(600),
+    imageKey: z.string().min(1).optional(),
+  }).optional(),
   valueSetId: z.string().optional(),
   optionColours: z.record(z.string(), z.string()).optional(),
   scale: z.object({ steps: z.number().int().min(2).max(10), render: z.enum(['stars', 'slider', 'buttons']) }).optional(),

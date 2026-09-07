@@ -98,6 +98,19 @@ export function NewVariableDialog({ valueSets }: { valueSets: ValueSet[] }) {
   const field: FieldDefinition | null = parsed.success ? parsed.data : null
   const ready = Boolean(field) && draft.name.trim().length >= 2 && /^[a-z0-9_]{2,}$/.test(draft.code) && (!usesValueSet || Boolean(valueSet))
   const defaultChips = draft.type === 'boolean' ? ['Yes', 'No'] : items.map((item) => item.label)
+  const multipleDefault = draft.type === 'series_availability'
+  const defaultSeries = multipleDefault && Array.isArray(draft.defaultValue)
+    ? draft.defaultValue.filter((entry): entry is string => typeof entry === 'string')
+    : []
+
+  function nextDefault(label: string): unknown {
+    if (multipleDefault) {
+      const next = defaultSeries.includes(label) ? defaultSeries.filter((entry) => entry !== label) : [...defaultSeries, label]
+      return next.length === 0 ? undefined : next
+    }
+    const value = draft.type === 'boolean' ? label === 'Yes' : label
+    return draft.defaultValue === value ? undefined : value
+  }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -192,11 +205,14 @@ export function NewVariableDialog({ valueSets }: { valueSets: ValueSet[] }) {
               />
             ) : defaultChips.length > 0 ? (
               <div className="flex flex-wrap gap-1.5">
-                {defaultChips.map((label) => {
-                  const value = draft.type === 'boolean' ? label === 'Yes' : label
-                  const selected = draft.defaultValue === value
-                  return <ChoiceChip key={label} label={label} selected={selected} onClick={() => setDraft({ ...draft, defaultValue: selected ? undefined : value })} />
-                })}
+                {defaultChips.map((label) => (
+                  <ChoiceChip
+                    key={label}
+                    label={label}
+                    selected={multipleDefault ? defaultSeries.includes(label) : draft.defaultValue === (draft.type === 'boolean' ? label === 'Yes' : label)}
+                    onClick={() => setDraft({ ...draft, defaultValue: nextDefault(label) })}
+                  />
+                ))}
               </div>
             ) : (
               <p className="text-[13px] text-text-muted">{ti('defaultNotApplicable')}</p>

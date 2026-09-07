@@ -9,6 +9,11 @@ export const variableParamsSchema = z.object({
   segmentCount: z.union([z.literal(16), z.literal(17)]).optional(),
   calibrationTolerance: z.object({ absolute: z.number().nonnegative(), relativePercent: z.number().nonnegative() }).optional(),
   discordanceThreshold: z.object({ minorPercent: z.number().nonnegative(), majorPercent: z.number().nonnegative() }).optional(),
+  guidance: z.object({
+    level: z.enum(['INFO', 'WARNING']),
+    text: z.string().max(600),
+    imageKey: z.string().min(1).optional(),
+  }).optional(),
   defaultValue: z.unknown().optional(),
   conditionalOn: z.object({ fieldId: z.string(), value: z.unknown() }).optional(),
   scale: z.object({ steps: z.number().int().min(2).max(10), render: z.enum(['stars', 'slider', 'buttons']) }).optional(),
@@ -55,6 +60,7 @@ export function variableToFieldDefinition(
     ...(params.discordanceThreshold ? { discordanceThreshold: params.discordanceThreshold } : {}),
     ...(params.defaultValue !== undefined ? { defaultValue: params.defaultValue } : {}),
     ...(params.conditionalOn ? { conditionalOn: params.conditionalOn } : {}),
+    ...(params.guidance && params.guidance.text.trim() !== '' ? { guidance: params.guidance } : {}),
     ...(params.scale ? { scale: params.scale } : {}),
     ...(items.length > 0
       ? { options: items.map((item) => item.label), ...(Object.keys(colours).length > 0 ? { optionColours: colours } : {}) }
@@ -73,6 +79,7 @@ export function fieldToVariableParams(field: FieldDefinition): VariableParams {
     ...(field.discordanceThreshold ? { discordanceThreshold: field.discordanceThreshold } : {}),
     ...(field.defaultValue !== undefined ? { defaultValue: field.defaultValue } : {}),
     ...(field.conditionalOn ? { conditionalOn: field.conditionalOn } : {}),
+    ...(field.guidance && field.guidance.text.trim() !== '' ? { guidance: field.guidance } : {}),
     ...(field.scale ? { scale: field.scale } : {}),
   }
 }

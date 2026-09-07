@@ -54,6 +54,13 @@ test('the data manager reads the library as a reader would, and edits what it ac
   await page.getByRole('button', { name: /^save$/i }).last().click()
   await expect(page.getByRole('spinbutton', { name: 'Maximum' })).toHaveValue('60', { timeout: 60000 })
 
+  // Guidance: what the data manager writes here reaches the reader as a hover.
+  await page.getByTestId('variable-lvef').locator('[data-slot=field-name]').click()
+  await page.getByRole('button', { name: /^watch out$/i }).click()
+  await page.getByRole('textbox', { name: /guidance text/i }).fill('Measure at end-diastole.')
+  await page.getByRole('button', { name: /^save$/i }).last().click()
+  await expect(page.getByTestId('variable-lvef').getByRole('button', { name: /^watch out$/i })).toBeVisible({ timeout: 60000 })
+
   // Blocks: a section renders as the reader sees it, and its condition is set from the inspector.
   await page.getByRole('button', { name: /^blocks$/i }).click()
   await expect(page.getByTestId('block-field-lvef')).toBeVisible()

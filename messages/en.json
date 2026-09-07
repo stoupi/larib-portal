@@ -2315,7 +2315,9 @@
         "noCrf": "This study has no published CRF yet."
       },
       "seriesHint": "Several series possible",
-      "seriesSelected": "{count} of {total} selected"
+      "seriesSelected": "{count} of {total} selected",
+      "guidanceInfo": "Information",
+      "guidanceWarning": "Watch out"
     },
     "training": {
       "title": "My training",
@@ -3042,7 +3044,20 @@
         "valueSet": "Value set",
         "presentIn": "Present in",
         "save": "Save",
-        "saved": "Saved"
+        "saved": "Saved",
+        "guidance": "Filling guidance",
+        "guidanceNone": "None",
+        "guidanceInfo": "Information",
+        "guidanceWarning": "Watch out",
+        "guidanceText": "Guidance text",
+        "guidancePlaceholder": "What the reader must know before filling this variable.",
+        "guidanceAddImage": "Add a screenshot",
+        "guidanceRemoveImage": "Remove the screenshot",
+        "guidanceUploading": "Uploading…",
+        "guidanceImage": "Guidance screenshot",
+        "guidanceHint": "An icon appears beside the variable name; the text and the screenshot show on hover.",
+        "imageTooLarge": "The image is over 4 MB.",
+        "imageFailed": "The image upload failed."
       }
     }
   }

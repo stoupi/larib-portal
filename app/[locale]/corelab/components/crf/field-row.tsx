@@ -9,6 +9,7 @@ import { FieldInputText } from './field-input-text'
 import { FieldInputSeries } from './field-input-series'
 import { BullsEye } from './bulls-eye'
 import { FlagMenu } from './flag-menu'
+import { FieldGuidance } from './field-guidance'
 import type { FieldDefinition } from '@/lib/corelab/crf/schema'
 import type { FieldValue, SegmentValues } from '@/types/corelab'
 
@@ -44,6 +45,7 @@ export function FieldRow({ field, value, onChange, readOnly, preview = false }: 
       <div data-slot="field-name" className="md:w-1/3">
         <div className="flex items-center gap-2">
           <span className="text-sm font-medium text-text-primary">{field.name}</span>
+          {field.guidance && field.guidance.text.trim() !== '' ? <FieldGuidance guidance={field.guidance} /> : null}
           {preview ? null : value ? (
             <span data-testid={`source-${field.id}`} className={`rounded-md border px-1.5 py-0.5 text-[11px] ${SOURCE_STYLE[value.source]}`}>
               {t(`source.${value.source}`)}

@@ -54,6 +54,19 @@ describe('variableToFieldDefinition', () => {
     expect(field.defaultValue).toBe('Normal')
   })
 
+  it('carries the guidance a data manager wrote for the reader', () => {
+    const field = variableToFieldDefinition(
+      { ...numeric, params: { required: true, guidance: { level: 'WARNING', text: 'Mesurer en télédiastole.', imageKey: 'corelab/library/guidance/x.png' } } },
+      [],
+    )
+    expect(field.guidance).toEqual({ level: 'WARNING', text: 'Mesurer en télédiastole.', imageKey: 'corelab/library/guidance/x.png' })
+  })
+
+  it('drops a guidance with no text rather than showing an empty bubble', () => {
+    const field = variableToFieldDefinition({ ...numeric, params: { required: true, guidance: { level: 'INFO', text: '' } } }, [])
+    expect(field.guidance).toBeUndefined()
+  })
+
   it('refuses a variable whose code could never be a field id', () => {
     expect(() => variableToFieldDefinition({ ...numeric, code: 'LVEF ratio' }, [])).toThrow()
   })

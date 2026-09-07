@@ -2313,7 +2313,9 @@
         "noCrf": "Cette étude n'a pas encore de CRF publié."
       },
       "seriesHint": "Plusieurs séries possibles",
-      "seriesSelected": "{count} sur {total} sélectionnées"
+      "seriesSelected": "{count} sur {total} sélectionnées",
+      "guidanceInfo": "Information",
+      "guidanceWarning": "Point de vigilance"
     },
     "training": {
       "title": "Ma formation",
@@ -3040,7 +3042,20 @@
         "valueSet": "Jeu de valeurs",
         "presentIn": "Présente dans",
         "save": "Enregistrer",
-        "saved": "Enregistré"
+        "saved": "Enregistré",
+        "guidance": "Aide au remplissage",
+        "guidanceNone": "Aucune",
+        "guidanceInfo": "Information",
+        "guidanceWarning": "Vigilance",
+        "guidanceText": "Texte de l'aide",
+        "guidancePlaceholder": "Ce que le relecteur doit savoir avant de saisir cette variable.",
+        "guidanceAddImage": "Ajouter une capture",
+        "guidanceRemoveImage": "Retirer la capture",
+        "guidanceUploading": "Envoi…",
+        "guidanceImage": "Capture d'aide",
+        "guidanceHint": "Un icône apparaît à côté du nom de la variable ; le texte et la capture s'affichent au survol.",
+        "imageTooLarge": "L'image dépasse 4 Mo.",
+        "imageFailed": "L'envoi de l'image a échoué."
       }
     }
   }

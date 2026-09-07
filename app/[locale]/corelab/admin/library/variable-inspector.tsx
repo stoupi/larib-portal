@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { SingleSelect } from '@/components/ui/single-select'
 import { InspectorHeader, InspectorSection, WarningNote } from './library-chrome'
 import { ChoiceChip, LabelledInput, ValueSetChips } from './inspector-controls'
+import { GuidanceEditor } from './guidance-editor'
 import type { FieldDefinition } from '@/lib/corelab/crf/schema'
 
 const TYPES_WITH_BOUNDS = new Set(['numeric', 'segment_numeric'])
@@ -37,6 +38,25 @@ export function VariableInspector({ input }: { input: InspectorInput }) {
     ? reference.type === 'boolean' ? [true, false] : (reference.options ?? [])
     : []
   const defaultChips = field.type === 'boolean' ? ['Yes', 'No'] : (field.options ?? [])
+  // Available series accept several values at once, so their default is a list.
+  const multiple = field.type === 'series_availability'
+  const defaultSeries = multiple && Array.isArray(field.defaultValue)
+    ? field.defaultValue.filter((entry): entry is string => typeof entry === 'string')
+    : []
+
+  function chipValue(label: string): unknown {
+    return field.type === 'boolean' ? label === 'Yes' : label
+  }
+
+  function nextDefault(label: string): unknown {
+    if (multiple) {
+      const next = defaultSeries.includes(label)
+        ? defaultSeries.filter((entry) => entry !== label)
+        : [...defaultSeries, label]
+      return next.length === 0 ? undefined : next
+    }
+    return field.defaultValue === chipValue(label) ? undefined : chipValue(label)
+  }
 
   function patch(next: Partial<FieldDefinition>) {
     onChange({ ...field, ...next } as FieldDefinition)
@@ -104,16 +124,14 @@ export function VariableInspector({ input }: { input: InspectorInput }) {
             />
           ) : defaultChips.length > 0 ? (
             <div className="flex flex-wrap gap-1.5">
-              {defaultChips.map((label) => {
-                const value = field.type === 'boolean' ? label === 'Yes' : label
-                const selected = field.defaultValue === value
-                return (
-                  <ChoiceChip
-                    key={label} label={label} selected={selected}
-                    onClick={() => patch({ defaultValue: selected ? undefined : value })}
-                  />
-                )
-              })}
+              {defaultChips.map((label) => (
+                <ChoiceChip
+                  key={label}
+                  label={label}
+                  selected={multiple ? defaultSeries.includes(label) : field.defaultValue === chipValue(label)}
+                  onClick={() => patch({ defaultValue: nextDefault(label) })}
+                />
+              ))}
             </div>
           ) : (
             <p className="text-[13px] text-text-muted">{t('defaultNotApplicable')}</p>
@@ -178,6 +196,13 @@ export function VariableInspector({ input }: { input: InspectorInput }) {
               ) : null}
             </>
           )}
+        </InspectorSection>
+
+        <InspectorSection title={t('guidance')}>
+          <GuidanceEditor
+            guidance={field.guidance}
+            onChange={(next) => patch({ guidance: next })}
+          />
         </InspectorSection>
 
         <InspectorSection title={t('tolerated')}>
