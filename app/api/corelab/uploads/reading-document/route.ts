@@ -9,7 +9,7 @@ export const runtime = 'nodejs'
 
 // Files above this size go through a presigned PUT instead: a Vercel function
 // refuses a request body larger than 4.5 MB.
-export const SERVER_UPLOAD_MAX_BYTES = 4 * 1024 * 1024
+const SERVER_UPLOAD_MAX_BYTES = 4 * 1024 * 1024
 
 export async function POST(request: NextRequest) {
   const session = await getTypedSession()
