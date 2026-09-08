@@ -15,23 +15,34 @@
     a { color: #d61f55; text-decoration: none; }
     a:hover { color: #b01547; }
 
-    .ri { display: flex; width: 100%; align-items: center; gap: 6px; padding: 7px 8px; border-radius: 10px; text-align: left; cursor: pointer; margin-bottom: 1px; }
-    .ri:hover { background: #f5f7fa; }
-    .ri.sub { padding-left: 22px; padding-top: 5px; padding-bottom: 5px; }
-    .ri.on { background: #fff1f4; box-shadow: inset 2px 0 0 #d61f55; }
-    .ri.on .ri-l { font-weight: 600; color: #141a22; }
-    .ri.over { box-shadow: inset 0 2px 0 #d61f55; background: #fff1f4; }
     .ri-l { display: block; font-size: 13.5px; color: #363f4c; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .ri-m { display: block; font-size: 11px; color: #9aa5b3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .ri-n { font-size: 11px; color: #9aa5b3; font-variant-numeric: tabular-nums; flex: none; }
-    .ri:hover .ri-n, .ri.on .ri-n { display: none; }
+
+    .seqcard { border: 1px solid #dde2e9; border-radius: 11px; background: #ffffff; margin-bottom: 8px; overflow: hidden; }
+    .seqcard.open { box-shadow: 0 1px 2px rgba(16,28,48,0.05); }
+    .seqhead { display: flex; align-items: center; gap: 7px; background: #f5f7fa; padding: 9px 9px 9px 8px; cursor: pointer; }
+    .seqhead:hover { background: #eceff3; }
+    .seqcard.open .seqhead { border-bottom: 1px solid #eceff3; }
+    .seqhead.on { background: #fff1f4; box-shadow: inset 3px 0 0 #d61f55; }
+    .seqhead.over { box-shadow: inset 0 2px 0 #d61f55; }
+    .seqname { display: block; font-size: 13.5px; font-weight: 600; color: #141a22; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .seqhead.on .seqname { color: #b01547; }
+    .seqmeta { display: block; font-size: 10.5px; font-weight: 500; letter-spacing: 0.03em; text-transform: uppercase; color: #9aa5b3; white-space: nowrap; }
+    .seclist { padding: 5px 6px 6px 12px; }
+    .secrow { display: flex; align-items: center; gap: 7px; padding: 5px 6px 5px 7px; border-radius: 8px; cursor: pointer; }
+    .secrow:hover { background: #f5f7fa; }
+    .secrow.on { background: #fff1f4; box-shadow: inset 2px 0 0 #d61f55; }
+    .secrow.over { box-shadow: inset 0 2px 0 #d61f55; }
+    .secname { min-width: 0; flex: 1; font-size: 12.5px; color: #4d5765; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .secrow.on .secname { font-weight: 600; color: #141a22; }
+    .cnt { font-size: 11px; color: #9aa5b3; font-variant-numeric: tabular-nums; flex: none; }
+    .seqhead:hover .cnt, .seqhead.on .cnt, .secrow:hover .cnt, .secrow.on .cnt { display: none; }
     .chev { flex: none; color: #c4ccd6; transition: transform 0.15s ease; }
     .chev.open { transform: rotate(90deg); }
-    .chev.hide { visibility: hidden; }
     .grip { flex: none; color: #dde2e9; cursor: grab; }
-    .ri:hover .grip, .ri.on .grip { color: #9aa5b3; }
+    .seqhead:hover .grip, .seqhead.on .grip, .secrow:hover .grip, .secrow.on .grip { color: #9aa5b3; }
     .moves { display: none; gap: 3px; flex: none; }
-    .ri:hover .moves, .ri.on .moves { display: inline-flex; }
+    .seqhead:hover .moves, .seqhead.on .moves, .secrow:hover .moves, .secrow.on .moves { display: inline-flex; }
     .mv { display: inline-flex; align-items: center; justify-content: center; height: 20px; width: 20px; padding: 0; border: 1px solid #dde2e9; border-radius: 6px; background: #ffffff; color: #6b7685; cursor: pointer; }
     .mv:hover { background: #f5f7fa; color: #141a22; }
     .mv.off { opacity: 0.3; cursor: default; }
@@ -208,27 +219,51 @@
               <div style="padding: 7px 10px 6px; border-bottom: 1px solid #eceff3; font-size: 11.5px; line-height: 1.4; color: #9aa5b3;">
                 Glissez une séquence ou une section pour changer l'ordre de lecture.
               </div>
-              <div class="scroll" style="flex: 1; padding: 6px;">
-                <sc-for list="{{tree}}" as="node" hint-placeholder-count="8">
-                  <div class="{{node.cls}}" draggable="true" onClick="{{node.pick}}" onDragStart="{{node.dragStart}}" onDragOver="{{node.dragOver}}" onDrop="{{node.drop}}" onDragEnd="{{node.dragEnd}}">
-                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" class="grip"><circle cx="9" cy="6" r="0.6"></circle><circle cx="9" cy="12" r="0.6"></circle><circle cx="9" cy="18" r="0.6"></circle><circle cx="15" cy="6" r="0.6"></circle><circle cx="15" cy="12" r="0.6"></circle><circle cx="15" cy="18" r="0.6"></circle></svg>
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="{{node.chev}}"><path d="m9 6 6 6-6 6"></path></svg>
-                    <span style="min-width: 0; flex: 1;">
-                      <span class="ri-l">{{node.label}}</span>
-                      <span class="ri-m">{{node.meta}}</span>
-                    </span>
-                    <sc-if value="{{node.diverges}}" hint-placeholder-val="{{true}}">
-                      <span class="tag tuned">{{node.diffCount}}</span>
+              <div class="scroll" style="flex: 1; padding: 8px;">
+                <sc-for list="{{tree}}" as="seq" hint-placeholder-count="6">
+                  <div class="{{seq.cardCls}}">
+                    <div class="{{seq.cls}}" draggable="true" onClick="{{seq.pick}}" onDragStart="{{seq.dragStart}}" onDragOver="{{seq.dragOver}}" onDrop="{{seq.drop}}" onDragEnd="{{seq.dragEnd}}">
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" class="grip"><circle cx="9" cy="6" r="0.6"></circle><circle cx="9" cy="12" r="0.6"></circle><circle cx="9" cy="18" r="0.6"></circle><circle cx="15" cy="6" r="0.6"></circle><circle cx="15" cy="12" r="0.6"></circle><circle cx="15" cy="18" r="0.6"></circle></svg>
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" class="{{seq.chev}}"><path d="m9 6 6 6-6 6"></path></svg>
+                      <span style="min-width: 0; flex: 1;">
+                        <span class="seqname">{{seq.label}}</span>
+                        <span class="seqmeta">{{seq.meta}}</span>
+                      </span>
+                      <sc-if value="{{seq.diverges}}" hint-placeholder-val="{{true}}">
+                        <span class="tag tuned">{{seq.diffCount}}</span>
+                      </sc-if>
+                      <span class="cnt">{{seq.count}}</span>
+                        <span class="moves">
+                          <button type="button" class="{{seq.upCls}}" onClick="{{seq.up}}" aria-label="Monter">
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m6 15 6-6 6 6"></path></svg>
+                          </button>
+                          <button type="button" class="{{seq.downCls}}" onClick="{{seq.down}}" aria-label="Descendre">
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg>
+                          </button>
+                        </span>
+                    </div>
+                    <sc-if value="{{seq.open}}" hint-placeholder-val="{{true}}">
+                      <div class="seclist">
+                        <sc-for list="{{seq.sections}}" as="sec" hint-placeholder-count="4">
+                          <div class="{{sec.cls}}" draggable="true" onClick="{{sec.pick}}" onDragStart="{{sec.dragStart}}" onDragOver="{{sec.dragOver}}" onDrop="{{sec.drop}}" onDragEnd="{{sec.dragEnd}}">
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" class="grip"><circle cx="9" cy="6" r="0.6"></circle><circle cx="9" cy="12" r="0.6"></circle><circle cx="9" cy="18" r="0.6"></circle><circle cx="15" cy="6" r="0.6"></circle><circle cx="15" cy="12" r="0.6"></circle><circle cx="15" cy="18" r="0.6"></circle></svg>
+                            <span class="secname">{{sec.label}}</span>
+                            <sc-if value="{{sec.diverges}}" hint-placeholder-val="{{true}}">
+                              <span class="tag tuned">{{sec.diffCount}}</span>
+                            </sc-if>
+                            <span class="cnt">{{sec.count}}</span>
+                            <span class="moves">
+                              <button type="button" class="{{sec.upCls}}" onClick="{{sec.up}}" aria-label="Monter">
+                                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m6 15 6-6 6 6"></path></svg>
+                              </button>
+                              <button type="button" class="{{sec.downCls}}" onClick="{{sec.down}}" aria-label="Descendre">
+                                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg>
+                              </button>
+                            </span>
+                          </div>
+                        </sc-for>
+                      </div>
                     </sc-if>
-                    <span class="ri-n">{{node.count}}</span>
-                    <span class="moves">
-                      <button type="button" class="{{node.upCls}}" onClick="{{node.up}}" aria-label="Monter">
-                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m6 15 6-6 6 6"></path></svg>
-                      </button>
-                      <button type="button" class="{{node.downCls}}" onClick="{{node.down}}" aria-label="Descendre">
-                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg>
-                      </button>
-                    </span>
                   </div>
                 </sc-for>
               </div>
@@ -1152,8 +1187,7 @@ class Component extends DCLogic {
     const self = this;
     const state = this.read();
     const doc = state.doc;
-    const rows = [];
-    doc.forEach(function (sequence, sequenceIndex) {
+    return doc.map(function (sequence, sequenceIndex) {
       const open = Boolean(state.open && state.open[sequence.id]);
       let count = 0;
       let drift = 0;
@@ -1163,24 +1197,26 @@ class Component extends DCLogic {
       });
       const active = sequence.secs.some(function (section) { return section.id === state.sectionId; });
       const node = { kind: 'seq', id: sequence.id };
-      rows.push({
+      return {
         label: sequence.name,
-        meta: sequence.secs.length + ' sections',
+        meta: sequence.secs.length + (sequence.secs.length > 1 ? ' sections' : ' section'),
         count: String(count),
+        open: open,
         diverges: drift > 0 && !open,
         diffCount: String(drift),
-        cls: 'ri' + (active && !open ? ' on' : '') + (state.overId === sequence.id ? ' over' : ''),
+        cardCls: 'seqcard' + (open ? ' open' : ''),
+        cls: 'seqhead' + (active && !open ? ' on' : '') + (state.overId === sequence.id ? ' over' : ''),
         chev: open ? 'chev open' : 'chev',
         upCls: sequenceIndex === 0 ? 'mv off' : 'mv',
         downCls: sequenceIndex === doc.length - 1 ? 'mv off' : 'mv',
         up: function (event) { event.stopPropagation(); self.moveSequence(sequence.id, sequenceIndex - 1); },
         down: function (event) { event.stopPropagation(); self.moveSequence(sequence.id, sequenceIndex + 1); },
-        dragStart: function () { self.patch({ dragging: node }); },
+        dragStart: function (event) { event.stopPropagation(); self.patch({ dragging: node }); },
         dragOver: function (event) {
           event.preventDefault();
           if (state.overId !== sequence.id) self.patch({ overId: sequence.id });
         },
-        drop: function (event) { event.preventDefault(); self.drop(node); },
+        drop: function (event) { event.preventDefault(); event.stopPropagation(); self.drop(node); },
         dragEnd: function () { self.patch({ dragging: null, overId: null }); },
         pick: function () {
           const nextOpen = Object.assign({}, state.open);
@@ -1193,37 +1229,34 @@ class Component extends DCLogic {
             draft: null,
           });
         },
-      });
-      if (!open) return;
-      sequence.secs.forEach(function (section, sectionIndex) {
-        const drifted = divergentCount(section);
-        const sectionNode = { kind: 'sec', id: section.id };
-        rows.push({
-          label: section.name,
-          meta: '',
-          count: String(section.fields.length),
-          diverges: drifted > 0,
-          diffCount: String(drifted),
-          cls: 'ri sub' + (section.id === state.sectionId ? ' on' : '') + (state.overId === section.id ? ' over' : ''),
-          chev: 'chev hide',
-          upCls: sectionIndex === 0 ? 'mv off' : 'mv',
-          downCls: sectionIndex === sequence.secs.length - 1 ? 'mv off' : 'mv',
-          up: function (event) { event.stopPropagation(); self.moveSection(section.id, sequence.id, sectionIndex - 1); },
-          down: function (event) { event.stopPropagation(); self.moveSection(section.id, sequence.id, sectionIndex + 1); },
-          dragStart: function () { self.patch({ dragging: sectionNode }); },
-          dragOver: function (event) {
-            event.preventDefault();
-            if (state.overId !== section.id) self.patch({ overId: section.id });
-          },
-          drop: function (event) { event.preventDefault(); self.drop(sectionNode); },
-          dragEnd: function () { self.patch({ dragging: null, overId: null }); },
-          pick: function () {
-            self.patch({ sectionId: section.id, fieldId: section.fields[0].id, panel: 'field', draft: null });
-          },
-        });
-      });
+        sections: sequence.secs.map(function (section, sectionIndex) {
+          const drifted = divergentCount(section);
+          const sectionNode = { kind: 'sec', id: section.id };
+          return {
+            label: section.name,
+            count: String(section.fields.length),
+            diverges: drifted > 0,
+            diffCount: String(drifted),
+            cls: 'secrow' + (section.id === state.sectionId ? ' on' : '') + (state.overId === section.id ? ' over' : ''),
+            upCls: sectionIndex === 0 ? 'mv off' : 'mv',
+            downCls: sectionIndex === sequence.secs.length - 1 ? 'mv off' : 'mv',
+            up: function (event) { event.stopPropagation(); self.moveSection(section.id, sequence.id, sectionIndex - 1); },
+            down: function (event) { event.stopPropagation(); self.moveSection(section.id, sequence.id, sectionIndex + 1); },
+            dragStart: function (event) { event.stopPropagation(); self.patch({ dragging: sectionNode }); },
+            dragOver: function (event) {
+              event.preventDefault();
+              event.stopPropagation();
+              if (state.overId !== section.id) self.patch({ overId: section.id });
+            },
+            drop: function (event) { event.preventDefault(); event.stopPropagation(); self.drop(sectionNode); },
+            dragEnd: function () { self.patch({ dragging: null, overId: null }); },
+            pick: function () {
+              self.patch({ sectionId: section.id, fieldId: section.fields[0].id, panel: 'field', draft: null });
+            },
+          };
+        }),
+      };
     });
-    return rows;
   }
 
   buildFields(dense) {
