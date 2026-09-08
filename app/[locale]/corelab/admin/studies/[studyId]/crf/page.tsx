@@ -63,7 +63,11 @@ export default async function StudyCrfEditorPage({ params }: PageParams) {
           worst: impact?.worst ?? 'HARMLESS',
           signedReadings: impact?.signedReadings ?? 0,
         }}
-        library={{ references: [...references.entries()], blocks: options }}
+        library={{
+          references: [...references.entries()],
+          ids: variables.map((variable) => [variable.code, variable.id] as [string, string]),
+          blocks: options,
+        }}
       />
     </div>
   )

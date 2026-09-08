@@ -3,6 +3,7 @@
 import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { fieldDiffs, fieldOrigin, type OriginDiff } from '@/lib/corelab/crf/origin'
+import { asIdentifier } from '@/lib/corelab/crf/identifier'
 import { Cap, ChoiceChip, EditorInput, OriginNote, PaneBand, PaneFooter } from './crf-chrome'
 import type { FieldDefinition, SectionDefinition } from '@/lib/corelab/crf/schema'
 
@@ -84,7 +85,7 @@ export function CrfInspector({ field, reference, section, modality, actions }: {
 
         <div className="mb-4">
           <Cap>{t('exportName')}</Cap>
-          <EditorInput mono value={field.id} onChange={(value) => patch({ id: value })} />
+          <EditorInput mono value={field.id} onChange={(value) => patch({ id: asIdentifier(value) })} />
         </div>
 
         <div className="mb-4">

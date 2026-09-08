@@ -1,0 +1,96 @@
+import { test, expect, type Page } from '@playwright/test'
+
+test.setTimeout(240000)
+
+async function login(page: Page, email: string) {
+  await page.goto('/en/login', { timeout: 60000 })
+  await page.getByPlaceholder('Email').fill(email)
+  await page.getByPlaceholder('Password').fill('ristifou')
+  await page.getByRole('button', { name: /sign in/i }).click()
+  await page.waitForURL((url) => url.pathname === '/en/dashboard', { timeout: 60000 })
+}
+
+async function openCrfEditor(page: Page): Promise<string> {
+  await page.goto('/en/corelab/admin/studies', { timeout: 60000 })
+  const href = await page.getByRole('link', { name: /MIR-DJ-TEST/ }).getAttribute('href')
+  const studyId = (href ?? '').split('/').pop() ?? ''
+  await page.goto(`/en/corelab/admin/studies/${studyId}/crf`, { timeout: 60000 })
+  await expect(page.getByRole('heading', { name: 'CRF editor' })).toBeVisible({ timeout: 60000 })
+  return studyId
+}
+
+const sectionOrder = (page: Page) => page.locator('[data-testid^="crf-section-"]')
+
+test('the data manager composes a CRF: reorders it, borrows from the library, creates a variable and tunes one', async ({ page }) => {
+  await login(page, 'corelab-admin@larib-portal.test')
+  await openCrfEditor(page)
+
+  // The three panes: the plan reads parts and sections apart, the form shows the reader's view.
+  await expect(page.getByText('Part · 5 sections')).toBeVisible()
+  await expect(page.getByTestId('crf-section-cine-lv')).toBeVisible()
+  await expect(page.getByText('No published version · publishing will create v1')).toBeVisible()
+  await expect(page.getByTestId('crf-impact-pill')).toContainText('no signed reading')
+
+  await page.getByTestId('crf-section-cine-lv').click()
+  await expect(page.getByRole('heading', { name: 'Left Ventricle' })).toBeVisible()
+  await expect(page.getByText('part cine › section cine-lv')).toBeVisible()
+  await expect(page.getByTestId('crf-field-lvef')).toBeVisible()
+
+  // The origin of a variable is read against the library, not stored: LVEF carries tolerances the library does not.
+  await page.getByTestId('crf-field-lvef').click()
+  await expect(page.getByText('Origin')).toBeVisible()
+  await expect(page.getByText('Tuned for this study.')).toBeVisible()
+  await expect(page.getByText('Calibration tolerance:')).toBeVisible()
+
+  // Reordering: the second section climbs above the first.
+  const before = await sectionOrder(page).evaluateAll((nodes) => nodes.map((node) => node.getAttribute('data-testid')))
+  const second = page.getByTestId(before[1] ?? '')
+  await second.hover()
+  await second.getByRole('button', { name: 'Move up' }).click()
+  const after = await sectionOrder(page).evaluateAll((nodes) => nodes.map((node) => node.getAttribute('data-testid')))
+  expect(after[0]).toBe(before[1])
+  expect(after[1]).toBe(before[0])
+
+  // Borrowing from the library: the panel on the right carries the whole add flow.
+  await page.getByTestId('crf-section-cine-rv').click()
+  await page.getByRole('button', { name: '+ Variable' }).click()
+  await expect(page.getByTestId('crf-add-tab-library')).toBeVisible()
+  await page.getByTestId('crf-candidate-lvef').click()
+  await expect(page.getByTestId('crf-field-lvef')).toBeVisible()
+
+  // Creating one from scratch: the identifier follows the name and the row appears where it will land.
+  await page.getByTestId('crf-add-tab-create').click()
+  await page.getByPlaceholder('LV Strain global').fill('RV Strain global')
+  await expect(page.getByTestId('crf-field-ghost')).toContainText('being created')
+  await expect(page.getByTestId('crf-field-ghost')).toContainText('rv_strain_global')
+  await page.getByTestId('crf-type-boolean').click()
+  await page.getByRole('button', { name: 'Add to the CRF' }).click()
+  await expect(page.getByTestId('crf-field-rv_strain_global')).toContainText('study only')
+
+  // Tuning a variable rewrites nothing in the library: the difference is shown, and it can be undone.
+  await page.getByTestId('crf-field-lvef').click()
+  await page.getByRole('spinbutton').first().fill('15')
+  await expect(page.getByText('Minimum: 10 → 15')).toBeVisible()
+  await page.getByRole('button', { name: 'Back to the library version' }).click()
+  await expect(page.getByText('Minimum: 10 → 15')).toHaveCount(0)
+
+  // Saving keeps everything the draft gained.
+  await page.getByRole('button', { name: 'Save', exact: true }).click()
+  await expect(page.getByText('Draft saved.')).toBeVisible({ timeout: 60000 })
+  await page.reload()
+  await page.getByTestId('crf-section-cine-rv').click()
+  await expect(page.getByTestId('crf-field-rv_strain_global')).toBeVisible()
+})
+
+test('the plan speaks French while the CRF content stays in English', async ({ page }) => {
+  await login(page, 'corelab-admin@larib-portal.test')
+  await page.goto('/en/corelab/admin/studies', { timeout: 60000 })
+  const href = await page.getByRole('link', { name: /MIR-DJ-TEST/ }).getAttribute('href')
+  const studyId = (href ?? '').split('/').pop() ?? ''
+
+  await page.goto(`/fr/corelab/admin/studies/${studyId}/crf`, { timeout: 60000 })
+  await expect(page.getByRole('heading', { name: 'Éditeur de CRF' })).toBeVisible({ timeout: 60000 })
+  await expect(page.getByText('Partie · 5 sections')).toBeVisible()
+  await expect(page.getByText('Glissez une partie ou une section')).toBeVisible()
+  await expect(page.getByTestId('crf-section-cine-lv')).toContainText('Left Ventricle')
+})

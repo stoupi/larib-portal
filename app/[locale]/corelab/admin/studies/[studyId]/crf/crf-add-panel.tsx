@@ -6,6 +6,7 @@ import { Plus, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Cap, ChoiceChip, EditorInput, OriginNote, PaneBand, PaneFooter } from './crf-chrome'
+import { asIdentifier, slugify } from '@/lib/corelab/crf/identifier'
 import type { FieldDefinition } from '@/lib/corelab/crf/schema'
 
 const TYPES = [
@@ -21,15 +22,6 @@ const TYPES = [
 const TYPES_WITH_BOUNDS = new Set<string>(['numeric', 'segment_numeric'])
 const TYPES_WITH_OPTIONS = new Set<string>(['categorical', 'segment_categorical', 'series_availability'])
 const TYPES_WITH_SEGMENTS = new Set<string>(['segment_categorical', 'segment_numeric'])
-
-export function slugify(label: string): string {
-  return label
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '')
-    .replace(/[^a-z0-9]+/g, '_')
-    .replace(/^_+|_+$/g, '')
-}
 
 export type AddActions = {
   insert: (field: FieldDefinition) => void
@@ -141,7 +133,7 @@ export function CrfAddPanel({ candidates, draft, context, actions }: {
                 value={draft.id}
                 onChange={(value) => {
                   setIdTouched(true)
-                  patchDraft({ id: value })
+                  patchDraft({ id: asIdentifier(value) })
                 }}
               />
               <p className="mt-1.5 text-xs leading-relaxed text-text-muted">{t('exportHint')}</p>

@@ -27,7 +27,8 @@ import { CrfPlan } from './crf-plan'
 import { CrfBlockPicker, type LibraryBlockOption } from './crf-block-picker'
 import { CrfForm } from './crf-form'
 import { CrfInspector } from './crf-inspector'
-import { CrfAddPanel, slugify } from './crf-add-panel'
+import { CrfAddPanel } from './crf-add-panel'
+import { slugify } from '@/lib/corelab/crf/identifier'
 import { CrfImpactPanel } from './crf-impact-panel'
 import type { CrfDefinition, FieldDefinition, SectionDefinition, SequenceDefinition } from '@/lib/corelab/crf/schema'
 import type { ChangeImpact, VersionChange } from '@/lib/corelab/crf/diff-versions'
@@ -58,11 +59,12 @@ export function CrfEditor({ context, definition, impact, library }: {
   context: EditorContext
   definition: CrfDefinition
   impact: { changes: VersionChange[]; worst: ChangeImpact; signedReadings: number }
-  library: { references: Array<[string, FieldDefinition]>; blocks: LibraryBlockOption[] }
+  library: { references: Array<[string, FieldDefinition]>; ids: Array<[string, string]>; blocks: LibraryBlockOption[] }
 }) {
   const t = useTranslations('corelab.crfEditor')
   const router = useRouter()
   const references = useMemo(() => new Map(library.references), [library.references])
+  const libraryIds = useMemo(() => new Map(library.ids), [library.ids])
 
   const [draft, setDraft] = useState<CrfDefinition>(definition)
   const [sectionId, setSectionId] = useState(definition[0]?.sections[0]?.id ?? '')
@@ -315,6 +317,7 @@ export function CrfEditor({ context, definition, impact, library }: {
                 },
                 promote: () =>
                   promote.execute({
+                    ...(libraryIds.has(field.id) ? { variableId: libraryIds.get(field.id) } : {}),
                     code: field.id,
                     name: field.name,
                     modality: context.modality,
