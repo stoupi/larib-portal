@@ -10,6 +10,7 @@ l'écran de lecture : un même objet porte le même nom partout.
 | **Section** | Un groupe ordonné de variables. | des variables |
 | **Partie** | Un groupe ordonné de sections. Le niveau 1 d'un CRF. | des sections |
 | **Bloc** | Le mot de la bibliothèque pour ce qui est réutilisable et s'insère dans un CRF : une section **ou** une partie. Un rôle, pas un niveau. | — |
+| **Modalité** | CMR, CT, écho. Cloisonne la bibliothèque : une variable, un jeu de valeurs et un bloc appartiennent à une modalité et ne se mélangent pas. | — |
 | **CRF** | L'ensemble des parties d'une étude, versionné et publié. | des parties |
 
 ## Ce que « séquence » devient
@@ -20,13 +21,32 @@ manager donne à une partie dans un CRF d'IRM — Cine, LGE, T1 Mapping. En
 acquisition. Nommer le niveau « partie » est ce qui rend le modèle valable
 hors de l'IRM cardiaque.
 
+## Provenance : trois états
+
+Insérer un bloc de bibliothèque dans un CRF en crée une copie. Chaque
+variable, section et partie d'un CRF porte donc l'un de ces trois états, et
+ce sont les mêmes mots aux trois niveaux :
+
+| État | Ce que ça veut dire | Sorties |
+|---|---|---|
+| **Conforme** | Identique à son original en bibliothèque. | — |
+| **Ajustée** | Modifiée pour cette étude ; la bibliothèque garde sa version. | revenir à la bibliothèque, ou lui renvoyer le réglage |
+| **Propre à l'étude** | Créée ici, elle n'existe pas en bibliothèque. | l'ajouter à la bibliothèque |
+
+## Langue
+
+L'interface est bilingue français / anglais. **Le contenu d'un CRF ne l'est
+pas** : les noms de parties, de sections et de variables sont saisis en
+anglais et s'affichent tels quels dans les deux langues. Ce sont des données
+d'étude, pas des libellés d'application — ils partent aussi à l'export.
+
 ## Ce qui reste interne
 
 Les identifiants stockés gardent leur ancien nom : la colonne `sequenceId`
-des valeurs de lecture, et la valeur `SEQUENCE` de l'enum
-`CorelabLibraryBlockKind`. Ils ne sont jamais montrés à un utilisateur, et les
-renommer imposerait une migration sur des lectures signées. Le vocabulaire
-visible se règle dans les traductions.
+des valeurs de lecture, des verrous et des comparaisons de relecture, et la
+valeur `SEQUENCE` de l'enum `CorelabLibraryBlockKind`. Ils ne sont jamais
+montrés à un utilisateur, et les renommer imposerait une migration sur des
+lectures signées. Le vocabulaire visible se règle dans les traductions.
 
 ## Règles d'écriture
 
