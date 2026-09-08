@@ -81,6 +81,12 @@ test('the data manager composes a CRF: reorders it, borrows from the library, cr
   await page.getByRole('button', { name: 'Back to the library version' }).click()
   await expect(page.getByText('Minimum: 10 → 15')).toHaveCount(0)
 
+  // Renaming a part and a section, where they are read.
+  await page.getByRole('button', { name: 'Rename' }).click()
+  await page.getByRole('textbox', { name: 'Section name' }).fill('Pericardium review')
+  await page.getByRole('button', { name: 'Done' }).click()
+  await expect(page.getByTestId('crf-section-t2w-pericardial')).toContainText('Pericardium review')
+
   // Saving keeps everything the draft gained.
   await page.getByRole('button', { name: 'Save', exact: true }).click()
   await expect(page.getByText('Draft saved.')).toBeVisible({ timeout: 60000 })

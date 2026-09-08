@@ -17,6 +17,8 @@ import {
   partIds,
   publishable,
   removeField,
+  renamePart,
+  renameSection,
   replaceField,
   sectionIds,
   uniqueId,
@@ -259,6 +261,8 @@ export function CrfEditor({ context, definition, impact, library }: {
                   setPanel(panel === 'add' ? 'field' : 'add')
                   setAddTab('library')
                 },
+                renamePart: (name) => setDraft(renamePart(draft, part.id, name)),
+                renameSection: (name) => setDraft(renameSection(draft, section.id, name)),
               }}
             />
           ) : (

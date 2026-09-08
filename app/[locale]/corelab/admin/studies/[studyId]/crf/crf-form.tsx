@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils'
 import { FieldControl } from '@/app/[locale]/corelab/components/crf/field-control'
 import { defaultSequenceValues } from '@/lib/corelab/crf/values'
 import { fieldOrigin, referenceOf, sectionDrift } from '@/lib/corelab/crf/origin'
-import { BandButton, GripIcon, OriginTag, PaneBand, StatStrip } from './crf-chrome'
+import { BandButton, EditorInput, GripIcon, OriginTag, PaneBand, StatStrip } from './crf-chrome'
 import type { FieldDefinition, SectionDefinition, SequenceDefinition } from '@/lib/corelab/crf/schema'
 
 function ControlPreview({ field }: { field: FieldDefinition }) {
@@ -31,6 +31,8 @@ function conditionLabel(field: FieldDefinition, section: SectionDefinition): str
 export type FormActions = {
   selectField: (fieldId: string) => void
   openAdd: () => void
+  renamePart: (name: string) => void
+  renameSection: (name: string) => void
 }
 
 export function CrfForm({ part, section, references, view, actions }: {
@@ -41,6 +43,7 @@ export function CrfForm({ part, section, references, view, actions }: {
   actions: FormActions
 }) {
   const t = useTranslations('corelab.crfEditor')
+  const [renaming, setRenaming] = useState(false)
   const drift = sectionDrift(section, references)
   const required = section.fields.filter((field) => field.required).length
   const conditional = section.fields.filter((field) => field.conditionalOn).length
@@ -51,20 +54,36 @@ export function CrfForm({ part, section, references, view, actions }: {
   return (
     <>
       <PaneBand
-        kind={t('partNamed', { name: part.name })}
+        kind={renaming ? t('partName') : t('partNamed', { name: part.name })}
         title={
-          <>
-            {section.name}
-            <span className={cn(
-              'rounded-md border px-1.5 py-px text-[11px] font-medium',
-              drift > 0 ? 'border-warn-50 bg-warn-50 font-semibold text-warn-700' : 'border-white/45 bg-white/15 text-white',
-            )}>
-              {drift > 0 ? t('driftBadge', { count: drift }) : t('conform')}
+          renaming ? (
+            <span className="flex w-full max-w-md flex-col gap-1.5">
+              <EditorInput value={part.name} onChange={actions.renamePart} options={{ label: t('partName') }} />
+              <EditorInput value={section.name} onChange={actions.renameSection} options={{ label: t('sectionName') }} />
             </span>
-          </>
+          ) : (
+            <>
+              {section.name}
+              <span className={cn(
+                'rounded-md border px-1.5 py-px text-[11px] font-medium',
+                drift > 0 ? 'border-warn-50 bg-warn-50 font-semibold text-warn-700' : 'border-white/45 bg-white/15 text-white',
+              )}>
+                {drift > 0 ? t('driftBadge', { count: drift }) : t('conform')}
+              </span>
+            </>
+          )
         }
-        subtitle={t('breadcrumb', { part: part.id, section: section.id })}
-        action={<BandButton filled onClick={actions.openAdd}>{t('addVariable')}</BandButton>}
+        subtitle={renaming ? undefined : t('breadcrumb', { part: part.id, section: section.id })}
+        action={
+          renaming ? (
+            <BandButton filled onClick={() => setRenaming(false)}>{t('doneRenaming')}</BandButton>
+          ) : (
+            <>
+              <BandButton onClick={() => setRenaming(true)}>{t('rename')}</BandButton>
+              <BandButton filled onClick={actions.openAdd}>{t('addVariable')}</BandButton>
+            </>
+          )
+        }
       />
       <StatStrip
         hint={t('readerPreview')}

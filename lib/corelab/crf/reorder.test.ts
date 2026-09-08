@@ -9,6 +9,8 @@ import {
   moved,
   publishable,
   removeField,
+  renamePart,
+  renameSection,
   replaceField,
   uniqueId,
 } from './reorder'
@@ -125,6 +127,20 @@ describe('insertSection', () => {
       'cine-atria',
       'cine-rv',
     ])
+  })
+})
+
+describe('renaming', () => {
+  it('renames a part and leaves the others alone', () => {
+    const next = renamePart(definition, 'cine', 'Ciné')
+    expect(next[0].name).toBe('Ciné')
+    expect(next[1].name).toBe('LGE')
+  })
+
+  it('renames a section wherever it lives', () => {
+    const next = renameSection(definition, 'lge-lv', 'Left ventricle LGE')
+    expect(next[1].sections[0].name).toBe('Left ventricle LGE')
+    expect(next[0].sections[0].name).toBe('Left Ventricle')
   })
 })
 

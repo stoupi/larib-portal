@@ -150,3 +150,14 @@ export function insertSection(
     return { ...part, sections: [...part.sections.slice(0, index), section, ...part.sections.slice(index)] }
   })
 }
+
+export function renamePart(definition: CrfDefinition, partId: string, name: string): CrfDefinition {
+  return definition.map((part) => (part.id === partId ? { ...part, name } : part))
+}
+
+export function renameSection(definition: CrfDefinition, sectionId: string, name: string): CrfDefinition {
+  return definition.map((part) => ({
+    ...part,
+    sections: part.sections.map((section) => (section.id === sectionId ? { ...section, name } : section)),
+  }))
+}

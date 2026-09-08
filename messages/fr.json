@@ -3154,7 +3154,10 @@
       "driftLabel": "{count, plural, one {écart bibliothèque} other {écarts bibliothèque}}",
       "partNamed": "Partie {name}",
       "variableKind": "Variable",
-      "publishedOnly": "Version publiée : v{number}"
+      "publishedOnly": "Version publiée : v{number}",
+      "partName": "Nom de la partie",
+      "sectionName": "Nom de la section",
+      "doneRenaming": "Terminé"
     }
   }
 }

@@ -3156,7 +3156,10 @@
       "driftLabel": "{count, plural, one {library difference} other {library differences}}",
       "partNamed": "Part {name}",
       "variableKind": "Variable",
-      "publishedOnly": "Published version: v{number}"
+      "publishedOnly": "Published version: v{number}",
+      "partName": "Part name",
+      "sectionName": "Section name",
+      "doneRenaming": "Done"
     }
   }
 }
