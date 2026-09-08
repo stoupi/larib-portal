@@ -123,12 +123,14 @@
     .tabitem.on { font-weight: 600; color: #141a22; box-shadow: inset 0 -2px 0 #d61f55; }
 
     .cap { font-size: 11px; font-weight: 600; letter-spacing: 0.03em; text-transform: uppercase; color: #6b7685; }
-    .panehead { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; background: linear-gradient(to bottom, #ec3b68, #d61f55); padding: 13px 18px; }
+    .panehead { display: flex; min-height: 74px; align-items: center; justify-content: space-between; gap: 16px; background: linear-gradient(to bottom, #ec3b68, #d61f55); padding: 12px 18px; }
     .panecode { display: block; margin-top: 3px; font-family: ui-monospace, Menlo, monospace; font-size: 12px; color: #ffdbe3; }
     .paneact { display: inline-flex; align-items: center; height: 28px; padding: 0 11px; border: 1px solid rgba(255,255,255,0.45); border-radius: 9px; background: rgba(255,255,255,0.15); font-size: 12.5px; color: #ffffff; cursor: pointer; }
     .paneact.filled { border-color: #ffffff; background: #ffffff; font-weight: 600; color: #b01547; }
     .card { border: 1px solid #dde2e9; border-radius: 16px; background: #ffffff; box-shadow: 0 1px 3px rgba(16,28,48,0.08), 0 1px 2px rgba(16,28,48,0.04); overflow: hidden; }
-    .col { display: flex; flex-direction: column; height: 660px; }
+    .pane { display: flex; flex-direction: column; min-width: 0; height: 672px; overflow: hidden; }
+    .hdr { display: flex; min-height: 74px; flex-direction: column; justify-content: center; background: linear-gradient(to bottom, #ec3b68, #d61f55); padding: 12px 16px; }
+    .draftbar { display: flex; align-items: center; gap: 12px; border-bottom: 1px solid #dde2e9; background: #ffffff; padding: 12px 16px; }
     .lbl { font-size: 13px; color: #6b7685; }
 
     .scroll { overflow-y: auto; overflow-x: hidden; }
@@ -178,7 +180,8 @@
         <span class="tabitem">Export</span>
       </nav>
 
-      <div class="card" style="display: flex; align-items: center; gap: 12px; padding: 11px 14px;">
+      <div class="card">
+        <div class="draftbar">
         <span class="state"><span class="dot"></span>Brouillon</span>
         <span style="min-width: 0; font-size: 13px; line-height: 1.35; color: #6b7685;">
           {{versionLine}}
@@ -189,17 +192,18 @@
           <button type="button" class="btn ghost">Abandonner</button>
           <button type="button" class="btn out">Enregistrer</button>
           <button type="button" class="btn solid">{{publishLabel}}</button>
+          </div>
         </div>
-      </div>
 
-      <div style="display: grid; grid-template-columns: 274px minmax(0, 1fr) 350px; gap: 16px; align-items: start;">
+        <div style="display: grid; grid-template-columns: 274px minmax(0, 1fr) 350px;">
 
-        <aside class="card col">
+        <aside class="pane" style="border-right: 1px solid #dde2e9;">
           <sc-if value="{{railTree}}" hint-placeholder-val="{{true}}">
             <div style="display: flex; flex-direction: column; min-height: 0; flex: 1;">
-              <header style="display: flex; align-items: baseline; justify-content: space-between; gap: 8px; background: linear-gradient(to bottom, #ec3b68, #d61f55); padding: 11px 16px;">
-                <span style="font-size: 11px; font-weight: 600; letter-spacing: 0.03em; text-transform: uppercase; color: #ffffff;">Plan du CRF</span>
-                <span style="font-size: 12px; color: #ffdbe3;">{{railMeta}}</span>
+              <header class="hdr">
+                <div style="font-size: 11px; font-weight: 600; letter-spacing: 0.03em; text-transform: uppercase; color: #ffdbe3;">Structure</div>
+                <div style="margin-top: 2px; font-size: 16px; font-weight: 600; line-height: 1.2; color: #ffffff;">Plan du CRF</div>
+                <div style="margin-top: 2px; font-size: 12px; color: #ffdbe3;">{{railMeta}}</div>
               </header>
               <div style="padding: 7px 10px 6px; border-bottom: 1px solid #eceff3; font-size: 11.5px; line-height: 1.4; color: #9aa5b3;">
                 Glissez une séquence ou une section pour changer l'ordre de lecture.
@@ -242,11 +246,15 @@
           </sc-if>
           <sc-if value="{{railLib}}" hint-placeholder-val="{{true}}">
             <div style="display: flex; flex-direction: column; min-height: 0; flex: 1;">
-              <header style="display: flex; align-items: center; gap: 9px; background: linear-gradient(to bottom, #ec3b68, #d61f55); padding: 11px 12px 11px 9px;">
-                <button type="button" onClick="{{closeLib}}" style="display: inline-flex; align-items: center; justify-content: center; height: 26px; width: 26px; border: 0; border-radius: 8px; background: rgba(255,255,255,0.18); color: #ffffff; cursor: pointer; flex: none;">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"></path></svg>
+              <header style="display: flex; min-height: 74px; align-items: center; gap: 10px; background: linear-gradient(to bottom, #ec3b68, #d61f55); padding: 12px 16px 12px 10px;">
+                <button type="button" onClick="{{closeLib}}" style="display: inline-flex; align-items: center; justify-content: center; height: 28px; width: 28px; border: 0; border-radius: 9px; background: rgba(255,255,255,0.18); color: #ffffff; cursor: pointer; flex: none;">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"></path></svg>
                 </button>
-                <span style="font-size: 11px; font-weight: 600; letter-spacing: 0.03em; text-transform: uppercase; color: #ffffff;">Bibliothèque CMR</span>
+                <span style="min-width: 0;">
+                  <span style="display: block; font-size: 11px; font-weight: 600; letter-spacing: 0.03em; text-transform: uppercase; color: #ffdbe3;">Importer un bloc</span>
+                  <span style="display: block; margin-top: 2px; font-size: 16px; font-weight: 600; line-height: 1.2; color: #ffffff;">Bibliothèque CMR</span>
+                  <span style="display: block; margin-top: 2px; font-size: 12px; color: #ffdbe3;">dans « {{paneTitle}} »</span>
+                </span>
               </header>
               <div style="padding: 10px 10px 0;">
                 <input class="ipt" value="{{libSearch}}" onChange="{{setLibSearch}}" placeholder="Chercher un bloc">
@@ -274,7 +282,7 @@
           </sc-if>
         </aside>
 
-        <section class="card col">
+        <section class="pane">
           <header class="panehead">
             <div style="min-width: 0;">
               <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
@@ -385,10 +393,10 @@
           </div>
         </section>
 
-        <aside class="card col">
+        <aside class="pane" style="border-left: 1px solid #dde2e9;">
           <sc-if value="{{panelAdd}}" hint-placeholder-val="{{true}}">
             <div style="display: flex; flex-direction: column; min-height: 0; flex: 1;">
-              <header style="background: linear-gradient(to bottom, #ec3b68, #d61f55); padding: 12px 16px;">
+              <header class="hdr">
                 <div style="font-size: 11px; font-weight: 600; letter-spacing: 0.03em; text-transform: uppercase; color: #ffdbe3;">Ajouter une variable</div>
                 <div style="margin-top: 2px; font-size: 16px; font-weight: 600; line-height: 1.2; color: #ffffff;">{{addTitle}}</div>
                 <div style="margin-top: 2px; font-size: 12px; color: #ffdbe3;">{{addWhere}}</div>
@@ -504,7 +512,7 @@
 
           <sc-if value="{{panelField}}" hint-placeholder-val="{{true}}">
             <div style="display: flex; flex-direction: column; min-height: 0; flex: 1;">
-              <header style="background: linear-gradient(to bottom, #ec3b68, #d61f55); padding: 12px 16px;">
+              <header class="hdr">
                 <div style="font-size: 11px; font-weight: 600; letter-spacing: 0.03em; text-transform: uppercase; color: #ffdbe3;">Variable</div>
                 <div style="margin-top: 2px; font-size: 16px; font-weight: 600; line-height: 1.2; color: #ffffff;">{{insName}}</div>
                 <div style="margin-top: 2px; font-size: 12px; color: #ffdbe3;">{{insType}}</div>
@@ -626,7 +634,7 @@
 
           <sc-if value="{{panelImpact}}" hint-placeholder-val="{{true}}">
             <div style="display: flex; flex-direction: column; min-height: 0; flex: 1;">
-              <header style="background: linear-gradient(to bottom, #ec3b68, #d61f55); padding: 12px 16px;">
+              <header class="hdr">
                 <div style="font-size: 11px; font-weight: 600; letter-spacing: 0.03em; text-transform: uppercase; color: #ffdbe3;">Publication</div>
                 <div style="margin-top: 2px; font-size: 16px; font-weight: 600; line-height: 1.2; color: #ffffff;">{{impactTitle}}</div>
                 <div style="margin-top: 2px; font-size: 12px; color: #ffdbe3;">{{impactSub}}</div>
@@ -662,6 +670,7 @@
             </div>
           </sc-if>
         </aside>
+        </div>
       </div>
 
     </div>
@@ -669,7 +678,7 @@
 </div>
 </x-dc>
 
-<script data-dc-script data-props='{"versionState":{"editor":"enum","options":["Premier brouillon","Après une v2 publiée"],"default":"Premier brouillon","section":"État"},"density":{"editor":"enum","options":["Confortable","Compact"],"default":"Confortable","section":"État"},"$preview":{"width":1440,"height":1006}}'>
+<script data-dc-script data-props='{"versionState":{"editor":"enum","options":["Premier brouillon","Après une v2 publiée"],"default":"Premier brouillon","section":"État"},"density":{"editor":"enum","options":["Confortable","Compact"],"default":"Confortable","section":"État"},"$preview":{"width":1440,"height":1000}}'>
 const CRF = [{"id":"cine","name":"Cine","secs":[{"id":"cine-availability","name":"Available Series & Artefacts","fields":[{"id":"series_availability","name":"Available Series","type":"series_availability","req":true,"opts":["SAX","2CH","3CH","4CH"]},{"id":"artefacts_grade","name":"Artefacts Grade","type":"categorical","req":true,"opts":["0","1","2","3","4"],"uses":5},{"id":"artefacts_type","name":"Artefacts Type","type":"categorical","req":false,"opts":["Ghosting (motion)","Wrapping","Flow","Metal","Arrhythmia"],"uses":5}]},{"id":"cine-lv","name":"Left Ventricle","fields":[{"id":"wall_motion_abnormalities","name":"Wall Motion Abnormalities","type":"boolean","req":true},{"id":"wall_motion_segments","name":"Wall Motion Segments","type":"segment_categorical","req":true,"opts":["Normal","Hypokinetic","Akinetic","Dyskinetic"],"seg":17},{"id":"wall_motion_global","name":"Global Wall Motion","type":"boolean","req":true},{"id":"asynchronism","name":"Asynchronism","type":"boolean","req":true},{"id":"lv_measurable","name":"LV Measurable","type":"boolean","req":true,"def":true},{"id":"visual_lvef","name":"Visual LVEF","type":"numeric","req":true,"unit":"%","min":10,"max":80,"tol":[5,8]},{"id":"lvef","name":"LVEF","type":"numeric","req":true,"unit":"%","min":10,"max":80,"cond":{"f":"lv_measurable","v":true},"tol":[5,8],"thr":[5,10]},{"id":"lv_edv","name":"LV EDV","type":"numeric","req":true,"unit":"mL","min":30,"max":350,"cond":{"f":"lv_measurable","v":true},"tol":[15,10],"thr":[5,10]},{"id":"lv_esv","name":"LV ESV","type":"numeric","req":true,"unit":"mL","min":20,"max":300,"cond":{"f":"lv_measurable","v":true},"tol":[15,10],"thr":[10,20]},{"id":"lv_mass","name":"LV Mass","type":"numeric","req":true,"unit":"g","min":50,"max":300,"cond":{"f":"lv_measurable","v":true},"tol":[10,8],"thr":[5,10]},{"id":"ed_max_thickness","name":"ED Max Wall Thickness","type":"numeric","req":false,"unit":"mm","min":1,"max":40,"cond":{"f":"lv_measurable","v":true},"tol":[2,15]}]},{"id":"cine-rv","name":"Right Ventricle","fields":[{"id":"rv_wall_motion","name":"RV Wall Motion Abnormalities","type":"boolean","req":true},{"id":"rv_visual_dysfunction","name":"RV Visual Dysfunction","type":"boolean","req":true},{"id":"tapse","name":"TAPSE","type":"numeric","req":false,"unit":"mm","min":1,"max":50,"tol":[3,15],"thr":[10,20]},{"id":"rv_measurable","name":"RV Measurable","type":"boolean","req":true,"def":true},{"id":"rvef","name":"RVEF","type":"numeric","req":true,"unit":"%","min":10,"max":80,"cond":{"f":"rv_measurable","v":true},"tol":[5,8],"thr":[5,10]},{"id":"rv_edv","name":"RV EDV","type":"numeric","req":true,"unit":"mL","min":0,"max":500,"cond":{"f":"rv_measurable","v":true},"tol":[15,10],"thr":[10,20]},{"id":"rv_esv","name":"RV ESV","type":"numeric","req":true,"unit":"mL","min":0,"max":400,"cond":{"f":"rv_measurable","v":true},"tol":[15,10]}]},{"id":"cine-atria","name":"Atria","fields":[{"id":"la_measurable","name":"LA Measurable","type":"boolean","req":true,"def":true},{"id":"la_biplanar_smallest","name":"LA Smallest Vol.","type":"numeric","req":true,"unit":"mL","min":5,"max":60,"cond":{"f":"la_measurable","v":true},"tol":[5,15]},{"id":"la_biplanar_largest","name":"LA Largest Vol.","type":"numeric","req":true,"unit":"mL","min":5,"max":50,"cond":{"f":"la_measurable","v":true},"tol":[5,15]},{"id":"ra_measurable","name":"RA Measurable","type":"boolean","req":true,"def":true},{"id":"ra_4c_smallest","name":"RA Smallest Area","type":"numeric","req":true,"unit":"cm2","min":5,"max":60,"cond":{"f":"ra_measurable","v":true},"tol":[5,15]},{"id":"ra_4c_largest","name":"RA Largest Area","type":"numeric","req":true,"unit":"cm2","min":5,"max":50,"cond":{"f":"ra_measurable","v":true},"tol":[5,15]}]},{"id":"cine-pericardium","name":"Pericardium","fields":[{"id":"pericardial_effusion","name":"Pericardial Effusion Thickness","type":"categorical","req":true,"opts":["0","1","2","3"]}]}]},{"id":"t2w","name":"T2w","secs":[{"id":"t2w-availability","name":"Availability & Artefacts","fields":[{"id":"t2w_available","name":"T2w Available","type":"boolean","req":true},{"id":"artefacts_grade","name":"Artefacts Grade","type":"categorical","req":true,"opts":["0","1","2","3","4"],"cond":{"f":"t2w_available","v":true},"uses":5},{"id":"artefacts_type","name":"Artefacts Type","type":"categorical","req":false,"opts":["Ghosting (motion)","Wrapping","Flow","Metal","Arrhythmia"],"cond":{"f":"t2w_available","v":true},"uses":5}]},{"id":"t2w-hyperintensity","name":"T2w Myocardial Hyperintensity","fields":[{"id":"myocardial_hyperintensity","name":"Myocardial Hyperintensity","type":"boolean","req":true,"cond":{"f":"t2w_available","v":true}},{"id":"hyperintensity_segments","name":"Hyperintensity Segments","type":"segment_categorical","req":true,"opts":["Y","N"],"seg":17,"cond":{"f":"myocardial_hyperintensity","v":true}}]},{"id":"t2w-pericardial","name":"Pericardial","fields":[{"id":"t2w_pericardial_hyperintensity","name":"Pericardial Hyperintensity","type":"categorical","req":true,"opts":["N","L","D"],"cond":{"f":"t2w_available","v":true}}]}]},{"id":"t1-mapping-pre","name":"T1 Mapping Pre","secs":[{"id":"t1-pre-availability","name":"Availability & Artefacts","fields":[{"id":"t1_pre_available","name":"T1 Pre Available","type":"boolean","req":true},{"id":"basal_available","name":"Basal Slice Available","type":"boolean","req":true,"cond":{"f":"t1_pre_available","v":true},"uses":2},{"id":"medial_available","name":"Medial Slice Available","type":"boolean","req":true,"cond":{"f":"t1_pre_available","v":true},"uses":2},{"id":"apical_available","name":"Apical Slice Available","type":"boolean","req":true,"cond":{"f":"t1_pre_available","v":true},"uses":2},{"id":"artefacts_grade","name":"Artefacts Grade","type":"categorical","req":true,"opts":["0","1","2","3","4"],"cond":{"f":"t1_pre_available","v":true},"uses":5},{"id":"artefacts_type","name":"Artefacts Type","type":"categorical","req":false,"opts":["Bad MOCO","Wrapping","Other"],"cond":{"f":"t1_pre_available","v":true},"uses":5}]},{"id":"t1-pre-values","name":"T1 Values","fields":[{"id":"mid_ivs","name":"Mid IVS T1","type":"numeric","req":true,"unit":"ms","min":500,"max":2000,"cond":{"f":"t1_pre_available","v":true},"tol":[30,3],"uses":2},{"id":"presence_local_elevation","name":"Presence of Local Elevation","type":"boolean","req":true,"cond":{"f":"t1_pre_available","v":true},"uses":2},{"id":"local_elevation","name":"Local Elevation Value","type":"numeric","req":true,"unit":"ms","min":500,"max":2000,"cond":{"f":"presence_local_elevation","v":true},"tol":[30,3],"uses":2},{"id":"t1_segments","name":"T1 Segment Values","type":"segment_numeric","req":false,"unit":"ms","min":0,"max":2500,"seg":16,"cond":{"f":"t1_pre_available","v":true}}]}]},{"id":"t2-mapping","name":"T2 Mapping","secs":[{"id":"t2-map-availability","name":"Availability & Artefacts","fields":[{"id":"t2_available","name":"T2 Mapping Available","type":"boolean","req":true},{"id":"basal_available","name":"Basal Slice Available","type":"boolean","req":true,"cond":{"f":"t2_available","v":true},"uses":2},{"id":"medial_available","name":"Medial Slice Available","type":"boolean","req":true,"cond":{"f":"t2_available","v":true},"uses":2},{"id":"apical_available","name":"Apical Slice Available","type":"boolean","req":true,"cond":{"f":"t2_available","v":true},"uses":2},{"id":"artefacts_grade","name":"Artefacts Grade","type":"categorical","req":true,"opts":["0","1","2","3","4"],"cond":{"f":"t2_available","v":true},"uses":5},{"id":"artefacts_type","name":"Artefacts Type","type":"categorical","req":false,"opts":["Bad MOCO","Wrapping","Other"],"cond":{"f":"t2_available","v":true},"uses":5}]},{"id":"t2-map-values","name":"T2 Values","fields":[{"id":"mid_ivs","name":"Mid IVS T2","type":"numeric","req":true,"unit":"ms","min":30,"max":100,"cond":{"f":"t2_available","v":true},"tol":[5,8],"uses":2},{"id":"presence_local_elevation","name":"Presence of Local Elevation","type":"boolean","req":true,"cond":{"f":"t2_available","v":true},"uses":2},{"id":"local_elevation","name":"Local Elevation Value","type":"numeric","req":true,"unit":"ms","min":30,"max":100,"cond":{"f":"presence_local_elevation","v":true},"tol":[5,8],"uses":2},{"id":"t2_segments","name":"T2 Segment Values","type":"segment_numeric","req":false,"unit":"ms","min":0,"max":100,"seg":16,"cond":{"f":"t2_available","v":true}}]}]},{"id":"lge","name":"LGE","secs":[{"id":"lge-availability","name":"Availability & Artefacts","fields":[{"id":"lge_available","name":"LGE Available","type":"boolean","req":true},{"id":"sequence_used","name":"Sequence Used","type":"categorical","req":true,"opts":["FLASH","PSIR-PSIR","PSIR-MAG"],"cond":{"f":"lge_available","v":true}},{"id":"artefacts_grade","name":"Artefacts Grade","type":"categorical","req":true,"opts":["0","1","2","3","4"],"cond":{"f":"lge_available","v":true},"uses":5},{"id":"artefacts_type","name":"Artefacts Type","type":"categorical","req":false,"opts":["Ghosting (motion)","Wrapping","Flow","Metal","Arrhythmia","Imperfect Ti selection"],"cond":{"f":"lge_available","v":true},"uses":5},{"id":"segments_analysable","name":"All Segments Analysable","type":"boolean","req":true,"cond":{"f":"lge_available","v":true}}]},{"id":"lge-lv","name":"LV LGE","fields":[{"id":"lge_presence","name":"LGE Presence","type":"boolean","req":true,"cond":{"f":"lge_available","v":true}},{"id":"lge_segments","name":"LGE Segments","type":"segment_categorical","req":true,"opts":["Sub-epicardial","Intra-myocardial","Sub-endocardial","Transmural (epi)","Transmural (endo)","Mixed","None"],"seg":17,"cond":{"f":"lge_presence","v":true}},{"id":"visual_quantification","name":"Visual Quantification","type":"numeric","req":true,"min":0,"max":17,"cond":{"f":"lge_presence","v":true},"tol":[1,20]},{"id":"lge_mass","name":"LGE Mass","type":"numeric","req":false,"unit":"g","min":0,"max":300,"cond":{"f":"lge_presence","v":true},"tol":[3,15]},{"id":"lge_percentage","name":"LGE Percentage","type":"numeric","req":false,"unit":"%","min":0,"max":100,"cond":{"f":"lge_presence","v":true},"tol":[3,15]}]},{"id":"lge-pericardial","name":"Pericardial LGE","fields":[{"id":"pericardial_lge","name":"Pericardial LGE","type":"categorical","req":true,"opts":["N","L","D"],"cond":{"f":"lge_available","v":true}}]}]},{"id":"t1-mapping-post","name":"T1 Mapping Post","secs":[{"id":"t1-post-availability","name":"Availability","fields":[{"id":"t1_post_available","name":"T1 Post Available","type":"boolean","req":true}]}]}];
 
 const TYPE_LABEL = {
