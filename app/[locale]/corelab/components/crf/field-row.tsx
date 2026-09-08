@@ -2,16 +2,11 @@
 
 import { useTranslations } from 'next-intl'
 import { isOutOfBounds, nextSource } from '@/lib/corelab/crf/values'
-import { FieldInputNumeric } from './field-input-numeric'
-import { FieldInputBoolean } from './field-input-boolean'
-import { FieldInputCategorical } from './field-input-categorical'
-import { FieldInputText } from './field-input-text'
-import { FieldInputSeries } from './field-input-series'
-import { BullsEye } from './bulls-eye'
+import { FieldControl } from './field-control'
 import { FlagMenu } from './flag-menu'
 import { FieldGuidance } from './field-guidance'
 import type { FieldDefinition } from '@/lib/corelab/crf/schema'
-import type { FieldValue, SegmentValues } from '@/types/corelab'
+import type { FieldValue } from '@/types/corelab'
 
 type FieldRowProps = {
   field: FieldDefinition
@@ -70,24 +65,7 @@ export function FieldRow({ field, value, onChange, readOnly, preview = false }: 
 
       <div className="flex flex-1 items-start gap-2">
         <div className="flex-1" data-field={field.id}>
-          {field.type === 'numeric' ? (
-            <FieldInputNumeric field={field} value={value?.value} onChange={emit} readOnly={readOnly} />
-          ) : field.type === 'boolean' ? (
-            <FieldInputBoolean field={field} value={value?.value} onChange={emit} readOnly={readOnly} />
-          ) : field.type === 'categorical' ? (
-            <FieldInputCategorical field={field} value={value?.value} onChange={emit} readOnly={readOnly} />
-          ) : field.type === 'text' ? (
-            <FieldInputText field={field} value={value?.value} onChange={emit} readOnly={readOnly} />
-          ) : field.type === 'series_availability' ? (
-            <FieldInputSeries field={field} value={value?.value} onChange={emit} readOnly={readOnly} />
-          ) : (
-            <BullsEye
-              field={field}
-              value={(value?.value ?? undefined) as SegmentValues | undefined}
-              onChange={emit}
-              readOnly={readOnly}
-            />
-          )}
+          <FieldControl field={field} value={value?.value} onChange={emit} readOnly={readOnly} />
         </div>
         {preview ? null : <FlagMenu
           flag={value?.flag ?? null}

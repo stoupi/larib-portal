@@ -24,7 +24,7 @@ function findSection(definition: CrfDefinition, sectionId: string): SectionDefin
   return null
 }
 
-// A part without a section cannot be saved, so emptying one removes it.
+// Only the part the section just left is pruned: a part created empty on purpose stays.
 export function moveSection(
   definition: CrfDefinition,
   sectionId: string,
@@ -33,6 +33,7 @@ export function moveSection(
 ): CrfDefinition {
   const section = findSection(definition, sectionId)
   if (!section) return definition
+  const sourceId = definition.find((part) => part.sections.some((entry) => entry.id === sectionId))?.id
 
   return definition
     .map((part) => {
@@ -41,7 +42,7 @@ export function moveSection(
       const at = Math.max(0, Math.min(targetIndex, trimmed.sections.length))
       return { ...trimmed, sections: [...trimmed.sections.slice(0, at), section, ...trimmed.sections.slice(at)] }
     })
-    .filter((part) => part.sections.length > 0)
+    .filter((part) => part.id !== sourceId || part.id === targetPartId || part.sections.length > 0)
 }
 
 export function moveField(
@@ -111,8 +112,11 @@ export function replaceField(
   }))
 }
 
-// A section without a variable cannot be saved either.
+// Only the section the variable just left is pruned, and its part with it if it was the last.
 export function removeField(definition: CrfDefinition, sectionId: string, fieldId: string): CrfDefinition {
+  const emptied = definition.some((part) =>
+    part.sections.some((section) => section.id === sectionId && section.fields.length === 1 && section.fields[0].id === fieldId),
+  )
   return definition
     .map((part) => ({
       ...part,
@@ -121,8 +125,15 @@ export function removeField(definition: CrfDefinition, sectionId: string, fieldI
           if (section.id !== sectionId) return section
           return { ...section, fields: section.fields.filter((field) => field.id !== fieldId) }
         })
-        .filter((section) => section.fields.length > 0),
+        .filter((section) => section.id !== sectionId || section.fields.length > 0),
     }))
+    .filter((part) => !emptied || part.sections.length > 0)
+}
+
+// The draft may hold a part or a section still being filled; the schema may not.
+export function publishable(definition: CrfDefinition): CrfDefinition {
+  return definition
+    .map((part) => ({ ...part, sections: part.sections.filter((section) => section.fields.length > 0) }))
     .filter((part) => part.sections.length > 0)
 }
 

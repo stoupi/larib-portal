@@ -7,6 +7,7 @@ import {
   movePart,
   moveSection,
   moved,
+  publishable,
   removeField,
   replaceField,
   uniqueId,
@@ -67,10 +68,13 @@ describe('moveSection', () => {
     expect(next[1].sections[0].fields.map((entry) => entry.id)).toEqual(['rvef'])
   })
 
-  it('removes a part left without a section, which could not be saved', () => {
+  it('removes the part the section just left, and keeps a part created empty on purpose', () => {
     const next = moveSection(definition, 'lge-lv', 'cine', 2)
     expect(partOrder(next)).toEqual(['cine'])
     expect(sectionOrder(next, 'cine')).toEqual(['cine-lv', 'cine-rv', 'lge-lv'])
+
+    const withBlank: CrfDefinition = [...definition, { id: 'blank', name: 'Blank', sections: [] }]
+    expect(partOrder(moveSection(withBlank, 'cine-rv', 'cine', 0))).toEqual(['cine', 'lge', 'blank'])
   })
 })
 
@@ -121,6 +125,21 @@ describe('insertSection', () => {
       'cine-atria',
       'cine-rv',
     ])
+  })
+})
+
+describe('publishable', () => {
+  it('drops the part and the section still being filled, which the schema refuses', () => {
+    const withEmpties: CrfDefinition = [
+      ...definition,
+      { id: 'new-part', name: 'New part', sections: [] },
+      { id: 'half', name: 'Half', sections: [{ id: 'half-one', name: 'Empty', fields: [] }] },
+    ]
+    expect(publishable(withEmpties).map((part) => part.id)).toEqual(['cine', 'lge'])
+  })
+
+  it('leaves a complete definition alone', () => {
+    expect(publishable(definition)).toEqual(definition)
   })
 })
 
