@@ -69,6 +69,10 @@
     .ipt.mono { font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace; }
     .ipt.big { height: 34px; border-radius: 10px; }
 
+    .pickrow { display: flex; width: 100%; align-items: center; gap: 8px; border: 0; border-radius: 10px; background: transparent; padding: 7px 9px; text-align: left; cursor: pointer; }
+    .pickrow:hover { background: #fff1f4; }
+    .plus { display: inline-flex; align-items: center; justify-content: center; height: 22px; width: 22px; border: 1px solid #dde2e9; border-radius: 7px; background: #ffffff; font-size: 14px; color: #d61f55; flex: none; }
+    .pickrow:hover .plus { border-color: #fb88a3; }
     .addrow { display: grid; grid-template-columns: minmax(0, 1fr) 176px 124px 22px; align-items: center; width: 100%; border: 0; border-bottom: 1px solid #eceff3; background: transparent; padding: 7px 11px; text-align: left; cursor: pointer; font-size: 12.5px; color: #363f4c; }
     .addrow:hover { background: #fff1f4; }
     .addrow span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -295,29 +299,6 @@
             <span style="margin-left: auto; color: #7197c2;">Aperçu tel que le relecteur le voit</span>
           </div>
 
-          <sc-if value="{{adding}}" hint-placeholder-val="{{true}}">
-            <div style="border-bottom: 1px solid #dde2e9; background: #fafbfc; padding: 12px 14px;">
-              <div style="display: flex; align-items: center; gap: 8px;">
-                <span style="font-size: 12.5px; color: #6b7685;">Ajouter dans « {{paneTitle}} » :</span>
-                <button type="button" class="btn out sm" onClick="{{startDraft}}">Créer une variable</button>
-                <button type="button" class="btn ghost sm" style="margin-left: auto;" onClick="{{closeAdd}}">Fermer</button>
-              </div>
-              <div style="margin-top: 10px;">
-                <input class="ipt" value="{{addSearch}}" onChange="{{setAddSearch}}" placeholder="Chercher une variable de la bibliothèque">
-              </div>
-              <div class="scroll" style="max-height: 148px; margin-top: 8px; border: 1px solid #dde2e9; border-radius: 10px; background: #ffffff;">
-                <sc-for list="{{addOptions}}" as="opt" hint-placeholder-count="5">
-                  <button type="button" class="addrow" onClick="{{opt.pick}}">
-                    <span style="color: #141a22; font-weight: 500;">{{opt.name}}</span>
-                    <span style="font-family: ui-monospace, Menlo, monospace; font-size: 11.5px; color: #6b7685;">{{opt.code}}</span>
-                    <span style="color: #6b7685;">{{opt.type}}</span>
-                    <span style="color: #d61f55; font-weight: 600; text-align: right;">+</span>
-                  </button>
-                </sc-for>
-              </div>
-            </div>
-          </sc-if>
-
           <div class="scroll" style="flex: 1; padding: 6px 12px 14px;">
             <sc-for list="{{fields}}" as="f" hint-placeholder-count="6">
               <div class="{{f.cls}}" onClick="{{f.pick}}">
@@ -405,14 +386,41 @@
         </section>
 
         <aside class="card col">
-          <sc-if value="{{panelDraft}}" hint-placeholder-val="{{true}}">
+          <sc-if value="{{panelAdd}}" hint-placeholder-val="{{true}}">
             <div style="display: flex; flex-direction: column; min-height: 0; flex: 1;">
               <header style="background: linear-gradient(to bottom, #ec3b68, #d61f55); padding: 12px 16px;">
-                <div style="font-size: 11px; font-weight: 600; letter-spacing: 0.03em; text-transform: uppercase; color: #ffdbe3;">Nouvelle variable</div>
-                <div style="margin-top: 2px; font-size: 16px; font-weight: 600; line-height: 1.2; color: #ffffff;">{{draftTitle}}</div>
-                <div style="margin-top: 2px; font-size: 12px; color: #ffdbe3;">dans « {{paneTitle}} »</div>
+                <div style="font-size: 11px; font-weight: 600; letter-spacing: 0.03em; text-transform: uppercase; color: #ffdbe3;">Ajouter une variable</div>
+                <div style="margin-top: 2px; font-size: 16px; font-weight: 600; line-height: 1.2; color: #ffffff;">{{addTitle}}</div>
+                <div style="margin-top: 2px; font-size: 12px; color: #ffdbe3;">{{addWhere}}</div>
               </header>
-              <div class="scroll" style="flex: 1; padding: 15px 16px;">
+              <div style="display: flex; gap: 6px; border-bottom: 1px solid #eceff3; padding: 12px 16px;">
+                <button type="button" class="{{addLibCls}}" onClick="{{addTabLib}}">Depuis la bibliothèque</button>
+                <button type="button" class="{{addNewCls}}" onClick="{{addTabNew}}">Créer</button>
+              </div>
+              <sc-if value="{{addingLib}}" hint-placeholder-val="{{true}}">
+                <div style="display: flex; flex-direction: column; min-height: 0; flex: 1;">
+                  <div style="padding: 12px 16px 10px;">
+                    <input class="ipt" value="{{addSearch}}" onChange="{{setAddSearch}}" placeholder="Chercher une variable">
+                  </div>
+                  <div class="scroll" style="flex: 1; padding: 0 10px 10px;">
+                    <sc-for list="{{addOptions}}" as="opt" hint-placeholder-count="7">
+                      <button type="button" class="pickrow" onClick="{{opt.pick}}">
+                        <span style="min-width: 0; flex: 1;">
+                          <span class="ri-l">{{opt.name}}</span>
+                          <span class="ri-m">{{opt.code}} · {{opt.type}}</span>
+                        </span>
+                        <span class="plus">+</span>
+                      </button>
+                    </sc-for>
+                  </div>
+                  <div style="border-top: 1px solid #eceff3; background: #fafbfc; padding: 12px 16px;">
+                    <button type="button" class="btn ghost" style="width: 100%;" onClick="{{closeAdd}}">Fermer</button>
+                  </div>
+                </div>
+              </sc-if>
+              <sc-if value="{{addingNew}}" hint-placeholder-val="{{true}}">
+                <div style="display: flex; flex-direction: column; min-height: 0; flex: 1;">
+                  <div class="scroll" style="flex: 1; padding: 12px 16px;">
                 <div style="margin-bottom: 15px;">
                   <div class="cap" style="margin-bottom: 7px;">Nom vu par le relecteur</div>
                   <input class="ipt big" value="{{draftName}}" onChange="{{setDraftName}}" placeholder="LV Strain global">
@@ -484,11 +492,13 @@
                 <div class="orgbox own" style="margin-bottom: 15px;">
                   Créée pour MIR Dijon : elle n'existera pas dans la bibliothèque CMR. Vous pourrez l'y ajouter plus tard depuis sa fiche.
                 </div>
-              </div>
-              <div style="display: flex; gap: 8px; border-top: 1px solid #eceff3; background: #fafbfc; padding: 12px 16px;">
-                <button type="button" class="btn ghost" style="flex: none;" onClick="{{cancelDraft}}">Annuler</button>
-                <button type="button" class="{{draftAddCls}}" style="flex: 1;" onClick="{{commitDraft}}">Ajouter au CRF</button>
-              </div>
+                  </div>
+                  <div style="display: flex; gap: 8px; border-top: 1px solid #eceff3; background: #fafbfc; padding: 12px 16px;">
+                    <button type="button" class="btn ghost" style="flex: none;" onClick="{{cancelDraft}}">Annuler</button>
+                    <button type="button" class="{{draftAddCls}}" style="flex: 1;" onClick="{{commitDraft}}">Ajouter au CRF</button>
+                  </div>
+                </div>
+              </sc-if>
             </div>
           </sc-if>
 
@@ -1005,7 +1015,7 @@ class Component extends DCLogic {
       panel: 'field',
       rail: 'tree',
       open: { cine: true },
-      adding: false,
+      addTab: 'lib',
       addSearch: '',
       libSearch: '',
       draft: null,
@@ -1044,7 +1054,7 @@ class Component extends DCLogic {
     copy.id = uniqueId(taken, copy.id);
     copy.lib = snapshot(copy);
     this.insertAt(found.section, copy);
-    this.patch({ doc: doc, fieldId: copy.id, adding: false, panel: 'field' });
+    this.patch({ doc: doc, fieldId: copy.id, panel: 'add' });
   }
 
   insertSection(entry) {
@@ -1171,7 +1181,6 @@ class Component extends DCLogic {
             sectionId: sequence.secs[0].id,
             fieldId: sequence.secs[0].fields[0].id,
             panel: 'field',
-            adding: false,
             draft: null,
           });
         },
@@ -1200,7 +1209,7 @@ class Component extends DCLogic {
           drop: function (event) { event.preventDefault(); self.drop(sectionNode); },
           dragEnd: function () { self.patch({ dragging: null, overId: null }); },
           pick: function () {
-            self.patch({ sectionId: section.id, fieldId: section.fields[0].id, panel: 'field', adding: false, draft: null });
+            self.patch({ sectionId: section.id, fieldId: section.fields[0].id, panel: 'field', draft: null });
           },
         });
       });
@@ -1215,7 +1224,8 @@ class Component extends DCLogic {
     const active = resolveField(found.section, state.fieldId);
     const rows = [];
     found.section.fields.forEach(function (field) {
-      const selected = field.id === active && !state.draft;
+      const creating = state.panel === 'add' && state.addTab === 'new' && Boolean(state.draft);
+      const selected = field.id === active && !creating;
       const origin = originOf(field);
       rows.push(Object.assign({
         name: field.name,
@@ -1231,7 +1241,7 @@ class Component extends DCLogic {
         bounds: boundsLabel(field),
         pick: function () { self.patch({ fieldId: field.id, panel: 'field', draft: null }); },
       }, controlsOf(field)));
-      if (state.draft && field.id === active) {
+      if (creating && field.id === active) {
         const draft = state.draft;
         rows.push(Object.assign({
           name: draft.name || 'Nouvelle variable',
@@ -1397,9 +1407,6 @@ class Component extends DCLogic {
       setSeg16: function () { setDraft({ seg: 16 }); },
       setDraftReqYes: function () { setDraft({ req: true }); },
       setDraftReqNo: function () { setDraft({ req: false }); },
-      startDraft: function () {
-        self.patch({ draft: { name: '', id: '', idTouched: false, type: 'numeric', req: false, opts: [] }, adding: false, panel: 'draft' });
-      },
       cancelDraft: function () { self.patch({ draft: null, panel: 'field' }); },
       commitDraft: function () {
         const current = self.read();
@@ -1471,6 +1478,7 @@ class Component extends DCLogic {
     const found = findSection(doc, state.sectionId);
     const fields = found.section.fields;
     const drift = divergentCount(found.section);
+    const activeName = fieldNameOf(doc, state.sectionId, resolveField(found.section, state.fieldId));
     let total = 0;
     let totalDrift = 0;
     doc.forEach(function (sequence) {
@@ -1532,16 +1540,29 @@ class Component extends DCLogic {
       stripDiff: String(drift),
       fields: this.buildFields(dense),
 
-      adding: Boolean(state.adding),
-      toggleAdd: function () { self.patch({ adding: !state.adding }); },
-      closeAdd: function () { self.patch({ adding: false }); },
+      addTitle: state.addTab === 'new' ? ((state.draft && state.draft.name) || 'Sans nom pour l’instant') : 'Bibliothèque CMR',
+      addWhere: 'dans « ' + found.section.name + ' », après « ' + activeName + ' »',
+      addingLib: state.addTab !== 'new',
+      addingNew: state.addTab === 'new',
+      addLibCls: state.addTab === 'new' ? 'seg' : 'seg on',
+      addNewCls: state.addTab === 'new' ? 'seg on' : 'seg',
+      addTabLib: function () { self.patch({ addTab: 'lib' }); },
+      addTabNew: function () {
+        const current = self.read();
+        self.patch({
+          addTab: 'new',
+          draft: current.draft || { name: '', id: '', idTouched: false, type: 'numeric', req: false, opts: [] },
+        });
+      },
+      toggleAdd: function () { self.patch({ panel: state.panel === 'add' ? 'field' : 'add', addTab: 'lib' }); },
+      closeAdd: function () { self.patch({ panel: 'field' }); },
       addSearch: state.addSearch || '',
       setAddSearch: function (event) { self.patch({ addSearch: event.target.value }); },
       addOptions: this.buildAddOptions(),
 
-      panelDraft: Boolean(state.draft),
-      panelField: !state.draft && state.panel !== 'impact',
-      panelImpact: !state.draft && state.panel === 'impact',
+      panelAdd: state.panel === 'add',
+      panelField: state.panel === 'field',
+      panelImpact: state.panel === 'impact',
     }, this.buildInspector(), this.buildDraft());
   }
 }
