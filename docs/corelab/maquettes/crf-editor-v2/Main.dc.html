@@ -11,7 +11,7 @@
   <style>
     *{ box-sizing: border-box; }
     body { margin: 0; font-family: 'Inter Tight', system-ui, -apple-system, 'Segoe UI', sans-serif; -webkit-font-smoothing: antialiased; }
-    button { font-family: inherit; }
+    button, input { font-family: inherit; }
     a { color: #d61f55; text-decoration: none; }
     a:hover { color: #b01547; }
 
@@ -31,6 +31,9 @@
     .chev.open { transform: rotate(90deg); }
     .chev.hide { visibility: hidden; }
 
+    .libitem { display: flex; width: 100%; align-items: center; gap: 8px; border: 1px solid #eceff3; border-radius: 10px; background: #fafbfc; padding: 8px 9px; margin-bottom: 6px; text-align: left; cursor: pointer; }
+    .libitem:hover { border-color: #fb88a3; background: #fff1f4; }
+
     .fr { display: flex; gap: 14px; align-items: flex-start; padding: 11px 10px; border-bottom: 1px solid #eceff3; border-radius: 10px; cursor: pointer; }
     .fr:hover { background: #fafbfc; }
     .fr.on { background: #fafbfc; box-shadow: inset 2px 0 0 #d61f55; }
@@ -48,7 +51,32 @@
     .cc:hover { background: #f5f7fa; }
     .cc.on { border-color: #122f54; background: #122f54; color: #ffffff; font-weight: 600; }
 
-    .bt { --cols: 34px minmax(180px, 1fr) 170px 122px 58px 60px 58px 58px 168px 138px 132px; }
+    .seg { display: inline-flex; align-items: center; height: 28px; padding: 0 11px; border: 1px solid #dde2e9; border-radius: 9px; background: #ffffff; color: #6b7685; font-size: 12.5px; cursor: pointer; }
+    .seg.on { border-color: #d61f55; background: #fff1f4; color: #b01547; font-weight: 600; }
+
+    .ipt { height: 31px; width: 100%; border: 1px solid #dde2e9; border-radius: 9px; background: #ffffff; padding: 0 10px; font-size: 13px; color: #141a22; font-variant-numeric: tabular-nums; outline: none; }
+    .ipt:focus { border-color: #1f4b86; box-shadow: 0 0 0 3px rgba(31,75,134,0.16); }
+    .ipt.mono { font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace; }
+    .ipt.big { height: 34px; border-radius: 10px; }
+
+    .addrow { display: grid; grid-template-columns: minmax(0, 1fr) 176px 124px 22px; align-items: center; width: 100%; border: 0; border-bottom: 1px solid #eceff3; background: transparent; padding: 7px 11px; text-align: left; cursor: pointer; font-size: 12.5px; color: #363f4c; }
+    .addrow:hover { background: #fff1f4; }
+    .addrow span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    .badge { border: 1px solid rgba(255,255,255,0.45); border-radius: 6px; background: rgba(255,255,255,0.15); padding: 1px 7px; font-size: 11px; font-weight: 500; color: #ffffff; }
+    .badge.warn { border-color: #fff8eb; background: #fff8eb; color: #92400e; font-weight: 600; }
+    .tag { display: inline-flex; align-items: center; border-radius: 6px; padding: 1px 6px; font-size: 10.5px; font-weight: 500; }
+    .tag.tuned { border: 1px solid #fbe3bd; background: #fff8eb; color: #92400e; }
+    .tag.own { border: 1px solid #d6e0ee; background: #eef2f8; color: #173d6e; }
+
+    .orgbox { border-radius: 10px; padding: 10px 11px; font-size: 12.5px; line-height: 1.5; }
+    .orgbox.ok { border: 1px solid #cdf3dd; background: #ecfdf3; color: #166534; }
+    .orgbox.warn { border: 1px solid #fbe3bd; background: #fff8eb; color: #92400e; }
+    .orgbox.own { border: 1px solid #d6e0ee; background: #eef2f8; color: #173d6e; }
+    .orgbox ul { margin: 7px 0 0; padding-left: 16px; }
+    .orgbox code { font-family: ui-monospace, Menlo, monospace; font-size: 11.5px; }
+
+    .bt { --cols: 34px minmax(150px, 1fr) 162px 112px 62px 54px 52px 52px 144px 126px 120px 100px; }
     .bhead { display: grid; grid-template-columns: var(--cols); align-items: center; height: 31px; background: #f5f7fa; border-bottom: 1px solid #dde2e9; position: sticky; top: 0; z-index: 1; }
     .bhead .bc { font-size: 10.5px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: #6b7685; }
     .brow { display: grid; grid-template-columns: var(--cols); align-items: center; height: 33px; border-bottom: 1px solid #eceff3; cursor: pointer; }
@@ -61,6 +89,9 @@
     .bc.num { text-align: right; font-variant-numeric: tabular-nums; }
     .bc.mid { text-align: center; }
     .bc.cond { color: #92400e; font-size: 11.5px; }
+    .bc.o-lib { color: #9aa5b3; }
+    .bc.o-tuned { color: #b45309; font-weight: 500; }
+    .bc.o-own { color: #173d6e; font-weight: 500; }
     .bgroup { display: flex; align-items: center; height: 28px; padding: 0 10px; background: #fff1f4; border-bottom: 1px solid #ffdbe3; font-size: 11px; font-weight: 600; letter-spacing: 0.03em; text-transform: uppercase; color: #b01547; }
     .box { display: inline-block; height: 14px; width: 14px; border-radius: 4px; border: 1px solid #c4ccd6; background: #ffffff; }
     .box.on { border-color: #d61f55; background: #d61f55; box-shadow: inset 0 0 0 2px #ffffff; }
@@ -75,7 +106,8 @@
     .pill:hover { background: #cdf3dd; }
     .pill.on { border-color: #15803d; box-shadow: 0 0 0 2px #cdf3dd; }
 
-    .btn { display: inline-flex; align-items: center; gap: 7px; height: 34px; padding: 0 14px; border-radius: 10px; font-size: 13px; font-weight: 500; cursor: pointer; border: 1px solid transparent; }
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 7px; height: 34px; padding: 0 14px; border-radius: 10px; font-size: 13px; font-weight: 500; cursor: pointer; border: 1px solid transparent; }
+    .btn.sm { height: 29px; padding: 0 11px; font-size: 12.5px; }
     .btn.ghost { background: transparent; color: #6b7685; }
     .btn.ghost:hover { background: #f5f7fa; }
     .btn.out { background: #ffffff; border-color: #dde2e9; color: #363f4c; }
@@ -97,7 +129,6 @@
     .paneact.filled { border-color: #ffffff; background: #ffffff; font-weight: 600; color: #b01547; }
     .card { border: 1px solid #dde2e9; border-radius: 16px; background: #ffffff; box-shadow: 0 1px 3px rgba(16,28,48,0.08), 0 1px 2px rgba(16,28,48,0.04); overflow: hidden; }
     .col { display: flex; flex-direction: column; height: 636px; }
-    .field-in { display: flex; align-items: center; height: 31px; border: 1px solid #dde2e9; border-radius: 9px; background: #ffffff; padding: 0 10px; font-size: 13px; color: #141a22; font-variant-numeric: tabular-nums; }
     .lbl { font-size: 13px; color: #6b7685; }
 
     .scroll { overflow-y: auto; overflow-x: hidden; }
@@ -118,19 +149,19 @@
     <div style="margin-left: auto; max-width: 720px; text-align: right; line-height: 1.35;">
       <sc-if value="{{isA}}" hint-placeholder-val="{{true}}">
         <div>
-          <div style="font-size: 12.5px; font-weight: 600; color: #ffffff;">On règle une variable là où on la voit, dans le formulaire tel que le relecteur l'aura.</div>
+          <div style="font-size: 12.5px; font-weight: 600; color: #ffffff;">On importe un bloc, puis on l'ajuste là où on le voit — le formulaire tel que le relecteur l'aura.</div>
           <div style="font-size: 12px; color: #7197c2;">Contrepartie : une seule section à l'écran, donc mal adapté à une reprise en masse.</div>
         </div>
       </sc-if>
       <sc-if value="{{isB}}" hint-placeholder-val="{{true}}">
         <div>
-          <div style="font-size: 12.5px; font-weight: 600; color: #ffffff;">Les 66 variables comparables colonne par colonne, modifiables en lot.</div>
+          <div style="font-size: 12.5px; font-weight: 600; color: #ffffff;">Toutes les variables comparables colonne par colonne, écarts bibliothèque compris, modifiables en lot.</div>
           <div style="font-size: 12px; color: #7197c2;">Contrepartie : on ne voit jamais ce que le relecteur verra.</div>
         </div>
       </sc-if>
       <sc-if value="{{isC}}" hint-placeholder-val="{{true}}">
         <div>
-          <div style="font-size: 12.5px; font-weight: 600; color: #ffffff;">Le plan complet d'un coup d'œil : on déplace sections et variables entre séquences.</div>
+          <div style="font-size: 12.5px; font-weight: 600; color: #ffffff;">Le plan complet d'un coup d'œil : on glisse des blocs de bibliothèque, on déplace des sections.</div>
           <div style="font-size: 12px; color: #7197c2;">Contrepartie : on structure ici, on règle le détail ailleurs.</div>
         </div>
       </sc-if>
@@ -201,7 +232,7 @@
                 <div style="display: flex; flex-direction: column; min-height: 0; flex: 1;">
                   <header style="display: flex; align-items: baseline; justify-content: space-between; gap: 8px; background: linear-gradient(to bottom, #ec3b68, #d61f55); padding: 11px 16px;">
                     <span style="font-size: 11px; font-weight: 600; letter-spacing: 0.03em; text-transform: uppercase; color: #ffffff;">Plan du CRF</span>
-                    <span style="font-size: 12px; color: #ffdbe3;">6 séquences · 66 variables</span>
+                    <span style="font-size: 12px; color: #ffdbe3;">{{railMeta}}</span>
                   </header>
                   <div class="scroll" style="flex: 1; padding: 6px;">
                     <sc-for list="{{tree}}" as="node" hint-placeholder-count="8">
@@ -211,18 +242,21 @@
                           <span class="ri-l">{{node.label}}</span>
                           <span class="ri-m">{{node.meta}}</span>
                         </span>
+                        <sc-if value="{{node.diverges}}" hint-placeholder-val="{{true}}">
+                          <span class="tag tuned">{{node.diffCount}}</span>
+                        </sc-if>
                         <span class="ri-n">{{node.count}}</span>
                       </button>
                     </sc-for>
                   </div>
                   <div style="display: flex; flex-direction: column; gap: 6px; border-top: 1px solid #eceff3; padding: 10px;">
-                    <button type="button" class="btn out" style="justify-content: center; width: 100%;">
+                    <button type="button" class="btn out" style="width: 100%;">
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>
-                      Ajouter une séquence
+                      Séquence vide
                     </button>
-                    <button type="button" class="btn coral" style="justify-content: center; width: 100%;" onClick="{{openLib}}">
+                    <button type="button" class="btn coral" style="width: 100%;" onClick="{{openLib}}">
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
-                      Depuis la bibliothèque
+                      Importer un bloc
                     </button>
                   </div>
                 </div>
@@ -230,25 +264,23 @@
               <sc-if value="{{railLib}}" hint-placeholder-val="{{true}}">
                 <div style="display: flex; flex-direction: column; min-height: 0; flex: 1;">
                   <header style="display: flex; align-items: center; gap: 9px; background: linear-gradient(to bottom, #ec3b68, #d61f55); padding: 11px 12px 11px 9px;">
-                    <button type="button" onClick="{{closeLib}}" style="display: inline-flex; align-items: center; justify-content: center; height: 26px; width: 26px; border: 0; border-radius: 8px; background: rgba(255,255,255,0.18); color: #ffffff; cursor: pointer;">
+                    <button type="button" onClick="{{closeLib}}" style="display: inline-flex; align-items: center; justify-content: center; height: 26px; width: 26px; border: 0; border-radius: 8px; background: rgba(255,255,255,0.18); color: #ffffff; cursor: pointer; flex: none;">
                       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"></path></svg>
                     </button>
                     <span style="font-size: 11px; font-weight: 600; letter-spacing: 0.03em; text-transform: uppercase; color: #ffffff;">Bibliothèque CMR</span>
                   </header>
                   <div style="padding: 10px 10px 0;">
-                    <div style="display: flex; height: 32px; align-items: center; gap: 7px; border: 1px solid #dde2e9; border-radius: 10px; background: #fafbfc; padding: 0 10px;">
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9aa5b3" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
-                      <span style="font-size: 13px; color: #aeb7c2;">Chercher un bloc</span>
-                    </div>
+                    <input class="ipt" value="{{libSearch}}" onChange="{{setLibSearch}}" placeholder="Chercher un bloc">
                     <div style="display: flex; gap: 5px; padding: 10px 0 8px;">
                       <span class="ch sm on">Sections</span>
-                      <span class="ch sm">Variables</span>
                       <span class="ch sm">Séquences</span>
+                      <span class="ch sm">Variables</span>
                     </div>
+                    <p style="margin: 0 0 8px; font-size: 11.5px; line-height: 1.45; color: #9aa5b3;">L'import crée une copie dans l'étude : les réglages faits ici ne remontent pas dans la bibliothèque.</p>
                   </div>
                   <div class="scroll" style="flex: 1; padding: 0 8px 8px;">
-                    <sc-for list="{{libItems}}" as="item" hint-placeholder-count="6">
-                      <div style="display: flex; align-items: center; gap: 8px; border-bottom: 1px solid #eceff3; padding: 9px 6px;">
+                    <sc-for list="{{libSections}}" as="item" hint-placeholder-count="6">
+                      <button type="button" class="libitem" onClick="{{item.pick}}">
                         <span style="min-width: 0; flex: 1;">
                           <span class="ri-l">{{item.name}}</span>
                           <span class="ri-m">{{item.meta}}</span>
@@ -256,7 +288,7 @@
                         <span style="display: inline-flex; align-items: center; justify-content: center; height: 24px; width: 24px; border: 1px solid #dde2e9; border-radius: 8px; background: #ffffff; color: #6b7685; flex: none;">
                           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>
                         </span>
-                      </div>
+                      </button>
                     </sc-for>
                   </div>
                 </div>
@@ -266,15 +298,15 @@
             <section class="card col">
               <header class="panehead">
                 <div style="min-width: 0;">
-                  <div style="display: flex; align-items: center; gap: 8px;">
+                  <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
                     <h2 style="margin: 0; font-size: 18px; font-weight: 600; letter-spacing: -0.01em; color: #ffffff;">{{paneTitle}}</h2>
-                    <span style="border: 1px solid rgba(255,255,255,0.45); border-radius: 6px; background: rgba(255,255,255,0.15); padding: 1px 6px; font-size: 11px; font-weight: 500; color: #ffffff;">Section</span>
+                    <span class="{{paneOrgCls}}">{{paneOrgLabel}}</span>
                   </div>
                   <code class="panecode">{{paneCode}}</code>
                 </div>
                 <div style="display: flex; gap: 6px; flex: none;">
                   <span class="paneact">Renommer</span>
-                  <span class="paneact filled">+ Variable</span>
+                  <button type="button" class="paneact filled" onClick="{{toggleAdd}}">+ Variable</button>
                 </div>
               </header>
               <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px; background: #0e2542; padding: 8px 18px; font-size: 12px; color: #aac0dc;">
@@ -284,9 +316,46 @@
                 <span style="color: #3f6aa3;">·</span>
                 <span><strong style="font-weight: 600; color: #ffffff;">{{stripCond}}</strong> sous condition</span>
                 <span style="color: #3f6aa3;">·</span>
-                <span><strong style="font-weight: 600; color: #ffffff;">{{stripTol}}</strong> avec tolérance</span>
+                <span><strong style="font-weight: 600; color: #ffffff;">{{stripDiff}}</strong> écarts bibliothèque</span>
                 <span style="margin-left: auto; color: #7197c2;">Aperçu tel que le relecteur le voit</span>
               </div>
+
+              <sc-if value="{{adding}}" hint-placeholder-val="{{true}}">
+                <div style="border-bottom: 1px solid #dde2e9; background: #fafbfc; padding: 12px 14px;">
+                  <div style="display: flex; align-items: center; gap: 7px;">
+                    <button type="button" class="{{addLibCls}}" onClick="{{addTabLib}}">Depuis la bibliothèque</button>
+                    <button type="button" class="{{addNewCls}}" onClick="{{addTabNew}}">Nouvelle variable</button>
+                    <button type="button" class="btn ghost sm" style="margin-left: auto;" onClick="{{closeAdd}}">Fermer</button>
+                  </div>
+                  <sc-if value="{{addingLib}}" hint-placeholder-val="{{true}}">
+                    <div>
+                      <div style="margin-top: 10px;">
+                        <input class="ipt" value="{{addSearch}}" onChange="{{setAddSearch}}" placeholder="Chercher une variable de la bibliothèque">
+                      </div>
+                      <div class="scroll" style="max-height: 152px; margin-top: 8px; border: 1px solid #dde2e9; border-radius: 10px; background: #ffffff;">
+                        <sc-for list="{{addOptions}}" as="opt" hint-placeholder-count="5">
+                          <button type="button" class="addrow" onClick="{{opt.pick}}">
+                            <span style="color: #141a22; font-weight: 500;">{{opt.name}}</span>
+                            <span style="font-family: ui-monospace, Menlo, monospace; font-size: 11.5px; color: #6b7685;">{{opt.code}}</span>
+                            <span style="color: #6b7685;">{{opt.type}}</span>
+                            <span style="color: #d61f55; font-weight: 600; text-align: right;">+</span>
+                          </button>
+                        </sc-for>
+                      </div>
+                    </div>
+                  </sc-if>
+                  <sc-if value="{{addingNew}}" hint-placeholder-val="{{true}}">
+                    <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 10px;">
+                      <input class="ipt" style="width: 232px;" value="{{newName}}" onChange="{{setNewName}}" placeholder="Nom de la variable">
+                      <sc-for list="{{newTypes}}" as="ty" hint-placeholder-count="4">
+                        <button type="button" class="{{ty.cls}}" onClick="{{ty.pick}}">{{ty.label}}</button>
+                      </sc-for>
+                      <button type="button" class="btn coral sm" onClick="{{createVar}}">Créer et régler</button>
+                    </div>
+                  </sc-if>
+                </div>
+              </sc-if>
+
               <div class="scroll" style="flex: 1; padding: 6px 12px 14px;">
                 <sc-for list="{{fields}}" as="f" hint-placeholder-count="6">
                   <div class="{{f.cls}}" onClick="{{f.pick}}">
@@ -296,6 +365,12 @@
                         <span class="fr-n">{{f.name}}</span>
                         <sc-if value="{{f.req}}" hint-placeholder-val="{{true}}">
                           <span style="color: #d61f55; font-size: 14px; line-height: 1;">*</span>
+                        </sc-if>
+                        <sc-if value="{{f.isTuned}}" hint-placeholder-val="{{true}}">
+                          <span class="tag tuned">ajustée</span>
+                        </sc-if>
+                        <sc-if value="{{f.isOwn}}" hint-placeholder-val="{{true}}">
+                          <span class="tag own">propre à l'étude</span>
                         </sc-if>
                       </div>
                       <div style="margin-top: 2px; font-size: 11.5px; color: #9aa5b3; font-family: ui-monospace, Menlo, monospace;">{{f.code}}</div>
@@ -372,8 +447,37 @@
                   <div class="scroll" style="flex: 1; padding: 15px 16px;">
 
                     <div style="margin-bottom: 15px;">
+                      <div class="cap" style="margin-bottom: 7px;">Origine</div>
+                      <sc-if value="{{insOrgLib}}" hint-placeholder-val="{{true}}">
+                        <div class="orgbox ok">Identique à la variable <code>{{insLibCode}}</code> de la bibliothèque. Une modification faite ici ne vaudra que pour MIR Dijon.</div>
+                      </sc-if>
+                      <sc-if value="{{insOrgTuned}}" hint-placeholder-val="{{true}}">
+                        <div class="orgbox warn">
+                          <div>Ajustée pour cette étude. La bibliothèque garde sa version.</div>
+                          <ul>
+                            <sc-for list="{{insDiffs}}" as="d" hint-placeholder-count="2">
+                              <li>{{d.label}} : {{d.from}} → {{d.to}}</li>
+                            </sc-for>
+                          </ul>
+                          <div style="display: flex; gap: 7px; margin-top: 9px;">
+                            <button type="button" class="btn out sm" onClick="{{revert}}">Revenir à la bibliothèque</button>
+                            <button type="button" class="btn out sm" onClick="{{promote}}">Renvoyer vers la bibliothèque</button>
+                          </div>
+                        </div>
+                      </sc-if>
+                      <sc-if value="{{insOrgOwn}}" hint-placeholder-val="{{true}}">
+                        <div class="orgbox own">
+                          <div>Propre à cette étude : elle n'existe pas dans la bibliothèque CMR.</div>
+                          <div style="margin-top: 9px;">
+                            <button type="button" class="btn out sm" onClick="{{promote}}">Ajouter à la bibliothèque</button>
+                          </div>
+                        </div>
+                      </sc-if>
+                    </div>
+
+                    <div style="margin-bottom: 15px;">
                       <div class="cap" style="margin-bottom: 7px;">Nom de colonne à l'export</div>
-                      <div style="display: flex; align-items: center; height: 34px; border: 1px solid #dde2e9; border-radius: 10px; background: #ffffff; padding: 0 10px; font-family: ui-monospace, Menlo, monospace; font-size: 13px; color: #141a22;">{{insCode}}</div>
+                      <input class="ipt big mono" value="{{insCode}}" onChange="{{setCode}}">
                     </div>
 
                     <div style="margin-bottom: 15px;">
@@ -382,17 +486,17 @@
                         <sc-if value="{{insNum}}" hint-placeholder-val="{{true}}">
                           <div style="display: contents;">
                             <span class="lbl">Minimum</span>
-                            <span class="field-in">{{insMin}}</span>
+                            <input class="ipt" type="number" value="{{insMin}}" onChange="{{setMin}}">
                             <span class="lbl">Maximum</span>
-                            <span class="field-in">{{insMax}}</span>
+                            <input class="ipt" type="number" value="{{insMax}}" onChange="{{setMax}}">
                             <span class="lbl">Unité</span>
-                            <span class="field-in">{{insUnit}}</span>
+                            <input class="ipt" value="{{insUnit}}" onChange="{{setUnit}}" placeholder="aucune">
                           </div>
                         </sc-if>
                         <span class="lbl">Obligatoire</span>
                         <span style="display: inline-flex; gap: 6px;">
-                          <span class="{{insReqYes}}">Oui</span>
-                          <span class="{{insReqNo}}">Non</span>
+                          <button type="button" class="{{insReqYes}}" onClick="{{setReqYes}}">Oui</button>
+                          <button type="button" class="{{insReqNo}}" onClick="{{setReqNo}}">Non</button>
                         </span>
                       </div>
                     </div>
@@ -426,9 +530,9 @@
                         <div class="cap" style="margin-bottom: 7px;">Écarts tolérés</div>
                         <div style="display: grid; grid-template-columns: 100px minmax(0, 1fr); align-items: center; gap: 8px 10px;">
                           <span class="lbl">Calibration</span>
-                          <span class="field-in">{{insTolText}}</span>
+                          <span class="ipt" style="display: flex; align-items: center;">{{insTolText}}</span>
                           <span class="lbl">Discordance</span>
-                          <span class="field-in">{{insThrText}}</span>
+                          <span class="ipt" style="display: flex; align-items: center;">{{insThrText}}</span>
                         </div>
                       </div>
                     </sc-if>
@@ -447,16 +551,11 @@
                       </div>
                     </sc-if>
 
-                    <div style="margin-bottom: 15px;">
-                      <div class="cap" style="margin-bottom: 7px;">Présente dans</div>
-                      <p style="margin: 0; font-size: 12.5px; line-height: 1.5; color: #6b7685;">{{insUsage}}</p>
-                    </div>
-
                     <div style="display: flex; flex-direction: column; gap: 8px; border-top: 1px solid #eceff3; padding-top: 14px;">
-                      <button type="button" class="btn solid" style="justify-content: center; width: 100%;">Enregistrer la variable</button>
+                      <button type="button" class="btn solid" style="width: 100%;">Enregistrer le brouillon</button>
                       <div style="display: flex; gap: 8px;">
-                        <button type="button" class="btn out" style="flex: 1; justify-content: center;">Déplacer</button>
-                        <button type="button" class="btn out" style="flex: 1; justify-content: center; color: #b91c1c;">Retirer du CRF</button>
+                        <button type="button" class="btn out" style="flex: 1;">Déplacer</button>
+                        <button type="button" class="btn out" style="flex: 1; color: #b91c1c;" onClick="{{removeField}}">Retirer du CRF</button>
                       </div>
                     </div>
                   </div>
@@ -476,11 +575,13 @@
                     </div>
                     <div class="cap" style="margin: 16px 0 8px;">Ce que la publication verrouille</div>
                     <ul style="margin: 0; padding-left: 17px; font-size: 12.5px; line-height: 1.65; color: #6b7685;">
-                      <li>Les 66 identifiants de variables deviennent des colonnes d'export définitives.</li>
+                      <li>Les identifiants de variables deviennent des colonnes d'export définitives.</li>
                       <li>Une variable retirée après une signature casserait la lecture correspondante.</li>
                       <li>Élargir des bornes reste sans conséquence, les rétrécir crée un manque.</li>
                     </ul>
-                    <button type="button" class="btn out" style="justify-content: center; width: 100%; margin-top: 16px;" onClick="{{closeImpact}}">Revenir à la variable</button>
+                    <div class="cap" style="margin: 16px 0 8px;">Écarts avec la bibliothèque</div>
+                    <p style="margin: 0; font-size: 12.5px; line-height: 1.5; color: #6b7685;">{{impactDrift}}</p>
+                    <button type="button" class="btn out" style="width: 100%; margin-top: 16px;" onClick="{{closeImpact}}">Revenir à la variable</button>
                   </div>
                 </div>
               </sc-if>
@@ -493,7 +594,7 @@
             <header class="panehead">
               <div>
                 <h2 style="margin: 0; font-size: 18px; font-weight: 600; letter-spacing: -0.01em; color: #ffffff;">Toutes les variables du CRF</h2>
-                <code class="panecode">6 séquences · 16 sections · 66 variables</code>
+                <code class="panecode">{{planMeta}}</code>
               </div>
               <div style="display: flex; gap: 6px; flex: none;">
                 <span class="paneact">Colonnes</span>
@@ -501,9 +602,8 @@
               </div>
             </header>
             <div style="display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #dde2e9; background: #ffffff; padding: 10px 14px;">
-              <div style="display: flex; height: 32px; width: 200px; align-items: center; gap: 7px; border: 1px solid #dde2e9; border-radius: 10px; background: #fafbfc; padding: 0 10px; flex: none;">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9aa5b3" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
-                <span style="font-size: 13px; color: #aeb7c2;">Chercher une variable</span>
+              <div style="width: 200px; flex: none;">
+                <input class="ipt" value="{{tableSearch}}" onChange="{{setTableSearch}}" placeholder="Chercher une variable">
               </div>
               <span style="height: 20px; width: 1px; background: #dde2e9;"></span>
               <div style="display: flex; gap: 5px;">
@@ -525,6 +625,7 @@
               <span class="bc">Condition</span>
               <span class="bc num">Calibration</span>
               <span class="bc num">Discordance</span>
+              <span class="bc">Bibliothèque</span>
             </div>
             <div class="scroll" style="flex: 1;">
               <sc-for list="{{bRows}}" as="row" hint-placeholder-count="14">
@@ -545,6 +646,7 @@
                       <span class="bc cond">{{row.cond}}</span>
                       <span class="bc num">{{row.tol}}</span>
                       <span class="bc num">{{row.thr}}</span>
+                      <span class="{{row.orgCls}}">{{row.org}}</span>
                     </div>
                   </sc-if>
                 </div>
@@ -558,6 +660,7 @@
                   <span style="display: inline-flex; align-items: center; height: 28px; padding: 0 11px; border: 1px solid rgba(255,255,255,0.28); border-radius: 9px; font-size: 12.5px; color: #d6e0ee; cursor: pointer;">Rendre obligatoire</span>
                   <span style="display: inline-flex; align-items: center; height: 28px; padding: 0 11px; border: 1px solid rgba(255,255,255,0.28); border-radius: 9px; font-size: 12.5px; color: #d6e0ee; cursor: pointer;">Appliquer une tolérance</span>
                   <span style="display: inline-flex; align-items: center; height: 28px; padding: 0 11px; border: 1px solid rgba(255,255,255,0.28); border-radius: 9px; font-size: 12.5px; color: #d6e0ee; cursor: pointer;">Déplacer vers une section</span>
+                  <span style="display: inline-flex; align-items: center; height: 28px; padding: 0 11px; border: 1px solid rgba(255,255,255,0.28); border-radius: 9px; font-size: 12.5px; color: #d6e0ee; cursor: pointer;">Renvoyer vers la bibliothèque</span>
                   <span style="display: inline-flex; align-items: center; height: 28px; padding: 0 11px; border: 1px solid rgba(255,255,255,0.28); border-radius: 9px; font-size: 12.5px; color: #ffb6c6; cursor: pointer;">Retirer du CRF</span>
                 </div>
                 <button type="button" onClick="{{clearRows}}" style="margin-left: auto; border: 0; background: transparent; font-size: 12.5px; color: #7197c2; cursor: pointer; flex: none;">Tout désélectionner</button>
@@ -574,10 +677,7 @@
                 <span style="font-size: 12px; color: #ffdbe3;">à glisser</span>
               </header>
               <div style="padding: 10px 10px 0;">
-                <div style="display: flex; height: 32px; align-items: center; gap: 7px; border: 1px solid #dde2e9; border-radius: 10px; background: #fafbfc; padding: 0 10px;">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9aa5b3" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
-                  <span style="font-size: 13px; color: #aeb7c2;">Chercher un bloc</span>
-                </div>
+                <input class="ipt" value="{{libSearch}}" onChange="{{setLibSearch}}" placeholder="Chercher un bloc">
                 <div style="display: flex; gap: 5px; padding: 10px 0 8px;">
                   <span class="ch sm on">Sections</span>
                   <span class="ch sm">Séquences</span>
@@ -585,14 +685,14 @@
                 </div>
               </div>
               <div class="scroll" style="flex: 1; padding: 0 8px 8px;">
-                <sc-for list="{{libItems}}" as="item" hint-placeholder-count="8">
-                  <div style="display: flex; align-items: center; gap: 8px; border: 1px solid #eceff3; border-radius: 10px; background: #fafbfc; padding: 8px 9px; margin-bottom: 6px;">
+                <sc-for list="{{libSections}}" as="item" hint-placeholder-count="8">
+                  <button type="button" class="libitem" onClick="{{item.pick}}">
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#c4ccd6" stroke-width="2" stroke-linecap="round" style="flex: none;"><circle cx="9" cy="6" r="1"></circle><circle cx="9" cy="12" r="1"></circle><circle cx="9" cy="18" r="1"></circle><circle cx="15" cy="6" r="1"></circle><circle cx="15" cy="12" r="1"></circle><circle cx="15" cy="18" r="1"></circle></svg>
                     <span style="min-width: 0; flex: 1;">
                       <span class="ri-l">{{item.name}}</span>
                       <span class="ri-m">{{item.meta}}</span>
                     </span>
-                  </div>
+                  </button>
                 </sc-for>
               </div>
             </aside>
@@ -623,7 +723,12 @@
                           <div class="{{sec.cls}}" onClick="{{sec.pick}}">
                             <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 6px;">
                               <span class="cs-t">{{sec.name}}</span>
-                              <span class="ri-n">{{sec.count}}</span>
+                              <span style="display: inline-flex; align-items: center; gap: 5px; flex: none;">
+                                <sc-if value="{{sec.diverges}}" hint-placeholder-val="{{true}}">
+                                  <span class="tag tuned">{{sec.diffCount}}</span>
+                                </sc-if>
+                                <span class="ri-n">{{sec.count}}</span>
+                              </span>
                             </div>
                             <div style="display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px;">
                               <sc-for list="{{sec.chips}}" as="chip" hint-placeholder-count="4">
@@ -727,8 +832,7 @@ function ringShapes(centre, ring, order, startAngle, scale) {
   const span = 360 / order.length;
   return order.map(function (segment, index) {
     const from = startAngle + index * span;
-    const label = pointOn(centre, (ring.outer + ring.inner) / 2, from + span / 2, scale);
-    return { segment: segment, path: sectorPath(centre, ring, from, from + span, scale), labelX: label[0], labelY: label[1] };
+    return { segment: segment, path: sectorPath(centre, ring, from, from + span, scale) };
   });
 }
 
@@ -742,23 +846,62 @@ function bullsEyeShapes(size) {
   shapes.push({
     segment: 17,
     path: 'M ' + centre + ' ' + (centre - apex) + ' A ' + apex + ' ' + apex + ' 0 1 1 ' + (centre - 0.01) + ' ' + (centre - apex) + ' Z',
-    labelX: centre,
-    labelY: centre,
   });
   return shapes;
 }
 
-function boardChips(section) {
-  const shown = section.fields.slice(0, 5).map(function (field) {
-    return { name: field.name, dot: TYPE_DOT[field.type] || '#9aa5b3' };
-  });
-  if (section.fields.length > 5) shown.push({ name: '+ ' + (section.fields.length - 5), dot: '#c4ccd6' });
-  return shown;
+function clone(value) {
+  return JSON.parse(JSON.stringify(value));
 }
 
-function allFields() {
+const TRACKED = [['id', 'Nom de colonne'], ['req', 'Obligatoire'], ['min', 'Minimum'], ['max', 'Maximum'], ['unit', 'Unité']];
+
+function show(value) {
+  if (value === undefined || value === null || value === '') return '—';
+  if (value === true) return 'oui';
+  if (value === false) return 'non';
+  return String(value);
+}
+
+function diffsOf(field) {
+  if (!field.lib) return [];
   const out = [];
-  CRF.forEach(function (sequence) {
+  TRACKED.forEach(function (entry) {
+    const before = field.lib[entry[0]];
+    const after = field[entry[0]];
+    if (show(before) === show(after)) return;
+    out.push({ label: entry[1], from: show(before), to: show(after) });
+  });
+  return out;
+}
+
+function originOf(field) {
+  if (field.own) return 'own';
+  return diffsOf(field).length > 0 ? 'tuned' : 'lib';
+}
+
+function snapshot(field) {
+  return { id: field.id, req: field.req, min: field.min, max: field.max, unit: field.unit };
+}
+
+function seedDoc() {
+  const doc = clone(CRF);
+  doc.forEach(function (sequence) {
+    sequence.secs.forEach(function (section) {
+      section.fields.forEach(function (field) { field.lib = snapshot(field); });
+    });
+  });
+  const lv = doc[0].secs[1];
+  lv.fields.forEach(function (field) {
+    if (field.id === 'lvef') field.min = 15;
+    if (field.id === 'ed_max_thickness') { field.own = true; delete field.lib; }
+  });
+  return doc;
+}
+
+function allFields(doc) {
+  const out = [];
+  doc.forEach(function (sequence) {
     sequence.secs.forEach(function (section) {
       section.fields.forEach(function (field) {
         out.push({ field: field, section: section, sequence: sequence });
@@ -768,18 +911,22 @@ function allFields() {
   return out;
 }
 
-function findSection(sectionId) {
-  for (let i = 0; i < CRF.length; i += 1) {
-    for (let j = 0; j < CRF[i].secs.length; j += 1) {
-      if (CRF[i].secs[j].id === sectionId) return { section: CRF[i].secs[j], sequence: CRF[i] };
+function findSection(doc, sectionId) {
+  for (let i = 0; i < doc.length; i += 1) {
+    for (let j = 0; j < doc[i].secs.length; j += 1) {
+      if (doc[i].secs[j].id === sectionId) return { section: doc[i].secs[j], sequence: doc[i], index: j };
     }
   }
-  return { section: CRF[0].secs[0], sequence: CRF[0] };
+  return { section: doc[0].secs[0], sequence: doc[0], index: 0 };
 }
 
-function fieldNameOf(sectionId, fieldId) {
-  const found = findSection(sectionId).section.fields.filter(function (entry) { return entry.id === fieldId; })[0];
+function fieldNameOf(doc, sectionId, fieldId) {
+  const found = findSection(doc, sectionId).section.fields.filter(function (entry) { return entry.id === fieldId; })[0];
   return found ? found.name : fieldId;
+}
+
+function divergentCount(section) {
+  return section.fields.filter(function (field) { return originOf(field) !== 'lib'; }).length;
 }
 
 function boundsLabel(field) {
@@ -792,15 +939,60 @@ function conditionValue(field) {
   return field.cond.v === true ? 'Yes' : field.cond.v === false ? 'No' : String(field.cond.v);
 }
 
-const LIBRARY_ITEMS = [
-  { name: 'Availability & Artefacts', meta: 'Section · 3 variables · 5 études' },
-  { name: 'Left Ventricle', meta: 'Section · 11 variables · 4 études' },
-  { name: 'Right Ventricle', meta: 'Section · 7 variables · 4 études' },
-  { name: 'Atria', meta: 'Section · 6 variables · 3 études' },
-  { name: 'Pericardium', meta: 'Section · 1 variable · 5 études' },
-  { name: 'LV LGE', meta: 'Section · 5 variables · 3 études' },
-  { name: 'T1 Values', meta: 'Section · 4 variables · 2 études' },
-  { name: 'T2 Values', meta: 'Section · 4 variables · 2 études' },
+function librarySections() {
+  const seen = {};
+  const out = [];
+  CRF.forEach(function (sequence) {
+    sequence.secs.forEach(function (section) {
+      if (seen[section.name]) { seen[section.name].uses += 1; return; }
+      const entry = { name: section.name, count: section.fields.length, uses: 1, sectionId: section.id };
+      seen[section.name] = entry;
+      out.push(entry);
+    });
+  });
+  return out;
+}
+
+function libraryVariables() {
+  const seen = {};
+  const out = [];
+  CRF.forEach(function (sequence) {
+    sequence.secs.forEach(function (section) {
+      section.fields.forEach(function (field) {
+        if (seen[field.id]) return;
+        seen[field.id] = true;
+        out.push(field);
+      });
+    });
+  });
+  return out;
+}
+
+function sourceSection(sectionId) {
+  for (let i = 0; i < CRF.length; i += 1) {
+    for (let j = 0; j < CRF[i].secs.length; j += 1) {
+      if (CRF[i].secs[j].id === sectionId) return CRF[i].secs[j];
+    }
+  }
+  return null;
+}
+
+function uniqueId(taken, base) {
+  if (taken.indexOf(base) < 0) return base;
+  let index = 2;
+  while (taken.indexOf(base + '_' + index) >= 0) index += 1;
+  return base + '_' + index;
+}
+
+function slug(label) {
+  return label.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '') || 'variable';
+}
+
+const NEW_TYPES = [
+  { id: 'numeric', label: 'Numérique' },
+  { id: 'boolean', label: 'Booléen' },
+  { id: 'categorical', label: 'Catégorielle' },
+  { id: 'text', label: 'Texte libre' },
 ];
 
 class Component extends DCLogic {
@@ -808,6 +1000,7 @@ class Component extends DCLogic {
     super(props);
     this.state = {
       view: 'a',
+      doc: seedDoc(),
       sectionId: 'cine-lv',
       fieldId: 'lvef',
       panel: 'field',
@@ -816,6 +1009,12 @@ class Component extends DCLogic {
       filter: 'cine',
       picked: { lvef: true, lv_edv: true, lv_esv: true },
       boardSection: 'cine-lv',
+      adding: null,
+      addSearch: '',
+      libSearch: '',
+      tableSearch: '',
+      newName: '',
+      newType: 'numeric',
     };
   }
 
@@ -827,19 +1026,114 @@ class Component extends DCLogic {
     this.setState(next);
   }
 
+  editSelected(apply, extra) {
+    const state = this.read();
+    const doc = clone(state.doc);
+    const found = findSection(doc, state.sectionId);
+    const field = found.section.fields.filter(function (entry) { return entry.id === state.fieldId; })[0];
+    if (field) apply(field, found.section);
+    this.patch(Object.assign({ doc: doc }, extra || {}));
+  }
+
+  insertVariable(source) {
+    const state = this.read();
+    const doc = clone(state.doc);
+    const found = findSection(doc, state.sectionId);
+    const taken = found.section.fields.map(function (entry) { return entry.id; });
+    const copy = clone(source);
+    delete copy.uses;
+    copy.id = uniqueId(taken, copy.id);
+    copy.lib = snapshot(copy);
+    const at = found.section.fields.map(function (entry) { return entry.id; }).indexOf(state.fieldId);
+    found.section.fields.splice(at < 0 ? found.section.fields.length : at + 1, 0, copy);
+    this.patch({ doc: doc, fieldId: copy.id, adding: null, panel: 'field' });
+  }
+
+  createVariable() {
+    const state = this.read();
+    const doc = clone(state.doc);
+    const found = findSection(doc, state.sectionId);
+    const taken = found.section.fields.map(function (entry) { return entry.id; });
+    const label = (state.newName || '').trim() || 'Nouvelle variable';
+    const field = {
+      id: uniqueId(taken, slug(label)),
+      name: label,
+      type: state.newType || 'numeric',
+      req: false,
+      own: true,
+    };
+    if (field.type === 'categorical') field.opts = ['À définir'];
+    const at = found.section.fields.map(function (entry) { return entry.id; }).indexOf(state.fieldId);
+    found.section.fields.splice(at < 0 ? found.section.fields.length : at + 1, 0, field);
+    this.patch({ doc: doc, fieldId: field.id, adding: null, panel: 'field', newName: '' });
+  }
+
+  insertSection(entry) {
+    const state = this.read();
+    const doc = clone(state.doc);
+    const found = findSection(doc, state.sectionId);
+    const source = sourceSection(entry.sectionId);
+    if (!source) return;
+    const takenSections = [];
+    doc.forEach(function (sequence) {
+      sequence.secs.forEach(function (section) { takenSections.push(section.id); });
+    });
+    const copy = clone(source);
+    copy.id = uniqueId(takenSections, copy.id);
+    const takenFields = [];
+    found.sequence.secs.forEach(function (section) {
+      section.fields.forEach(function (field) { takenFields.push(field.id); });
+    });
+    copy.fields.forEach(function (field) {
+      delete field.uses;
+      field.id = uniqueId(takenFields, field.id);
+      takenFields.push(field.id);
+      field.lib = snapshot(field);
+    });
+    found.sequence.secs.splice(found.index + 1, 0, copy);
+    const open = Object.assign({}, state.open);
+    open[found.sequence.id] = true;
+    this.patch({
+      doc: doc,
+      open: open,
+      sectionId: copy.id,
+      fieldId: copy.fields[0].id,
+      rail: 'tree',
+      panel: 'field',
+      boardSection: copy.id,
+    });
+  }
+
+  removeSelected() {
+    const state = this.read();
+    const doc = clone(state.doc);
+    const found = findSection(doc, state.sectionId);
+    const remaining = found.section.fields.filter(function (entry) { return entry.id !== state.fieldId; });
+    if (remaining.length === 0) return;
+    found.section.fields = remaining;
+    this.patch({ doc: doc, fieldId: remaining[0].id });
+  }
+
   buildTree() {
     const self = this;
     const state = this.read();
+    const doc = state.doc;
     const rows = [];
-    CRF.forEach(function (sequence) {
+    doc.forEach(function (sequence) {
       const open = Boolean(state.open && state.open[sequence.id]);
       let count = 0;
-      sequence.secs.forEach(function (section) { count += section.fields.length; });
+      let drift = 0;
+      sequence.secs.forEach(function (section) {
+        count += section.fields.length;
+        drift += divergentCount(section);
+      });
       const active = sequence.secs.some(function (section) { return section.id === state.sectionId; });
       rows.push({
         label: sequence.name,
         meta: sequence.secs.length + ' sections',
         count: String(count),
+        diverges: drift > 0 && !open,
+        diffCount: String(drift),
         cls: active && !open ? 'ri on' : 'ri',
         chev: open ? 'chev open' : 'chev',
         pick: function () {
@@ -850,19 +1144,23 @@ class Component extends DCLogic {
             sectionId: sequence.secs[0].id,
             fieldId: sequence.secs[0].fields[0].id,
             panel: 'field',
+            adding: null,
           });
         },
       });
       if (!open) return;
       sequence.secs.forEach(function (section) {
+        const drifted = divergentCount(section);
         rows.push({
           label: section.name,
           meta: '',
           count: String(section.fields.length),
+          diverges: drifted > 0,
+          diffCount: String(drifted),
           cls: section.id === state.sectionId ? 'ri sub on' : 'ri sub',
           chev: 'chev hide',
           pick: function () {
-            self.patch({ sectionId: section.id, fieldId: section.fields[0].id, panel: 'field' });
+            self.patch({ sectionId: section.id, fieldId: section.fields[0].id, panel: 'field', adding: null });
           },
         });
       });
@@ -873,9 +1171,10 @@ class Component extends DCLogic {
   buildFields(dense) {
     const self = this;
     const state = this.read();
-    const found = findSection(state.sectionId);
+    const found = findSection(state.doc, state.sectionId);
     return found.section.fields.map(function (field) {
       const selected = field.id === state.fieldId;
+      const origin = originOf(field);
       const chips = [];
       if (field.type === 'boolean') {
         chips.push({ label: 'Yes', cls: field.def === true ? 'ch on' : 'ch' });
@@ -892,15 +1191,7 @@ class Component extends DCLogic {
         else if (options.indexOf('Normal') >= 0) defaultIndex = options.indexOf('Normal');
         const colour = PALETTE[defaultIndex % PALETTE.length];
         bullsEyeShapes(152).forEach(function (shape) {
-          segments.push({
-            path: shape.path,
-            fill: colour.fill,
-            stroke: colour.border,
-            text: colour.text,
-            tx: String(shape.labelX),
-            ty: String(shape.labelY),
-            n: String(shape.segment),
-          });
+          segments.push({ path: shape.path, fill: colour.fill, stroke: colour.border });
         });
         options.slice(0, 5).forEach(function (option, index) {
           legend.push({ label: option, fill: PALETTE[index % PALETTE.length].fill });
@@ -910,10 +1201,12 @@ class Component extends DCLogic {
         name: field.name,
         code: field.id,
         req: Boolean(field.req),
+        isTuned: origin === 'tuned',
+        isOwn: origin === 'own',
         hasCond: Boolean(field.cond),
-        condLabel: field.cond ? fieldNameOf(state.sectionId, field.cond.f) + ' = ' + conditionValue(field) : '',
+        condLabel: field.cond ? fieldNameOf(state.doc, state.sectionId, field.cond.f) + ' = ' + conditionValue(field) : '',
         cls: 'fr' + (selected ? ' on' : '') + (dense ? ' dense' : ''),
-        isNum: field.type === 'numeric',
+        isNum: field.type === 'numeric' || field.type === 'text',
         isChips: chips.length > 0,
         isSeg: Boolean(field.seg),
         unit: field.unit || '',
@@ -927,24 +1220,31 @@ class Component extends DCLogic {
   }
 
   buildInspector() {
+    const self = this;
     const state = this.read();
-    const found = findSection(state.sectionId);
+    const found = findSection(state.doc, state.sectionId);
     const matches = found.section.fields.filter(function (entry) { return entry.id === state.fieldId; });
     const field = matches[0] || found.section.fields[0];
     const options = field.opts || [];
+    const origin = originOf(field);
     return {
       insName: field.name,
       insType: TYPE_LABEL[field.type] || field.type,
       insCode: field.id,
+      insLibCode: field.lib ? field.lib.id : field.id,
+      insOrgLib: origin === 'lib',
+      insOrgTuned: origin === 'tuned',
+      insOrgOwn: origin === 'own',
+      insDiffs: diffsOf(field),
       insNum: field.type === 'numeric' || field.type === 'segment_numeric',
-      insMin: field.min === undefined ? '—' : String(field.min),
-      insMax: field.max === undefined ? '—' : String(field.max),
-      insUnit: field.unit || 'aucune',
+      insMin: field.min === undefined ? '' : String(field.min),
+      insMax: field.max === undefined ? '' : String(field.max),
+      insUnit: field.unit === undefined ? '' : field.unit,
       insReqYes: field.req ? 'cc on' : 'cc',
       insReqNo: field.req ? 'cc' : 'cc on',
       insCond: Boolean(field.cond),
       insAlways: !field.cond,
-      insCondField: field.cond ? fieldNameOf(state.sectionId, field.cond.f) : '',
+      insCondField: field.cond ? fieldNameOf(state.doc, state.sectionId, field.cond.f) : '',
       insCondValue: conditionValue(field),
       insTol: Boolean(field.tol),
       insTolText: field.tol ? '± ' + field.tol[0] + (field.unit ? ' ' + field.unit : '') + ' ou ' + field.tol[1] + ' % relatif' : '',
@@ -953,19 +1253,54 @@ class Component extends DCLogic {
       insOpts: options.map(function (option, index) {
         return { label: option, fill: PALETTE[index % PALETTE.length].fill };
       }),
-      insUsage: field.uses
-        ? 'Variable de la bibliothèque, reprise dans ' + field.uses + ' séquences de ce CRF. La régler ici ne touche que MIR Dijon.'
-        : 'Variable de la bibliothèque, utilisée une seule fois dans ce CRF.',
+      setCode: function (event) {
+        const value = event.target.value;
+        self.editSelected(function (entry) { entry.id = value; }, { fieldId: value });
+      },
+      setMin: function (event) {
+        const raw = event.target.value;
+        self.editSelected(function (entry) { entry.min = raw === '' ? undefined : Number(raw); });
+      },
+      setMax: function (event) {
+        const raw = event.target.value;
+        self.editSelected(function (entry) { entry.max = raw === '' ? undefined : Number(raw); });
+      },
+      setUnit: function (event) {
+        const raw = event.target.value;
+        self.editSelected(function (entry) { entry.unit = raw === '' ? undefined : raw; });
+      },
+      setReqYes: function () { self.editSelected(function (entry) { entry.req = true; }); },
+      setReqNo: function () { self.editSelected(function (entry) { entry.req = false; }); },
+      revert: function () {
+        self.editSelected(function (entry) {
+          if (!entry.lib) return;
+          entry.id = entry.lib.id;
+          entry.req = entry.lib.req;
+          entry.min = entry.lib.min;
+          entry.max = entry.lib.max;
+          entry.unit = entry.lib.unit;
+        }, { fieldId: field.lib ? field.lib.id : field.id });
+      },
+      promote: function () {
+        self.editSelected(function (entry) {
+          entry.lib = snapshot(entry);
+          delete entry.own;
+        });
+      },
+      removeField: function () { self.removeSelected(); },
     };
   }
 
   buildRows(dense) {
     const self = this;
     const state = this.read();
+    const needle = (state.tableSearch || '').trim().toLowerCase();
     const rows = [];
     let currentSection = null;
-    allFields().forEach(function (entry) {
+    allFields(state.doc).forEach(function (entry) {
       if (state.filter !== 'all' && entry.sequence.id !== state.filter) return;
+      const field = entry.field;
+      if (needle && field.name.toLowerCase().indexOf(needle) < 0 && field.id.indexOf(needle) < 0) return;
       if (entry.section.id !== currentSection) {
         currentSection = entry.section.id;
         rows.push({
@@ -974,11 +1309,12 @@ class Component extends DCLogic {
           label: entry.sequence.name + ' › ' + entry.section.name,
           cls: 'bgroup',
           box: 'box',
+          orgCls: 'bc',
           pick: function () { return undefined; },
         });
       }
-      const field = entry.field;
       const checked = Boolean(state.picked && state.picked[field.id]);
+      const origin = originOf(field);
       rows.push({
         isGroup: false,
         isField: true,
@@ -993,6 +1329,8 @@ class Component extends DCLogic {
         cond: field.cond ? field.cond.f + ' = ' + conditionValue(field) : '',
         tol: field.tol ? '± ' + field.tol[0] + ' / ' + field.tol[1] + ' %' : '',
         thr: field.thr ? field.thr[0] + ' / ' + field.thr[1] + ' %' : '',
+        org: origin === 'lib' ? 'conforme' : origin === 'tuned' ? 'ajustée' : 'propre',
+        orgCls: 'bc o-' + origin,
         cls: 'brow' + (checked ? ' on' : '') + (dense ? ' dense' : ''),
         box: checked ? 'box on' : 'box',
         pick: function () {
@@ -1009,23 +1347,69 @@ class Component extends DCLogic {
   buildBoard() {
     const self = this;
     const state = this.read();
-    return CRF.map(function (sequence) {
+    return state.doc.map(function (sequence) {
       let count = 0;
       sequence.secs.forEach(function (section) { count += section.fields.length; });
       return {
         name: sequence.name,
         meta: sequence.secs.length + ' sections · ' + count + ' variables',
         secs: sequence.secs.map(function (section) {
+          const drift = divergentCount(section);
+          const chips = section.fields.slice(0, 5).map(function (field) {
+            return { name: field.name, dot: TYPE_DOT[field.type] || '#9aa5b3' };
+          });
+          if (section.fields.length > 5) chips.push({ name: '+ ' + (section.fields.length - 5), dot: '#c4ccd6' });
           return {
             name: section.name,
             count: String(section.fields.length),
+            diverges: drift > 0,
+            diffCount: String(drift),
             cls: section.id === state.boardSection ? 'cs on' : 'cs',
-            chips: boardChips(section),
-            pick: function () { self.patch({ boardSection: section.id }); },
+            chips: chips,
+            pick: function () {
+              self.patch({ boardSection: section.id, sectionId: section.id, fieldId: section.fields[0].id });
+            },
           };
         }),
       };
     });
+  }
+
+  buildLibrary() {
+    const self = this;
+    const state = this.read();
+    const needle = (state.libSearch || '').trim().toLowerCase();
+    return librarySections()
+      .filter(function (entry) { return needle === '' || entry.name.toLowerCase().indexOf(needle) >= 0; })
+      .map(function (entry) {
+        return {
+          name: entry.name,
+          meta: 'Section · ' + entry.count + ' variables · ' + entry.uses + (entry.uses > 1 ? ' séquences' : ' séquence'),
+          pick: function () { self.insertSection(entry); },
+        };
+      });
+  }
+
+  buildAddOptions() {
+    const self = this;
+    const state = this.read();
+    const found = findSection(state.doc, state.sectionId);
+    const present = found.section.fields.map(function (entry) { return entry.id; });
+    const needle = (state.addSearch || '').trim().toLowerCase();
+    return libraryVariables()
+      .filter(function (field) { return present.indexOf(field.id) < 0; })
+      .filter(function (field) {
+        return needle === '' || field.name.toLowerCase().indexOf(needle) >= 0 || field.id.indexOf(needle) >= 0;
+      })
+      .slice(0, 40)
+      .map(function (field) {
+        return {
+          name: field.name,
+          code: field.id,
+          type: TYPE_SHORT[field.type] || field.type,
+          pick: function () { self.insertVariable(field); },
+        };
+      });
   }
 
   renderVals() {
@@ -1033,13 +1417,25 @@ class Component extends DCLogic {
     const state = this.read();
     const view = state.view || 'a';
     const dense = (this.props.density || 'Confortable') === 'Compact';
-    const found = findSection(state.sectionId);
+    const doc = state.doc;
+    const found = findSection(doc, state.sectionId);
     const fields = found.section.fields;
-    const filters = [{ id: 'all', label: 'Toutes' }].concat(CRF.map(function (sequence) {
+    const drift = divergentCount(found.section);
+    const filters = [{ id: 'all', label: 'Toutes' }].concat(doc.map(function (sequence) {
       return { id: sequence.id, label: sequence.name };
     }));
+    let total = 0;
+    let sections = 0;
+    let totalDrift = 0;
+    doc.forEach(function (sequence) {
+      sequence.secs.forEach(function (section) {
+        sections += 1;
+        total += section.fields.length;
+        totalDrift += divergentCount(section);
+      });
+    });
     let shown = 0;
-    allFields().forEach(function (entry) {
+    allFields(doc).forEach(function (entry) {
       if (state.filter === 'all' || entry.sequence.id === state.filter) shown += 1;
     });
     const pickedCount = Object.keys(state.picked || {}).length;
@@ -1055,24 +1451,59 @@ class Component extends DCLogic {
       pickB: function () { self.patch({ view: 'b' }); },
       pickC: function () { self.patch({ view: 'c' }); },
 
+      planMeta: doc.length + ' séquences · ' + sections + ' sections · ' + total + ' variables',
+      railMeta: total + ' variables',
+
       impactCls: state.panel === 'impact' ? 'pill on' : 'pill',
       openImpact: function () { self.patch({ view: 'a', panel: 'impact' }); },
       closeImpact: function () { self.patch({ panel: 'field' }); },
+      impactDrift: totalDrift === 0
+        ? 'Le CRF est identique à la bibliothèque CMR sur toutes ses variables.'
+        : totalDrift + ' variables s’écartent de la bibliothèque ou lui sont propres. Elles restent locales à MIR Dijon tant que personne ne les y renvoie.',
 
       railTree: state.rail !== 'library',
       railLib: state.rail === 'library',
       openLib: function () { self.patch({ rail: 'library' }); },
       closeLib: function () { self.patch({ rail: 'tree' }); },
-      libItems: LIBRARY_ITEMS,
+      libSections: this.buildLibrary(),
+      libSearch: state.libSearch || '',
+      setLibSearch: function (event) { self.patch({ libSearch: event.target.value }); },
 
       tree: this.buildTree(),
       paneTitle: found.section.name,
       paneCode: found.sequence.id + ' › ' + found.section.id,
+      paneOrgCls: drift > 0 ? 'badge warn' : 'badge',
+      paneOrgLabel: drift > 0
+        ? drift + (drift > 1 ? ' écarts avec la bibliothèque' : ' écart avec la bibliothèque')
+        : 'Conforme à la bibliothèque',
       stripVars: String(fields.length),
       stripReq: String(fields.filter(function (field) { return field.req; }).length),
       stripCond: String(fields.filter(function (field) { return field.cond; }).length),
-      stripTol: String(fields.filter(function (field) { return field.tol; }).length),
+      stripDiff: String(drift),
       fields: this.buildFields(dense),
+
+      adding: Boolean(state.adding),
+      addingLib: state.adding === 'lib',
+      addingNew: state.adding === 'new',
+      addLibCls: state.adding === 'lib' ? 'seg on' : 'seg',
+      addNewCls: state.adding === 'new' ? 'seg on' : 'seg',
+      toggleAdd: function () { self.patch({ adding: state.adding ? null : 'lib' }); },
+      addTabLib: function () { self.patch({ adding: 'lib' }); },
+      addTabNew: function () { self.patch({ adding: 'new' }); },
+      closeAdd: function () { self.patch({ adding: null }); },
+      addSearch: state.addSearch || '',
+      setAddSearch: function (event) { self.patch({ addSearch: event.target.value }); },
+      addOptions: this.buildAddOptions(),
+      newName: state.newName || '',
+      setNewName: function (event) { self.patch({ newName: event.target.value }); },
+      newTypes: NEW_TYPES.map(function (entry) {
+        return {
+          label: entry.label,
+          cls: state.newType === entry.id ? 'seg on' : 'seg',
+          pick: function () { self.patch({ newType: entry.id }); },
+        };
+      }),
+      createVar: function () { self.createVariable(); },
 
       panelField: state.panel !== 'impact',
       panelImpact: state.panel === 'impact',
@@ -1085,10 +1516,12 @@ class Component extends DCLogic {
         };
       }),
       bRows: this.buildRows(dense),
-      bCountLabel: shown + ' variables affichées',
+      bCountLabel: shown + ' variables dans la séquence',
       bBulk: pickedCount > 0,
       bBulkLabel: pickedCount + ' variables sélectionnées',
       clearRows: function () { self.patch({ picked: {} }); },
+      tableSearch: state.tableSearch || '',
+      setTableSearch: function (event) { self.patch({ tableSearch: event.target.value }); },
 
       cCols: this.buildBoard(),
     }, this.buildInspector());
