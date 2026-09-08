@@ -217,7 +217,7 @@
                 <div style="margin-top: 2px; font-size: 12px; color: #ffdbe3;">{{railMeta}}</div>
               </header>
               <div style="padding: 7px 10px 6px; border-bottom: 1px solid #eceff3; font-size: 11.5px; line-height: 1.4; color: #9aa5b3;">
-                Glissez une séquence ou une section pour changer l'ordre de lecture.
+                Glissez une partie ou une section pour changer l'ordre de lecture.
               </div>
               <div class="scroll" style="flex: 1; padding: 8px;">
                 <sc-for list="{{tree}}" as="seq" hint-placeholder-count="6">
@@ -270,7 +270,7 @@
               <div style="display: flex; flex-direction: column; gap: 6px; border-top: 1px solid #eceff3; padding: 10px;">
                 <button type="button" class="btn out" style="width: 100%;">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>
-                  Séquence vide
+                  Partie vide
                 </button>
                 <button type="button" class="btn coral" style="width: 100%;" onClick="{{openLib}}">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
@@ -295,7 +295,7 @@
                 <input class="ipt" value="{{libSearch}}" onChange="{{setLibSearch}}" placeholder="Chercher un bloc">
                 <div style="display: flex; gap: 5px; padding: 10px 0 8px;">
                   <span class="ch sm on">Sections</span>
-                  <span class="ch sm">Séquences</span>
+                  <span class="ch sm">Parties</span>
                   <span class="ch sm">Variables</span>
                 </div>
                 <p style="margin: 0 0 8px; font-size: 11.5px; line-height: 1.45; color: #9aa5b3;">L'import crée une copie dans l'étude : les réglages faits ici ne remontent pas dans la bibliothèque.</p>
@@ -1199,7 +1199,7 @@ class Component extends DCLogic {
       const node = { kind: 'seq', id: sequence.id };
       return {
         label: sequence.name,
-        meta: sequence.secs.length + (sequence.secs.length > 1 ? ' sections' : ' section'),
+        meta: 'Partie · ' + sequence.secs.length + (sequence.secs.length > 1 ? ' sections' : ' section'),
         count: String(count),
         open: open,
         diverges: drift > 0 && !open,
@@ -1483,7 +1483,7 @@ class Component extends DCLogic {
       .map(function (entry) {
         return {
           name: entry.name,
-          meta: 'Section · ' + entry.count + ' variables · ' + entry.uses + (entry.uses > 1 ? ' séquences' : ' séquence'),
+          meta: 'Section · ' + entry.count + ' variables · ' + entry.uses + (entry.uses > 1 ? ' parties' : ' partie'),
           pick: function () { self.insertSection(entry); },
         };
       });
@@ -1571,7 +1571,7 @@ class Component extends DCLogic {
 
       tree: this.buildTree(),
       paneTitle: found.section.name,
-      paneCode: found.sequence.id + ' › ' + found.section.id,
+      paneCode: 'partie ' + found.sequence.id + ' › section ' + found.section.id,
       paneOrgCls: drift > 0 ? 'badge warn' : 'badge',
       paneOrgLabel: drift > 0
         ? drift + (drift > 1 ? ' écarts avec la bibliothèque' : ' écart avec la bibliothèque')
