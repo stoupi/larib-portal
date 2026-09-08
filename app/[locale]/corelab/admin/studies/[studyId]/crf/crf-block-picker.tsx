@@ -51,7 +51,7 @@ export function CrfBlockPicker({ blocks, modality, sectionName, onInsert, onClos
         }
       />
       <div className="px-2.5 pt-2.5">
-        <EditorInput value={search} onChange={setSearch} placeholder={t('searchBlock')} />
+        <EditorInput value={search} onChange={setSearch} options={{ placeholder: t('searchBlock'), label: t('searchBlock') }} />
         <p className="py-2 text-[11.5px] leading-snug text-text-muted">{t('copyWarning')}</p>
       </div>
       <div className="flex-1 overflow-y-auto px-2 pb-2">

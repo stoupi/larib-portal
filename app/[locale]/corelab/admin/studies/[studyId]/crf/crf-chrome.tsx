@@ -14,7 +14,7 @@ export function PaneBand({ kind, title, subtitle, action }: {
     <header className="flex min-h-[74px] items-center justify-between gap-4 bg-gradient-to-b from-coral-500 to-coral-600 px-4 py-3">
       <div className="min-w-0">
         <div className="text-[11px] font-semibold uppercase tracking-[0.03em] text-coral-100">{kind}</div>
-        <div className="mt-0.5 flex flex-wrap items-center gap-2 text-base font-semibold leading-tight text-white">{title}</div>
+        <h2 className="m-0 mt-0.5 flex flex-wrap items-center gap-2 text-base font-semibold leading-tight text-white">{title}</h2>
         {subtitle ? <div className="mt-0.5 truncate text-xs text-coral-100">{subtitle}</div> : null}
       </div>
       {action ? <div className="flex flex-none items-center gap-1.5">{action}</div> : null}
@@ -108,17 +108,17 @@ export function ChoiceChip({ label, selected, onClick }: { label: string; select
   )
 }
 
-export function EditorInput({ value, onChange, placeholder, mono, type }: {
+export function EditorInput({ value, onChange, options }: {
   value: string
   onChange: (value: string) => void
-  placeholder?: string
-  mono?: boolean
-  type?: 'text' | 'number'
+  options?: { label?: string; placeholder?: string; mono?: boolean; type?: 'text' | 'number' }
 }) {
+  const { label, placeholder, mono, type } = options ?? {}
   return (
     <input
       type={type ?? 'text'}
       value={value}
+      aria-label={label}
       placeholder={placeholder}
       onChange={(event) => onChange(event.target.value)}
       className={cn(

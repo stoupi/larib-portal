@@ -112,7 +112,11 @@ export function CrfEditor({ context, definition, impact, library }: {
   if (context.draftNumber === null) {
     return (
       <section className="rounded-2xl border border-border bg-white p-6">
-        <p className="text-sm text-text-secondary">{t('noVersion')}</p>
+        <p className="text-sm text-text-secondary">
+          {context.publishedNumber === null
+            ? t('noVersion')
+            : t('publishedOnly', { number: context.publishedNumber })}
+        </p>
         <Button className="mt-4" onClick={() => start.execute({ studyId: context.studyId })}>{t('start')}</Button>
       </section>
     )
@@ -279,7 +283,7 @@ export function CrfEditor({ context, definition, impact, library }: {
           {panel === 'add' && section ? (
             <CrfAddPanel
               candidates={[...references.values()].filter(
-                (candidate) => !section.fields.some((entry) => entry.id === candidate.id),
+                (candidate) => !(part ? fieldIdsOfPart(part) : []).includes(candidate.id),
               )}
               draft={pendingField}
               context={{

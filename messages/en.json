@@ -3155,7 +3155,8 @@
       "conditionalLabel": "conditional",
       "driftLabel": "{count, plural, one {library difference} other {library differences}}",
       "partNamed": "Part {name}",
-      "variableKind": "Variable"
+      "variableKind": "Variable",
+      "publishedOnly": "Published version: v{number}"
     }
   }
 }

@@ -3153,7 +3153,8 @@
       "conditionalLabel": "sous condition",
       "driftLabel": "{count, plural, one {écart bibliothèque} other {écarts bibliothèque}}",
       "partNamed": "Partie {name}",
-      "variableKind": "Variable"
+      "variableKind": "Variable",
+      "publishedOnly": "Version publiée : v{number}"
     }
   }
 }

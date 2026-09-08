@@ -93,31 +93,21 @@ test('a draft CRF measures its impact before publication', async ({ page }) => {
 
   await page.goto(`/en/corelab/admin/studies/${studyId}/crf`, { timeout: 60000 })
   await page.getByRole('button', { name: /start a draft/i }).click()
-  await expect(page.getByTestId('impact')).toBeVisible({ timeout: 60000 })
-  await expect(page.getByText(/no change against the published version/i)).toBeVisible()
+  await expect(page.getByTestId('crf-impact-pill')).toBeVisible({ timeout: 60000 })
+  await expect(page.getByTestId('crf-impact-pill')).toContainText('no change')
 
-  await expect(page.getByTestId('sequence-cine')).toBeVisible()
-  await page.getByRole('button', { name: /add a sequence/i }).click()
-  const created = page.getByTestId('sequence-sequence_2')
-  await expect(created).toBeVisible()
-  await expect(created.getByLabel(/section name/i)).toHaveCount(1)
-  await created.getByRole('button', { name: /add a section/i }).click()
-  await expect(created.getByLabel(/section name/i)).toHaveCount(2)
+  // A part created empty carries a section waiting for its first variable.
+  await page.getByRole('button', { name: 'Empty part' }).click()
+  await expect(page.getByTestId('crf-section-section')).toBeVisible()
+  await page.getByRole('button', { name: '+ Variable' }).click()
+  await page.getByTestId('crf-candidate-lv_edv').click()
+  await expect(page.getByTestId('crf-field-lv_edv')).toBeVisible()
 
-  await created.getByText(/from the library/i).first().click()
-  await page.getByRole('option', { name: 'LV EDV' }).click()
-  await page.keyboard.press('Escape')
-  await expect(created.getByRole('listitem').filter({ hasText: 'LV EDV' })).toBeVisible()
+  // A required variable added after a publication leaves every signed reading with a hole.
+  await page.getByRole('button', { name: 'Save', exact: true }).click()
+  await expect(page.getByTestId('crf-impact-pill')).toContainText('Creates a gap', { timeout: 60000 })
 
-  await created.getByRole('button', { name: /^edit$/i }).click()
-  await page.getByRole('dialog').getByRole('switch').click()
-  await page.getByRole('dialog').getByRole('button', { name: /^apply$/i }).click()
-  await expect(created.getByRole('listitem').filter({ hasText: 'numeric · *' })).toBeVisible()
-
-  await page.getByRole('button', { name: /save the draft/i }).click()
-  await expect(page.getByTestId('worst-impact')).toBeVisible({ timeout: 60000 })
-
-  await page.getByRole('button', { name: /discard the draft/i }).click()
+  await page.getByRole('button', { name: 'Discard' }).click()
   await expect(page.getByRole('button', { name: /start a draft/i })).toBeVisible({ timeout: 60000 })
 })
 
@@ -139,17 +129,16 @@ test('a study created without a CRF opens its editor, keeps an empty draft and p
 
   await page.goto(`/en/corelab/admin/studies/${studyId}/crf`, { timeout: 60000 })
   await page.getByRole('button', { name: /start a draft/i }).click()
-  await expect(page.getByTestId('impact')).toBeVisible({ timeout: 60000 })
+  await expect(page.getByText('No published version · publishing will create v1')).toBeVisible({ timeout: 60000 })
 
   await page.reload()
-  await expect(page.getByRole('button', { name: /add a sequence/i })).toBeVisible({ timeout: 60000 })
+  await expect(page.getByRole('button', { name: 'Empty part' })).toBeVisible({ timeout: 60000 })
 
-  await page.getByRole('button', { name: /add a sequence/i }).click()
-  const created = page.getByTestId('sequence-sequence_1')
-  await created.getByText(/from the library/i).first().click()
-  await page.getByRole('option', { name: 'LVEF' }).click()
-  await page.keyboard.press('Escape')
-  await page.getByRole('button', { name: /save the draft/i }).click()
-  await page.getByRole('button', { name: /publish the version/i }).click()
-  await expect(page.getByText(/published version: v1/i)).toBeVisible({ timeout: 60000 })
+  await page.getByRole('button', { name: 'Empty part' }).click()
+  await page.getByRole('button', { name: '+ Variable' }).click()
+  await page.getByTestId('crf-candidate-lvef').click()
+  await page.getByRole('button', { name: 'Save', exact: true }).click()
+  await expect(page.getByText('Draft saved.')).toBeVisible({ timeout: 60000 })
+  await page.getByRole('button', { name: 'Publish v1' }).click()
+  await expect(page.getByText('Published version: v1', { exact: false })).toBeVisible({ timeout: 60000 })
 })

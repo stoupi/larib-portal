@@ -87,7 +87,7 @@ export function CrfAddPanel({ candidates, draft, context, actions }: {
       {context.tab === 'library' ? (
         <>
           <div className="px-4 pb-2.5 pt-3">
-            <EditorInput value={search} onChange={setSearch} placeholder={t('searchVariable')} />
+            <EditorInput value={search} onChange={setSearch} options={{ placeholder: t('searchVariable'), label: t('searchVariable') }} />
           </div>
           <div className="flex-1 overflow-y-auto px-2.5 pb-2.5">
             {shown.map((field) => (
@@ -122,19 +122,19 @@ export function CrfAddPanel({ candidates, draft, context, actions }: {
               <Cap>{t('readerName')}</Cap>
               <EditorInput
                 value={draft.name}
-                placeholder={t('readerNamePlaceholder')}
                 onChange={(value) => patchDraft({ name: value, ...(idTouched ? {} : { id: slugify(value) }) })}
+                options={{ placeholder: t('readerNamePlaceholder'), label: t('readerName') }}
               />
             </div>
             <div className="mb-4">
               <Cap>{t('exportName')}</Cap>
               <EditorInput
-                mono
                 value={draft.id}
                 onChange={(value) => {
                   setIdTouched(true)
                   patchDraft({ id: asIdentifier(value) })
                 }}
+                options={{ mono: true, label: t('exportName') }}
               />
               <p className="mt-1.5 text-xs leading-relaxed text-text-muted">{t('exportHint')}</p>
             </div>
@@ -168,11 +168,11 @@ export function CrfAddPanel({ candidates, draft, context, actions }: {
                 <Cap>{t('acceptedEntry')}</Cap>
                 <div className="grid grid-cols-[6.5rem_minmax(0,1fr)] items-center gap-x-2.5 gap-y-2">
                   <span className="text-[13px] text-text-secondary">{t('min')}</span>
-                  <EditorInput type="number" value={draft.min === undefined ? '' : String(draft.min)} onChange={(value) => patchDraft({ min: value === '' ? undefined : Number(value) })} />
+                  <EditorInput value={draft.min === undefined ? '' : String(draft.min)} onChange={(value) => patchDraft({ min: value === '' ? undefined : Number(value) })} options={{ type: 'number', label: t('min') }} />
                   <span className="text-[13px] text-text-secondary">{t('max')}</span>
-                  <EditorInput type="number" value={draft.max === undefined ? '' : String(draft.max)} onChange={(value) => patchDraft({ max: value === '' ? undefined : Number(value) })} />
+                  <EditorInput value={draft.max === undefined ? '' : String(draft.max)} onChange={(value) => patchDraft({ max: value === '' ? undefined : Number(value) })} options={{ type: 'number', label: t('max') }} />
                   <span className="text-[13px] text-text-secondary">{t('unit')}</span>
-                  <EditorInput value={draft.unit ?? ''} placeholder={t('none')} onChange={(value) => patchDraft({ unit: value === '' ? undefined : value })} />
+                  <EditorInput value={draft.unit ?? ''} onChange={(value) => patchDraft({ unit: value === '' ? undefined : value })} options={{ placeholder: t('none'), label: t('unit') }} />
                 </div>
               </div>
             ) : null}
@@ -194,7 +194,7 @@ export function CrfAddPanel({ candidates, draft, context, actions }: {
                   ))}
                 </div>
                 <div className="flex gap-2">
-                  <EditorInput value={pendingValue} onChange={setPendingValue} placeholder={t('addValue')} />
+                  <EditorInput value={pendingValue} onChange={setPendingValue} options={{ placeholder: t('addValue'), label: t('addValue') }} />
                   <Button
                     variant="outline"
                     className="flex-none"

@@ -16,6 +16,9 @@ async function openCrfEditor(page: Page): Promise<string> {
   const studyId = (href ?? '').split('/').pop() ?? ''
   await page.goto(`/en/corelab/admin/studies/${studyId}/crf`, { timeout: 60000 })
   await expect(page.getByRole('heading', { name: 'CRF editor' })).toBeVisible({ timeout: 60000 })
+  const start = page.getByRole('button', { name: /start a draft/i })
+  if (await start.count()) await start.click()
+  await expect(page.getByTestId('crf-impact-pill')).toBeVisible({ timeout: 60000 })
   return studyId
 }
 
@@ -28,8 +31,7 @@ test('the data manager composes a CRF: reorders it, borrows from the library, cr
   // The three panes: the plan reads parts and sections apart, the form shows the reader's view.
   await expect(page.getByText('Part · 5 sections')).toBeVisible()
   await expect(page.getByTestId('crf-section-cine-lv')).toBeVisible()
-  await expect(page.getByText('No published version · publishing will create v1')).toBeVisible()
-  await expect(page.getByTestId('crf-impact-pill')).toContainText('no signed reading')
+  await expect(page.getByText('Published version: v1 · publishing will create v2')).toBeVisible()
 
   await page.getByTestId('crf-section-cine-lv').click()
   await expect(page.getByRole('heading', { name: 'Left Ventricle' })).toBeVisible()
@@ -51,16 +53,21 @@ test('the data manager composes a CRF: reorders it, borrows from the library, cr
   expect(after[0]).toBe(before[1])
   expect(after[1]).toBe(before[0])
 
-  // Borrowing from the library: the panel on the right carries the whole add flow.
-  await page.getByTestId('crf-section-cine-rv').click()
+  // An identifier is unique inside a part, so what Cine already holds is not offered again there.
   await page.getByRole('button', { name: '+ Variable' }).click()
   await expect(page.getByTestId('crf-add-tab-library')).toBeVisible()
+  await expect(page.getByTestId('crf-candidate-lvef')).toHaveCount(0)
+
+  // Borrowing into another part: the panel on the right carries the whole add flow.
+  await page.getByTestId('crf-part-t2w').click()
+  await page.getByTestId('crf-section-t2w-pericardial').click()
+  await page.getByRole('button', { name: '+ Variable' }).click()
   await page.getByTestId('crf-candidate-lvef').click()
   await expect(page.getByTestId('crf-field-lvef')).toBeVisible()
 
   // Creating one from scratch: the identifier follows the name and the row appears where it will land.
   await page.getByTestId('crf-add-tab-create').click()
-  await page.getByPlaceholder('LV Strain global').fill('RV Strain global')
+  await page.getByRole('textbox', { name: 'Name the reader sees' }).fill('RV Strain global')
   await expect(page.getByTestId('crf-field-ghost')).toContainText('being created')
   await expect(page.getByTestId('crf-field-ghost')).toContainText('rv_strain_global')
   await page.getByTestId('crf-type-boolean').click()
@@ -69,7 +76,7 @@ test('the data manager composes a CRF: reorders it, borrows from the library, cr
 
   // Tuning a variable rewrites nothing in the library: the difference is shown, and it can be undone.
   await page.getByTestId('crf-field-lvef').click()
-  await page.getByRole('spinbutton').first().fill('15')
+  await page.getByRole('spinbutton', { name: 'Minimum' }).fill('15')
   await expect(page.getByText('Minimum: 10 → 15')).toBeVisible()
   await page.getByRole('button', { name: 'Back to the library version' }).click()
   await expect(page.getByText('Minimum: 10 → 15')).toHaveCount(0)
@@ -78,7 +85,8 @@ test('the data manager composes a CRF: reorders it, borrows from the library, cr
   await page.getByRole('button', { name: 'Save', exact: true }).click()
   await expect(page.getByText('Draft saved.')).toBeVisible({ timeout: 60000 })
   await page.reload()
-  await page.getByTestId('crf-section-cine-rv').click()
+  await page.getByTestId('crf-part-t2w').click()
+  await page.getByTestId('crf-section-t2w-pericardial').click()
   await expect(page.getByTestId('crf-field-rv_strain_global')).toBeVisible()
 })
 
@@ -90,6 +98,8 @@ test('the plan speaks French while the CRF content stays in English', async ({ p
 
   await page.goto(`/fr/corelab/admin/studies/${studyId}/crf`, { timeout: 60000 })
   await expect(page.getByRole('heading', { name: 'Éditeur de CRF' })).toBeVisible({ timeout: 60000 })
+  const demarrer = page.getByRole('button', { name: /commencer un brouillon/i })
+  if (await demarrer.count()) await demarrer.click()
   await expect(page.getByText('Partie · 5 sections')).toBeVisible()
   await expect(page.getByText('Glissez une partie ou une section')).toBeVisible()
   await expect(page.getByTestId('crf-section-cine-lv')).toContainText('Left Ventricle')

@@ -85,7 +85,7 @@ export function CrfInspector({ field, reference, section, modality, actions }: {
 
         <div className="mb-4">
           <Cap>{t('exportName')}</Cap>
-          <EditorInput mono value={field.id} onChange={(value) => patch({ id: asIdentifier(value) })} />
+          <EditorInput value={field.id} onChange={(value) => patch({ id: asIdentifier(value) })} options={{ mono: true, label: t('exportName') }} />
         </div>
 
         <div className="mb-4">
@@ -94,11 +94,11 @@ export function CrfInspector({ field, reference, section, modality, actions }: {
             {TYPES_WITH_BOUNDS.has(field.type) ? (
               <>
                 <span className="text-[13px] text-text-secondary">{t('min')}</span>
-                <EditorInput type="number" value={field.min === undefined ? '' : String(field.min)} onChange={(value) => patch({ min: numberOrUndefined(value) })} />
+                <EditorInput value={field.min === undefined ? '' : String(field.min)} onChange={(value) => patch({ min: numberOrUndefined(value) })} options={{ type: 'number', label: t('min') }} />
                 <span className="text-[13px] text-text-secondary">{t('max')}</span>
-                <EditorInput type="number" value={field.max === undefined ? '' : String(field.max)} onChange={(value) => patch({ max: numberOrUndefined(value) })} />
+                <EditorInput value={field.max === undefined ? '' : String(field.max)} onChange={(value) => patch({ max: numberOrUndefined(value) })} options={{ type: 'number', label: t('max') }} />
                 <span className="text-[13px] text-text-secondary">{t('unit')}</span>
-                <EditorInput value={field.unit ?? ''} placeholder={t('none')} onChange={(value) => patch({ unit: value === '' ? undefined : value })} />
+                <EditorInput value={field.unit ?? ''} onChange={(value) => patch({ unit: value === '' ? undefined : value })} options={{ placeholder: t('none'), label: t('unit') }} />
               </>
             ) : null}
             <span className="text-[13px] text-text-secondary">{t('required')}</span>
