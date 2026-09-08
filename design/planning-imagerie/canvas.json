@@ -1,0 +1,71 @@
+{
+  "pages": [
+    { "id": "page-1", "name": "Coordinateur" },
+    { "id": "page-2", "name": "Médecin" },
+    { "id": "page-3", "name": "Mobile" }
+  ],
+  "artboards": [
+    { "file": "Main.dc.html", "page": "page-1", "title": "1 · Campagnes", "x": 0, "y": 0, "w": 1440, "h": 980 },
+    { "file": "Vacations.dc.html", "page": "page-1", "title": "2 · Chargement des vacations", "x": 1520, "y": 0, "w": 1440, "h": 1120 },
+    { "file": "Suivi.dc.html", "page": "page-1", "title": "3 · Avant génération", "x": 3040, "y": 0, "w": 1440, "h": 1000 },
+    { "file": "Revue.dc.html", "page": "page-1", "title": "4 · Revue et modification", "x": 0, "y": 1240, "w": 1440, "h": 1180 },
+    { "file": "Rapport.dc.html", "page": "page-1", "title": "5 · Rapport du moteur", "x": 1520, "y": 1240, "w": 1440, "h": 1160 },
+    { "file": "Publication.dc.html", "page": "page-1", "title": "6 · Publication et diffusion", "x": 3040, "y": 1240, "w": 1440, "h": 1420 },
+    { "file": "Parametres.dc.html", "page": "page-1", "title": "7 · Paramètres du module", "x": 0, "y": 2780, "w": 1440, "h": 1080 },
+
+    { "file": "Disponibilites.dc.html", "page": "page-2", "title": "A · Saisie des disponibilités", "x": 0, "y": 0, "w": 1440, "h": 1140 },
+    { "file": "MonMois.dc.html", "page": "page-2", "title": "B · Mon mois (vue fellow)", "x": 1520, "y": 0, "w": 1440, "h": 1020 },
+    { "file": "Compteurs.dc.html", "page": "page-2", "title": "C · Compteurs et équité", "x": 0, "y": 1260, "w": 1440, "h": 1240 },
+    { "file": "Echanges.dc.html", "page": "page-2", "title": "D · Échanges entre pairs", "x": 1520, "y": 1260, "w": 1440, "h": 1280 },
+
+    { "file": "DisponibilitesMobile.dc.html", "page": "page-3", "title": "A · Disponibilités", "x": 0, "y": 0, "w": 390, "h": 844 },
+    { "file": "MonMoisMobile.dc.html", "page": "page-3", "title": "B · Mon mois", "x": 470, "y": 0, "w": 390, "h": 844 },
+    { "file": "CompteursMobile.dc.html", "page": "page-3", "title": "C · Compteurs", "x": 940, "y": 0, "w": 390, "h": 844 },
+    { "file": "EchangesMobile.dc.html", "page": "page-3", "title": "D · Échanges", "x": 1410, "y": 0, "w": 390, "h": 844 },
+    { "file": "CampagnesMobile.dc.html", "page": "page-3", "title": "1 · Campagnes (coordinateur)", "x": 1880, "y": 0, "w": 390, "h": 844 },
+    { "file": "SuiviMobile.dc.html", "page": "page-3", "title": "3 · Suivi (coordinateur)", "x": 2350, "y": 0, "w": 390, "h": 844 }
+  ],
+  "annotations": [
+    {
+      "id": "cycle-order",
+      "page": "page-1",
+      "x": 0,
+      "y": -190,
+      "w": 700,
+      "text": "Parcours coordinateur, dans l'ordre du cycle mensuel du §5.2.\nLes deux sous-cycles sont séquentiels : la génération du planning des fellows n'est possible qu'une fois le planning des seniors publié (RG-06), parce que les objectifs F1 à F4 ont besoin de connaître le senior affecté à chaque créneau."
+    },
+    {
+      "id": "no-bypass",
+      "page": "page-1",
+      "x": 780,
+      "y": -190,
+      "w": 640,
+      "text": "Écran 4, la règle qui structure tout : aucune affectation n'est possible sur un créneau qu'une personne n'a pas déclaré disponible (RG-24, contrainte C1).\nL'interface ne propose jamais une personne indisponible. Le seul recours est la demande de disponibilité exceptionnelle, qu'elle doit accepter explicitement. Pas de mode expert, pas de forçage administrateur."
+    },
+    {
+      "id": "medecin-scope",
+      "page": "page-2",
+      "x": 0,
+      "y": -170,
+      "w": 700,
+      "text": "Parcours médecin. La saisie des disponibilités (A) est en vue senior, « mon mois » (B) en vue fellow pour montrer le senior encadrant et le compteur de vacations avec le coordinateur.\nLes disponibilités individuelles ne sont visibles que du coordinateur (RG-05) ; les compteurs, eux, sont nominatifs au sein de chaque population (RG-04) — c'est ce qui rend l'équité vérifiable."
+    },
+    {
+      "id": "mobile-chrome",
+      "page": "page-3",
+      "x": 0,
+      "y": -190,
+      "w": 700,
+      "text": "Le portail n'a pas encore de chrome mobile : la sidebar navy est toujours rendue en 256 px fixes. La barre supérieure et la barre d'onglets proposées ici sont donc une extension à valider, pas un existant recopié.\nPas de fausse barre d'état ni de faux clavier : sur un vrai téléphone ils se superposeraient au rendu. Toutes les cibles tactiles font au moins 44 px."
+    },
+    {
+      "id": "mobile-priority",
+      "page": "page-3",
+      "x": 780,
+      "y": -190,
+      "w": 620,
+      "text": "Le §7.3 n'exige explicitement le mobile que pour la saisie des disponibilités (A) — c'est l'écran à traiter en premier.\nLes quatre autres suivent la même grammaire. L'écran de revue du coordinateur n'a délibérément pas de version mobile : glisser-déposer, grille mensuelle et panneau d'équité en parallèle demandent une largeur d'écran."
+    }
+  ],
+  "launch": { "view": "canvas", "page": "page-1" }
+}
