@@ -1,0 +1,1099 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&display=swap">
+  <style>
+    *{ box-sizing: border-box; }
+    body { margin: 0; font-family: 'Inter Tight', system-ui, -apple-system, 'Segoe UI', sans-serif; -webkit-font-smoothing: antialiased; }
+    button { font-family: inherit; }
+    a { color: #d61f55; text-decoration: none; }
+    a:hover { color: #b01547; }
+
+    .t { display: inline-flex; align-items: center; height: 32px; padding: 0 14px; border-radius: 9px; border: 1px solid rgba(255,255,255,0.22); background: transparent; color: #aac0dc; font-size: 13px; font-weight: 500; cursor: pointer; }
+    .t:hover { background: rgba(255,255,255,0.09); color: #ffffff; }
+    .t.on { background: #ec3b68; border-color: #ec3b68; color: #ffffff; font-weight: 600; }
+
+    .ri { display: flex; width: 100%; align-items: center; gap: 8px; padding: 7px 10px; border: 0; background: transparent; border-radius: 10px; text-align: left; cursor: pointer; margin-bottom: 1px; }
+    .ri:hover { background: #f5f7fa; }
+    .ri.sub { padding-left: 30px; padding-top: 5px; padding-bottom: 5px; }
+    .ri.on { background: #fff1f4; box-shadow: inset 2px 0 0 #d61f55; }
+    .ri.on .ri-l { font-weight: 600; color: #141a22; }
+    .ri-l { display: block; font-size: 13.5px; color: #363f4c; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .ri-m { display: block; font-size: 11px; color: #9aa5b3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .ri-n { font-size: 11px; color: #9aa5b3; font-variant-numeric: tabular-nums; flex: none; }
+    .chev { flex: none; color: #c4ccd6; transition: transform 0.15s ease; }
+    .chev.open { transform: rotate(90deg); }
+    .chev.hide { visibility: hidden; }
+
+    .fr { display: flex; gap: 14px; align-items: flex-start; padding: 11px 10px; border-bottom: 1px solid #eceff3; border-radius: 10px; cursor: pointer; }
+    .fr:hover { background: #fafbfc; }
+    .fr.on { background: #fafbfc; box-shadow: inset 2px 0 0 #d61f55; }
+    .fr.dense { padding: 6px 10px; }
+    .fr.on .fr-n { font-weight: 600; }
+    .fr-n { font-size: 13.5px; color: #141a22; font-weight: 500; }
+    .drag { color: #dde2e9; flex: none; }
+    .fr:hover .drag, .fr.on .drag { color: #9aa5b3; }
+
+    .ch { display: inline-flex; align-items: center; height: 30px; padding: 0 12px; border-radius: 10px; border: 1px solid #dde2e9; background: #fafbfc; color: #6b7685; font-size: 13px; }
+    .ch.on { border-color: #122f54; background: #122f54; color: #ffffff; font-weight: 600; }
+    .ch.sm { height: 26px; padding: 0 10px; font-size: 12px; }
+
+    .cc { display: inline-flex; align-items: center; height: 30px; padding: 0 13px; border-radius: 9px; border: 1px solid #dde2e9; background: #fafbfc; color: #6b7685; font-size: 13px; cursor: pointer; }
+    .cc:hover { background: #f5f7fa; }
+    .cc.on { border-color: #122f54; background: #122f54; color: #ffffff; font-weight: 600; }
+
+    .bt { --cols: 34px minmax(180px, 1fr) 170px 122px 58px 60px 58px 58px 168px 138px 132px; }
+    .bhead { display: grid; grid-template-columns: var(--cols); align-items: center; height: 31px; background: #f5f7fa; border-bottom: 1px solid #dde2e9; position: sticky; top: 0; z-index: 1; }
+    .bhead .bc { font-size: 10.5px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: #6b7685; }
+    .brow { display: grid; grid-template-columns: var(--cols); align-items: center; height: 33px; border-bottom: 1px solid #eceff3; cursor: pointer; }
+    .brow:hover { background: #fafbfc; }
+    .brow.on { background: #fff1f4; }
+    .brow.dense { height: 27px; }
+    .bc { padding: 0 10px; font-size: 12.5px; color: #363f4c; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .bc.name { color: #141a22; font-weight: 500; }
+    .bc.mono { font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace; font-size: 11.5px; color: #6b7685; }
+    .bc.num { text-align: right; font-variant-numeric: tabular-nums; }
+    .bc.mid { text-align: center; }
+    .bc.cond { color: #92400e; font-size: 11.5px; }
+    .bgroup { display: flex; align-items: center; height: 28px; padding: 0 10px; background: #fff1f4; border-bottom: 1px solid #ffdbe3; font-size: 11px; font-weight: 600; letter-spacing: 0.03em; text-transform: uppercase; color: #b01547; }
+    .box { display: inline-block; height: 14px; width: 14px; border-radius: 4px; border: 1px solid #c4ccd6; background: #ffffff; }
+    .box.on { border-color: #d61f55; background: #d61f55; box-shadow: inset 0 0 0 2px #ffffff; }
+
+    .cs { border: 1px solid #dde2e9; border-radius: 10px; background: #ffffff; padding: 8px 9px; cursor: pointer; }
+    .cs:hover { border-color: #c4ccd6; }
+    .cs.on { border-color: #d61f55; box-shadow: 0 0 0 2px #ffdbe3; }
+    .cs.on .cs-t { color: #b01547; }
+    .cs-t { font-size: 12.5px; font-weight: 600; color: #363f4c; }
+
+    .pill { display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 11px; border-radius: 999px; border: 1px solid #cdf3dd; background: #ecfdf3; color: #166534; font-size: 12.5px; font-weight: 500; cursor: pointer; }
+    .pill:hover { background: #cdf3dd; }
+    .pill.on { border-color: #15803d; box-shadow: 0 0 0 2px #cdf3dd; }
+
+    .btn { display: inline-flex; align-items: center; gap: 7px; height: 34px; padding: 0 14px; border-radius: 10px; font-size: 13px; font-weight: 500; cursor: pointer; border: 1px solid transparent; }
+    .btn.ghost { background: transparent; color: #6b7685; }
+    .btn.ghost:hover { background: #f5f7fa; }
+    .btn.out { background: #ffffff; border-color: #dde2e9; color: #363f4c; }
+    .btn.out:hover { background: #fafbfc; }
+    .btn.solid { background: #0e2542; color: #ffffff; font-weight: 600; }
+    .btn.solid:hover { background: #122f54; }
+    .btn.coral { background: #d61f55; color: #ffffff; font-weight: 600; }
+    .btn.coral:hover { background: #b01547; }
+
+    .navitem { display: inline-flex; height: 100%; align-items: center; padding: 0 14px; font-size: 14px; color: #6b7685; }
+    .navitem.on { font-weight: 600; color: #141a22; box-shadow: inset 0 -2px 0 #d61f55; }
+    .tabitem { padding: 9px 14px; font-size: 14px; color: #6b7685; }
+    .tabitem.on { font-weight: 600; color: #141a22; box-shadow: inset 0 -2px 0 #d61f55; }
+
+    .cap { font-size: 11px; font-weight: 600; letter-spacing: 0.03em; text-transform: uppercase; color: #6b7685; }
+    .panehead { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; background: linear-gradient(to bottom, #ec3b68, #d61f55); padding: 13px 18px; }
+    .panecode { display: block; margin-top: 3px; font-family: ui-monospace, Menlo, monospace; font-size: 12px; color: #ffdbe3; }
+    .paneact { display: inline-flex; align-items: center; height: 28px; padding: 0 11px; border: 1px solid rgba(255,255,255,0.45); border-radius: 9px; background: rgba(255,255,255,0.15); font-size: 12.5px; color: #ffffff; cursor: pointer; }
+    .paneact.filled { border-color: #ffffff; background: #ffffff; font-weight: 600; color: #b01547; }
+    .card { border: 1px solid #dde2e9; border-radius: 16px; background: #ffffff; box-shadow: 0 1px 3px rgba(16,28,48,0.08), 0 1px 2px rgba(16,28,48,0.04); overflow: hidden; }
+    .col { display: flex; flex-direction: column; height: 636px; }
+    .field-in { display: flex; align-items: center; height: 31px; border: 1px solid #dde2e9; border-radius: 9px; background: #ffffff; padding: 0 10px; font-size: 13px; color: #141a22; font-variant-numeric: tabular-nums; }
+    .lbl { font-size: 13px; color: #6b7685; }
+
+    .scroll { overflow-y: auto; overflow-x: hidden; }
+    .scroll::-webkit-scrollbar { width: 9px; height: 9px; }
+    .scroll::-webkit-scrollbar-thumb { background: #dde2e9; border-radius: 9px; }
+  </style>
+</helmet>
+
+<div style="width: 1440px; background: #f5f7fa; color: #141a22;">
+
+  <div style="display: flex; align-items: center; gap: 16px; height: 62px; padding: 0 24px; background: #0a1b30;">
+    <span style="font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #7197c2;">Éditeur de CRF · propositions</span>
+    <div style="display: flex; gap: 6px;">
+      <button type="button" class="{{tabA}}" onClick="{{pickA}}">A · Composer</button>
+      <button type="button" class="{{tabB}}" onClick="{{pickB}}">B · Grille</button>
+      <button type="button" class="{{tabC}}" onClick="{{pickC}}">C · Plan</button>
+    </div>
+    <div style="margin-left: auto; max-width: 720px; text-align: right; line-height: 1.35;">
+      <sc-if value="{{isA}}" hint-placeholder-val="{{true}}">
+        <div>
+          <div style="font-size: 12.5px; font-weight: 600; color: #ffffff;">On règle une variable là où on la voit, dans le formulaire tel que le relecteur l'aura.</div>
+          <div style="font-size: 12px; color: #7197c2;">Contrepartie : une seule section à l'écran, donc mal adapté à une reprise en masse.</div>
+        </div>
+      </sc-if>
+      <sc-if value="{{isB}}" hint-placeholder-val="{{true}}">
+        <div>
+          <div style="font-size: 12.5px; font-weight: 600; color: #ffffff;">Les 66 variables comparables colonne par colonne, modifiables en lot.</div>
+          <div style="font-size: 12px; color: #7197c2;">Contrepartie : on ne voit jamais ce que le relecteur verra.</div>
+        </div>
+      </sc-if>
+      <sc-if value="{{isC}}" hint-placeholder-val="{{true}}">
+        <div>
+          <div style="font-size: 12.5px; font-weight: 600; color: #ffffff;">Le plan complet d'un coup d'œil : on déplace sections et variables entre séquences.</div>
+          <div style="font-size: 12px; color: #7197c2;">Contrepartie : on structure ici, on règle le détail ailleurs.</div>
+        </div>
+      </sc-if>
+    </div>
+  </div>
+
+  <div style="background-color: #f5f7fa; background-image: radial-gradient(58% 52% at 10% 4%, rgba(214,31,85,0.10), transparent 60%), radial-gradient(52% 48% at 92% 12%, rgba(236,59,104,0.08), transparent 62%), radial-gradient(60% 60% at 84% 96%, rgba(214,31,85,0.07), transparent 60%);">
+
+    <div style="display: flex; height: 56px; align-items: center; gap: 24px; border-bottom: 1px solid #dde2e9; background: #ffffff; padding: 0 32px;">
+      <span style="display: inline-flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #6b7685;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ec3b68" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.7 8.9a1 1 0 0 1-.6 0C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.2-2.7a1 1 0 0 1 1.5 0C14.5 3.8 17 5 19 5a1 1 0 0 1 1 1z"></path><path d="m9 12 2 2 4-4"></path></svg>
+        Administration
+      </span>
+      <span style="height: 20px; width: 1px; background: #dde2e9;"></span>
+      <nav style="display: flex; height: 100%; align-items: center; gap: 2px;">
+        <span class="navitem">Vue d'ensemble</span>
+        <span class="navitem on">Études</span>
+        <span class="navitem">Formation</span>
+        <span class="navitem">Utilisateurs</span>
+        <span class="navitem">Bibliothèque</span>
+        <span class="navitem">Journal d'audit</span>
+      </nav>
+    </div>
+
+    <div style="padding: 26px 32px 30px;">
+      <div style="display: flex; flex-direction: column; gap: 18px; max-width: 1376px; margin: 0 auto;">
+
+        <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; border-left: 4px solid #ec3b68; padding-left: 16px;">
+          <div>
+            <h1 style="margin: 0; font-size: 28px; font-weight: 700; letter-spacing: -0.01em; color: #141a22;">MIR Dijon</h1>
+            <p style="margin: 4px 0 0; font-size: 14px; color: #6b7685;">2026-09-MIR-DIJON · CMR</p>
+          </div>
+          <span style="display: inline-flex; align-items: center; height: 24px; padding: 0 10px; border-radius: 8px; border: 1px solid #dde2e9; background: #ffffff; font-size: 12px; color: #6b7685;">Brouillon</span>
+        </div>
+
+        <nav style="display: flex; align-items: center; gap: 2px; border-bottom: 1px solid #dde2e9;">
+          <span class="tabitem">Configuration</span>
+          <span class="tabitem on">CRF</span>
+          <span class="tabitem">Équipe</span>
+          <span class="tabitem">Documents</span>
+          <span class="tabitem">Formation</span>
+          <span class="tabitem">Calibration</span>
+          <span class="tabitem">Patients</span>
+          <span class="tabitem">Discordance</span>
+          <span class="tabitem">Export</span>
+        </nav>
+
+        <div class="card" style="display: flex; align-items: center; gap: 14px; padding: 11px 14px;">
+          <span style="font-size: 14px; font-weight: 600; color: #141a22;">Brouillon v1</span>
+          <span style="font-size: 13px; color: #9aa5b3;">aucune version publiée</span>
+          <span style="height: 20px; width: 1px; background: #dde2e9;"></span>
+          <button type="button" class="{{impactCls}}" onClick="{{openImpact}}">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#15803d" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"></path></svg>
+            0 lecture signée · aucun changement à publier
+          </button>
+          <div style="margin-left: auto; display: flex; gap: 8px;">
+            <button type="button" class="btn ghost">Abandonner</button>
+            <button type="button" class="btn out">Enregistrer</button>
+            <button type="button" class="btn solid">Publier v1</button>
+          </div>
+        </div>
+
+        <sc-if value="{{isA}}" hint-placeholder-val="{{true}}">
+          <div style="display: grid; grid-template-columns: 268px minmax(0, 1fr) 350px; gap: 16px; align-items: start;">
+
+            <aside class="card col">
+              <sc-if value="{{railTree}}" hint-placeholder-val="{{true}}">
+                <div style="display: flex; flex-direction: column; min-height: 0; flex: 1;">
+                  <header style="display: flex; align-items: baseline; justify-content: space-between; gap: 8px; background: linear-gradient(to bottom, #ec3b68, #d61f55); padding: 11px 16px;">
+                    <span style="font-size: 11px; font-weight: 600; letter-spacing: 0.03em; text-transform: uppercase; color: #ffffff;">Plan du CRF</span>
+                    <span style="font-size: 12px; color: #ffdbe3;">6 séquences · 66 variables</span>
+                  </header>
+                  <div class="scroll" style="flex: 1; padding: 6px;">
+                    <sc-for list="{{tree}}" as="node" hint-placeholder-count="8">
+                      <button type="button" class="{{node.cls}}" onClick="{{node.pick}}">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="{{node.chev}}"><path d="m9 6 6 6-6 6"></path></svg>
+                        <span style="min-width: 0; flex: 1;">
+                          <span class="ri-l">{{node.label}}</span>
+                          <span class="ri-m">{{node.meta}}</span>
+                        </span>
+                        <span class="ri-n">{{node.count}}</span>
+                      </button>
+                    </sc-for>
+                  </div>
+                  <div style="display: flex; flex-direction: column; gap: 6px; border-top: 1px solid #eceff3; padding: 10px;">
+                    <button type="button" class="btn out" style="justify-content: center; width: 100%;">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>
+                      Ajouter une séquence
+                    </button>
+                    <button type="button" class="btn coral" style="justify-content: center; width: 100%;" onClick="{{openLib}}">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                      Depuis la bibliothèque
+                    </button>
+                  </div>
+                </div>
+              </sc-if>
+              <sc-if value="{{railLib}}" hint-placeholder-val="{{true}}">
+                <div style="display: flex; flex-direction: column; min-height: 0; flex: 1;">
+                  <header style="display: flex; align-items: center; gap: 9px; background: linear-gradient(to bottom, #ec3b68, #d61f55); padding: 11px 12px 11px 9px;">
+                    <button type="button" onClick="{{closeLib}}" style="display: inline-flex; align-items: center; justify-content: center; height: 26px; width: 26px; border: 0; border-radius: 8px; background: rgba(255,255,255,0.18); color: #ffffff; cursor: pointer;">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"></path></svg>
+                    </button>
+                    <span style="font-size: 11px; font-weight: 600; letter-spacing: 0.03em; text-transform: uppercase; color: #ffffff;">Bibliothèque CMR</span>
+                  </header>
+                  <div style="padding: 10px 10px 0;">
+                    <div style="display: flex; height: 32px; align-items: center; gap: 7px; border: 1px solid #dde2e9; border-radius: 10px; background: #fafbfc; padding: 0 10px;">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9aa5b3" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+                      <span style="font-size: 13px; color: #aeb7c2;">Chercher un bloc</span>
+                    </div>
+                    <div style="display: flex; gap: 5px; padding: 10px 0 8px;">
+                      <span class="ch sm on">Sections</span>
+                      <span class="ch sm">Variables</span>
+                      <span class="ch sm">Séquences</span>
+                    </div>
+                  </div>
+                  <div class="scroll" style="flex: 1; padding: 0 8px 8px;">
+                    <sc-for list="{{libItems}}" as="item" hint-placeholder-count="6">
+                      <div style="display: flex; align-items: center; gap: 8px; border-bottom: 1px solid #eceff3; padding: 9px 6px;">
+                        <span style="min-width: 0; flex: 1;">
+                          <span class="ri-l">{{item.name}}</span>
+                          <span class="ri-m">{{item.meta}}</span>
+                        </span>
+                        <span style="display: inline-flex; align-items: center; justify-content: center; height: 24px; width: 24px; border: 1px solid #dde2e9; border-radius: 8px; background: #ffffff; color: #6b7685; flex: none;">
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>
+                        </span>
+                      </div>
+                    </sc-for>
+                  </div>
+                </div>
+              </sc-if>
+            </aside>
+
+            <section class="card col">
+              <header class="panehead">
+                <div style="min-width: 0;">
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <h2 style="margin: 0; font-size: 18px; font-weight: 600; letter-spacing: -0.01em; color: #ffffff;">{{paneTitle}}</h2>
+                    <span style="border: 1px solid rgba(255,255,255,0.45); border-radius: 6px; background: rgba(255,255,255,0.15); padding: 1px 6px; font-size: 11px; font-weight: 500; color: #ffffff;">Section</span>
+                  </div>
+                  <code class="panecode">{{paneCode}}</code>
+                </div>
+                <div style="display: flex; gap: 6px; flex: none;">
+                  <span class="paneact">Renommer</span>
+                  <span class="paneact filled">+ Variable</span>
+                </div>
+              </header>
+              <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px; background: #0e2542; padding: 8px 18px; font-size: 12px; color: #aac0dc;">
+                <span><strong style="font-weight: 600; color: #ffffff;">{{stripVars}}</strong> variables</span>
+                <span style="color: #3f6aa3;">·</span>
+                <span><strong style="font-weight: 600; color: #ffffff;">{{stripReq}}</strong> obligatoires</span>
+                <span style="color: #3f6aa3;">·</span>
+                <span><strong style="font-weight: 600; color: #ffffff;">{{stripCond}}</strong> sous condition</span>
+                <span style="color: #3f6aa3;">·</span>
+                <span><strong style="font-weight: 600; color: #ffffff;">{{stripTol}}</strong> avec tolérance</span>
+                <span style="margin-left: auto; color: #7197c2;">Aperçu tel que le relecteur le voit</span>
+              </div>
+              <div class="scroll" style="flex: 1; padding: 6px 12px 14px;">
+                <sc-for list="{{fields}}" as="f" hint-placeholder-count="6">
+                  <div class="{{f.cls}}" onClick="{{f.pick}}">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" class="drag" style="margin-top: 5px;"><circle cx="9" cy="6" r="1"></circle><circle cx="9" cy="12" r="1"></circle><circle cx="9" cy="18" r="1"></circle><circle cx="15" cy="6" r="1"></circle><circle cx="15" cy="12" r="1"></circle><circle cx="15" cy="18" r="1"></circle></svg>
+                    <div style="width: 250px; flex: none;">
+                      <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                        <span class="fr-n">{{f.name}}</span>
+                        <sc-if value="{{f.req}}" hint-placeholder-val="{{true}}">
+                          <span style="color: #d61f55; font-size: 14px; line-height: 1;">*</span>
+                        </sc-if>
+                      </div>
+                      <div style="margin-top: 2px; font-size: 11.5px; color: #9aa5b3; font-family: ui-monospace, Menlo, monospace;">{{f.code}}</div>
+                      <sc-if value="{{f.hasCond}}" hint-placeholder-val="{{true}}">
+                        <div style="display: inline-flex; align-items: center; gap: 4px; margin-top: 5px; border: 1px solid #fbe3bd; border-radius: 6px; background: #fff8eb; padding: 1px 6px; font-size: 10.5px; color: #92400e;">
+                          <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v12a3 3 0 0 0 3 3h9"></path><path d="m15 15 3 3-3 3"></path></svg>
+                          {{f.condLabel}}
+                        </div>
+                      </sc-if>
+                    </div>
+                    <div style="flex: 1; min-width: 0;">
+                      <sc-if value="{{f.isNum}}" hint-placeholder-val="{{true}}">
+                        <div style="display: flex; align-items: center; gap: 9px;">
+                          <div style="display: flex; align-items: center; height: 34px; width: 118px; border: 1px solid #dde2e9; border-radius: 10px; background: #fafbfc; padding: 0 11px; font-size: 13px; color: #aeb7c2;">—</div>
+                          <span style="font-size: 13px; color: #6b7685;">{{f.unit}}</span>
+                          <span style="font-size: 11.5px; color: #9aa5b3;">{{f.bounds}}</span>
+                        </div>
+                      </sc-if>
+                      <sc-if value="{{f.isChips}}" hint-placeholder-val="{{true}}">
+                        <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+                          <sc-for list="{{f.chips}}" as="chip" hint-placeholder-count="3">
+                            <span class="{{chip.cls}}">{{chip.label}}</span>
+                          </sc-for>
+                        </div>
+                      </sc-if>
+                      <sc-if value="{{f.isSeg}}" hint-placeholder-val="{{true}}">
+                        <div style="display: flex; align-items: flex-start; gap: 18px;">
+                          <svg width="152" height="152" viewBox="0 0 152 152" style="flex: none;">
+                            <sc-for list="{{f.segs}}" as="seg" hint-placeholder-count="17">
+                              <path d="{{seg.path}}" fill="{{seg.fill}}" stroke="{{seg.stroke}}" stroke-width="1.1"></path>
+                            </sc-for>
+                            <text x="76.00" y="20.20" text-anchor="middle" dominant-baseline="central" font-size="8" fill="#4d5765" pointer-events="none">1</text>
+                            <text x="124.32" y="48.10" text-anchor="middle" dominant-baseline="central" font-size="8" fill="#4d5765" pointer-events="none">6</text>
+                            <text x="124.32" y="103.90" text-anchor="middle" dominant-baseline="central" font-size="8" fill="#4d5765" pointer-events="none">5</text>
+                            <text x="76.00" y="131.80" text-anchor="middle" dominant-baseline="central" font-size="8" fill="#4d5765" pointer-events="none">4</text>
+                            <text x="27.68" y="103.90" text-anchor="middle" dominant-baseline="central" font-size="8" fill="#4d5765" pointer-events="none">3</text>
+                            <text x="27.68" y="48.10" text-anchor="middle" dominant-baseline="central" font-size="8" fill="#4d5765" pointer-events="none">2</text>
+                            <text x="76.00" y="35.59" text-anchor="middle" dominant-baseline="central" font-size="8" fill="#4d5765" pointer-events="none">7</text>
+                            <text x="110.99" y="55.80" text-anchor="middle" dominant-baseline="central" font-size="8" fill="#4d5765" pointer-events="none">12</text>
+                            <text x="110.99" y="96.20" text-anchor="middle" dominant-baseline="central" font-size="8" fill="#4d5765" pointer-events="none">11</text>
+                            <text x="76.00" y="116.41" text-anchor="middle" dominant-baseline="central" font-size="8" fill="#4d5765" pointer-events="none">10</text>
+                            <text x="41.01" y="96.20" text-anchor="middle" dominant-baseline="central" font-size="8" fill="#4d5765" pointer-events="none">9</text>
+                            <text x="41.01" y="55.80" text-anchor="middle" dominant-baseline="central" font-size="8" fill="#4d5765" pointer-events="none">8</text>
+                            <text x="76.00" y="51.47" text-anchor="middle" dominant-baseline="central" font-size="8" fill="#4d5765" pointer-events="none">13</text>
+                            <text x="100.53" y="76.00" text-anchor="middle" dominant-baseline="central" font-size="8" fill="#4d5765" pointer-events="none">16</text>
+                            <text x="76.00" y="100.53" text-anchor="middle" dominant-baseline="central" font-size="8" fill="#4d5765" pointer-events="none">15</text>
+                            <text x="51.47" y="76.00" text-anchor="middle" dominant-baseline="central" font-size="8" fill="#4d5765" pointer-events="none">14</text>
+                            <text x="76.00" y="76.00" text-anchor="middle" dominant-baseline="central" font-size="8" fill="#4d5765" pointer-events="none">17</text>
+                          </svg>
+                          <div style="display: flex; flex-direction: column; gap: 5px;">
+                            <sc-for list="{{f.legend}}" as="l" hint-placeholder-count="4">
+                              <span style="display: inline-flex; align-items: center; gap: 7px; font-size: 12px; color: #363f4c;">
+                                <svg width="12" height="12" viewBox="0 0 12 12" style="flex: none;"><rect x="0.5" y="0.5" width="11" height="11" rx="3" fill="{{l.fill}}" stroke="#dde2e9"></rect></svg>
+                                {{l.label}}
+                              </span>
+                            </sc-for>
+                          </div>
+                        </div>
+                      </sc-if>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+            </section>
+
+            <aside class="card col">
+              <sc-if value="{{panelField}}" hint-placeholder-val="{{true}}">
+                <div style="display: flex; flex-direction: column; min-height: 0; flex: 1;">
+                  <header style="background: linear-gradient(to bottom, #ec3b68, #d61f55); padding: 12px 16px;">
+                    <div style="font-size: 11px; font-weight: 600; letter-spacing: 0.03em; text-transform: uppercase; color: #ffdbe3;">Variable</div>
+                    <div style="margin-top: 2px; font-size: 16px; font-weight: 600; line-height: 1.2; color: #ffffff;">{{insName}}</div>
+                    <div style="margin-top: 2px; font-size: 12px; color: #ffdbe3;">{{insType}}</div>
+                  </header>
+                  <div class="scroll" style="flex: 1; padding: 15px 16px;">
+
+                    <div style="margin-bottom: 15px;">
+                      <div class="cap" style="margin-bottom: 7px;">Nom de colonne à l'export</div>
+                      <div style="display: flex; align-items: center; height: 34px; border: 1px solid #dde2e9; border-radius: 10px; background: #ffffff; padding: 0 10px; font-family: ui-monospace, Menlo, monospace; font-size: 13px; color: #141a22;">{{insCode}}</div>
+                    </div>
+
+                    <div style="margin-bottom: 15px;">
+                      <div class="cap" style="margin-bottom: 7px;">Saisie acceptée</div>
+                      <div style="display: grid; grid-template-columns: 100px minmax(0, 1fr); align-items: center; gap: 8px 10px;">
+                        <sc-if value="{{insNum}}" hint-placeholder-val="{{true}}">
+                          <div style="display: contents;">
+                            <span class="lbl">Minimum</span>
+                            <span class="field-in">{{insMin}}</span>
+                            <span class="lbl">Maximum</span>
+                            <span class="field-in">{{insMax}}</span>
+                            <span class="lbl">Unité</span>
+                            <span class="field-in">{{insUnit}}</span>
+                          </div>
+                        </sc-if>
+                        <span class="lbl">Obligatoire</span>
+                        <span style="display: inline-flex; gap: 6px;">
+                          <span class="{{insReqYes}}">Oui</span>
+                          <span class="{{insReqNo}}">Non</span>
+                        </span>
+                      </div>
+                    </div>
+
+                    <div style="margin-bottom: 15px;">
+                      <div class="cap" style="margin-bottom: 7px;">Affichage</div>
+                      <sc-if value="{{insCond}}" hint-placeholder-val="{{true}}">
+                        <div style="display: flex; flex-direction: column; gap: 7px;">
+                          <span style="display: inline-flex; gap: 6px;">
+                            <span class="cc">Toujours affichée</span>
+                            <span class="cc on">Sous condition</span>
+                          </span>
+                          <div style="display: flex; align-items: center; flex-wrap: wrap; gap: 6px; border: 1px solid #dde2e9; border-radius: 10px; background: #fafbfc; padding: 8px 10px; font-size: 12.5px; color: #363f4c;">
+                            <span style="color: #6b7685;">si</span>
+                            <strong style="font-weight: 600;">{{insCondField}}</strong>
+                            <span style="color: #6b7685;">vaut</span>
+                            <span class="ch sm on">{{insCondValue}}</span>
+                          </div>
+                        </div>
+                      </sc-if>
+                      <sc-if value="{{insAlways}}" hint-placeholder-val="{{true}}">
+                        <span style="display: inline-flex; gap: 6px;">
+                          <span class="cc on">Toujours affichée</span>
+                          <span class="cc">Sous condition</span>
+                        </span>
+                      </sc-if>
+                    </div>
+
+                    <sc-if value="{{insTol}}" hint-placeholder-val="{{true}}">
+                      <div style="margin-bottom: 15px;">
+                        <div class="cap" style="margin-bottom: 7px;">Écarts tolérés</div>
+                        <div style="display: grid; grid-template-columns: 100px minmax(0, 1fr); align-items: center; gap: 8px 10px;">
+                          <span class="lbl">Calibration</span>
+                          <span class="field-in">{{insTolText}}</span>
+                          <span class="lbl">Discordance</span>
+                          <span class="field-in">{{insThrText}}</span>
+                        </div>
+                      </div>
+                    </sc-if>
+
+                    <sc-if value="{{insHasOpts}}" hint-placeholder-val="{{true}}">
+                      <div style="margin-bottom: 15px;">
+                        <div class="cap" style="margin-bottom: 7px;">Jeu de valeurs</div>
+                        <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+                          <sc-for list="{{insOpts}}" as="opt" hint-placeholder-count="4">
+                            <span style="display: inline-flex; align-items: center; gap: 6px; border: 1px solid #dde2e9; border-radius: 7px; background: #ffffff; padding: 2px 8px; font-size: 12px; color: #363f4c;">
+                              <svg width="10" height="10" viewBox="0 0 10 10" style="flex: none;"><rect x="0.5" y="0.5" width="9" height="9" rx="2.5" fill="{{opt.fill}}" stroke="#dde2e9"></rect></svg>
+                              {{opt.label}}
+                            </span>
+                          </sc-for>
+                        </div>
+                      </div>
+                    </sc-if>
+
+                    <div style="margin-bottom: 15px;">
+                      <div class="cap" style="margin-bottom: 7px;">Présente dans</div>
+                      <p style="margin: 0; font-size: 12.5px; line-height: 1.5; color: #6b7685;">{{insUsage}}</p>
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; gap: 8px; border-top: 1px solid #eceff3; padding-top: 14px;">
+                      <button type="button" class="btn solid" style="justify-content: center; width: 100%;">Enregistrer la variable</button>
+                      <div style="display: flex; gap: 8px;">
+                        <button type="button" class="btn out" style="flex: 1; justify-content: center;">Déplacer</button>
+                        <button type="button" class="btn out" style="flex: 1; justify-content: center; color: #b91c1c;">Retirer du CRF</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </sc-if>
+
+              <sc-if value="{{panelImpact}}" hint-placeholder-val="{{true}}">
+                <div style="display: flex; flex-direction: column; min-height: 0; flex: 1;">
+                  <header style="background: linear-gradient(to bottom, #ec3b68, #d61f55); padding: 12px 16px;">
+                    <div style="font-size: 11px; font-weight: 600; letter-spacing: 0.03em; text-transform: uppercase; color: #ffdbe3;">Publication</div>
+                    <div style="margin-top: 2px; font-size: 16px; font-weight: 600; line-height: 1.2; color: #ffffff;">Impact sur les lectures signées</div>
+                  </header>
+                  <div class="scroll" style="flex: 1; padding: 16px;">
+                    <div style="display: flex; gap: 10px; border: 1px solid #cdf3dd; border-radius: 10px; background: #ecfdf3; padding: 12px; font-size: 12.5px; line-height: 1.5; color: #166534;">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex: none; margin-top: 1px;"><path d="m5 12 5 5L20 7"></path></svg>
+                      <p style="margin: 0;">Aucune lecture n'est signée sur cette étude, et le brouillon ne s'écarte d'aucune version publiée. Publier v1 ne casse rien.</p>
+                    </div>
+                    <div class="cap" style="margin: 16px 0 8px;">Ce que la publication verrouille</div>
+                    <ul style="margin: 0; padding-left: 17px; font-size: 12.5px; line-height: 1.65; color: #6b7685;">
+                      <li>Les 66 identifiants de variables deviennent des colonnes d'export définitives.</li>
+                      <li>Une variable retirée après une signature casserait la lecture correspondante.</li>
+                      <li>Élargir des bornes reste sans conséquence, les rétrécir crée un manque.</li>
+                    </ul>
+                    <button type="button" class="btn out" style="justify-content: center; width: 100%; margin-top: 16px;" onClick="{{closeImpact}}">Revenir à la variable</button>
+                  </div>
+                </div>
+              </sc-if>
+            </aside>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{isB}}" hint-placeholder-val="{{true}}">
+          <div class="card col bt">
+            <header class="panehead">
+              <div>
+                <h2 style="margin: 0; font-size: 18px; font-weight: 600; letter-spacing: -0.01em; color: #ffffff;">Toutes les variables du CRF</h2>
+                <code class="panecode">6 séquences · 16 sections · 66 variables</code>
+              </div>
+              <div style="display: flex; gap: 6px; flex: none;">
+                <span class="paneact">Colonnes</span>
+                <span class="paneact filled">+ Depuis la bibliothèque</span>
+              </div>
+            </header>
+            <div style="display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #dde2e9; background: #ffffff; padding: 10px 14px;">
+              <div style="display: flex; height: 32px; width: 200px; align-items: center; gap: 7px; border: 1px solid #dde2e9; border-radius: 10px; background: #fafbfc; padding: 0 10px; flex: none;">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9aa5b3" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+                <span style="font-size: 13px; color: #aeb7c2;">Chercher une variable</span>
+              </div>
+              <span style="height: 20px; width: 1px; background: #dde2e9;"></span>
+              <div style="display: flex; gap: 5px;">
+                <sc-for list="{{bChips}}" as="chip" hint-placeholder-count="7">
+                  <button type="button" class="{{chip.cls}}" onClick="{{chip.pick}}">{{chip.label}}</button>
+                </sc-for>
+              </div>
+              <span style="margin-left: auto; font-size: 12.5px; color: #9aa5b3;">{{bCountLabel}}</span>
+            </div>
+            <div class="bhead">
+              <span class="bc mid"></span>
+              <span class="bc">Variable</span>
+              <span class="bc">Identifiant</span>
+              <span class="bc">Type</span>
+              <span class="bc mid">Oblig.</span>
+              <span class="bc">Unité</span>
+              <span class="bc num">Min</span>
+              <span class="bc num">Max</span>
+              <span class="bc">Condition</span>
+              <span class="bc num">Calibration</span>
+              <span class="bc num">Discordance</span>
+            </div>
+            <div class="scroll" style="flex: 1;">
+              <sc-for list="{{bRows}}" as="row" hint-placeholder-count="14">
+                <div>
+                  <sc-if value="{{row.isGroup}}" hint-placeholder-val="{{true}}">
+                    <div class="bgroup">{{row.label}}</div>
+                  </sc-if>
+                  <sc-if value="{{row.isField}}" hint-placeholder-val="{{true}}">
+                    <div class="{{row.cls}}" onClick="{{row.pick}}">
+                      <span class="bc mid"><span class="{{row.box}}"></span></span>
+                      <span class="bc name">{{row.name}}</span>
+                      <span class="bc mono">{{row.code}}</span>
+                      <span class="bc">{{row.type}}</span>
+                      <span class="bc mid">{{row.req}}</span>
+                      <span class="bc">{{row.unit}}</span>
+                      <span class="bc num">{{row.min}}</span>
+                      <span class="bc num">{{row.max}}</span>
+                      <span class="bc cond">{{row.cond}}</span>
+                      <span class="bc num">{{row.tol}}</span>
+                      <span class="bc num">{{row.thr}}</span>
+                    </div>
+                  </sc-if>
+                </div>
+              </sc-for>
+            </div>
+            <sc-if value="{{bBulk}}" hint-placeholder-val="{{true}}">
+              <div style="display: flex; align-items: center; gap: 14px; background: #0e2542; padding: 10px 16px;">
+                <span style="font-size: 13px; font-weight: 600; color: #ffffff; flex: none;">{{bBulkLabel}}</span>
+                <span style="height: 18px; width: 1px; background: #3f6aa3;"></span>
+                <div style="display: flex; gap: 7px;">
+                  <span style="display: inline-flex; align-items: center; height: 28px; padding: 0 11px; border: 1px solid rgba(255,255,255,0.28); border-radius: 9px; font-size: 12.5px; color: #d6e0ee; cursor: pointer;">Rendre obligatoire</span>
+                  <span style="display: inline-flex; align-items: center; height: 28px; padding: 0 11px; border: 1px solid rgba(255,255,255,0.28); border-radius: 9px; font-size: 12.5px; color: #d6e0ee; cursor: pointer;">Appliquer une tolérance</span>
+                  <span style="display: inline-flex; align-items: center; height: 28px; padding: 0 11px; border: 1px solid rgba(255,255,255,0.28); border-radius: 9px; font-size: 12.5px; color: #d6e0ee; cursor: pointer;">Déplacer vers une section</span>
+                  <span style="display: inline-flex; align-items: center; height: 28px; padding: 0 11px; border: 1px solid rgba(255,255,255,0.28); border-radius: 9px; font-size: 12.5px; color: #ffb6c6; cursor: pointer;">Retirer du CRF</span>
+                </div>
+                <button type="button" onClick="{{clearRows}}" style="margin-left: auto; border: 0; background: transparent; font-size: 12.5px; color: #7197c2; cursor: pointer; flex: none;">Tout désélectionner</button>
+              </div>
+            </sc-if>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{isC}}" hint-placeholder-val="{{true}}">
+          <div style="display: grid; grid-template-columns: 276px minmax(0, 1fr); gap: 16px; align-items: start;">
+            <aside class="card col">
+              <header style="display: flex; align-items: baseline; justify-content: space-between; gap: 8px; background: linear-gradient(to bottom, #ec3b68, #d61f55); padding: 11px 16px;">
+                <span style="font-size: 11px; font-weight: 600; letter-spacing: 0.03em; text-transform: uppercase; color: #ffffff;">Bibliothèque CMR</span>
+                <span style="font-size: 12px; color: #ffdbe3;">à glisser</span>
+              </header>
+              <div style="padding: 10px 10px 0;">
+                <div style="display: flex; height: 32px; align-items: center; gap: 7px; border: 1px solid #dde2e9; border-radius: 10px; background: #fafbfc; padding: 0 10px;">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9aa5b3" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+                  <span style="font-size: 13px; color: #aeb7c2;">Chercher un bloc</span>
+                </div>
+                <div style="display: flex; gap: 5px; padding: 10px 0 8px;">
+                  <span class="ch sm on">Sections</span>
+                  <span class="ch sm">Séquences</span>
+                  <span class="ch sm">Variables</span>
+                </div>
+              </div>
+              <div class="scroll" style="flex: 1; padding: 0 8px 8px;">
+                <sc-for list="{{libItems}}" as="item" hint-placeholder-count="8">
+                  <div style="display: flex; align-items: center; gap: 8px; border: 1px solid #eceff3; border-radius: 10px; background: #fafbfc; padding: 8px 9px; margin-bottom: 6px;">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#c4ccd6" stroke-width="2" stroke-linecap="round" style="flex: none;"><circle cx="9" cy="6" r="1"></circle><circle cx="9" cy="12" r="1"></circle><circle cx="9" cy="18" r="1"></circle><circle cx="15" cy="6" r="1"></circle><circle cx="15" cy="12" r="1"></circle><circle cx="15" cy="18" r="1"></circle></svg>
+                    <span style="min-width: 0; flex: 1;">
+                      <span class="ri-l">{{item.name}}</span>
+                      <span class="ri-m">{{item.meta}}</span>
+                    </span>
+                  </div>
+                </sc-for>
+              </div>
+            </aside>
+
+            <section class="card col">
+              <header class="panehead">
+                <div>
+                  <h2 style="margin: 0; font-size: 18px; font-weight: 600; letter-spacing: -0.01em; color: #ffffff;">Plan du CRF</h2>
+                  <code class="panecode">L'ordre des colonnes est l'ordre des séquences dans la lecture</code>
+                </div>
+                <div style="display: flex; gap: 6px; flex: none;">
+                  <span class="paneact filled">+ Séquence</span>
+                </div>
+              </header>
+              <div class="scroll" style="flex: 1; overflow-x: auto; padding: 14px;">
+                <div style="display: flex; gap: 12px; align-items: flex-start;">
+                  <sc-for list="{{cCols}}" as="col" hint-placeholder-count="6">
+                    <div style="width: 224px; flex: none; border: 1px solid #dde2e9; border-radius: 14px; background: #fafbfc;">
+                      <div style="display: flex; align-items: center; gap: 7px; border-bottom: 1px solid #eceff3; padding: 10px 11px;">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#c4ccd6" stroke-width="2" stroke-linecap="round" style="flex: none;"><circle cx="9" cy="6" r="1"></circle><circle cx="9" cy="12" r="1"></circle><circle cx="9" cy="18" r="1"></circle><circle cx="15" cy="6" r="1"></circle><circle cx="15" cy="12" r="1"></circle><circle cx="15" cy="18" r="1"></circle></svg>
+                        <span style="min-width: 0; flex: 1;">
+                          <span style="display: block; font-size: 13.5px; font-weight: 600; color: #141a22;">{{col.name}}</span>
+                          <span class="ri-m">{{col.meta}}</span>
+                        </span>
+                      </div>
+                      <div style="display: flex; flex-direction: column; gap: 7px; padding: 9px;">
+                        <sc-for list="{{col.secs}}" as="sec" hint-placeholder-count="3">
+                          <div class="{{sec.cls}}" onClick="{{sec.pick}}">
+                            <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 6px;">
+                              <span class="cs-t">{{sec.name}}</span>
+                              <span class="ri-n">{{sec.count}}</span>
+                            </div>
+                            <div style="display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px;">
+                              <sc-for list="{{sec.chips}}" as="chip" hint-placeholder-count="4">
+                                <span style="display: inline-flex; align-items: center; gap: 4px; border: 1px solid #eceff3; border-radius: 6px; background: #ffffff; padding: 1px 6px; font-size: 11px; color: #6b7685;">
+                                  <svg width="6" height="6" viewBox="0 0 6 6" style="flex: none;"><circle cx="3" cy="3" r="3" fill="{{chip.dot}}"></circle></svg>
+                                  {{chip.name}}
+                                </span>
+                              </sc-for>
+                            </div>
+                          </div>
+                        </sc-for>
+                        <button type="button" style="display: flex; align-items: center; justify-content: center; gap: 6px; height: 30px; border: 1px dashed #c4ccd6; border-radius: 10px; background: transparent; font-size: 12.5px; color: #6b7685; cursor: pointer;">
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>
+                          Section
+                        </button>
+                      </div>
+                    </div>
+                  </sc-for>
+                  <div style="display: flex; width: 132px; flex: none; align-items: center; justify-content: center; gap: 7px; height: 96px; border: 1px dashed #c4ccd6; border-radius: 14px; font-size: 12.5px; color: #6b7685;">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>
+                    Séquence
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </sc-if>
+
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+
+<script data-dc-script data-props='{"density":{"editor":"enum","options":["Confortable","Compact"],"default":"Confortable","section":"Densité"},"$preview":{"width":1440,"height":1062}}'>
+const CRF = [{"id":"cine","name":"Cine","secs":[{"id":"cine-availability","name":"Available Series & Artefacts","fields":[{"id":"series_availability","name":"Available Series","type":"series_availability","req":true,"opts":["SAX","2CH","3CH","4CH"]},{"id":"artefacts_grade","name":"Artefacts Grade","type":"categorical","req":true,"opts":["0","1","2","3","4"],"uses":5},{"id":"artefacts_type","name":"Artefacts Type","type":"categorical","req":false,"opts":["Ghosting (motion)","Wrapping","Flow","Metal","Arrhythmia"],"uses":5}]},{"id":"cine-lv","name":"Left Ventricle","fields":[{"id":"wall_motion_abnormalities","name":"Wall Motion Abnormalities","type":"boolean","req":true},{"id":"wall_motion_segments","name":"Wall Motion Segments","type":"segment_categorical","req":true,"opts":["Normal","Hypokinetic","Akinetic","Dyskinetic"],"seg":17},{"id":"wall_motion_global","name":"Global Wall Motion","type":"boolean","req":true},{"id":"asynchronism","name":"Asynchronism","type":"boolean","req":true},{"id":"lv_measurable","name":"LV Measurable","type":"boolean","req":true,"def":true},{"id":"visual_lvef","name":"Visual LVEF","type":"numeric","req":true,"unit":"%","min":10,"max":80,"tol":[5,8]},{"id":"lvef","name":"LVEF","type":"numeric","req":true,"unit":"%","min":10,"max":80,"cond":{"f":"lv_measurable","v":true},"tol":[5,8],"thr":[5,10]},{"id":"lv_edv","name":"LV EDV","type":"numeric","req":true,"unit":"mL","min":30,"max":350,"cond":{"f":"lv_measurable","v":true},"tol":[15,10],"thr":[5,10]},{"id":"lv_esv","name":"LV ESV","type":"numeric","req":true,"unit":"mL","min":20,"max":300,"cond":{"f":"lv_measurable","v":true},"tol":[15,10],"thr":[10,20]},{"id":"lv_mass","name":"LV Mass","type":"numeric","req":true,"unit":"g","min":50,"max":300,"cond":{"f":"lv_measurable","v":true},"tol":[10,8],"thr":[5,10]},{"id":"ed_max_thickness","name":"ED Max Wall Thickness","type":"numeric","req":false,"unit":"mm","min":1,"max":40,"cond":{"f":"lv_measurable","v":true},"tol":[2,15]}]},{"id":"cine-rv","name":"Right Ventricle","fields":[{"id":"rv_wall_motion","name":"RV Wall Motion Abnormalities","type":"boolean","req":true},{"id":"rv_visual_dysfunction","name":"RV Visual Dysfunction","type":"boolean","req":true},{"id":"tapse","name":"TAPSE","type":"numeric","req":false,"unit":"mm","min":1,"max":50,"tol":[3,15],"thr":[10,20]},{"id":"rv_measurable","name":"RV Measurable","type":"boolean","req":true,"def":true},{"id":"rvef","name":"RVEF","type":"numeric","req":true,"unit":"%","min":10,"max":80,"cond":{"f":"rv_measurable","v":true},"tol":[5,8],"thr":[5,10]},{"id":"rv_edv","name":"RV EDV","type":"numeric","req":true,"unit":"mL","min":0,"max":500,"cond":{"f":"rv_measurable","v":true},"tol":[15,10],"thr":[10,20]},{"id":"rv_esv","name":"RV ESV","type":"numeric","req":true,"unit":"mL","min":0,"max":400,"cond":{"f":"rv_measurable","v":true},"tol":[15,10]}]},{"id":"cine-atria","name":"Atria","fields":[{"id":"la_measurable","name":"LA Measurable","type":"boolean","req":true,"def":true},{"id":"la_biplanar_smallest","name":"LA Smallest Vol.","type":"numeric","req":true,"unit":"mL","min":5,"max":60,"cond":{"f":"la_measurable","v":true},"tol":[5,15]},{"id":"la_biplanar_largest","name":"LA Largest Vol.","type":"numeric","req":true,"unit":"mL","min":5,"max":50,"cond":{"f":"la_measurable","v":true},"tol":[5,15]},{"id":"ra_measurable","name":"RA Measurable","type":"boolean","req":true,"def":true},{"id":"ra_4c_smallest","name":"RA Smallest Area","type":"numeric","req":true,"unit":"cm2","min":5,"max":60,"cond":{"f":"ra_measurable","v":true},"tol":[5,15]},{"id":"ra_4c_largest","name":"RA Largest Area","type":"numeric","req":true,"unit":"cm2","min":5,"max":50,"cond":{"f":"ra_measurable","v":true},"tol":[5,15]}]},{"id":"cine-pericardium","name":"Pericardium","fields":[{"id":"pericardial_effusion","name":"Pericardial Effusion Thickness","type":"categorical","req":true,"opts":["0","1","2","3"]}]}]},{"id":"t2w","name":"T2w","secs":[{"id":"t2w-availability","name":"Availability & Artefacts","fields":[{"id":"t2w_available","name":"T2w Available","type":"boolean","req":true},{"id":"artefacts_grade","name":"Artefacts Grade","type":"categorical","req":true,"opts":["0","1","2","3","4"],"cond":{"f":"t2w_available","v":true},"uses":5},{"id":"artefacts_type","name":"Artefacts Type","type":"categorical","req":false,"opts":["Ghosting (motion)","Wrapping","Flow","Metal","Arrhythmia"],"cond":{"f":"t2w_available","v":true},"uses":5}]},{"id":"t2w-hyperintensity","name":"T2w Myocardial Hyperintensity","fields":[{"id":"myocardial_hyperintensity","name":"Myocardial Hyperintensity","type":"boolean","req":true,"cond":{"f":"t2w_available","v":true}},{"id":"hyperintensity_segments","name":"Hyperintensity Segments","type":"segment_categorical","req":true,"opts":["Y","N"],"seg":17,"cond":{"f":"myocardial_hyperintensity","v":true}}]},{"id":"t2w-pericardial","name":"Pericardial","fields":[{"id":"t2w_pericardial_hyperintensity","name":"Pericardial Hyperintensity","type":"categorical","req":true,"opts":["N","L","D"],"cond":{"f":"t2w_available","v":true}}]}]},{"id":"t1-mapping-pre","name":"T1 Mapping Pre","secs":[{"id":"t1-pre-availability","name":"Availability & Artefacts","fields":[{"id":"t1_pre_available","name":"T1 Pre Available","type":"boolean","req":true},{"id":"basal_available","name":"Basal Slice Available","type":"boolean","req":true,"cond":{"f":"t1_pre_available","v":true},"uses":2},{"id":"medial_available","name":"Medial Slice Available","type":"boolean","req":true,"cond":{"f":"t1_pre_available","v":true},"uses":2},{"id":"apical_available","name":"Apical Slice Available","type":"boolean","req":true,"cond":{"f":"t1_pre_available","v":true},"uses":2},{"id":"artefacts_grade","name":"Artefacts Grade","type":"categorical","req":true,"opts":["0","1","2","3","4"],"cond":{"f":"t1_pre_available","v":true},"uses":5},{"id":"artefacts_type","name":"Artefacts Type","type":"categorical","req":false,"opts":["Bad MOCO","Wrapping","Other"],"cond":{"f":"t1_pre_available","v":true},"uses":5}]},{"id":"t1-pre-values","name":"T1 Values","fields":[{"id":"mid_ivs","name":"Mid IVS T1","type":"numeric","req":true,"unit":"ms","min":500,"max":2000,"cond":{"f":"t1_pre_available","v":true},"tol":[30,3],"uses":2},{"id":"presence_local_elevation","name":"Presence of Local Elevation","type":"boolean","req":true,"cond":{"f":"t1_pre_available","v":true},"uses":2},{"id":"local_elevation","name":"Local Elevation Value","type":"numeric","req":true,"unit":"ms","min":500,"max":2000,"cond":{"f":"presence_local_elevation","v":true},"tol":[30,3],"uses":2},{"id":"t1_segments","name":"T1 Segment Values","type":"segment_numeric","req":false,"unit":"ms","min":0,"max":2500,"seg":16,"cond":{"f":"t1_pre_available","v":true}}]}]},{"id":"t2-mapping","name":"T2 Mapping","secs":[{"id":"t2-map-availability","name":"Availability & Artefacts","fields":[{"id":"t2_available","name":"T2 Mapping Available","type":"boolean","req":true},{"id":"basal_available","name":"Basal Slice Available","type":"boolean","req":true,"cond":{"f":"t2_available","v":true},"uses":2},{"id":"medial_available","name":"Medial Slice Available","type":"boolean","req":true,"cond":{"f":"t2_available","v":true},"uses":2},{"id":"apical_available","name":"Apical Slice Available","type":"boolean","req":true,"cond":{"f":"t2_available","v":true},"uses":2},{"id":"artefacts_grade","name":"Artefacts Grade","type":"categorical","req":true,"opts":["0","1","2","3","4"],"cond":{"f":"t2_available","v":true},"uses":5},{"id":"artefacts_type","name":"Artefacts Type","type":"categorical","req":false,"opts":["Bad MOCO","Wrapping","Other"],"cond":{"f":"t2_available","v":true},"uses":5}]},{"id":"t2-map-values","name":"T2 Values","fields":[{"id":"mid_ivs","name":"Mid IVS T2","type":"numeric","req":true,"unit":"ms","min":30,"max":100,"cond":{"f":"t2_available","v":true},"tol":[5,8],"uses":2},{"id":"presence_local_elevation","name":"Presence of Local Elevation","type":"boolean","req":true,"cond":{"f":"t2_available","v":true},"uses":2},{"id":"local_elevation","name":"Local Elevation Value","type":"numeric","req":true,"unit":"ms","min":30,"max":100,"cond":{"f":"presence_local_elevation","v":true},"tol":[5,8],"uses":2},{"id":"t2_segments","name":"T2 Segment Values","type":"segment_numeric","req":false,"unit":"ms","min":0,"max":100,"seg":16,"cond":{"f":"t2_available","v":true}}]}]},{"id":"lge","name":"LGE","secs":[{"id":"lge-availability","name":"Availability & Artefacts","fields":[{"id":"lge_available","name":"LGE Available","type":"boolean","req":true},{"id":"sequence_used","name":"Sequence Used","type":"categorical","req":true,"opts":["FLASH","PSIR-PSIR","PSIR-MAG"],"cond":{"f":"lge_available","v":true}},{"id":"artefacts_grade","name":"Artefacts Grade","type":"categorical","req":true,"opts":["0","1","2","3","4"],"cond":{"f":"lge_available","v":true},"uses":5},{"id":"artefacts_type","name":"Artefacts Type","type":"categorical","req":false,"opts":["Ghosting (motion)","Wrapping","Flow","Metal","Arrhythmia","Imperfect Ti selection"],"cond":{"f":"lge_available","v":true},"uses":5},{"id":"segments_analysable","name":"All Segments Analysable","type":"boolean","req":true,"cond":{"f":"lge_available","v":true}}]},{"id":"lge-lv","name":"LV LGE","fields":[{"id":"lge_presence","name":"LGE Presence","type":"boolean","req":true,"cond":{"f":"lge_available","v":true}},{"id":"lge_segments","name":"LGE Segments","type":"segment_categorical","req":true,"opts":["Sub-epicardial","Intra-myocardial","Sub-endocardial","Transmural (epi)","Transmural (endo)","Mixed","None"],"seg":17,"cond":{"f":"lge_presence","v":true}},{"id":"visual_quantification","name":"Visual Quantification","type":"numeric","req":true,"min":0,"max":17,"cond":{"f":"lge_presence","v":true},"tol":[1,20]},{"id":"lge_mass","name":"LGE Mass","type":"numeric","req":false,"unit":"g","min":0,"max":300,"cond":{"f":"lge_presence","v":true},"tol":[3,15]},{"id":"lge_percentage","name":"LGE Percentage","type":"numeric","req":false,"unit":"%","min":0,"max":100,"cond":{"f":"lge_presence","v":true},"tol":[3,15]}]},{"id":"lge-pericardial","name":"Pericardial LGE","fields":[{"id":"pericardial_lge","name":"Pericardial LGE","type":"categorical","req":true,"opts":["N","L","D"],"cond":{"f":"lge_available","v":true}}]}]},{"id":"t1-mapping-post","name":"T1 Mapping Post","secs":[{"id":"t1-post-availability","name":"Availability","fields":[{"id":"t1_post_available","name":"T1 Post Available","type":"boolean","req":true}]}]}];
+
+const TYPE_LABEL = {
+  numeric: 'Numérique',
+  boolean: 'Booléen',
+  categorical: 'Catégorielle',
+  text: 'Texte libre',
+  segment_categorical: 'Catégorielle par segment',
+  segment_numeric: 'Numérique par segment',
+  series_availability: 'Séries disponibles',
+};
+
+const TYPE_SHORT = {
+  numeric: 'Numérique',
+  boolean: 'Booléen',
+  categorical: 'Catégorielle',
+  text: 'Texte',
+  segment_categorical: 'Segments',
+  segment_numeric: 'Segments num.',
+  series_availability: 'Séries',
+};
+
+const TYPE_DOT = {
+  numeric: '#3f6aa3',
+  boolean: '#15803d',
+  categorical: '#d97706',
+  text: '#9aa5b3',
+  segment_categorical: '#d61f55',
+  segment_numeric: '#d61f55',
+  series_availability: '#7197c2',
+};
+
+const PALETTE = [
+  { fill: '#ECFDF5', border: '#A7F3D0', text: '#047857' },
+  { fill: '#FEFCE8', border: '#FDE68A', text: '#92400E' },
+  { fill: '#FFF3E9', border: '#FDBA74', text: '#C2410C' },
+  { fill: '#FEF2F2', border: '#FECACA', text: '#B91C1C' },
+  { fill: '#FFE4EC', border: '#FBCFE8', text: '#BE185D' },
+  { fill: '#EFF6FF', border: '#BFDBFE', text: '#1D4ED8' },
+];
+
+const RINGS = [{ outer: 132, inner: 100 }, { outer: 100, inner: 68 }, { outer: 68, inner: 34 }];
+const BASAL = [1, 6, 5, 4, 3, 2];
+const MID = [7, 12, 11, 10, 9, 8];
+const APICAL = [13, 16, 15, 14];
+
+function pointOn(centre, radius, degrees, scale) {
+  const radians = ((degrees - 90) * Math.PI) / 180;
+  return [centre + radius * scale * Math.cos(radians), centre + radius * scale * Math.sin(radians)];
+}
+
+function sectorPath(centre, ring, from, to, scale) {
+  const a = pointOn(centre, ring.outer, from, scale);
+  const b = pointOn(centre, ring.outer, to, scale);
+  const c = pointOn(centre, ring.inner, to, scale);
+  const d = pointOn(centre, ring.inner, from, scale);
+  const large = to - from > 180 ? 1 : 0;
+  return 'M ' + a[0] + ' ' + a[1]
+    + ' A ' + ring.outer * scale + ' ' + ring.outer * scale + ' 0 ' + large + ' 1 ' + b[0] + ' ' + b[1]
+    + ' L ' + c[0] + ' ' + c[1]
+    + ' A ' + ring.inner * scale + ' ' + ring.inner * scale + ' 0 ' + large + ' 0 ' + d[0] + ' ' + d[1]
+    + ' Z';
+}
+
+function ringShapes(centre, ring, order, startAngle, scale) {
+  const span = 360 / order.length;
+  return order.map(function (segment, index) {
+    const from = startAngle + index * span;
+    const label = pointOn(centre, (ring.outer + ring.inner) / 2, from + span / 2, scale);
+    return { segment: segment, path: sectorPath(centre, ring, from, from + span, scale), labelX: label[0], labelY: label[1] };
+  });
+}
+
+function bullsEyeShapes(size) {
+  const centre = size / 2;
+  const scale = size / 316;
+  const shapes = ringShapes(centre, RINGS[0], BASAL, -30, scale)
+    .concat(ringShapes(centre, RINGS[1], MID, -30, scale))
+    .concat(ringShapes(centre, RINGS[2], APICAL, -45, scale));
+  const apex = 34 * scale;
+  shapes.push({
+    segment: 17,
+    path: 'M ' + centre + ' ' + (centre - apex) + ' A ' + apex + ' ' + apex + ' 0 1 1 ' + (centre - 0.01) + ' ' + (centre - apex) + ' Z',
+    labelX: centre,
+    labelY: centre,
+  });
+  return shapes;
+}
+
+function boardChips(section) {
+  const shown = section.fields.slice(0, 5).map(function (field) {
+    return { name: field.name, dot: TYPE_DOT[field.type] || '#9aa5b3' };
+  });
+  if (section.fields.length > 5) shown.push({ name: '+ ' + (section.fields.length - 5), dot: '#c4ccd6' });
+  return shown;
+}
+
+function allFields() {
+  const out = [];
+  CRF.forEach(function (sequence) {
+    sequence.secs.forEach(function (section) {
+      section.fields.forEach(function (field) {
+        out.push({ field: field, section: section, sequence: sequence });
+      });
+    });
+  });
+  return out;
+}
+
+function findSection(sectionId) {
+  for (let i = 0; i < CRF.length; i += 1) {
+    for (let j = 0; j < CRF[i].secs.length; j += 1) {
+      if (CRF[i].secs[j].id === sectionId) return { section: CRF[i].secs[j], sequence: CRF[i] };
+    }
+  }
+  return { section: CRF[0].secs[0], sequence: CRF[0] };
+}
+
+function fieldNameOf(sectionId, fieldId) {
+  const found = findSection(sectionId).section.fields.filter(function (entry) { return entry.id === fieldId; })[0];
+  return found ? found.name : fieldId;
+}
+
+function boundsLabel(field) {
+  if (field.min === undefined || field.max === undefined) return '';
+  return field.min + ' – ' + field.max;
+}
+
+function conditionValue(field) {
+  if (!field.cond) return '';
+  return field.cond.v === true ? 'Yes' : field.cond.v === false ? 'No' : String(field.cond.v);
+}
+
+const LIBRARY_ITEMS = [
+  { name: 'Availability & Artefacts', meta: 'Section · 3 variables · 5 études' },
+  { name: 'Left Ventricle', meta: 'Section · 11 variables · 4 études' },
+  { name: 'Right Ventricle', meta: 'Section · 7 variables · 4 études' },
+  { name: 'Atria', meta: 'Section · 6 variables · 3 études' },
+  { name: 'Pericardium', meta: 'Section · 1 variable · 5 études' },
+  { name: 'LV LGE', meta: 'Section · 5 variables · 3 études' },
+  { name: 'T1 Values', meta: 'Section · 4 variables · 2 études' },
+  { name: 'T2 Values', meta: 'Section · 4 variables · 2 études' },
+];
+
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = {
+      view: 'a',
+      sectionId: 'cine-lv',
+      fieldId: 'lvef',
+      panel: 'field',
+      rail: 'tree',
+      open: { cine: true },
+      filter: 'cine',
+      picked: { lvef: true, lv_edv: true, lv_esv: true },
+      boardSection: 'cine-lv',
+    };
+  }
+
+  read() {
+    return this.state || {};
+  }
+
+  patch(next) {
+    this.setState(next);
+  }
+
+  buildTree() {
+    const self = this;
+    const state = this.read();
+    const rows = [];
+    CRF.forEach(function (sequence) {
+      const open = Boolean(state.open && state.open[sequence.id]);
+      let count = 0;
+      sequence.secs.forEach(function (section) { count += section.fields.length; });
+      const active = sequence.secs.some(function (section) { return section.id === state.sectionId; });
+      rows.push({
+        label: sequence.name,
+        meta: sequence.secs.length + ' sections',
+        count: String(count),
+        cls: active && !open ? 'ri on' : 'ri',
+        chev: open ? 'chev open' : 'chev',
+        pick: function () {
+          const nextOpen = Object.assign({}, state.open);
+          nextOpen[sequence.id] = !open;
+          self.patch({
+            open: nextOpen,
+            sectionId: sequence.secs[0].id,
+            fieldId: sequence.secs[0].fields[0].id,
+            panel: 'field',
+          });
+        },
+      });
+      if (!open) return;
+      sequence.secs.forEach(function (section) {
+        rows.push({
+          label: section.name,
+          meta: '',
+          count: String(section.fields.length),
+          cls: section.id === state.sectionId ? 'ri sub on' : 'ri sub',
+          chev: 'chev hide',
+          pick: function () {
+            self.patch({ sectionId: section.id, fieldId: section.fields[0].id, panel: 'field' });
+          },
+        });
+      });
+    });
+    return rows;
+  }
+
+  buildFields(dense) {
+    const self = this;
+    const state = this.read();
+    const found = findSection(state.sectionId);
+    return found.section.fields.map(function (field) {
+      const selected = field.id === state.fieldId;
+      const chips = [];
+      if (field.type === 'boolean') {
+        chips.push({ label: 'Yes', cls: field.def === true ? 'ch on' : 'ch' });
+        chips.push({ label: 'No', cls: field.def === false ? 'ch on' : 'ch' });
+      } else if (field.opts && !field.seg) {
+        field.opts.forEach(function (option) { chips.push({ label: option, cls: 'ch' }); });
+      }
+      const segments = [];
+      const legend = [];
+      if (field.seg) {
+        const options = field.opts || [];
+        let defaultIndex = 0;
+        if (options.indexOf('None') >= 0) defaultIndex = options.indexOf('None');
+        else if (options.indexOf('Normal') >= 0) defaultIndex = options.indexOf('Normal');
+        const colour = PALETTE[defaultIndex % PALETTE.length];
+        bullsEyeShapes(152).forEach(function (shape) {
+          segments.push({
+            path: shape.path,
+            fill: colour.fill,
+            stroke: colour.border,
+            text: colour.text,
+            tx: String(shape.labelX),
+            ty: String(shape.labelY),
+            n: String(shape.segment),
+          });
+        });
+        options.slice(0, 5).forEach(function (option, index) {
+          legend.push({ label: option, fill: PALETTE[index % PALETTE.length].fill });
+        });
+      }
+      return {
+        name: field.name,
+        code: field.id,
+        req: Boolean(field.req),
+        hasCond: Boolean(field.cond),
+        condLabel: field.cond ? fieldNameOf(state.sectionId, field.cond.f) + ' = ' + conditionValue(field) : '',
+        cls: 'fr' + (selected ? ' on' : '') + (dense ? ' dense' : ''),
+        isNum: field.type === 'numeric',
+        isChips: chips.length > 0,
+        isSeg: Boolean(field.seg),
+        unit: field.unit || '',
+        bounds: boundsLabel(field),
+        chips: chips,
+        segs: segments,
+        legend: legend,
+        pick: function () { self.patch({ fieldId: field.id, panel: 'field' }); },
+      };
+    });
+  }
+
+  buildInspector() {
+    const state = this.read();
+    const found = findSection(state.sectionId);
+    const matches = found.section.fields.filter(function (entry) { return entry.id === state.fieldId; });
+    const field = matches[0] || found.section.fields[0];
+    const options = field.opts || [];
+    return {
+      insName: field.name,
+      insType: TYPE_LABEL[field.type] || field.type,
+      insCode: field.id,
+      insNum: field.type === 'numeric' || field.type === 'segment_numeric',
+      insMin: field.min === undefined ? '—' : String(field.min),
+      insMax: field.max === undefined ? '—' : String(field.max),
+      insUnit: field.unit || 'aucune',
+      insReqYes: field.req ? 'cc on' : 'cc',
+      insReqNo: field.req ? 'cc' : 'cc on',
+      insCond: Boolean(field.cond),
+      insAlways: !field.cond,
+      insCondField: field.cond ? fieldNameOf(state.sectionId, field.cond.f) : '',
+      insCondValue: conditionValue(field),
+      insTol: Boolean(field.tol),
+      insTolText: field.tol ? '± ' + field.tol[0] + (field.unit ? ' ' + field.unit : '') + ' ou ' + field.tol[1] + ' % relatif' : '',
+      insThrText: field.thr ? 'mineure ' + field.thr[0] + ' % · majeure ' + field.thr[1] + ' %' : 'aucun seuil',
+      insHasOpts: options.length > 0,
+      insOpts: options.map(function (option, index) {
+        return { label: option, fill: PALETTE[index % PALETTE.length].fill };
+      }),
+      insUsage: field.uses
+        ? 'Variable de la bibliothèque, reprise dans ' + field.uses + ' séquences de ce CRF. La régler ici ne touche que MIR Dijon.'
+        : 'Variable de la bibliothèque, utilisée une seule fois dans ce CRF.',
+    };
+  }
+
+  buildRows(dense) {
+    const self = this;
+    const state = this.read();
+    const rows = [];
+    let currentSection = null;
+    allFields().forEach(function (entry) {
+      if (state.filter !== 'all' && entry.sequence.id !== state.filter) return;
+      if (entry.section.id !== currentSection) {
+        currentSection = entry.section.id;
+        rows.push({
+          isGroup: true,
+          isField: false,
+          label: entry.sequence.name + ' › ' + entry.section.name,
+          cls: 'bgroup',
+          box: 'box',
+          pick: function () { return undefined; },
+        });
+      }
+      const field = entry.field;
+      const checked = Boolean(state.picked && state.picked[field.id]);
+      rows.push({
+        isGroup: false,
+        isField: true,
+        label: '',
+        name: field.name,
+        code: field.id,
+        type: TYPE_SHORT[field.type] || field.type,
+        req: field.req ? '●' : '',
+        unit: field.unit || '',
+        min: field.min === undefined ? '' : String(field.min),
+        max: field.max === undefined ? '' : String(field.max),
+        cond: field.cond ? field.cond.f + ' = ' + conditionValue(field) : '',
+        tol: field.tol ? '± ' + field.tol[0] + ' / ' + field.tol[1] + ' %' : '',
+        thr: field.thr ? field.thr[0] + ' / ' + field.thr[1] + ' %' : '',
+        cls: 'brow' + (checked ? ' on' : '') + (dense ? ' dense' : ''),
+        box: checked ? 'box on' : 'box',
+        pick: function () {
+          const next = Object.assign({}, state.picked);
+          if (next[field.id]) delete next[field.id];
+          else next[field.id] = true;
+          self.patch({ picked: next });
+        },
+      });
+    });
+    return rows;
+  }
+
+  buildBoard() {
+    const self = this;
+    const state = this.read();
+    return CRF.map(function (sequence) {
+      let count = 0;
+      sequence.secs.forEach(function (section) { count += section.fields.length; });
+      return {
+        name: sequence.name,
+        meta: sequence.secs.length + ' sections · ' + count + ' variables',
+        secs: sequence.secs.map(function (section) {
+          return {
+            name: section.name,
+            count: String(section.fields.length),
+            cls: section.id === state.boardSection ? 'cs on' : 'cs',
+            chips: boardChips(section),
+            pick: function () { self.patch({ boardSection: section.id }); },
+          };
+        }),
+      };
+    });
+  }
+
+  renderVals() {
+    const self = this;
+    const state = this.read();
+    const view = state.view || 'a';
+    const dense = (this.props.density || 'Confortable') === 'Compact';
+    const found = findSection(state.sectionId);
+    const fields = found.section.fields;
+    const filters = [{ id: 'all', label: 'Toutes' }].concat(CRF.map(function (sequence) {
+      return { id: sequence.id, label: sequence.name };
+    }));
+    let shown = 0;
+    allFields().forEach(function (entry) {
+      if (state.filter === 'all' || entry.sequence.id === state.filter) shown += 1;
+    });
+    const pickedCount = Object.keys(state.picked || {}).length;
+
+    return Object.assign({
+      isA: view === 'a',
+      isB: view === 'b',
+      isC: view === 'c',
+      tabA: view === 'a' ? 't on' : 't',
+      tabB: view === 'b' ? 't on' : 't',
+      tabC: view === 'c' ? 't on' : 't',
+      pickA: function () { self.patch({ view: 'a' }); },
+      pickB: function () { self.patch({ view: 'b' }); },
+      pickC: function () { self.patch({ view: 'c' }); },
+
+      impactCls: state.panel === 'impact' ? 'pill on' : 'pill',
+      openImpact: function () { self.patch({ view: 'a', panel: 'impact' }); },
+      closeImpact: function () { self.patch({ panel: 'field' }); },
+
+      railTree: state.rail !== 'library',
+      railLib: state.rail === 'library',
+      openLib: function () { self.patch({ rail: 'library' }); },
+      closeLib: function () { self.patch({ rail: 'tree' }); },
+      libItems: LIBRARY_ITEMS,
+
+      tree: this.buildTree(),
+      paneTitle: found.section.name,
+      paneCode: found.sequence.id + ' › ' + found.section.id,
+      stripVars: String(fields.length),
+      stripReq: String(fields.filter(function (field) { return field.req; }).length),
+      stripCond: String(fields.filter(function (field) { return field.cond; }).length),
+      stripTol: String(fields.filter(function (field) { return field.tol; }).length),
+      fields: this.buildFields(dense),
+
+      panelField: state.panel !== 'impact',
+      panelImpact: state.panel === 'impact',
+
+      bChips: filters.map(function (entry) {
+        return {
+          label: entry.label,
+          cls: state.filter === entry.id ? 'cc on' : 'cc',
+          pick: function () { self.patch({ filter: entry.id }); },
+        };
+      }),
+      bRows: this.buildRows(dense),
+      bCountLabel: shown + ' variables affichées',
+      bBulk: pickedCount > 0,
+      bBulkLabel: pickedCount + ' variables sélectionnées',
+      clearRows: function () { self.patch({ picked: {} }); },
+
+      cCols: this.buildBoard(),
+    }, this.buildInspector());
+  }
+}
+</script>
+</body>
+</html>
