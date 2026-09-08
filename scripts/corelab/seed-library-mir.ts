@@ -7,8 +7,10 @@ import { extractLibrary } from '../../lib/corelab/crf/library-extract'
 import { crfDefinitionSchema } from '../../lib/corelab/crf/schema'
 import { toJsonValue } from '../../lib/corelab/crf/json'
 
-const envFile = process.argv.includes('--test') ? '.env.test' : '.env'
-dotenv.config({ path: path.resolve(__dirname, '..', '..', envFile), override: true })
+const explicitEnv = process.argv.find((argument) => argument.startsWith('--env='))?.slice('--env='.length)
+const envFile = explicitEnv ?? (process.argv.includes('--test') ? '.env.test' : '.env')
+dotenv.config({ path: path.resolve(process.cwd(), envFile), override: true })
+console.log(`seeding the library into ${new URL(process.env.DATABASE_URL ?? '').pathname.slice(1)}`)
 
 const prisma = new PrismaClient()
 

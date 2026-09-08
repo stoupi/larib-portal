@@ -6,7 +6,7 @@ import { toast } from 'sonner'
 import { ImagePlus, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
-import { guidanceImageUrl } from '@/app/[locale]/corelab/components/crf/field-guidance'
+import { guidanceImageUrl } from '@/lib/corelab/library/guidance'
 import { ChoiceChip } from './inspector-controls'
 import type { FieldDefinition } from '@/lib/corelab/crf/schema'
 

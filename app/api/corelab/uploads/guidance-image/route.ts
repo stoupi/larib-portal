@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getTypedSession } from '@/lib/auth-helpers'
 import { canAccessApp } from '@/lib/permissions'
 import { r2GetSignedDownloadUrl } from '@/lib/services/r2-s3'
-import { GUIDANCE_PREFIX } from '../library-guidance/route'
+import { isGuidanceKey } from '@/lib/corelab/library/guidance'
 
 export const runtime = 'nodejs'
 
@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
   }
 
   const key = request.nextUrl.searchParams.get('key')
-  if (!key || !key.startsWith(GUIDANCE_PREFIX) || key.includes('..')) {
+  if (!key || !isGuidanceKey(key)) {
     return NextResponse.json({ error: 'invalid_request' }, { status: 400 })
   }
 

@@ -2,10 +2,9 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getTypedSession } from '@/lib/auth-helpers'
 import { canAdminApp } from '@/lib/permissions'
 import { r2PutObject } from '@/lib/services/r2-s3'
+import { GUIDANCE_PREFIX } from '@/lib/corelab/library/guidance'
 
 export const runtime = 'nodejs'
-
-export const GUIDANCE_PREFIX = 'corelab/library/guidance/'
 
 // A Vercel function refuses a request body larger than 4.5 MB.
 const MAX_BYTES = 4 * 1024 * 1024

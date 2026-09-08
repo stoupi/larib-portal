@@ -4,11 +4,8 @@ import { useTranslations } from 'next-intl'
 import { AlertTriangle, Info } from 'lucide-react'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
+import { guidanceImageUrl } from '@/lib/corelab/library/guidance'
 import type { FieldDefinition } from '@/lib/corelab/crf/schema'
-
-export function guidanceImageUrl(imageKey: string): string {
-  return `/api/corelab/uploads/guidance-image?key=${encodeURIComponent(imageKey)}`
-}
 
 export function FieldGuidance({ guidance }: { guidance: NonNullable<FieldDefinition['guidance']> }) {
   const t = useTranslations('corelab.form')
