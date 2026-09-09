@@ -26,6 +26,7 @@ import {
   uniqueId,
 } from '@/lib/corelab/crf/reorder'
 import { discardDraftAction, publishDraftAction, saveDraftAction, saveVariableAction, startDraftAction } from '../../../actions-library'
+import { PaneFrame } from '@/app/[locale]/corelab/components/crf/pane-chrome'
 import { CrfCommandBar } from './crf-command-bar'
 import { CrfPlan } from './crf-plan'
 import { blockCodeOf } from '@/lib/corelab/library/blocks'
@@ -184,192 +185,196 @@ export function CrfEditor({ context, definition, impact, library }: {
   const reference = field ? referenceOf(field, references) : null
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-border bg-white shadow-elevation-sm">
-      <CrfCommandBar
-        version={{ draftNumber: context.draftNumber, publishedNumber: context.publishedNumber }}
-        impact={{
-          signedReadings: impact.signedReadings,
-          changes: impact.changes.length,
-          worst: impact.worst,
-          open: panel === 'impact',
-        }}
-        pending={save.isPending || publish.isPending || discard.isPending}
-        actions={{
-          openImpact: () => setPanel(panel === 'impact' ? 'field' : 'impact'),
-          save: () => save.execute({ studyId: context.studyId, definition: publishable(draft) }),
-          discard: () => discard.execute({ studyId: context.studyId }),
-          publish: () => publish.execute({ studyId: context.studyId }),
-        }}
-      />
-
-      <div className="grid lg:grid-cols-[17rem_minmax(0,1fr)_22rem]">
-        <aside className="flex h-[42rem] min-w-0 flex-col overflow-hidden border-border lg:border-r">
-          {rail === 'plan' ? (
-            <CrfPlan
-              definition={draft}
-              library={{ references, blocks: blocksByCode }}
-              view={{ sectionId: section?.id ?? '', openParts }}
-              actions={{
-                selectSection: (id) => select(id),
-                togglePart: (id) => {
-                  const host = draft.find((entry) => entry.id === id)
-                  setOpenParts({ ...openParts, [id]: !(openParts[id] ?? false) })
-                  if (host?.sections[0]) select(host.sections[0].id)
-                },
-                movePart: (id, index) => setDraft(movePart(draft, id, index)),
-                moveSection: (id, partId, index) => {
-                  setDraft(moveSection(draft, id, partId, index))
-                  setOpenParts({ ...openParts, [partId]: true })
-                  select(id)
-                },
-                removePart: (id) => {
-                  const next = removePart(draft, id)
-                  setDraft(next)
-                  select(next[0]?.sections[0]?.id ?? '')
-                },
-                removeSection: (id) => {
-                  const next = removeSection(draft, id)
-                  setDraft(next)
-                  const stillThere = next.flatMap((entry) => entry.sections).some((entry) => entry.id === section?.id)
-                  if (!stillThere) select(next[0]?.sections[0]?.id ?? '')
-                },
-                openLibrary: () => setRail('library'),
-                addEmptyPart: () => {
-                  const created = newPart(partIds(draft), sectionIds(draft))
-                  setDraft([...draft, created])
-                  setOpenParts({ ...openParts, [created.id]: true })
-                  select(created.sections[0].id)
-                },
-              }}
-            />
-          ) : (
-            <CrfBlockPicker
-              blocks={library.blocks}
-              modality={context.modality}
-              sectionName={section?.name ?? ''}
-              onClose={() => setRail('plan')}
-              onInsert={(block) => {
-                if (!part) return
-                if ('sections' in block.definition) {
-                  const created = { ...block.definition, id: uniqueId(partIds(draft), block.definition.id) }
-                  setDraft([...draft, created])
-                  setOpenParts({ ...openParts, [created.id]: true })
-                  select(created.sections[0]?.id ?? '')
-                } else {
-                  const created = { ...block.definition, id: uniqueId(sectionIds(draft), block.definition.id) }
-                  setDraft(insertSection(draft, part.id, created, section?.id ?? null))
-                  select(created.id)
-                }
-                setRail('plan')
-              }}
-            />
-          )}
-        </aside>
-
-        <section className="flex h-[42rem] min-w-0 flex-col overflow-hidden">
-          {part && section ? (
-            <CrfForm
-              part={part}
-              section={section}
-              references={references}
-              view={{
-                fieldId: field?.id ?? '',
-                ghost: panel === 'add' && addTab === 'create' ? pendingField : null,
-                origin: sectionOrigin(section, sectionBlockOf(section.id), references),
-              }}
-              actions={{
-                selectField: (id) => {
-                  setFieldId(id)
-                  setPanel('field')
-                  setPendingField(null)
-                },
-                openAdd: () => {
-                  setPanel(panel === 'add' ? 'field' : 'add')
-                  setAddTab('library')
-                },
-                renamePart: (name) => setDraft(renamePart(draft, part.id, name)),
-                renameSection: (name) => setDraft(renameSection(draft, section.id, name)),
-              }}
-            />
-          ) : (
-            <p className="p-6 text-sm text-text-secondary">{t('emptyCrf')}</p>
-          )}
-        </section>
-
-        <aside className="flex h-[42rem] min-w-0 flex-col overflow-hidden border-border lg:border-l">
-          {panel === 'impact' ? (
-            <CrfImpactPanel
-              changes={impact.changes}
-              context={{
-                signedReadings: impact.signedReadings,
-                publishedNumber: context.publishedNumber,
-                drift,
-                modality: context.modality,
-              }}
-              onClose={() => setPanel('field')}
-            />
-          ) : null}
-
-          {panel === 'add' && section ? (
-            <CrfAddPanel
-              candidates={[...references.values()].filter(
-                (candidate) => !(part ? fieldIdsOfPart(part) : []).includes(candidate.id),
+    <PaneFrame
+      header={
+        <CrfCommandBar
+          version={{ draftNumber: context.draftNumber, publishedNumber: context.publishedNumber }}
+          impact={{
+            signedReadings: impact.signedReadings,
+            changes: impact.changes.length,
+            worst: impact.worst,
+            open: panel === 'impact',
+          }}
+          pending={save.isPending || publish.isPending || discard.isPending}
+          actions={{
+            openImpact: () => setPanel(panel === 'impact' ? 'field' : 'impact'),
+            save: () => save.execute({ studyId: context.studyId, definition: publishable(draft) }),
+            discard: () => discard.execute({ studyId: context.studyId }),
+            publish: () => publish.execute({ studyId: context.studyId }),
+          }}
+        />
+  
+      }
+      rail={
+        <>
+              {rail === 'plan' ? (
+                <CrfPlan
+                  definition={draft}
+                  library={{ references, blocks: blocksByCode }}
+                  view={{ sectionId: section?.id ?? '', openParts }}
+                  actions={{
+                    selectSection: (id) => select(id),
+                    togglePart: (id) => {
+                      const host = draft.find((entry) => entry.id === id)
+                      setOpenParts({ ...openParts, [id]: !(openParts[id] ?? false) })
+                      if (host?.sections[0]) select(host.sections[0].id)
+                    },
+                    movePart: (id, index) => setDraft(movePart(draft, id, index)),
+                    moveSection: (id, partId, index) => {
+                      setDraft(moveSection(draft, id, partId, index))
+                      setOpenParts({ ...openParts, [partId]: true })
+                      select(id)
+                    },
+                    removePart: (id) => {
+                      const next = removePart(draft, id)
+                      setDraft(next)
+                      select(next[0]?.sections[0]?.id ?? '')
+                    },
+                    removeSection: (id) => {
+                      const next = removeSection(draft, id)
+                      setDraft(next)
+                      const stillThere = next.flatMap((entry) => entry.sections).some((entry) => entry.id === section?.id)
+                      if (!stillThere) select(next[0]?.sections[0]?.id ?? '')
+                    },
+                    openLibrary: () => setRail('library'),
+                    addEmptyPart: () => {
+                      const created = newPart(partIds(draft), sectionIds(draft))
+                      setDraft([...draft, created])
+                      setOpenParts({ ...openParts, [created.id]: true })
+                      select(created.sections[0].id)
+                    },
+                  }}
+                />
+              ) : (
+                <CrfBlockPicker
+                  blocks={library.blocks}
+                  modality={context.modality}
+                  sectionName={section?.name ?? ''}
+                  onClose={() => setRail('plan')}
+                  onInsert={(block) => {
+                    if (!part) return
+                    if ('sections' in block.definition) {
+                      const created = { ...block.definition, id: uniqueId(partIds(draft), block.definition.id) }
+                      setDraft([...draft, created])
+                      setOpenParts({ ...openParts, [created.id]: true })
+                      select(created.sections[0]?.id ?? '')
+                    } else {
+                      const created = { ...block.definition, id: uniqueId(sectionIds(draft), block.definition.id) }
+                      setDraft(insertSection(draft, part.id, created, section?.id ?? null))
+                      select(created.id)
+                    }
+                    setRail('plan')
+                  }}
+                />
               )}
-              draft={pendingField}
-              context={{
-                sectionName: section.name,
-                fieldName: field?.name ?? null,
-                modality: context.modality,
-                tab: addTab,
-              }}
-              actions={{
-                insert: insertLibraryField,
-                setTab: (tab) => {
-                  setAddTab(tab)
-                  if (tab === 'create' && !pendingField) setPendingField(blankField())
-                },
-                setDraft: setPendingField,
-                commit: commitPendingField,
-                close: () => {
-                  setPanel('field')
-                  setPendingField(null)
-                },
-              }}
-            />
-          ) : null}
-
-          {panel === 'field' && section && field ? (
-            <CrfInspector
-              field={field}
-              reference={reference}
-              section={section}
-              modality={context.modality}
-              actions={{
-                change: changeField,
-                revert: () => {
-                  if (reference) changeField(revertToReference(field, reference))
-                },
-                promote: () =>
-                  promote.execute({
-                    ...(libraryIds.has(field.id) ? { variableId: libraryIds.get(field.id) } : {}),
-                    code: field.id,
-                    name: field.name,
+        </>
+      }
+      main={
+        <>
+              {part && section ? (
+                <CrfForm
+                  part={part}
+                  section={section}
+                  references={references}
+                  view={{
+                    fieldId: field?.id ?? '',
+                    ghost: panel === 'add' && addTab === 'create' ? pendingField : null,
+                    origin: sectionOrigin(section, sectionBlockOf(section.id), references),
+                  }}
+                  actions={{
+                    selectField: (id) => {
+                      setFieldId(id)
+                      setPanel('field')
+                      setPendingField(null)
+                    },
+                    openAdd: () => {
+                      setPanel(panel === 'add' ? 'field' : 'add')
+                      setAddTab('library')
+                    },
+                    renamePart: (name) => setDraft(renamePart(draft, part.id, name)),
+                    renameSection: (name) => setDraft(renameSection(draft, section.id, name)),
+                  }}
+                />
+              ) : (
+                <p className="p-6 text-sm text-text-secondary">{t('emptyCrf')}</p>
+              )}
+        </>
+      }
+      inspector={
+        <>
+              {panel === 'impact' ? (
+                <CrfImpactPanel
+                  changes={impact.changes}
+                  context={{
+                    signedReadings: impact.signedReadings,
+                    publishedNumber: context.publishedNumber,
+                    drift,
                     modality: context.modality,
-                    type: field.type,
-                    params: fieldToVariableParams(field),
-                    valueSetId: null,
-                  }),
-                remove: () => {
-                  const next = removeField(draft, section.id, field.id)
-                  setDraft(next)
-                  const stillThere = next.flatMap((entry) => entry.sections).find((entry) => entry.id === section.id)
-                  select(stillThere?.id ?? next[0]?.sections[0]?.id ?? '')
-                },
-              }}
-            />
-          ) : null}
-        </aside>
-      </div>
-    </div>
+                  }}
+                  onClose={() => setPanel('field')}
+                />
+              ) : null}
+    
+              {panel === 'add' && section ? (
+                <CrfAddPanel
+                  candidates={[...references.values()].filter(
+                    (candidate) => !(part ? fieldIdsOfPart(part) : []).includes(candidate.id),
+                  )}
+                  draft={pendingField}
+                  context={{
+                    sectionName: section.name,
+                    fieldName: field?.name ?? null,
+                    modality: context.modality,
+                    tab: addTab,
+                  }}
+                  actions={{
+                    insert: insertLibraryField,
+                    setTab: (tab) => {
+                      setAddTab(tab)
+                      if (tab === 'create' && !pendingField) setPendingField(blankField())
+                    },
+                    setDraft: setPendingField,
+                    commit: commitPendingField,
+                    close: () => {
+                      setPanel('field')
+                      setPendingField(null)
+                    },
+                  }}
+                />
+              ) : null}
+    
+              {panel === 'field' && section && field ? (
+                <CrfInspector
+                  field={field}
+                  reference={reference}
+                  section={section}
+                  modality={context.modality}
+                  actions={{
+                    change: changeField,
+                    revert: () => {
+                      if (reference) changeField(revertToReference(field, reference))
+                    },
+                    promote: () =>
+                      promote.execute({
+                        ...(libraryIds.has(field.id) ? { variableId: libraryIds.get(field.id) } : {}),
+                        code: field.id,
+                        name: field.name,
+                        modality: context.modality,
+                        type: field.type,
+                        params: fieldToVariableParams(field),
+                        valueSetId: null,
+                      }),
+                    remove: () => {
+                      const next = removeField(draft, section.id, field.id)
+                      setDraft(next)
+                      const stillThere = next.flatMap((entry) => entry.sections).find((entry) => entry.id === section.id)
+                      select(stillThere?.id ?? next[0]?.sections[0]?.id ?? '')
+                    },
+                  }}
+                />
+              ) : null}
+        </>
+      }
+    />
   )
 }

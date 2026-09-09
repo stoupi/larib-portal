@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { driftCount, sectionOrigin } from '@/lib/corelab/crf/origin'
 import { blockCodeOf } from '@/lib/corelab/library/blocks'
-import { GripIcon, MoveButtons, PaneBand } from './crf-chrome'
+import { GripIcon, MoveButtons, PaneBand } from '@/app/[locale]/corelab/components/crf/pane-chrome'
 import { OriginMark } from './crf-origin-mark'
 import { DeleteButton } from './crf-delete-button'
 import type { CrfDefinition, FieldDefinition, SectionDefinition, SequenceDefinition } from '@/lib/corelab/crf/schema'
@@ -41,6 +41,7 @@ export function CrfPlan({ definition, library, view, actions }: {
   actions: PlanActions
 }) {
   const t = useTranslations('corelab.crfEditor')
+  const words = useTranslations('corelab.crf')
   const [dragging, setDragging] = useState<DragTarget | null>(null)
   const [over, setOver] = useState<string | null>(null)
 
@@ -93,7 +94,7 @@ export function CrfPlan({ definition, library, view, actions }: {
 
   return (
     <>
-      <PaneBand kind={t('structure')} title={t('plan')} subtitle={t('variableCount', { count: variables })} />
+      <PaneBand kind={t('structure')} title={t('plan')} subtitle={words('variableCount', { count: variables })} />
       <p className="border-b border-gray-100 px-3 py-2 text-[11.5px] leading-snug text-text-muted">{t('planHint')}</p>
 
       <div className="flex-1 overflow-y-auto p-2">
@@ -139,7 +140,7 @@ export function CrfPlan({ definition, library, view, actions }: {
                     {part.name}
                   </span>
                   <span className="block text-[10.5px] font-medium uppercase tracking-[0.03em] text-text-muted">
-                    {t('partKind')} · {t('sectionCount', { count: part.sections.length })}
+                    {words('partKind')} · {words('sectionCount', { count: part.sections.length })}
                   </span>
                 </span>
                 <OriginMark origin={partOrigin} />

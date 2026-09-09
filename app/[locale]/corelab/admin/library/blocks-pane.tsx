@@ -9,7 +9,8 @@ import { AlertTriangle, ChevronRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { blockSummary, danglingConditions, groupBlocks, readBlockDefinition, sectionsOf, conditionCandidates } from '@/lib/corelab/library/blocks'
 import { saveBlockAction } from '../actions-library'
-import { LibraryLayout, PaneHeader, RailButton, RailHeader, SummaryStrip, WarningNote } from './library-chrome'
+import { PaneFrame, PaneBand, RailRow, StatStrip } from '@/app/[locale]/corelab/components/crf/pane-chrome'
+import { WarningNote } from '@/app/[locale]/corelab/components/crf/field-controls'
 import { FieldPreview } from './field-preview'
 import { EmptyInspector, VariableInspector } from './variable-inspector'
 import type { FieldDefinition, SectionDefinition, SequenceDefinition } from '@/lib/corelab/crf/schema'
@@ -29,6 +30,7 @@ function replaceField(definition: SectionDefinition | SequenceDefinition, previo
 
 export function BlocksPane({ blocks }: BlocksPaneProps) {
   const t = useTranslations('corelab.library')
+  const words = useTranslations('corelab.crf')
   const router = useRouter()
   const groups = useMemo(() => groupBlocks(blocks), [blocks])
 
@@ -62,10 +64,14 @@ export function BlocksPane({ blocks }: BlocksPaneProps) {
   const dangling = danglingConditions(definition)
 
   return (
-    <LibraryLayout
+    <PaneFrame
       rail={
         <>
-          <RailHeader title={t('modalityRail')} count={t('blockCount', { count: blocks.length })} />
+          <PaneBand
+            kind={t('title')}
+            title={words('modality')}
+            subtitle={t('blockCount', { count: blocks.length })}
+          />
           <div className="p-1.5">
             {groups.map((group) => {
               const key = group.sequence?.code ?? 'loose'
@@ -73,9 +79,9 @@ export function BlocksPane({ blocks }: BlocksPaneProps) {
               const active = group.sequence?.id === block.id || group.sections.some((section) => section.id === block.id)
               return (
                 <div key={key}>
-                  <RailButton
-                    label={group.sequence?.name ?? t('looseSections')}
-                    meta={t('sectionCount', { count: group.sections.length })}
+                  <RailRow
+                    label={group.sequence?.name ?? words('looseSections')}
+                    meta={words('sectionCount', { count: group.sections.length })}
                     selected={active}
                     leading={<ChevronRight className={cn('size-3.5 text-text-muted transition-transform', open ? 'rotate-90' : '')} />}
                     onClick={() => {
@@ -89,7 +95,7 @@ export function BlocksPane({ blocks }: BlocksPaneProps) {
                   {open ? (
                     <div className="ml-5 flex flex-col border-l border-gray-100 pl-3">
                       {group.sections.map((section) => (
-                        <RailButton
+                        <RailRow
                           key={section.id}
                           indented
                           label={section.name.split('—').pop()?.trim() ?? section.name}
@@ -107,12 +113,12 @@ export function BlocksPane({ blocks }: BlocksPaneProps) {
       }
       main={
         <>
-          <PaneHeader title={block.name} code={block.code} badges={[t(`kinds.${block.kind}`), block.modality]} />
-          <SummaryStrip
-            hint={t('readerPreview')}
+          <PaneBand kind={block.kind === 'SEQUENCE' ? words('partKind') : words('sectionKind')} title={block.name} subtitle={block.code} />
+          <StatStrip
+            hint={words('readerPreview')}
             items={[
-              { value: String(summary.fields), label: t('variablesLabel', { count: summary.fields }) },
-              { value: String(summary.required), label: t('requiredLabel', { count: summary.required }) },
+              { value: String(summary.fields), label: words('variablesLabel', { count: summary.fields }) },
+              { value: String(summary.required), label: words('requiredLabel', { count: summary.required }) },
               { value: String(summary.thresholds), label: t('thresholdLabel', { count: summary.thresholds }) },
             ]}
           />
@@ -124,7 +130,7 @@ export function BlocksPane({ blocks }: BlocksPaneProps) {
               </WarningNote>
             </div>
           ) : null}
-          <div className="max-h-[calc(100vh-16rem)] overflow-y-auto px-3 pb-4 pt-1">
+          <div className="flex-1 overflow-y-auto px-3 pb-4 pt-1">
             {sections.map((section) => (
               <div key={section.id}>
                 {sections.length > 1 ? (

@@ -15,7 +15,7 @@ import { variableToFieldDefinition } from '@/lib/corelab/library/params'
 import { saveBlockAction } from '../actions-library'
 import { ChoiceChip } from '@/app/[locale]/corelab/components/crf/field-controls'
 import { FieldPreview } from './field-preview'
-import { WarningNote } from './library-chrome'
+import { WarningNote } from '@/app/[locale]/corelab/components/crf/field-controls'
 import { toFieldCode } from './slug'
 import type { FieldDefinition } from '@/lib/corelab/crf/schema'
 import type { LibraryVariableWithUsage, ValueSet } from '@/lib/services/corelab/library'
@@ -24,6 +24,7 @@ type NewBlockDialogProps = { variables: LibraryVariableWithUsage[]; valueSets: V
 
 export function NewBlockDialog({ variables, valueSets }: NewBlockDialogProps) {
   const t = useTranslations('corelab.library')
+  const words = useTranslations('corelab.crf')
   const tt = useTranslations('corelab.library.types')
   const router = useRouter()
   const [open, setOpen] = useState(false)
@@ -82,8 +83,8 @@ export function NewBlockDialog({ variables, valueSets }: NewBlockDialogProps) {
           <div className="space-y-2">
             <span className="text-[11px] font-semibold uppercase tracking-[0.03em] text-text-secondary">{t('kind')}</span>
             <div className="flex gap-1.5">
-              <ChoiceChip label={t('kinds.SECTION')} selected={kind === 'SECTION'} onClick={() => setKind('SECTION')} />
-              <ChoiceChip label={t('kinds.SEQUENCE')} selected={kind === 'SEQUENCE'} onClick={() => setKind('SEQUENCE')} />
+              <ChoiceChip label={words('sectionKind')} selected={kind === 'SECTION'} onClick={() => setKind('SECTION')} />
+              <ChoiceChip label={words('partKind')} selected={kind === 'SEQUENCE'} onClick={() => setKind('SEQUENCE')} />
             </div>
           </div>
           <div className="space-y-1.5">
@@ -113,7 +114,7 @@ export function NewBlockDialog({ variables, valueSets }: NewBlockDialogProps) {
                   value={search}
                   onChange={(event) => setSearch(event.target.value)}
                   placeholder={t('searchAmong', { count: variables.length })}
-                  aria-label={t('searchVariable')}
+                  aria-label={words('searchVariable')}
                   className="min-w-0 flex-1 bg-transparent text-[13px] outline-none"
                 />
               </div>
@@ -140,10 +141,10 @@ export function NewBlockDialog({ variables, valueSets }: NewBlockDialogProps) {
 
           <div className="overflow-hidden rounded-xl border border-border">
             <div className="flex items-center gap-3 bg-navy-800 px-4 py-2.5 text-xs text-navy-200">
-              <span><strong className="font-semibold text-white">{fields.length}</strong> {t('variablesLabel', { count: fields.length })}</span>
+              <span><strong className="font-semibold text-white">{fields.length}</strong> {words('variablesLabel', { count: fields.length })}</span>
               <span className="text-navy-400">·</span>
-              <span><strong className="font-semibold text-white">{fields.filter((field) => field.required).length}</strong> {t('requiredLabel', { count: fields.filter((field) => field.required).length })}</span>
-              <span className="ml-auto text-navy-300">{t('readerPreview')}</span>
+              <span><strong className="font-semibold text-white">{fields.filter((field) => field.required).length}</strong> {words('requiredLabel', { count: fields.filter((field) => field.required).length })}</span>
+              <span className="ml-auto text-navy-300">{words('readerPreview')}</span>
             </div>
             {fields.length === 0 ? (
               <p className="p-10 text-center text-sm text-text-secondary">{t('emptyBlockDraft')}</p>
@@ -198,7 +199,7 @@ export function NewBlockDialog({ variables, valueSets }: NewBlockDialogProps) {
             disabled={!ready || save.isPending}
             onClick={() => save.execute({ code: code.trim(), name: name.trim(), kind, modality: 'CMR', definition })}
           >
-            {t('save')}
+            {words('save')}
           </Button>
         </DialogFooter>
       </DialogContent>

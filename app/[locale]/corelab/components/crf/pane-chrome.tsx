@@ -3,7 +3,27 @@
 import type { ReactNode } from 'react'
 import { cn } from '@/lib/utils'
 
-// The three panes share one coral band across the frame, so their headers share a height.
+// The library and a study's CRF editor are the same instrument: one frame, three panes,
+// one coral band across the top. Everything they share in form lives here and nowhere else.
+export function PaneFrame({ header, rail, main, inspector }: {
+  header?: ReactNode
+  rail: ReactNode
+  main: ReactNode
+  inspector: ReactNode
+}) {
+  return (
+    <div className="overflow-hidden rounded-2xl border border-border bg-white shadow-elevation-sm">
+      {header}
+      <div className="grid lg:grid-cols-[17rem_minmax(0,1fr)_22rem]">
+        <aside className="flex h-[min(42rem,calc(100vh-17rem))] min-w-0 flex-col overflow-hidden border-border lg:border-r">{rail}</aside>
+        <section className="flex h-[min(42rem,calc(100vh-17rem))] min-w-0 flex-col overflow-hidden">{main}</section>
+        <aside className="flex h-[min(42rem,calc(100vh-17rem))] min-w-0 flex-col overflow-hidden border-border lg:border-l">{inspector}</aside>
+      </div>
+    </div>
+  )
+}
+
+// The three bands share a height so the coral reads as one strip across the frame.
 export function PaneBand({ kind, title, subtitle, action }: {
   kind: string
   title: ReactNode
@@ -15,7 +35,7 @@ export function PaneBand({ kind, title, subtitle, action }: {
       <div className="min-w-0">
         <div className="text-[11px] font-semibold uppercase tracking-[0.03em] text-coral-100">{kind}</div>
         <h2 className="m-0 mt-0.5 flex flex-wrap items-center gap-2 text-base font-semibold leading-tight text-white">{title}</h2>
-        {subtitle ? <div className="mt-0.5 truncate text-xs text-coral-100">{subtitle}</div> : null}
+        {subtitle ? <div className="mt-0.5 truncate font-mono text-xs text-coral-100">{subtitle}</div> : null}
       </div>
       {action ? <div className="flex flex-none items-center gap-1.5">{action}</div> : null}
     </header>
@@ -59,51 +79,38 @@ export function Cap({ children }: { children: ReactNode }) {
   return <div className="mb-1.5 text-[11px] font-semibold uppercase tracking-[0.03em] text-text-secondary">{children}</div>
 }
 
+// Both screens pin their actions at the bottom of a pane rather than at the end of a scroll.
 export function PaneFooter({ children }: { children: ReactNode }) {
   return <div className="flex gap-2 border-t border-gray-100 bg-gray-25 px-4 py-3">{children}</div>
 }
 
-export function OriginNote({ tone, children }: { tone: 'library' | 'tuned' | 'study'; children: ReactNode }) {
-  return (
-    <div
-      className={cn(
-        'rounded-[10px] border p-2.5 text-[12.5px] leading-relaxed',
-        tone === 'library' ? 'border-success-100 bg-success-50 text-success-700' : '',
-        tone === 'tuned' ? 'border-warn-100 bg-warn-50 text-warn-700' : '',
-        tone === 'study' ? 'border-navy-100 bg-navy-50 text-navy-600' : '',
-      )}
-    >
-      {children}
-    </div>
-  )
-}
-
-export function OriginTag({ tone, children }: { tone: 'tuned' | 'study' | 'new'; children: ReactNode }) {
-  return (
-    <span
-      className={cn(
-        'inline-flex flex-none items-center rounded-md border px-1.5 py-px text-[10.5px] font-medium',
-        tone === 'tuned' ? 'border-warn-100 bg-warn-50 text-warn-700' : '',
-        tone === 'study' ? 'border-navy-100 bg-navy-50 text-navy-600' : '',
-        tone === 'new' ? 'border-coral-200 bg-coral-50 text-coral-700' : '',
-      )}
-    >
-      {children}
-    </span>
-  )
-}
-
-export function ChoiceChip({ label, selected, onClick }: { label: string; selected: boolean; onClick: () => void }) {
+export function RailRow({ label, meta, selected, onClick, leading, trailing, indented, testId }: {
+  label: ReactNode
+  meta?: ReactNode
+  selected: boolean
+  onClick: () => void
+  leading?: ReactNode
+  trailing?: ReactNode
+  indented?: boolean
+  testId?: string
+}) {
   return (
     <button
       type="button"
+      data-testid={testId}
       onClick={onClick}
       className={cn(
-        'h-8 cursor-pointer rounded-[9px] border px-3.5 text-[13px] transition-colors',
-        selected ? 'border-navy-700 bg-navy-700 font-semibold text-white' : 'border-line bg-gray-25 text-text-secondary hover:bg-gray-50',
+        'mb-px flex w-full cursor-pointer items-center gap-2 rounded-[10px] px-2.5 py-2 text-left hover:bg-gray-50',
+        indented ? 'py-1.5' : '',
+        selected ? 'bg-coral-50 shadow-[inset_2px_0_0_var(--color-coral-600)]' : '',
       )}
     >
-      {label}
+      {leading}
+      <span className="min-w-0 flex-1">
+        <span className={cn('block truncate text-[13.5px]', selected ? 'font-semibold text-text-primary' : 'text-gray-700')}>{label}</span>
+        {meta ? <span className="block truncate text-[11px] text-text-muted">{meta}</span> : null}
+      </span>
+      {trailing}
     </button>
   )
 }

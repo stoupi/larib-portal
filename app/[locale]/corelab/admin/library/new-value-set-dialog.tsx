@@ -21,6 +21,7 @@ const EMPTY = { name: '', code: '', codeTouched: false, description: '', items: 
 
 export function NewValueSetDialog() {
   const t = useTranslations('corelab.library')
+  const words = useTranslations('corelab.crf')
   const router = useRouter()
   const [open, setOpen] = useState(false)
   const [draft, setDraft] = useState(EMPTY)
@@ -88,20 +89,20 @@ export function NewValueSetDialog() {
               <Input placeholder={t('code')} className="w-36 font-mono text-xs" value={item.code} onChange={(event) => patchItem(index, { code: event.target.value })} />
               <Input placeholder={t('label')} value={item.label} onChange={(event) => patchItem(index, { label: event.target.value })} />
               <Input type="color" aria-label={t('colour')} className="w-16 p-1" value={item.colour ?? '#ffffff'} onChange={(event) => patchItem(index, { colour: event.target.value })} />
-              <Button variant="ghost" size="icon" aria-label={t('removeValue')} onClick={() => setDraft({ ...draft, items: draft.items.filter((unused, position) => position !== index) })}>
+              <Button variant="ghost" size="icon" aria-label={words('removeValue')} onClick={() => setDraft({ ...draft, items: draft.items.filter((unused, position) => position !== index) })}>
                 <Trash2 className="size-4 text-gray-300" />
               </Button>
             </div>
           ))}
           <Button variant="outline" size="sm" className="gap-1.5" onClick={() => setDraft({ ...draft, items: [...draft.items, { code: '', label: '', colour: null }] })}>
-            <Plus className="size-4" />{t('addValue')}
+            <Plus className="size-4" />{words('addValue')}
           </Button>
           {duplicate ? <p className="text-xs text-danger-500">{t('duplicateValueCode')}</p> : null}
         </div>
 
         {usable.length > 0 ? (
           <div className="rounded-xl border border-gray-100 bg-gray-25 px-4 py-3">
-            <p className="mb-1 text-[11px] font-semibold uppercase tracking-[0.03em] text-text-secondary">{t('readerPreview')}</p>
+            <p className="mb-1 text-[11px] font-semibold uppercase tracking-[0.03em] text-text-secondary">{words('readerPreview')}</p>
             <FieldPreview
               key={usable.map((item) => `${item.label}${item.colour}`).join('|')}
               field={{
@@ -129,7 +130,7 @@ export function NewValueSetDialog() {
               items: usable.map((item, order) => ({ code: item.code, label: item.label, colour: item.colour, order })),
             })}
           >
-            {t('save')}
+            {words('save')}
           </Button>
         </DialogFooter>
       </DialogContent>

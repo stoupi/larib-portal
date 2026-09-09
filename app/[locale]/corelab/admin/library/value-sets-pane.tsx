@@ -10,7 +10,8 @@ import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Input } from '@/components/ui/input'
 import { saveValueSetAction } from '../actions-library'
-import { InspectorHeader, InspectorSection, LibraryLayout, PaneHeader, RailButton, RailHeader, SummaryStrip, WarningNote } from './library-chrome'
+import { PaneFrame, PaneBand, RailRow, StatStrip } from '@/app/[locale]/corelab/components/crf/pane-chrome'
+import { InspectorSection, WarningNote } from '@/app/[locale]/corelab/components/crf/field-controls'
 import { FieldPreview } from './field-preview'
 import type { ValueSet } from '@/lib/services/corelab/library'
 
@@ -20,6 +21,7 @@ type Draft = { name: string; description: string; items: DraftItem[] }
 
 export function ValueSetsPane({ valueSets }: ValueSetsPaneProps) {
   const t = useTranslations('corelab.library')
+  const words = useTranslations('corelab.crf')
   const router = useRouter()
   const [id, setId] = useState(valueSets[0]?.id ?? '')
   const [drafts, setDrafts] = useState<Record<string, Draft>>({})
@@ -53,13 +55,17 @@ export function ValueSetsPane({ valueSets }: ValueSetsPaneProps) {
   const coloured = usable.filter((item) => item.colour)
 
   return (
-    <LibraryLayout
+    <PaneFrame
       rail={
         <>
-          <RailHeader title={t('modalityRail')} count={t('valueSetCount', { count: valueSets.length })} />
+          <PaneBand
+            kind={t('title')}
+            title={words('modality')}
+            subtitle={t('valueSetCount', { count: valueSets.length })}
+          />
           <div className="p-1.5">
             {valueSets.map((entry) => (
-              <RailButton
+              <RailRow
                 key={entry.id}
                 testId={`value-set-${entry.code}`}
                 label={entry.name}
@@ -80,8 +86,8 @@ export function ValueSetsPane({ valueSets }: ValueSetsPaneProps) {
       }
       main={
         <>
-          <PaneHeader title={draft.name} code={valueSet.code} badges={[t('valueSetBadge'), valueSet.modality]} />
-          <SummaryStrip
+          <PaneBand kind={t('valueSetBadge')} title={draft.name} subtitle={valueSet.code} />
+          <StatStrip
             hint={coloured.length > 0 ? t('renderedOnBullseye') : t('renderedAsChips')}
             items={[
               { value: String(draft.items.length), label: t('valuesLabel', { count: draft.items.length }) },
@@ -118,7 +124,7 @@ export function ValueSetsPane({ valueSets }: ValueSetsPaneProps) {
                 />
                 <Button
                   variant="ghost" size="icon" className="size-8"
-                  aria-label={t('removeValue')}
+                  aria-label={words('removeValue')}
                   onClick={() => patch({ items: draft.items.filter((unused, position) => position !== index) })}
                 >
                   <Trash2 className="size-4 text-gray-300" />
@@ -130,13 +136,13 @@ export function ValueSetsPane({ valueSets }: ValueSetsPaneProps) {
               onClick={() => patch({ items: [...draft.items, { code: '', label: '', colour: null }] })}
             >
               <Plus className="size-4" />
-              {t('addValue')}
+              {words('addValue')}
             </Button>
           </div>
 
           {usable.length > 0 ? (
             <div className="m-5 rounded-xl border border-gray-100 bg-gray-25 px-4 py-3">
-              <p className="mb-1 text-[11px] font-semibold uppercase tracking-[0.03em] text-text-secondary">{t('readerPreview')}</p>
+              <p className="mb-1 text-[11px] font-semibold uppercase tracking-[0.03em] text-text-secondary">{words('readerPreview')}</p>
               <FieldPreview
                 key={`${valueSet.id}-${usable.map((item) => item.label).join('|')}-${coloured.length}`}
                 field={{
@@ -155,7 +161,7 @@ export function ValueSetsPane({ valueSets }: ValueSetsPaneProps) {
       }
       inspector={
         <>
-          <InspectorHeader kind={t('valueSetBadge')} title={draft.name} subtitle={valueSet.code} />
+          <PaneBand kind={t('valueSetBadge')} title={draft.name} subtitle={valueSet.code} />
           <div className="px-4 pb-5 pt-4">
             <InspectorSection title={t('name')}>
               <Input value={draft.name} aria-label={t('name')} onChange={(event) => patch({ name: event.target.value })} />
@@ -187,7 +193,7 @@ export function ValueSetsPane({ valueSets }: ValueSetsPaneProps) {
                 items: usable.map((item, order) => ({ code: item.code, label: item.label, colour: item.colour, order })),
               })}
             >
-              {dirty ? t('save') : t('saved')}
+              {dirty ? words('save') : t('saved')}
             </Button>
           </div>
         </>

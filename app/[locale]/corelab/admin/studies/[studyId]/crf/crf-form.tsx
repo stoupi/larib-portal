@@ -7,8 +7,8 @@ import { cn } from '@/lib/utils'
 import { FieldControl } from '@/app/[locale]/corelab/components/crf/field-control'
 import { defaultSequenceValues } from '@/lib/corelab/crf/values'
 import { fieldOrigin, referenceOf, type FieldOrigin } from '@/lib/corelab/crf/origin'
-import { BandButton, EditorInput, GripIcon, OriginTag, PaneBand, StatStrip } from './crf-chrome'
-import { OriginMark } from './crf-origin-mark'
+import { BandButton, EditorInput, GripIcon, PaneBand, StatStrip } from '@/app/[locale]/corelab/components/crf/pane-chrome'
+import { OriginMark, OriginTag } from './crf-origin-mark'
 import type { FieldDefinition, SectionDefinition, SequenceDefinition } from '@/lib/corelab/crf/schema'
 
 function ControlPreview({ field }: { field: FieldDefinition }) {
@@ -44,6 +44,7 @@ export function CrfForm({ part, section, references, view, actions }: {
   actions: FormActions
 }) {
   const t = useTranslations('corelab.crfEditor')
+  const words = useTranslations('corelab.crf')
   const [renaming, setRenaming] = useState(false)
   const required = section.fields.filter((field) => field.required).length
   const conditional = section.fields.filter((field) => field.conditionalOn).length
@@ -89,10 +90,10 @@ export function CrfForm({ part, section, references, view, actions }: {
         }
       />
       <StatStrip
-        hint={t('readerPreview')}
+        hint={words('readerPreview')}
         items={[
-          { value: String(section.fields.length), label: t('variablesLabel', { count: section.fields.length }) },
-          { value: String(required), label: t('requiredLabel', { count: required }) },
+          { value: String(section.fields.length), label: words('variablesLabel', { count: section.fields.length }) },
+          { value: String(required), label: words('requiredLabel', { count: required }) },
           { value: String(conditional), label: t('conditionalLabel') },
           { value: String(tuned), label: t('tunedLabel', { count: tuned }) },
           { value: String(studyOnly), label: t('studyOnlyLabel', { count: studyOnly }) },

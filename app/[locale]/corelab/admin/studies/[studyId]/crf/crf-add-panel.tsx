@@ -5,7 +5,9 @@ import { useTranslations } from 'next-intl'
 import { Plus, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
-import { Cap, ChoiceChip, EditorInput, OriginNote, PaneBand, PaneFooter } from './crf-chrome'
+import { Cap, EditorInput, PaneBand, PaneFooter } from '@/app/[locale]/corelab/components/crf/pane-chrome'
+import { ChoiceChip } from '@/app/[locale]/corelab/components/crf/field-controls'
+import { OriginNote } from './crf-origin-mark'
 import { asIdentifier, slugify } from '@/lib/corelab/crf/identifier'
 import type { FieldDefinition } from '@/lib/corelab/crf/schema'
 
@@ -38,6 +40,7 @@ export function CrfAddPanel({ candidates, draft, context, actions }: {
   actions: AddActions
 }) {
   const t = useTranslations('corelab.crfEditor')
+  const words = useTranslations('corelab.crf')
   const types = useTranslations('corelab.library.types')
   const [search, setSearch] = useState('')
   const [idTouched, setIdTouched] = useState(false)
@@ -87,7 +90,7 @@ export function CrfAddPanel({ candidates, draft, context, actions }: {
       {context.tab === 'library' ? (
         <>
           <div className="px-4 pb-2.5 pt-3">
-            <EditorInput value={search} onChange={setSearch} options={{ placeholder: t('searchVariable'), label: t('searchVariable') }} />
+            <EditorInput value={search} onChange={setSearch} options={{ placeholder: words('searchVariable'), label: words('searchVariable') }} />
           </div>
           <div className="flex-1 overflow-y-auto px-2.5 pb-2.5">
             {shown.map((field) => (
@@ -119,11 +122,11 @@ export function CrfAddPanel({ candidates, draft, context, actions }: {
         <>
           <div className="flex-1 overflow-y-auto px-4 py-3">
             <div className="mb-4">
-              <Cap>{t('readerName')}</Cap>
+              <Cap>{words('readerName')}</Cap>
               <EditorInput
                 value={draft.name}
                 onChange={(value) => patchDraft({ name: value, ...(idTouched ? {} : { id: slugify(value) }) })}
-                options={{ placeholder: t('readerNamePlaceholder'), label: t('readerName') }}
+                options={{ placeholder: t('readerNamePlaceholder'), label: words('readerName') }}
               />
             </div>
             <div className="mb-4">
@@ -184,7 +187,7 @@ export function CrfAddPanel({ candidates, draft, context, actions }: {
                     <button
                       key={option}
                       type="button"
-                      aria-label={t('removeValue')}
+                      aria-label={words('removeValue')}
                       onClick={() => patchDraft({ options: (draft.options ?? []).filter((entry) => entry !== option) })}
                       className="inline-flex cursor-pointer items-center gap-1.5 rounded-md border border-line bg-white px-2 py-0.5 text-xs text-gray-700 hover:border-danger-500"
                     >
@@ -194,7 +197,7 @@ export function CrfAddPanel({ candidates, draft, context, actions }: {
                   ))}
                 </div>
                 <div className="flex gap-2">
-                  <EditorInput value={pendingValue} onChange={setPendingValue} options={{ placeholder: t('addValue'), label: t('addValue') }} />
+                  <EditorInput value={pendingValue} onChange={setPendingValue} options={{ placeholder: words('addValue'), label: words('addValue') }} />
                   <Button
                     variant="outline"
                     className="flex-none"
@@ -230,7 +233,7 @@ export function CrfAddPanel({ candidates, draft, context, actions }: {
             <OriginNote tone="study">{t('createWarning', { modality: context.modality })}</OriginNote>
           </div>
           <PaneFooter>
-            <Button variant="ghost" className="flex-none" onClick={actions.close}>{t('cancel')}</Button>
+            <Button variant="ghost" className="flex-none" onClick={actions.close}>{words('cancel')}</Button>
             <Button className="flex-1 bg-coral-600 text-white hover:bg-coral-700" onClick={actions.commit}>{t('addToCrf')}</Button>
           </PaneFooter>
         </>

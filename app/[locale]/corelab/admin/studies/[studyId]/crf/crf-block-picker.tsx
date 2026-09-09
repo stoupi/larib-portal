@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { ChevronLeft, Plus } from 'lucide-react'
 import { groupBlocks } from '@/lib/corelab/library/blocks'
-import { EditorInput, PaneBand } from './crf-chrome'
+import { EditorInput, PaneBand } from '@/app/[locale]/corelab/components/crf/pane-chrome'
 import type { SectionDefinition, SequenceDefinition } from '@/lib/corelab/crf/schema'
 
 export type LibraryBlockOption = {
@@ -28,6 +28,7 @@ export function CrfBlockPicker({ blocks, modality, sectionName, onInsert, onClos
   onClose: () => void
 }) {
   const t = useTranslations('corelab.crfEditor')
+  const words = useTranslations('corelab.crf')
   const [search, setSearch] = useState('')
   const groups = useMemo(() => groupBlocks(blocks), [blocks])
 
@@ -37,9 +38,9 @@ export function CrfBlockPicker({ blocks, modality, sectionName, onInsert, onClos
   function meta(block: LibraryBlockOption): string {
     if ('sections' in block.definition) {
       const variables = block.definition.sections.reduce((total, section) => total + section.fields.length, 0)
-      return `${t('sectionCount', { count: block.definition.sections.length })} · ${t('variableCount', { count: variables })}`
+      return `${words('sectionCount', { count: block.definition.sections.length })} · ${words('variableCount', { count: variables })}`
     }
-    return t('variableCount', { count: block.definition.fields.length })
+    return words('variableCount', { count: block.definition.fields.length })
   }
 
   function AddButton({ block }: { block: LibraryBlockOption }) {
@@ -87,10 +88,10 @@ export function CrfBlockPicker({ blocks, modality, sectionName, onInsert, onClos
               <div className="flex items-center gap-2 bg-gray-50 px-2 py-2">
                 <span className="min-w-0 flex-1">
                   <span className="block truncate text-[13.5px] font-semibold text-text-primary">
-                    {part ? part.name : t('looseSections')}
+                    {part ? part.name : words('looseSections')}
                   </span>
                   <span className="block text-[10.5px] font-medium uppercase tracking-[0.03em] text-text-muted">
-                    {part ? `${t('partKind')} · ${meta(part)}` : t('sectionCount', { count: group.sections.length })}
+                    {part ? `${words('partKind')} · ${meta(part)}` : words('sectionCount', { count: group.sections.length })}
                   </span>
                 </span>
                 {part ? <AddButton block={part} /> : null}

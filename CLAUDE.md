@@ -48,6 +48,31 @@
 -  **Self-explanatory code**: Avoid unnecessary comments
 -  **User feedback (Sonner)**: For mutations (server actions) that change data, trigger a `sonner` toast on success and on error when it improves UX. Use `next-intl` for toast messages.
 
+## CoreLab: the library and the CRF editor are one instrument
+
+The library screen (`admin/library`) and a study's CRF editor (`admin/studies/[id]/crf`)
+show the same objects from two places. They drifted once — two chromes, two vocabularies,
+a settings panel richer on one side — and the cost was paid by the user, not by the code.
+
+-  **A change asked for on one side is applied on both.** When the user asks to rename a label,
+   move a control, change a spacing or add a setting on one screen, do it on the other in the
+   same commit. If it genuinely belongs to one screen only, say so and say why.
+-  **Anything both screens show lives in `app/[locale]/corelab/components/crf/`:**
+   -  `pane-chrome.tsx` — the frame, the coral band, the navy strip, the rail row, the pinned
+      footer, the inputs, the move buttons. Neither screen may define its own.
+   -  `variable-settings.tsx` — every setting a variable carries.
+   -  `field-controls.tsx` — the chips, the labelled inputs, the section blocks.
+   -  `field-control.tsx` — the reader's field engine, shared with the reading form.
+-  **One concept, one translation key.** Words both screens use live in `corelab.crf`.
+   `corelab.library` and `corelab.crfEditor` hold only what belongs to one screen.
+-  **`lib/corelab/homogeneity.test.ts` enforces all of it** and fails the build on a piece
+   defined twice, a screen-local chrome module, a sentence written in both namespaces, or a
+   locale left behind. When it fails, move the code or the key — never relax the rule.
+
+A difference is allowed when the two screens answer different questions: a CRF variable has an
+origin against the library, a library variable has none; the library saves one variable at a
+time, the editor saves a whole draft. State those in the code, not in the styling.
+
 ## Architecture & Code Organization
 
 ### Project Structure

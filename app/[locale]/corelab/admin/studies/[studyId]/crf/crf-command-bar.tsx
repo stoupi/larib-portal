@@ -25,6 +25,7 @@ export function CrfCommandBar({ version, impact, pending, actions }: {
   actions: CommandActions
 }) {
   const t = useTranslations('corelab.crfEditor')
+  const words = useTranslations('corelab.crf')
   const published = version.publishedNumber !== null
 
   const signed = impact.signedReadings > 0 ? t('signedReadings', { count: impact.signedReadings }) : t('noSigned')
@@ -57,7 +58,7 @@ export function CrfCommandBar({ version, impact, pending, actions }: {
       </button>
       <div className="ml-auto flex flex-none items-center gap-2">
         <Button variant="ghost" size="sm" disabled={pending} onClick={actions.discard}>{t('discard')}</Button>
-        <Button variant="outline" size="sm" disabled={pending} onClick={actions.save}>{t('save')}</Button>
+        <Button variant="outline" size="sm" disabled={pending} onClick={actions.save}>{words('save')}</Button>
         <Button size="sm" disabled={pending} onClick={actions.publish}>
           {t('publishVersion', { number: version.draftNumber })}
         </Button>

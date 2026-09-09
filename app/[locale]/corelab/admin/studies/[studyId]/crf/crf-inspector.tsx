@@ -5,7 +5,8 @@ import { Button } from '@/components/ui/button'
 import { fieldDiffs, fieldOrigin, type OriginDiff } from '@/lib/corelab/crf/origin'
 import { conditionCandidates } from '@/lib/corelab/library/blocks'
 import { VariableSettings } from '@/app/[locale]/corelab/components/crf/variable-settings'
-import { Cap, OriginNote, PaneBand, PaneFooter } from './crf-chrome'
+import { Cap, PaneBand, PaneFooter } from '@/app/[locale]/corelab/components/crf/pane-chrome'
+import { OriginNote } from './crf-origin-mark'
 import type { FieldDefinition, SectionDefinition } from '@/lib/corelab/crf/schema'
 
 export type InspectorActions = {

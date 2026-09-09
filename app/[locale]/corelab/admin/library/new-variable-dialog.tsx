@@ -54,6 +54,7 @@ function numberOrUndefined(raw: string): number | undefined {
 
 export function NewVariableDialog({ valueSets }: { valueSets: ValueSet[] }) {
   const t = useTranslations('corelab.library')
+  const words = useTranslations('corelab.crf')
   const tt = useTranslations('corelab.library.types')
   const ti = useTranslations('corelab.library.inspector')
   const router = useRouter()
@@ -122,7 +123,7 @@ export function NewVariableDialog({ valueSets }: { valueSets: ValueSet[] }) {
 
         <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_250px]">
           <div className="space-y-1.5">
-            <Label htmlFor="var-name">{t('readerName')}</Label>
+            <Label htmlFor="var-name">{words('readerName')}</Label>
             <Input
               id="var-name"
               value={draft.name}
@@ -231,7 +232,7 @@ export function NewVariableDialog({ valueSets }: { valueSets: ValueSet[] }) {
 
         {field ? (
           <div className="rounded-xl border border-gray-100 bg-gray-25 px-4 py-3">
-            <p className="mb-1 text-[11px] font-semibold uppercase tracking-[0.03em] text-text-secondary">{t('readerPreview')}</p>
+            <p className="mb-1 text-[11px] font-semibold uppercase tracking-[0.03em] text-text-secondary">{words('readerPreview')}</p>
             <FieldPreview key={JSON.stringify(field)} field={field} />
           </div>
         ) : null}
@@ -252,7 +253,7 @@ export function NewVariableDialog({ valueSets }: { valueSets: ValueSet[] }) {
               })
             }}
           >
-            {t('save')}
+            {words('save')}
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -9,7 +9,7 @@ import { Search } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { fieldToVariableParams, variableToFieldDefinition } from '@/lib/corelab/library/params'
 import { saveVariableAction } from '../actions-library'
-import { LibraryLayout, PaneHeader, RailButton, RailHeader, SummaryStrip } from './library-chrome'
+import { PaneFrame, PaneBand, RailRow, StatStrip } from '@/app/[locale]/corelab/components/crf/pane-chrome'
 import { FieldPreview } from './field-preview'
 import { EmptyInspector, VariableInspector } from './variable-inspector'
 import type { FieldDefinition } from '@/lib/corelab/crf/schema'
@@ -28,6 +28,7 @@ const GROUPS = [
 
 export function VariablesPane({ variables, valueSets }: VariablesPaneProps) {
   const t = useTranslations('corelab.library')
+  const words = useTranslations('corelab.crf')
   const router = useRouter()
   const [group, setGroup] = useState<(typeof GROUPS)[number]['id']>('all')
   const [search, setSearch] = useState('')
@@ -79,24 +80,28 @@ export function VariablesPane({ variables, valueSets }: VariablesPaneProps) {
   }
 
   return (
-    <LibraryLayout
+    <PaneFrame
       rail={
         <>
-          <RailHeader title={t('modalityRail')} count={t('variableCount', { count: variables.length })} />
+          <PaneBand
+            kind={t('title')}
+            title={words('modality')}
+            subtitle={words('variableCount', { count: variables.length })}
+          />
           <div className="p-2.5">
             <div className="mb-2.5 flex h-8 items-center gap-1.5 rounded-[10px] border border-line bg-gray-25 px-2.5">
               <Search className="size-3.5 text-text-muted" />
               <input
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
-                placeholder={t('searchVariable')}
-                aria-label={t('searchVariable')}
+                placeholder={words('searchVariable')}
+                aria-label={words('searchVariable')}
                 className="min-w-0 flex-1 bg-transparent text-[13px] text-text-primary outline-none"
               />
             </div>
             <p className="px-1 pb-1.5 text-[11px] font-semibold uppercase tracking-[0.03em] text-text-secondary">{t('type')}</p>
             {GROUPS.map((entry) => (
-              <RailButton
+              <RailRow
                 key={entry.id}
                 label={t(`groups.${entry.id}`)}
                 selected={entry.id === group}
@@ -113,16 +118,16 @@ export function VariablesPane({ variables, valueSets }: VariablesPaneProps) {
       }
       main={
         <>
-          <PaneHeader title={t(`groups.${group}`)} badges={['CMR']} />
-          <SummaryStrip
-            hint={t('readerPreview')}
+          <PaneBand kind={t('tabs.variables')} title={t(`groups.${group}`)} />
+          <StatStrip
+            hint={words('readerPreview')}
             items={[
               { value: String(shown.length), label: t('shownLabel', { count: shown.length }) },
               { value: String(shared), label: t('sharedLabel', { count: shared }) },
               { value: String(orphans), label: t('orphanLabel', { count: orphans }) },
             ]}
           />
-          <div className="max-h-[calc(100vh-16rem)] overflow-y-auto px-3 pb-4 pt-1">
+          <div className="flex-1 overflow-y-auto px-3 pb-4 pt-1">
             {shown.map((variable) => {
               const preview = fieldOf(variable)
               if (!preview) return null

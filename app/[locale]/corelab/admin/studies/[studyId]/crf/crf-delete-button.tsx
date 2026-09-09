@@ -21,6 +21,7 @@ export function DeleteButton({ name, variables, label, onConfirm }: {
   onConfirm: () => void
 }) {
   const t = useTranslations('corelab.crfEditor')
+  const words = useTranslations('corelab.crf')
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
@@ -39,7 +40,7 @@ export function DeleteButton({ name, variables, label, onConfirm }: {
           <AlertDialogDescription>{t('deleteBody', { count: variables })}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>{t('cancel')}</AlertDialogCancel>
+          <AlertDialogCancel>{words('cancel')}</AlertDialogCancel>
           <AlertDialogAction className="bg-danger-600 text-white hover:bg-danger-700" onClick={onConfirm}>
             {t('confirmDelete')}
           </AlertDialogAction>

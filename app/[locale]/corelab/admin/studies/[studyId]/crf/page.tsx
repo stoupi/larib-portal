@@ -9,6 +9,7 @@ import { getStudy } from '@/lib/services/corelab/studies'
 import { listBlocks, listValueSets, listVariables } from '@/lib/services/corelab/library'
 import { buildReferences } from '@/lib/corelab/library/references'
 import { readBlockDefinition } from '@/lib/corelab/library/blocks'
+import { PageHeader } from '@/app/[locale]/components/page-header'
 import { CrfEditor } from './crf-editor'
 import type { LibraryBlockOption } from './crf-block-picker'
 
@@ -45,10 +46,7 @@ export default async function StudyCrfEditorPage({ params }: PageParams) {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-lg font-semibold text-text-primary">{t('title')}</h2>
-        <p className="mt-1 text-sm text-text-secondary">{t('subtitle')}</p>
-      </div>
+      <PageHeader title={t('title')} subtitle={t('subtitle')} />
       <CrfEditor
         key={draft?.id ?? 'no-draft'}
         context={{

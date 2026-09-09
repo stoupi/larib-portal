@@ -4,7 +4,8 @@ import { useTranslations } from 'next-intl'
 import { Check } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
-import { Cap, OriginNote, PaneBand, PaneFooter } from './crf-chrome'
+import { Cap, PaneBand, PaneFooter } from '@/app/[locale]/corelab/components/crf/pane-chrome'
+import { OriginNote } from './crf-origin-mark'
 import type { VersionChange } from '@/lib/corelab/crf/diff-versions'
 
 const LEVEL_STYLE: Record<VersionChange['impact'], string> = {
