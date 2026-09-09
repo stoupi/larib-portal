@@ -13,7 +13,7 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogT
 import { danglingConditions } from '@/lib/corelab/library/blocks'
 import { variableToFieldDefinition } from '@/lib/corelab/library/params'
 import { saveBlockAction } from '../actions-library'
-import { ChoiceChip } from './inspector-controls'
+import { ChoiceChip } from '@/app/[locale]/corelab/components/crf/field-controls'
 import { FieldPreview } from './field-preview'
 import { WarningNote } from './library-chrome'
 import { toFieldCode } from './slug'

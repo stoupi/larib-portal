@@ -9,6 +9,8 @@ import {
   moved,
   publishable,
   removeField,
+  removePart,
+  removeSection,
   renamePart,
   renameSection,
   replaceField,
@@ -170,5 +172,16 @@ describe('uniqueId', () => {
 describe('fieldIdsOfPart', () => {
   it('gathers every identifier of a part, across its sections', () => {
     expect(fieldIdsOfPart(definition[0])).toEqual(['lvef', 'lv_edv', 'rvef'])
+  })
+})
+
+describe('removing', () => {
+  it('removes a part with everything it held', () => {
+    expect(partOrder(removePart(definition, 'cine'))).toEqual(['lge'])
+  })
+
+  it('removes a section, and its part when it was the last one', () => {
+    expect(sectionOrder(removeSection(definition, 'cine-rv'), 'cine')).toEqual(['cine-lv'])
+    expect(partOrder(removeSection(definition, 'lge-lv'))).toEqual(['cine'])
   })
 })

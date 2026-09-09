@@ -72,7 +72,8 @@ test('the data manager composes a CRF: reorders it, borrows from the library, cr
   await expect(page.getByTestId('crf-field-ghost')).toContainText('rv_strain_global')
   await page.getByTestId('crf-type-boolean').click()
   await page.getByRole('button', { name: 'Add to the CRF' }).click()
-  await expect(page.getByTestId('crf-field-rv_strain_global')).toContainText('study only')
+  await expect(page.getByTestId('crf-field-rv_strain_global')).toBeVisible()
+  await expect(page.getByText('Study only: it does not exist in the CMR library.')).toBeVisible()
 
   // Tuning a variable rewrites nothing in the library: the difference is shown, and it can be undone.
   await page.getByTestId('crf-field-lvef').click()
@@ -87,6 +88,17 @@ test('the data manager composes a CRF: reorders it, borrows from the library, cr
   await page.getByRole('button', { name: 'Done' }).click()
   await expect(page.getByTestId('crf-section-t2w-pericardial')).toContainText('Pericardium review')
 
+  // A default value is set here too, and counts as tuning the library variable.
+  await page.getByTestId('crf-field-lvef').click()
+  await page.getByRole('spinbutton', { name: 'Default value' }).fill('55')
+  await expect(page.getByText('Default value: — → 55')).toBeVisible()
+
+  // A section leaves with what it holds, behind a confirmation.
+  const doomed = page.getByTestId('crf-section-t2w-hyperintensity')
+  await doomed.hover()
+  await doomed.getByRole('button', { name: 'Delete the section' }).click()
+  await page.getByRole('button', { name: 'Delete', exact: true }).click()
+  await expect(page.getByTestId('crf-section-t2w-hyperintensity')).toHaveCount(0)
   // Saving keeps everything the draft gained.
   await page.getByRole('button', { name: 'Save', exact: true }).click()
   await expect(page.getByText('Draft saved.')).toBeVisible({ timeout: 60000 })

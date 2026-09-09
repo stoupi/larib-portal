@@ -7,7 +7,7 @@ import { ImagePlus, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { guidanceImageUrl } from '@/lib/corelab/library/guidance'
-import { ChoiceChip } from './inspector-controls'
+import { ChoiceChip } from './field-controls'
 import type { FieldDefinition } from '@/lib/corelab/crf/schema'
 
 type Guidance = NonNullable<FieldDefinition['guidance']>

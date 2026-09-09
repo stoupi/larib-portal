@@ -7,7 +7,7 @@ import { toast } from 'sonner'
 import { useRouter } from '@/app/i18n/navigation'
 import { Button } from '@/components/ui/button'
 import { fieldToVariableParams } from '@/lib/corelab/library/params'
-import { referenceOf, revertToReference, sectionDrift } from '@/lib/corelab/crf/origin'
+import { referenceOf, revertToReference, sectionDrift, sectionOrigin } from '@/lib/corelab/crf/origin'
 import {
   fieldIdsOfPart,
   insertField,
@@ -17,6 +17,8 @@ import {
   partIds,
   publishable,
   removeField,
+  removePart,
+  removeSection,
   renamePart,
   renameSection,
   replaceField,
@@ -26,6 +28,7 @@ import {
 import { discardDraftAction, publishDraftAction, saveDraftAction, saveVariableAction, startDraftAction } from '../../../actions-library'
 import { CrfCommandBar } from './crf-command-bar'
 import { CrfPlan } from './crf-plan'
+import { blockCodeOf } from '@/lib/corelab/library/blocks'
 import { CrfBlockPicker, type LibraryBlockOption } from './crf-block-picker'
 import { CrfForm } from './crf-form'
 import { CrfInspector } from './crf-inspector'
@@ -67,6 +70,10 @@ export function CrfEditor({ context, definition, impact, library }: {
   const router = useRouter()
   const references = useMemo(() => new Map(library.references), [library.references])
   const libraryIds = useMemo(() => new Map(library.ids), [library.ids])
+  const blocksByCode = useMemo(
+    () => new Map(library.blocks.map((block) => [blockCodeOf(block.code), block.definition])),
+    [library.blocks],
+  )
 
   const [draft, setDraft] = useState<CrfDefinition>(definition)
   const [sectionId, setSectionId] = useState(definition[0]?.sections[0]?.id ?? '')
@@ -169,6 +176,11 @@ export function CrfEditor({ context, definition, impact, library }: {
     setFieldId(next.id)
   }
 
+  function sectionBlockOf(id: string) {
+    const block = blocksByCode.get(blockCodeOf(id))
+    return block && !('sections' in block) ? block : null
+  }
+
   const reference = field ? referenceOf(field, references) : null
 
   return (
@@ -195,9 +207,8 @@ export function CrfEditor({ context, definition, impact, library }: {
           {rail === 'plan' ? (
             <CrfPlan
               definition={draft}
-              references={references}
-              sectionId={section?.id ?? ''}
-              openParts={openParts}
+              library={{ references, blocks: blocksByCode }}
+              view={{ sectionId: section?.id ?? '', openParts }}
               actions={{
                 selectSection: (id) => select(id),
                 togglePart: (id) => {
@@ -210,6 +221,17 @@ export function CrfEditor({ context, definition, impact, library }: {
                   setDraft(moveSection(draft, id, partId, index))
                   setOpenParts({ ...openParts, [partId]: true })
                   select(id)
+                },
+                removePart: (id) => {
+                  const next = removePart(draft, id)
+                  setDraft(next)
+                  select(next[0]?.sections[0]?.id ?? '')
+                },
+                removeSection: (id) => {
+                  const next = removeSection(draft, id)
+                  setDraft(next)
+                  const stillThere = next.flatMap((entry) => entry.sections).some((entry) => entry.id === section?.id)
+                  if (!stillThere) select(next[0]?.sections[0]?.id ?? '')
                 },
                 openLibrary: () => setRail('library'),
                 addEmptyPart: () => {
@@ -250,7 +272,11 @@ export function CrfEditor({ context, definition, impact, library }: {
               part={part}
               section={section}
               references={references}
-              view={{ fieldId: field?.id ?? '', ghost: panel === 'add' && addTab === 'create' ? pendingField : null }}
+              view={{
+                fieldId: field?.id ?? '',
+                ghost: panel === 'add' && addTab === 'create' ? pendingField : null,
+                origin: sectionOrigin(section, sectionBlockOf(section.id), references),
+              }}
               actions={{
                 selectField: (id) => {
                   setFieldId(id)

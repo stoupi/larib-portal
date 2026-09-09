@@ -3,21 +3,16 @@
 import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { fieldDiffs, fieldOrigin, type OriginDiff } from '@/lib/corelab/crf/origin'
-import { asIdentifier } from '@/lib/corelab/crf/identifier'
-import { Cap, ChoiceChip, EditorInput, OriginNote, PaneBand, PaneFooter } from './crf-chrome'
+import { conditionCandidates } from '@/lib/corelab/library/blocks'
+import { VariableSettings } from '@/app/[locale]/corelab/components/crf/variable-settings'
+import { Cap, OriginNote, PaneBand, PaneFooter } from './crf-chrome'
 import type { FieldDefinition, SectionDefinition } from '@/lib/corelab/crf/schema'
-
-const TYPES_WITH_BOUNDS = new Set(['numeric', 'segment_numeric'])
 
 export type InspectorActions = {
   change: (field: FieldDefinition) => void
   revert: () => void
   promote: () => void
   remove: () => void
-}
-
-function numberOrUndefined(raw: string): number | undefined {
-  return raw === '' ? undefined : Number(raw)
 }
 
 export function CrfInspector({ field, reference, section, modality, actions }: {
@@ -31,13 +26,6 @@ export function CrfInspector({ field, reference, section, modality, actions }: {
   const types = useTranslations('corelab.library.types')
   const origin = fieldOrigin(field, reference)
   const diffs = reference ? fieldDiffs(field, reference) : []
-  const conditionField = field.conditionalOn
-    ? section.fields.find((candidate) => candidate.id === field.conditionalOn?.fieldId)
-    : null
-
-  function patch(next: Partial<FieldDefinition>) {
-    actions.change({ ...field, ...next } as FieldDefinition)
-  }
 
   function shown(value: OriginDiff['from']): string {
     if (value === undefined || value === null || value === '') return t('emptyValue')
@@ -83,89 +71,14 @@ export function CrfInspector({ field, reference, section, modality, actions }: {
           ) : null}
         </div>
 
-        <div className="mb-4">
-          <Cap>{t('exportName')}</Cap>
-          <EditorInput value={field.id} onChange={(value) => patch({ id: asIdentifier(value) })} options={{ mono: true, label: t('exportName') }} />
-        </div>
-
-        <div className="mb-4">
-          <Cap>{t('acceptedEntry')}</Cap>
-          <div className="grid grid-cols-[6.5rem_minmax(0,1fr)] items-center gap-x-2.5 gap-y-2">
-            {TYPES_WITH_BOUNDS.has(field.type) ? (
-              <>
-                <span className="text-[13px] text-text-secondary">{t('min')}</span>
-                <EditorInput value={field.min === undefined ? '' : String(field.min)} onChange={(value) => patch({ min: numberOrUndefined(value) })} options={{ type: 'number', label: t('min') }} />
-                <span className="text-[13px] text-text-secondary">{t('max')}</span>
-                <EditorInput value={field.max === undefined ? '' : String(field.max)} onChange={(value) => patch({ max: numberOrUndefined(value) })} options={{ type: 'number', label: t('max') }} />
-                <span className="text-[13px] text-text-secondary">{t('unit')}</span>
-                <EditorInput value={field.unit ?? ''} onChange={(value) => patch({ unit: value === '' ? undefined : value })} options={{ placeholder: t('none'), label: t('unit') }} />
-              </>
-            ) : null}
-            <span className="text-[13px] text-text-secondary">{t('required')}</span>
-            <span className="inline-flex gap-1.5">
-              <ChoiceChip label={t('yes')} selected={field.required} onClick={() => patch({ required: true })} />
-              <ChoiceChip label={t('no')} selected={!field.required} onClick={() => patch({ required: false })} />
-            </span>
-          </div>
-        </div>
-
-        <div className="mb-4">
-          <Cap>{t('display')}</Cap>
-          {conditionField ? (
-            <p className="m-0 rounded-[10px] border border-line bg-gray-25 p-2.5 text-[12.5px] leading-relaxed text-gray-700">
-              {t('conditionReads', {
-                field: conditionField.name,
-                value: field.conditionalOn?.value === true ? 'Yes' : field.conditionalOn?.value === false ? 'No' : String(field.conditionalOn?.value ?? ''),
-              })}
-            </p>
-          ) : (
-            <p className="m-0 text-[12.5px] text-text-secondary">{t('always')}</p>
-          )}
-        </div>
-
-        {field.calibrationTolerance || field.discordanceThreshold ? (
-          <div className="mb-4">
-            <Cap>{t('tolerances')}</Cap>
-            <div className="grid grid-cols-[6.5rem_minmax(0,1fr)] items-center gap-x-2.5 gap-y-2 text-[13px]">
-              <span className="text-text-secondary">{t('calibration')}</span>
-              <span className="tabular-nums text-text-primary">
-                {field.calibrationTolerance
-                  ? t('calibrationValue', {
-                      absolute: field.calibrationTolerance.absolute,
-                      unit: field.unit ? ` ${field.unit}` : '',
-                      relative: field.calibrationTolerance.relativePercent,
-                    })
-                  : t('emptyValue')}
-              </span>
-              <span className="text-text-secondary">{t('discordance')}</span>
-              <span className="tabular-nums text-text-primary">
-                {field.discordanceThreshold
-                  ? t('discordanceValue', {
-                      minor: field.discordanceThreshold.minorPercent,
-                      major: field.discordanceThreshold.majorPercent,
-                    })
-                  : t('noThreshold')}
-              </span>
-            </div>
-          </div>
-        ) : null}
-
-        {(field.options ?? []).length > 0 ? (
-          <div className="mb-4">
-            <Cap>{t('valueSet')}</Cap>
-            <div className="flex flex-wrap gap-1.5">
-              {(field.options ?? []).map((option) => (
-                <span key={option} className="inline-flex items-center gap-1.5 rounded-md border border-line bg-white px-2 py-0.5 text-xs text-gray-700">
-                  <span className="size-2.5 rounded-[3px] border border-line" style={{ background: field.optionColours?.[option] ?? '#ffffff' }} />
-                  {option}
-                </span>
-              ))}
-            </div>
-          </div>
-        ) : null}
+        <VariableSettings
+          field={field}
+          onChange={actions.change}
+          context={{ valueSet: null, candidates: conditionCandidates(section, field.id), usage: [] }}
+        />
       </div>
       <PaneFooter>
-        <Button variant="outline" className="flex-1 text-danger-600" onClick={actions.remove}>{t('removeFromCrf')}</Button>
+        <Button variant="outline" className="w-full text-danger-600" onClick={actions.remove}>{t('removeFromCrf')}</Button>
       </PaneFooter>
     </>
   )

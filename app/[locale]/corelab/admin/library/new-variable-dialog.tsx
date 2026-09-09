@@ -14,7 +14,7 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogT
 import { fieldDefinitionSchema, type FieldDefinition } from '@/lib/corelab/crf/schema'
 import { fieldToVariableParams } from '@/lib/corelab/library/params'
 import { saveVariableAction } from '../actions-library'
-import { ChoiceChip, LabelledInput } from './inspector-controls'
+import { ChoiceChip, LabelledInput } from '@/app/[locale]/corelab/components/crf/field-controls'
 import { FieldPreview } from './field-preview'
 import { toFieldCode } from './slug'
 import type { ValueSet } from '@/lib/services/corelab/library'

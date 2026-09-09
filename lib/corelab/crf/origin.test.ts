@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { driftCount, fieldDiffs, fieldOrigin, revertToReference } from './origin'
+import { driftCount, fieldDiffs, fieldOrigin, revertToReference, sectionOrigin } from './origin'
 import type { FieldDefinition } from './schema'
 
 const lvef: FieldDefinition = {
@@ -99,5 +99,27 @@ describe('revertToReference', () => {
     const restored = revertToReference({ ...lvef, unit: 'ratio' }, { ...lvef, unit: undefined })
     expect(restored.unit).toBeUndefined()
     expect('unit' in restored).toBe(false)
+  })
+})
+
+describe('sectionOrigin', () => {
+  const references = new Map<string, FieldDefinition>([['lvef', lvef], ['artefacts_grade', grade]])
+  const block = { id: 'cine-lv', name: 'Left Ventricle', fields: [lvef, grade] }
+
+  it('reads a section with no library block as study only', () => {
+    expect(sectionOrigin(block, null, references)).toBe('STUDY_ONLY')
+  })
+
+  it('reads an untouched copy as identical to its block', () => {
+    expect(sectionOrigin({ ...block, fields: [{ ...lvef }, { ...grade }] }, block, references)).toBe('LIBRARY')
+  })
+
+  it('reads a variable added, removed or reordered as tuned', () => {
+    expect(sectionOrigin({ ...block, fields: [grade, lvef] }, block, references)).toBe('TUNED')
+    expect(sectionOrigin({ ...block, fields: [lvef] }, block, references)).toBe('TUNED')
+  })
+
+  it('reads a variable that left the library behind as tuned', () => {
+    expect(sectionOrigin({ ...block, fields: [{ ...lvef, min: 15 }, grade] }, block, references)).toBe('TUNED')
   })
 })

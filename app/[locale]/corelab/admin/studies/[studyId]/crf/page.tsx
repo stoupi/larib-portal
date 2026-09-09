@@ -40,7 +40,7 @@ export default async function StudyCrfEditorPage({ params }: PageParams) {
   const references = buildReferences(variables, valueSets)
   const options: LibraryBlockOption[] = blocks.flatMap((block) => {
     const definition = readBlockDefinition(block.definition)
-    return definition ? [{ id: block.id, name: block.name, definition }] : []
+    return definition ? [{ id: block.id, code: block.code, name: block.name, kind: block.kind, definition }] : []
   })
 
   return (

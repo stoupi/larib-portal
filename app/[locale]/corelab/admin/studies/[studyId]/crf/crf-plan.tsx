@@ -5,9 +5,12 @@ import { useTranslations } from 'next-intl'
 import { Plus } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
-import { sectionDrift } from '@/lib/corelab/crf/origin'
-import { GripIcon, MoveButtons, OriginTag, PaneBand } from './crf-chrome'
-import type { CrfDefinition, FieldDefinition } from '@/lib/corelab/crf/schema'
+import { driftCount, sectionOrigin } from '@/lib/corelab/crf/origin'
+import { blockCodeOf } from '@/lib/corelab/library/blocks'
+import { GripIcon, MoveButtons, PaneBand } from './crf-chrome'
+import { OriginMark } from './crf-origin-mark'
+import { DeleteButton } from './crf-delete-button'
+import type { CrfDefinition, FieldDefinition, SectionDefinition, SequenceDefinition } from '@/lib/corelab/crf/schema'
 
 type DragTarget = { kind: 'part'; id: string } | { kind: 'section'; id: string }
 
@@ -16,25 +19,36 @@ export type PlanActions = {
   togglePart: (partId: string) => void
   movePart: (partId: string, index: number) => void
   moveSection: (sectionId: string, partId: string, index: number) => void
+  removePart: (partId: string) => void
+  removeSection: (sectionId: string) => void
   openLibrary: () => void
   addEmptyPart: () => void
 }
 
-export function CrfPlan({ definition, references, sectionId, openParts, actions }: {
-  definition: CrfDefinition
+export type PlanLibrary = {
   references: Map<string, FieldDefinition>
-  sectionId: string
-  openParts: Record<string, boolean>
+  blocks: Map<string, SectionDefinition | SequenceDefinition>
+}
+
+function variablesOf(part: SequenceDefinition): number {
+  return part.sections.reduce((total, section) => total + section.fields.length, 0)
+}
+
+export function CrfPlan({ definition, library, view, actions }: {
+  definition: CrfDefinition
+  library: PlanLibrary
+  view: { sectionId: string; openParts: Record<string, boolean> }
   actions: PlanActions
 }) {
   const t = useTranslations('corelab.crfEditor')
   const [dragging, setDragging] = useState<DragTarget | null>(null)
   const [over, setOver] = useState<string | null>(null)
 
-  const variables = definition.reduce(
-    (total, part) => total + part.sections.reduce((count, section) => count + section.fields.length, 0),
-    0,
-  )
+  const variables = definition.reduce((total, part) => total + variablesOf(part), 0)
+
+  function blockOf(id: string): SectionDefinition | SequenceDefinition | null {
+    return library.blocks.get(blockCodeOf(id)) ?? null
+  }
 
   function drop(target: DragTarget) {
     if (!dragging) return
@@ -84,18 +98,21 @@ export function CrfPlan({ definition, references, sectionId, openParts, actions 
 
       <div className="flex-1 overflow-y-auto p-2">
         {definition.map((part, partIndex) => {
-          const open = openParts[part.id] ?? false
-          const holdsSelection = part.sections.some((section) => section.id === sectionId)
-          const drift = part.sections.reduce((total, section) => total + sectionDrift(section, references), 0)
-          const count = part.sections.reduce((total, section) => total + section.fields.length, 0)
+          const open = view.openParts[part.id] ?? false
+          const holdsSelection = part.sections.some((section) => section.id === view.sectionId)
+          const partBlock = blockOf(part.id)
+          const partOrigin = partBlock && 'sections' in partBlock
+            ? (part.sections.every((section, index) => section.id === partBlock.sections[index]?.id)
+              && part.sections.length === partBlock.sections.length
+              && part.sections.every((section) => driftCount(section.fields, library.references) === 0)
+                ? 'LIBRARY'
+                : 'TUNED')
+            : 'STUDY_ONLY'
 
           return (
             <div
               key={part.id}
-              className={cn(
-                'mb-2 overflow-hidden rounded-[11px] border border-border bg-white',
-                open ? 'shadow-elevation-xs' : '',
-              )}
+              className={cn('mb-2 overflow-hidden rounded-[11px] border border-border bg-white', open ? 'shadow-elevation-xs' : '')}
             >
               <div
                 {...dragProps({ kind: 'part', id: part.id })}
@@ -111,14 +128,8 @@ export function CrfPlan({ definition, references, sectionId, openParts, actions 
               >
                 <GripIcon />
                 <svg
-                  width="13"
-                  height="13"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
+                  width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"
                   className={cn('flex-none text-gray-300 transition-transform', open ? 'rotate-90' : '')}
                 >
                   <path d="m9 6 6 6-6 6" />
@@ -131,8 +142,10 @@ export function CrfPlan({ definition, references, sectionId, openParts, actions 
                     {t('partKind')} · {t('sectionCount', { count: part.sections.length })}
                   </span>
                 </span>
-                {drift > 0 && !open ? <OriginTag tone="tuned">{drift}</OriginTag> : null}
-                <span className="flex-none text-[11px] tabular-nums text-text-muted group-hover:hidden group-data-[selected=true]:hidden">{count}</span>
+                <OriginMark origin={partOrigin} />
+                <span className="flex-none text-[11px] tabular-nums text-text-muted group-hover:hidden group-data-[selected=true]:hidden">
+                  {variablesOf(part)}
+                </span>
                 <MoveButtons
                   disabledUp={partIndex === 0}
                   disabledDown={partIndex === definition.length - 1}
@@ -140,13 +153,22 @@ export function CrfPlan({ definition, references, sectionId, openParts, actions 
                   onDown={() => actions.movePart(part.id, partIndex + 1)}
                   labels={{ up: t('moveUp'), down: t('moveDown') }}
                 />
+                <span className="hidden group-hover:inline-flex group-data-[selected=true]:inline-flex">
+                  <DeleteButton
+                    name={part.name}
+                    variables={variablesOf(part)}
+                    label={t('deletePart')}
+                    onConfirm={() => actions.removePart(part.id)}
+                  />
+                </span>
               </div>
 
               {open ? (
                 <div className="py-1.5 pl-3 pr-1.5">
                   {part.sections.map((section, sectionIndex) => {
-                    const selected = section.id === sectionId
-                    const drifted = sectionDrift(section, references)
+                    const selected = section.id === view.sectionId
+                    const block = blockOf(section.id)
+                    const origin = sectionOrigin(section, block && !('sections' in block) ? block : null, library.references)
                     return (
                       <div
                         key={section.id}
@@ -164,7 +186,7 @@ export function CrfPlan({ definition, references, sectionId, openParts, actions 
                         <span className={cn('min-w-0 flex-1 truncate text-[12.5px]', selected ? 'font-semibold text-text-primary' : 'text-gray-600')}>
                           {section.name}
                         </span>
-                        {drifted > 0 ? <OriginTag tone="tuned">{drifted}</OriginTag> : null}
+                        <OriginMark origin={origin} count={driftCount(section.fields, library.references) || undefined} />
                         <span className="flex-none text-[11px] tabular-nums text-text-muted group-hover:hidden group-data-[selected=true]:hidden">
                           {section.fields.length}
                         </span>
@@ -175,6 +197,14 @@ export function CrfPlan({ definition, references, sectionId, openParts, actions 
                           onDown={() => actions.moveSection(section.id, part.id, sectionIndex + 1)}
                           labels={{ up: t('moveUp'), down: t('moveDown') }}
                         />
+                        <span className="hidden group-hover:inline-flex group-data-[selected=true]:inline-flex">
+                          <DeleteButton
+                            name={section.name}
+                            variables={section.fields.length}
+                            label={t('deleteSection')}
+                            onConfirm={() => actions.removeSection(section.id)}
+                          />
+                        </span>
                       </div>
                     )
                   })}

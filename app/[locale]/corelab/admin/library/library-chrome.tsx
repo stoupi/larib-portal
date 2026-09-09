@@ -3,6 +3,8 @@
 import type { ReactNode } from 'react'
 import { cn } from '@/lib/utils'
 
+export { InspectorSection, WarningNote } from '@/app/[locale]/corelab/components/crf/field-controls'
+
 export function LibraryLayout({ rail, main, inspector }: { rail: ReactNode; main: ReactNode; inspector: ReactNode }) {
   return (
     <div className="grid items-start gap-4 lg:grid-cols-[262px_minmax(0,1fr)_348px]">
@@ -100,22 +102,3 @@ export function InspectorHeader({ kind, title, subtitle }: { kind: string; title
   )
 }
 
-export function InspectorSection({ title, action, children }: { title: string; action?: ReactNode; children: ReactNode }) {
-  return (
-    <div className="mb-4">
-      <div className="mb-2 flex items-baseline justify-between gap-2">
-        <span className="text-[11px] font-semibold uppercase tracking-[0.03em] text-text-secondary">{title}</span>
-        {action}
-      </div>
-      {children}
-    </div>
-  )
-}
-
-export function WarningNote({ children }: { children: ReactNode }) {
-  return (
-    <div className="flex gap-2 rounded-[10px] border border-warn-100 bg-warn-50 p-3 text-xs leading-relaxed text-warn-700">
-      {children}
-    </div>
-  )
-}

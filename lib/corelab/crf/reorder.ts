@@ -161,3 +161,16 @@ export function renameSection(definition: CrfDefinition, sectionId: string, name
     sections: part.sections.map((section) => (section.id === sectionId ? { ...section, name } : section)),
   }))
 }
+
+export function removePart(definition: CrfDefinition, partId: string): CrfDefinition {
+  return definition.filter((part) => part.id !== partId)
+}
+
+// A part left without a section could not be saved, so it goes with its last section.
+export function removeSection(definition: CrfDefinition, sectionId: string): CrfDefinition {
+  const host = definition.find((part) => part.sections.some((section) => section.id === sectionId))
+  const alone = host?.sections.length === 1
+  return definition
+    .map((part) => (part.id === host?.id ? withoutSection(part, sectionId) : part))
+    .filter((part) => part.id !== host?.id || !alone)
+}

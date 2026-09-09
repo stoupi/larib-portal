@@ -74,7 +74,9 @@ export function variableUsage(blocks: BlockEntry[]): Map<string, Array<{ code: s
 export type BlockEntry = { id: string; code: string; name: string; kind: 'SECTION' | 'SEQUENCE'; definition: unknown }
 export type BlockGroup = { sequence: BlockEntry | null; sections: BlockEntry[] }
 
-function slug(value: string): string {
+// A block's code is the slug of the identifier its definition carries: that is what ties
+// a section of a CRF back to the block it was imported from.
+export function blockCodeOf(value: string): string {
   return value.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '')
 }
 
@@ -86,7 +88,7 @@ export function groupBlocks(blocks: BlockEntry[]): BlockGroup[] {
 
   const groups = sequences.map((sequence) => {
     const definition = readBlockDefinition(sequence.definition)
-    const order = definition ? sectionsOf(definition).map((section) => slug(section.id)) : []
+    const order = definition ? sectionsOf(definition).map((section) => blockCodeOf(section.id)) : []
     const children = sections
       .filter((section) => order.includes(section.code))
       .sort((left, right) => order.indexOf(left.code) - order.indexOf(right.code))

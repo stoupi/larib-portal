@@ -70,3 +70,17 @@ export function revertToReference(field: FieldDefinition, reference: FieldDefini
   }
   return restored
 }
+
+// A section keeps its library block's shape as long as it holds the same variables,
+// in the same order, each of them still matching the library.
+export function sectionOrigin(
+  section: SectionDefinition,
+  block: SectionDefinition | null,
+  references: Map<string, FieldDefinition>,
+): FieldOrigin {
+  if (!block) return 'STUDY_ONLY'
+  const here = section.fields.map((field) => field.id).join('|')
+  const there = block.fields.map((field) => field.id).join('|')
+  if (here !== there) return 'TUNED'
+  return driftCount(section.fields, references) === 0 ? 'LIBRARY' : 'TUNED'
+}

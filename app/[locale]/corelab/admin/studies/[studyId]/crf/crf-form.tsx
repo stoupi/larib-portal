@@ -6,8 +6,9 @@ import { CornerDownRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { FieldControl } from '@/app/[locale]/corelab/components/crf/field-control'
 import { defaultSequenceValues } from '@/lib/corelab/crf/values'
-import { fieldOrigin, referenceOf, sectionDrift } from '@/lib/corelab/crf/origin'
+import { fieldOrigin, referenceOf, type FieldOrigin } from '@/lib/corelab/crf/origin'
 import { BandButton, EditorInput, GripIcon, OriginTag, PaneBand, StatStrip } from './crf-chrome'
+import { OriginMark } from './crf-origin-mark'
 import type { FieldDefinition, SectionDefinition, SequenceDefinition } from '@/lib/corelab/crf/schema'
 
 function ControlPreview({ field }: { field: FieldDefinition }) {
@@ -39,14 +40,16 @@ export function CrfForm({ part, section, references, view, actions }: {
   part: SequenceDefinition
   section: SectionDefinition
   references: Map<string, FieldDefinition>
-  view: { fieldId: string; ghost: FieldDefinition | null }
+  view: { fieldId: string; ghost: FieldDefinition | null; origin: FieldOrigin }
   actions: FormActions
 }) {
   const t = useTranslations('corelab.crfEditor')
   const [renaming, setRenaming] = useState(false)
-  const drift = sectionDrift(section, references)
   const required = section.fields.filter((field) => field.required).length
   const conditional = section.fields.filter((field) => field.conditionalOn).length
+  const origins = section.fields.map((field) => fieldOrigin(field, referenceOf(field, references)))
+  const tuned = origins.filter((entry) => entry === 'TUNED').length
+  const studyOnly = origins.filter((entry) => entry === 'STUDY_ONLY').length
   const rows = section.fields.flatMap((field) =>
     view.ghost && field.id === view.fieldId ? [{ field, ghost: false }, { field: view.ghost, ghost: true }] : [{ field, ghost: false }],
   )
@@ -66,9 +69,9 @@ export function CrfForm({ part, section, references, view, actions }: {
               {section.name}
               <span className={cn(
                 'rounded-md border px-1.5 py-px text-[11px] font-medium',
-                drift > 0 ? 'border-warn-50 bg-warn-50 font-semibold text-warn-700' : 'border-white/45 bg-white/15 text-white',
+                view.origin === 'LIBRARY' ? 'border-white/45 bg-white/15 text-white' : 'border-warn-50 bg-warn-50 font-semibold text-warn-700',
               )}>
-                {drift > 0 ? t('driftBadge', { count: drift }) : t('conform')}
+                {view.origin === 'LIBRARY' ? t('sectionLibrary') : view.origin === 'TUNED' ? t('sectionTuned') : t('sectionStudyOnly')}
               </span>
             </>
           )
@@ -91,7 +94,8 @@ export function CrfForm({ part, section, references, view, actions }: {
           { value: String(section.fields.length), label: t('variablesLabel', { count: section.fields.length }) },
           { value: String(required), label: t('requiredLabel', { count: required }) },
           { value: String(conditional), label: t('conditionalLabel') },
-          { value: String(drift), label: t('driftLabel', { count: drift }) },
+          { value: String(tuned), label: t('tunedLabel', { count: tuned }) },
+          { value: String(studyOnly), label: t('studyOnlyLabel', { count: studyOnly }) },
         ]}
       />
       <div className="flex-1 overflow-y-auto px-3 pb-4 pt-1.5">
@@ -115,9 +119,7 @@ export function CrfForm({ part, section, references, view, actions }: {
                 <div className="flex flex-wrap items-center gap-1.5">
                   <span className="text-[13.5px] font-medium text-text-primary">{field.name}</span>
                   {field.required ? <span className="text-sm leading-none text-coral-600">*</span> : null}
-                  {ghost ? <OriginTag tone="new">{t('tagCreating')}</OriginTag> : null}
-                  {!ghost && origin === 'TUNED' ? <OriginTag tone="tuned">{t('tagTuned')}</OriginTag> : null}
-                  {!ghost && origin === 'STUDY_ONLY' ? <OriginTag tone="study">{t('tagStudyOnly')}</OriginTag> : null}
+                  {ghost ? <OriginTag tone="new">{t('tagCreating')}</OriginTag> : <OriginMark origin={origin} />}
                 </div>
                 <div className="mt-0.5 font-mono text-[11.5px] text-text-muted">{field.id || t('emptyValue')}</div>
                 {condition ? (
