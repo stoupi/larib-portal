@@ -24,6 +24,7 @@ const sandbox = {
   isNaN,
   localStorage: { getItem: () => null, setItem: () => {} },
   claude: { use: async () => null },
+  navigator: { clipboard: { writeText: async () => {} } },
   window: { scrollTo: () => {} },
   document: {
     getElementById: (id) => (id === 'app' ? appNode : null),
@@ -92,7 +93,12 @@ const scripted = [
   ['month-filter', 'all'],
   ['month-filter', 'mine'],
   ['swap-from', null],
-  ['set-scope', 'week']
+  ['set-scope', 'week'],
+  ['feedback-open', null],
+  ['feedback-kind', 'FIX'],
+  ['feedback-copy', null],
+  ['feedback-clear', null],
+  ['feedback-close', null]
 ]
 
 for (const [name, arg] of scripted) {

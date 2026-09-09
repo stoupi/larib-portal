@@ -200,14 +200,12 @@ function labBar() {
 /* ---- Feedback -------------------------------------------------------- */
 
 const FEEDBACK = {
-  db: null,
   ready: false,
   items: [],
   open: false,
   kind: 'BUG',
   draft: '',
-  author: '',
-  sending: false
+  author: ''
 }
 
 const FEEDBACK_KINDS = [
@@ -219,55 +217,29 @@ const FEEDBACK_KINDS = [
 const KIND_LABELS = { BUG: 'Anomalie', FIX: 'Correction', IDEA: 'Idée' }
 const KIND_TONES = { BUG: 'danger', FIX: 'warning', IDEA: 'info' }
 
-async function initFeedback() {
-  try {
-    FEEDBACK.db = await claude.use('db')
-  } catch (error) {
-    FEEDBACK.db = null
-  }
+/* Feedback lives in this browser only.
+
+   A page that declares the shared-storage or download capability becomes
+   organization-internal and cannot be opened by an outside link — and this
+   prototype has to reach a doctor outside the org. So retours are kept in
+   localStorage and exported as text from the "Retours" screen. */
+function initFeedback() {
   FEEDBACK.ready = true
-  if (!FEEDBACK.db) {
-    try {
-      FEEDBACK.items = JSON.parse(localStorage.getItem('planning-feedback') || '[]')
-    } catch (error) {
-      FEEDBACK.items = []
-    }
-    render()
-    return
-  }
   try {
-    FEEDBACK.db.collection('feedback').orderBy('createdAt', 'desc').limit(200).onSnapshot(
-      (snapshot) => {
-        FEEDBACK.items = snapshot.docs.map((document) => {
-          const body = document.data() || {}
-          const text = (value) => (typeof value === 'string' ? value : '')
-          return {
-            id: document.id,
-            kind: text(body.kind) || 'IDEA',
-            view: text(body.view),
-            role: text(body.role),
-            author: text(body.author),
-            text: text(body.text),
-            createdAt: text(body.createdAt)
-          }
-        })
-        render()
-      },
-      () => {}
-    )
+    const stored = JSON.parse(localStorage.getItem('planning-feedback') || '[]')
+    FEEDBACK.items = Array.isArray(stored) ? stored : []
   } catch (error) {
-    FEEDBACK.db = null
-    render()
+    FEEDBACK.items = []
   }
+  render()
 }
 
-async function sendFeedback() {
+function sendFeedback() {
   const text = FEEDBACK.draft.trim()
-  if (!text || FEEDBACK.sending) return
-  FEEDBACK.sending = true
-  render()
+  if (!text) return
 
   const entry = {
+    id: String(Date.now()) + '-' + Math.random().toString(36).slice(2, 8),
     kind: FEEDBACK.kind,
     view: VIEW_TITLES[S.view] || S.view,
     role: ROLES[S.role].label,
@@ -275,32 +247,17 @@ async function sendFeedback() {
     text,
     createdAt: new Date().toISOString()
   }
-  const id = String(Date.now()) + '-' + Math.random().toString(36).slice(2, 8)
 
-  if (FEEDBACK.db) {
-    try {
-      await FEEDBACK.db.collection('feedback').doc(id).set(entry)
-      toast('Retour envoyé. Il apparaît dans « Retours et anomalies ».')
-    } catch (error) {
-      toast('Envoi impossible pour le moment. Votre texte est conservé.')
-      FEEDBACK.sending = false
-      render()
-      return
-    }
-  } else {
-    FEEDBACK.items = [Object.assign({ id }, entry)].concat(FEEDBACK.items)
-    try {
-      localStorage.setItem('planning-feedback', JSON.stringify(FEEDBACK.items))
-    } catch (error) {
-      /* private window: the entry stays in memory for this visit */
-    }
-    toast('Retour enregistré sur cet appareil uniquement.')
+  FEEDBACK.items = [entry].concat(FEEDBACK.items)
+  try {
+    localStorage.setItem('planning-feedback', JSON.stringify(FEEDBACK.items))
+  } catch (error) {
+    /* private window: the entry stays in memory for this visit */
   }
 
   FEEDBACK.draft = ''
-  FEEDBACK.sending = false
   FEEDBACK.open = false
-  render()
+  toast('Retour enregistré. Retrouvez-le dans « Retours et anomalies » pour l’envoyer.')
 }
 
 function feedbackButton() {
@@ -311,9 +268,7 @@ function feedbackButton() {
 
 function feedbackPanel() {
   if (!FEEDBACK.open) return ''
-  const stored = FEEDBACK.db
-    ? 'Enregistré côté serveur : votre retour remonte directement à l’équipe de développement.'
-    : 'Le stockage partagé n’est pas disponible sur cette vue : le retour reste sur cet appareil.'
+  const stored = 'Conservé dans ce navigateur. Depuis « Retours et anomalies », copiez-les tous d’un clic pour les envoyer.'
 
   return `<div data-overlay="1" style="position:fixed;inset:0;z-index:50;background:rgba(10,27,48,0.45);display:flex;align-items:flex-end;justify-content:flex-end;padding:24px">
     <div style="width:460px;max-height:calc(100vh - 48px);overflow-y:auto;border-radius:18px;background:${T.surface};box-shadow:${T.shadowLg}">
@@ -346,7 +301,7 @@ function feedbackPanel() {
 
         <div style="display:flex;align-items:center;gap:10px;margin-top:18px">
           <span style="flex:1;font-size:11px;color:${T.text3};line-height:1.4">${stored}</span>
-          ${button({ label: FEEDBACK.sending ? 'Envoi…' : 'Envoyer', variant: FEEDBACK.sending ? 'disabled' : 'primary', icon: 'send', act: 'feedback-send', style: 'flex-shrink:0' })}
+          ${button({ label: 'Enregistrer', variant: 'primary', icon: 'check', act: 'feedback-send', style: 'flex-shrink:0' })}
         </div>
       </div>
     </div>
@@ -361,9 +316,8 @@ VIEWS.retours = () => {
   return `
     ${pageHeader(
       'Retours et anomalies',
-      FEEDBACK.db
-        ? 'Tout ce qui est signalé ici remonte à l’équipe de développement, avec l’écran et le rôle d’où le retour a été émis.'
-        : 'Le stockage partagé n’est pas disponible sur cette vue : les retours ci-dessous sont conservés sur cet appareil uniquement.',
+      'Chaque retour note l’écran et le rôle d’où il a été émis. Ils restent dans ce navigateur : copiez-les en bas de page pour les envoyer.',
+      (items.length ? button({ label: 'Copier tous les retours', variant: 'outline', icon: 'copy', act: 'feedback-copy' }) : '') +
       button({ label: 'Signaler quelque chose', variant: 'primary', icon: 'send', act: 'feedback-open' })
     )}
 
@@ -398,7 +352,33 @@ VIEWS.retours = () => {
         </span>
       </div>`).join('')}
       ${items.length ? footnote('Ces retours sont écrits par les personnes qui essaient le prototype. Ils sont affichés tels quels, sans interprétation.') : ''}
-    </section>`
+    </section>
+
+    ${items.length ? `<section style="${CARD};margin-top:20px;overflow:hidden">
+      ${sectionHead('À renvoyer à l’équipe de développement', `<span style="font-size:13px;color:${T.text2}">${plural(items.length, 'retour')} · texte prêt à coller</span>`)}
+      <div style="padding:18px 20px">
+        <p style="margin:0 0 12px;font-size:13px;color:${T.text2};line-height:1.5">Ce prototype ne renvoie rien tout seul : vos retours restent dans ce navigateur. Copiez ce bloc et envoyez-le par email, il contient l’écran et le rôle de chaque remarque.</p>
+        <textarea readonly rows="10" style="width:100%;border:1px solid ${T.line};border-radius:12px;background:${T.gray25};padding:12px 14px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;line-height:1.6;color:${T.gray700};resize:vertical;outline:none">${esc(feedbackAsText())}</textarea>
+        <div style="display:flex;align-items:center;gap:10px;margin-top:12px">
+          <span style="flex:1;font-size:12px;color:${T.text3}">Effacer les retours de ce navigateur est sans retour en arrière.</span>
+          ${button({ label: 'Copier', variant: 'primary', icon: 'copy', act: 'feedback-copy' })}
+          ${button({ label: 'Tout effacer', variant: 'outline', act: 'feedback-clear' })}
+        </div>
+      </div>
+    </section>` : ''}`
+}
+
+/** One plain-text block, ready to paste into an email. */
+function feedbackAsText() {
+  return FEEDBACK.items
+    .map((entry) => {
+      const head = '[' + (KIND_LABELS[entry.kind] || 'Retour') + '] ' + (entry.view || 'écran non précisé') +
+        ' — vu comme ' + (entry.role || 'rôle non précisé') +
+        (entry.author ? ' — ' + entry.author : '') +
+        (entry.createdAt ? ' — ' + formatStamp(entry.createdAt) : '')
+      return head + '\n' + entry.text
+    })
+    .join('\n\n')
 }
 
 function formatStamp(iso) {
@@ -624,9 +604,31 @@ const ACTIONS = {
   'swap-kind': (arg) => { S.swapKind = arg },
 
   'feedback-open': () => { FEEDBACK.open = true },
+  'feedback-copy': () => {
+    const text = feedbackAsText()
+    /* Clipboard access can be refused in a sandboxed frame; the textarea
+       above stays selectable either way. */
+    try {
+      navigator.clipboard.writeText(text).then(
+        () => toast(plural(FEEDBACK.items.length, 'retour') + ' copiés. Collez-les dans un email.'),
+        () => toast('Copie refusée par le navigateur : sélectionnez le texte ci-dessous et copiez-le.')
+      )
+    } catch (error) {
+      toast('Copie refusée par le navigateur : sélectionnez le texte ci-dessous et copiez-le.')
+    }
+  },
+  'feedback-clear': () => {
+    FEEDBACK.items = []
+    try {
+      localStorage.removeItem('planning-feedback')
+    } catch (error) {
+      /* private window: nothing was stored anyway */
+    }
+    toast('Retours effacés de ce navigateur.')
+  },
   'feedback-close': () => { captureDraft(); FEEDBACK.open = false },
   'feedback-kind': (arg) => { captureDraft(); FEEDBACK.kind = arg },
-  'feedback-send': () => { captureDraft(); sendFeedback() }
+  'feedback-send': () => { captureDraft(); sendFeedback() },
 }
 
 function captureDraft() {
@@ -655,7 +657,7 @@ document.addEventListener('click', (event) => {
     const handler = ACTIONS[name]
     if (handler) {
       handler(arg)
-      if (name !== 'feedback-send') render()
+      render()
       return
     }
   }
