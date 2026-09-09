@@ -15,6 +15,7 @@ import {
   LogOut,
   Pencil,
   ChevronUp,
+  ChevronDown,
   Check,
   BookOpen,
   HeartPulse,
@@ -58,6 +59,7 @@ type SidebarItem = {
 }
 
 type SidebarSection = {
+  key: string
   heading: string
   items: SidebarItem[]
 }
@@ -65,9 +67,11 @@ type SidebarSection = {
 export function AppSidebar({
   user,
   pendingLeaveRequestsCount = 0,
+  hiddenSections = [],
 }: {
   user: SidebarUser
   pendingLeaveRequestsCount?: number
+  hiddenSections?: string[]
 }) {
   const t = useTranslations('navigation')
   const tDashboard = useTranslations('dashboard')
@@ -76,6 +80,14 @@ export function AppSidebar({
   const locale = useLocale()
   const router = useRouter()
   const [collapsed, setCollapsed] = useState(false)
+  const [hidden, setHidden] = useState<string[]>(hiddenSections)
+
+  // The choice outlives a reload without a client effect: the shell reads the cookie back.
+  function toggleSection(key: string) {
+    const next = hidden.includes(key) ? hidden.filter((entry) => entry !== key) : [...hidden, key]
+    setHidden(next)
+    document.cookie = `sidebar-hidden=${encodeURIComponent(next.join(','))}; path=/; max-age=31536000; samesite=lax`
+  }
   const [isLoggingOut, setIsLoggingOut] = useState(false)
 
   const accessible = accessibleApplications(user)
@@ -127,13 +139,14 @@ export function AppSidebar({
 
   const sections: SidebarSection[] = [
     {
+      key: 'overview',
       heading: t('sectionOverview'),
       items: [{ href: '/dashboard', label: tDashboard('title'), icon: LayoutDashboard }],
     },
   ]
 
   if (applicationItems.length > 0) {
-    sections.push({ heading: t('sectionApplications'), items: applicationItems })
+    sections.push({ key: 'applications', heading: t('sectionApplications'), items: applicationItems })
   }
 
   const adminItems: SidebarItem[] = []
@@ -160,7 +173,7 @@ export function AppSidebar({
   }
 
   if (adminItems.length > 0) {
-    sections.push({ heading: t('sectionAdministration'), items: adminItems })
+    sections.push({ key: 'administration', heading: t('sectionAdministration'), items: adminItems })
   }
 
   const activeHref = sections
@@ -199,15 +212,31 @@ export function AppSidebar({
         )}
       </Link>
 
-      <nav className="flex-1 space-y-6 overflow-y-auto px-3 py-4">
+      <nav className="sidebar-scroll flex-1 space-y-6 overflow-y-auto px-3 py-4">
         {sections.map((section) => (
           <div key={section.heading}>
             {!collapsed && (
-              <p className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-navy-300">
-                {section.heading}
-              </p>
+              <button
+                type="button"
+                onClick={() => toggleSection(section.key)}
+                aria-expanded={!hidden.includes(section.key)}
+                className="mb-2 flex w-full cursor-pointer items-center gap-1.5 rounded px-3 text-xs font-semibold uppercase tracking-wider text-navy-300 transition-colors hover:text-white"
+              >
+                <span>{section.heading}</span>
+                <ChevronDown
+                  className={cn(
+                    'h-3.5 w-3.5 shrink-0 transition-transform',
+                    hidden.includes(section.key) ? '-rotate-90' : '',
+                  )}
+                />
+                {hidden.includes(section.key) && (
+                  <span aria-hidden className="ml-auto font-normal normal-case tracking-normal text-navy-400">
+                    {section.items.length}
+                  </span>
+                )}
+              </button>
             )}
-            <ul className="space-y-1">
+            <ul className={cn('space-y-1', !collapsed && hidden.includes(section.key) ? 'hidden' : '')}>
               {section.items.map((item) => {
                 const active = item.href === activeHref
                 const Icon = item.icon

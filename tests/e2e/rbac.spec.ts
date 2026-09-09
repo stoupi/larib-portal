@@ -34,3 +34,21 @@ test('Super-admin: reaches portal user management', async ({ page }) => {
   expect(resp?.status()).toBe(200)
   await expect(page.locator('table')).toBeVisible()
 })
+
+test('the rail hides a whole section and remembers it across a reload', async ({ page }) => {
+  await login(page, 'test-admin@larib-portal.test')
+
+  const administration = page.getByRole('button', { name: 'Administration' })
+  await expect(administration).toHaveAttribute('aria-expanded', 'true')
+  const adminLinks = await page.getByRole('link', { name: /Leave management/ }).count()
+
+  await administration.click()
+  await expect(administration).toHaveAttribute('aria-expanded', 'false')
+  await expect(page.getByRole('link', { name: /Leave management/ })).toHaveCount(adminLinks - 1)
+
+  // The choice rides a cookie, so a full page load finds the section still folded.
+  await page.goto('/en/dashboard', { timeout: 60000 })
+  const folded = page.getByRole('button', { name: 'Administration' })
+  await folded.waitFor({ timeout: 60000 })
+  await expect(folded).toHaveAttribute('aria-expanded', 'false')
+})

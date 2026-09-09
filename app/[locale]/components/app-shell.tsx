@@ -1,3 +1,4 @@
+import { cookies } from 'next/headers'
 import { getTypedSession } from '@/lib/auth-helpers'
 import { NavbarClient } from './navbar-client'
 import { AppSidebar } from './app-sidebar'
@@ -8,6 +9,7 @@ import { countPendingLeaveRequests } from '@/lib/services/conges'
 export const dynamic = 'force-dynamic'
 
 export async function AppShell({ children }: { children: React.ReactNode }) {
+  const hiddenSections = (await cookies()).get('sidebar-hidden')?.value.split(',').filter(Boolean) ?? []
   const session = await getTypedSession()
   const user = session?.user
 
@@ -32,6 +34,7 @@ export async function AppShell({ children }: { children: React.ReactNode }) {
           adminApplications: toActiveApplications(effective.adminApplications),
         }}
         pendingLeaveRequestsCount={pendingLeaveRequestsCount}
+        hiddenSections={hiddenSections}
       />
       <div className="flex min-w-0 flex-1 flex-col">
         <main className="app-gradient flex-1">{children}</main>
