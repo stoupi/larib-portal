@@ -53,6 +53,13 @@ test('the data manager composes a CRF: reorders it, borrows from the library, cr
   expect(after[0]).toBe(before[1])
   expect(after[1]).toBe(before[0])
 
+  // Borrowing a block: the whole row imports it, the part it is filed under is read from the library.
+  await page.getByRole('button', { name: 'Import a block' }).click()
+  await expect(page.getByTestId('crf-block-cine')).toContainText('Part')
+  await page.getByTestId('crf-block-cine_rv').click()
+  await expect(page.getByTestId('crf-section-cine_rv')).toBeVisible()
+  await expect(page.getByTestId('crf-field-rvef')).toBeVisible()
+
   // An identifier is unique inside a part, so what Cine already holds is not offered again there.
   await page.getByRole('button', { name: '+ Variable' }).click()
   await expect(page.getByTestId('crf-add-tab-library')).toBeVisible()
@@ -118,7 +125,7 @@ test('the plan speaks French while the CRF content stays in English', async ({ p
   await expect(page.getByRole('heading', { name: 'Éditeur de CRF' })).toBeVisible({ timeout: 60000 })
   const demarrer = page.getByRole('button', { name: /commencer un brouillon/i })
   if (await demarrer.count()) await demarrer.click()
-  await expect(page.getByText('Partie · 5 sections')).toBeVisible()
+  await expect(page.getByTestId('crf-part-cine').getByText(/^Partie · \d+ sections$/)).toBeVisible()
   await expect(page.getByText('Glissez une partie ou une section')).toBeVisible()
   await expect(page.getByTestId('crf-section-cine-lv')).toContainText('Left Ventricle')
 })

@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import {
   fieldIdsOfPart,
   insertField,
+  hostPart,
   insertSection,
   moveField,
   movePart,
@@ -183,5 +184,25 @@ describe('removing', () => {
   it('removes a section, and its part when it was the last one', () => {
     expect(sectionOrder(removeSection(definition, 'cine-rv'), 'cine')).toEqual(['cine-lv'])
     expect(partOrder(removeSection(definition, 'lge-lv'))).toEqual(['cine'])
+  })
+})
+
+describe('hostPart', () => {
+  const section = { id: 'cine-atria', name: 'Atria', fields: [field('la_measurable')] }
+
+  it('opens the part the library files the section under', () => {
+    expect(hostPart([], section, { id: 'cine', name: 'Cine' })).toEqual({
+      id: 'cine',
+      name: 'Cine',
+      sections: [section],
+    })
+  })
+
+  it('falls back on the section itself when it belongs to no part', () => {
+    expect(hostPart([], section, null)).toEqual({ id: 'cine-atria', name: 'Atria', sections: [section] })
+  })
+
+  it('never collides with a part the CRF already holds', () => {
+    expect(hostPart(['cine'], section, { id: 'cine', name: 'Cine' }).id).toBe('cine_2')
   })
 })

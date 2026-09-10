@@ -22,6 +22,7 @@ import {
   renamePart,
   renameSection,
   replaceField,
+  hostPart,
   sectionIds,
   uniqueId,
 } from '@/lib/corelab/crf/reorder'
@@ -251,18 +252,24 @@ export function CrfEditor({ context, definition, impact, library }: {
                   modality={context.modality}
                   sectionName={section?.name ?? ''}
                   onClose={() => setRail('plan')}
-                  onInsert={(block) => {
-                    if (!part) return
+                  onInsert={(block, host) => {
                     if ('sections' in block.definition) {
                       const created = { ...block.definition, id: uniqueId(partIds(draft), block.definition.id) }
                       setDraft([...draft, created])
                       setOpenParts({ ...openParts, [created.id]: true })
                       select(created.sections[0]?.id ?? '')
-                    } else {
-                      const created = { ...block.definition, id: uniqueId(sectionIds(draft), block.definition.id) }
-                      setDraft(insertSection(draft, part.id, created, section?.id ?? null))
-                      select(created.id)
+                      setRail('plan')
+                      return
                     }
+                    const created = { ...block.definition, id: uniqueId(sectionIds(draft), block.definition.id) }
+                    if (part) {
+                      setDraft(insertSection(draft, part.id, created, section?.id ?? null))
+                    } else {
+                      const home = hostPart(partIds(draft), created, host && 'sections' in host.definition ? { id: host.definition.id, name: host.name } : null)
+                      setDraft([...draft, home])
+                      setOpenParts({ ...openParts, [home.id]: true })
+                    }
+                    select(created.id)
                     setRail('plan')
                   }}
                 />

@@ -3,6 +3,7 @@
 import { useMemo, useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { ChevronLeft, Plus } from 'lucide-react'
+import { cn } from '@/lib/utils'
 import { groupBlocks } from '@/lib/corelab/library/blocks'
 import { EditorInput, PaneBand } from '@/app/[locale]/corelab/components/crf/pane-chrome'
 import type { SectionDefinition, SequenceDefinition } from '@/lib/corelab/crf/schema'
@@ -24,7 +25,7 @@ export function CrfBlockPicker({ blocks, modality, sectionName, onInsert, onClos
   blocks: LibraryBlockOption[]
   modality: string
   sectionName: string
-  onInsert: (block: LibraryBlockOption) => void
+  onInsert: (block: LibraryBlockOption, host: LibraryBlockOption | null) => void
   onClose: () => void
 }) {
   const t = useTranslations('corelab.crfEditor')
@@ -43,16 +44,45 @@ export function CrfBlockPicker({ blocks, modality, sectionName, onInsert, onClos
     return words('variableCount', { count: block.definition.fields.length })
   }
 
-  function AddButton({ block }: { block: LibraryBlockOption }) {
+  function BlockRow({ block, host, label, kind, className }: {
+    block: LibraryBlockOption
+    host: LibraryBlockOption | null
+    label: string
+    kind: string
+    className: string
+  }) {
     return (
       <button
         type="button"
         aria-label={t('importThis', { name: block.name })}
         data-testid={`crf-block-${block.code}`}
-        onClick={() => onInsert(block)}
-        className="inline-flex size-6 flex-none cursor-pointer items-center justify-center rounded-lg border border-line bg-white text-coral-600 hover:border-coral-300 hover:bg-coral-50"
+        onClick={() => onInsert(block, host)}
+        className={cn('group flex w-full cursor-pointer items-center gap-2 text-left', className)}
       >
-        <Plus className="size-3.5" />
+        <span className="min-w-0 flex-1">
+          <span
+            className={cn(
+              'block truncate group-hover:text-coral-700',
+              block.kind === 'SEQUENCE' ? 'text-[13.5px] font-semibold text-text-primary' : 'text-[12.5px] text-gray-600',
+            )}
+          >
+            {label}
+          </span>
+          <span
+            className={cn(
+              'block truncate text-text-muted',
+              block.kind === 'SEQUENCE' ? 'text-[10.5px] font-medium uppercase tracking-[0.03em]' : 'text-[11px]',
+            )}
+          >
+            {kind}
+          </span>
+        </span>
+        <span
+          aria-hidden
+          className="inline-flex size-6 flex-none items-center justify-center rounded-lg border border-line bg-white text-coral-600 group-hover:border-coral-300 group-hover:bg-coral-50"
+        >
+          <Plus className="size-3.5" />
+        </span>
       </button>
     )
   }
@@ -85,26 +115,32 @@ export function CrfBlockPicker({ blocks, modality, sectionName, onInsert, onClos
           if (!sections.length && !(part && matches(part))) return null
           return (
             <div key={part?.code ?? 'loose'} className="mb-2 overflow-hidden rounded-[11px] border border-border bg-white">
-              <div className="flex items-center gap-2 bg-gray-50 px-2 py-2">
-                <span className="min-w-0 flex-1">
-                  <span className="block truncate text-[13.5px] font-semibold text-text-primary">
-                    {part ? part.name : words('looseSections')}
-                  </span>
+              {part ? (
+                <BlockRow
+                  block={part}
+                  host={null}
+                  label={part.name}
+                  kind={`${words('partKind')} · ${meta(part)}`}
+                  className="bg-gray-50 px-2 py-2 hover:bg-gray-100"
+                />
+              ) : (
+                <div className="bg-gray-50 px-2 py-2">
+                  <span className="block truncate text-[13.5px] font-semibold text-text-primary">{words('looseSections')}</span>
                   <span className="block text-[10.5px] font-medium uppercase tracking-[0.03em] text-text-muted">
-                    {part ? `${words('partKind')} · ${meta(part)}` : words('sectionCount', { count: group.sections.length })}
+                    {words('sectionCount', { count: group.sections.length })}
                   </span>
-                </span>
-                {part ? <AddButton block={part} /> : null}
-              </div>
+                </div>
+              )}
               <div className="py-1.5 pl-3 pr-1.5">
                 {sections.map((section) => (
-                  <div key={section.code} className="flex items-center gap-2 rounded-lg py-1.5 pl-2 pr-1.5 hover:bg-gray-50">
-                    <span className="min-w-0 flex-1">
-                      <span className="block truncate text-[12.5px] text-gray-600">{shortName(section.name)}</span>
-                      <span className="block truncate text-[11px] text-text-muted">{meta(section)}</span>
-                    </span>
-                    <AddButton block={section} />
-                  </div>
+                  <BlockRow
+                    key={section.code}
+                    block={section}
+                    host={part}
+                    label={shortName(section.name)}
+                    kind={meta(section)}
+                    className="rounded-lg py-1.5 pl-2 pr-1.5 hover:bg-gray-50"
+                  />
                 ))}
               </div>
             </div>

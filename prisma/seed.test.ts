@@ -639,7 +639,48 @@ async function main() {
 			},
 		},
 	});
-	console.log('✅ Created CoreLab library: 1 value set, 3 variables, 1 block');
+	await prisma.corelabLibraryBlock.create({
+		data: {
+			code: 'cine_rv',
+			name: 'Cine — Right Ventricle',
+			kind: 'SECTION',
+			modality: 'CMR',
+			definition: {
+				id: 'cine_rv',
+				name: 'Right Ventricle',
+				fields: [{ id: 'rvef', name: 'RVEF', type: 'numeric', required: true, unit: '%', min: 10, max: 80 }],
+			},
+		},
+	});
+	await prisma.corelabLibraryBlock.create({
+		data: {
+			code: 'cine',
+			name: 'Cine',
+			kind: 'SEQUENCE',
+			modality: 'CMR',
+			definition: {
+				id: 'cine',
+				name: 'Cine',
+				sections: [
+					{
+						id: 'cine_lv',
+						name: 'Left Ventricle',
+						fields: [
+							{ id: 'lv_measurable', name: 'LV Measurable', type: 'boolean', required: true, defaultValue: true },
+							{ id: 'lvef', name: 'LVEF', type: 'numeric', required: true, unit: '%', min: 10, max: 80 },
+							{ id: 'lv_edv', name: 'LV EDV', type: 'numeric', required: true, unit: 'mL', min: 30, max: 350 },
+						],
+					},
+					{
+						id: 'cine_rv',
+						name: 'Right Ventricle',
+						fields: [{ id: 'rvef', name: 'RVEF', type: 'numeric', required: true, unit: '%', min: 10, max: 80 }],
+					},
+				],
+			},
+		},
+	});
+	console.log('✅ Created CoreLab library: 1 value set, 3 variables, 3 blocks');
 
 	console.log('✅ Created CoreLab training and calibration:', coreModule.title, studyQuizModule.title, calibrationCase.code);
 

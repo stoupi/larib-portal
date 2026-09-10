@@ -137,6 +137,20 @@ export function publishable(definition: CrfDefinition): CrfDefinition {
     .filter((part) => part.sections.length > 0)
 }
 
+// The first block imported into an empty CRF has no part to land in: it opens the one the
+// library files it under, so the plan reads like the library it was borrowed from.
+export function hostPart(
+  taken: readonly string[],
+  section: SectionDefinition,
+  host: { id: string; name: string } | null,
+): SequenceDefinition {
+  return {
+    id: uniqueId(taken, host ? host.id : section.id),
+    name: host ? host.name : section.name,
+    sections: [section],
+  }
+}
+
 export function insertSection(
   definition: CrfDefinition,
   partId: string,
