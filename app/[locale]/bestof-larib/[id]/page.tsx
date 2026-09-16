@@ -39,7 +39,7 @@ async function CaseViewPageContent({
 			: c.difficulty === 'INTERMEDIATE'
 			? 'intermediate'
 			: 'advanced';
-	const isAdmin = canAdminApp(session.user, 'BESTOF_LARIB');
+	const isAdmin = sp?.view === 'admin' && canAdminApp(session.user, 'BESTOF_LARIB');
 
 	const userId = session?.user?.id;
 	const [prefillState, attempts, userTags, userTagIds] = userId

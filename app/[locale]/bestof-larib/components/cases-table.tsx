@@ -265,7 +265,7 @@ export default async function CasesTable({
                   </TableCell>
                   <TableCell>
                     <div className='flex flex-wrap justify-end gap-2'>
-                      <Link href={`/bestof-larib/${caseItem.id}`} prefetch className='inline-flex'>
+                      <Link href={isAdmin ? `/bestof-larib/${caseItem.id}?view=admin` : `/bestof-larib/${caseItem.id}`} prefetch className='inline-flex'>
                         <Button size='icon' variant='outline' title={translations.actions.view}>
                           <Eye />
                         </Button>

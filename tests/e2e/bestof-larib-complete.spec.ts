@@ -358,3 +358,27 @@ test.describe('Admin: statistics page', () => {
 		await expect(page.getByText(/activité des utilisateurs/i)).toBeVisible();
 	});
 });
+
+test.describe('Account that is both member and admin', () => {
+	test('works a case as a member from the user view, and reviews it as an admin from the admin view', async ({ page }) => {
+		await loginAs(page, 'admin');
+
+		await gotoBestofLarib(page, 'user');
+		await waitForTableToLoad(page);
+		await page.getByRole('link', { name: /start new attempt/i }).first().click();
+		await page.waitForURL(/\/en\/bestof-larib\/[a-z0-9-]+\?newAttempt=1/, { timeout: 20000 });
+
+		const memberAnalysis = page.locator('section', { hasText: 'My Analysis' });
+		await expect(memberAnalysis.getByRole('textbox').first()).toBeEnabled({ timeout: 10000 });
+		await expect(page.getByText('You can access the result after submitting your case')).toBeVisible();
+
+		await gotoBestofLarib(page, 'admin');
+		await waitForTableToLoad(page);
+		await page.getByRole('button', { name: /^view$/i }).first().click();
+		await page.waitForURL(/\/en\/bestof-larib\/[a-z0-9-]+\?view=admin/, { timeout: 30000 });
+
+		const adminAnalysis = page.locator('section', { hasText: 'My Analysis' });
+		await expect(adminAnalysis.getByRole('textbox').first()).toBeDisabled({ timeout: 10000 });
+		await expect(page.getByText('You can access the result after submitting your case')).not.toBeVisible();
+	});
+});
