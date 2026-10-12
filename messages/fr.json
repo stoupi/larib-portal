@@ -2027,7 +2027,8 @@
         "UI": "Interface",
         "IMPORT": "Import",
         "CRON": "Tâche planifiée",
-        "SCRIPT": "Script"
+        "SCRIPT": "Script",
+        "MAIL_AGENT": "Agent mails"
       },
       "entities": {
         "ARTICLE": "Publication",
@@ -2058,6 +2059,7 @@
         "studyId": "Étude",
         "submittedAt": "Date de soumission",
         "decidedAt": "Date de décision",
+        "manuscriptNumber": "Numéro de manuscrit",
         "doi": "DOI",
         "pubmedId": "PubMed",
         "name": "Nom",
@@ -2070,6 +2072,65 @@
       "articleHistory": {
         "title": "Historique",
         "empty": "Aucune modification enregistrée pour cette publication."
+      }
+    },
+    "mailAgent": {
+      "title": "Propositions de l'agent mails",
+      "subtitle": "Ce que l'agent a relevé dans les mails des revues. Les cas sûrs sont appliqués seuls ; les autres attendent votre validation.",
+      "moduleDescription": "Soumissions et décisions repérées dans les mails",
+      "lastRun": "Dernier passage de l'agent : {date}",
+      "neverRan": "L'agent n'est encore jamais passé.",
+      "stale": "L'agent n'est pas passé depuis plus de deux jours.",
+      "pendingTitle": "À valider",
+      "pendingEmpty": "Aucune proposition en attente.",
+      "historyTitle": "Déjà traitées",
+      "historyEmpty": "Rien n'a encore été traité.",
+      "event": {
+        "SUBMISSION": "Nouvelle soumission",
+        "MINOR_REVISIONS": "Révision mineure",
+        "MAJOR_REVISIONS": "Révision majeure",
+        "ACCEPTED": "Acceptation",
+        "REJECTED": "Refus"
+      },
+      "reason": {
+        "UNKNOWN_ARTICLE": "Article absent de la bibliothèque",
+        "AMBIGUOUS_ARTICLE": "Plusieurs articles portent ce titre",
+        "UNKNOWN_JOURNAL": "Revue absente de la banque",
+        "NO_MATCHING_SUBMISSION": "Aucune soumission connue à cette revue",
+        "ACCEPTANCE": "Une acceptation est toujours confirmée à la main",
+        "OUT_OF_ORDER": "Contredit l'historique déjà saisi",
+        "UNSPECIFIED": "À vérifier"
+      },
+      "status": {
+        "APPLIED": "Validée",
+        "AUTO_APPLIED": "Appliquée par l'agent",
+        "REDUNDANT": "Déjà connue",
+        "DISMISSED": "Écartée"
+      },
+      "manuscript": "Manuscrit {number}",
+      "currentStatus": "Aujourd'hui dans l'app : {status}",
+      "sources": "{count, plural, one {Relevé dans # mail} other {Relevé dans # mails}}",
+      "openMail": "Voir le mail",
+      "articleLabel": "Article concerné",
+      "articlePlaceholder": "Choisir un article…",
+      "articleSearch": "Rechercher un article…",
+      "articleEmpty": "Aucun article trouvé",
+      "journalLabel": "Revue",
+      "apply": "Valider",
+      "createTeam": "Créer l'article",
+      "createOutside": "Créer hors équipe",
+      "dismiss": "Écarter",
+      "applied": "Proposition appliquée",
+      "created": "Article créé : complétez ses auteurs",
+      "openArticle": "Ouvrir l'article",
+      "dismissed": "Proposition écartée",
+      "notPending": "Cette proposition a déjà été traitée.",
+      "columns": {
+        "event": "Événement",
+        "article": "Article",
+        "journal": "Revue",
+        "date": "Date",
+        "outcome": "Issue"
       }
     }
   },

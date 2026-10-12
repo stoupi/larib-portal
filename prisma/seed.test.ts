@@ -32,6 +32,7 @@ async function main() {
 	await prisma.account.deleteMany();
 	await prisma.authorshipAffiliation.deleteMany();
 	await prisma.authorship.deleteMany();
+	await prisma.publicationMailSuggestion.deleteMany();
 	await prisma.submission.deleteMany();
 	await prisma.journalTarget.deleteMany();
 	await prisma.article.deleteMany();

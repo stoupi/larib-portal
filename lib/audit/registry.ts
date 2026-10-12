@@ -75,7 +75,7 @@ export const AUDITED_MODELS: Readonly<Record<string, AuditedModelConfig>> = {
   },
   Submission: {
     entity: 'SUBMISSION',
-    auditedFields: ['articleId', 'journalId', 'submittedAt', 'status', 'decidedAt', 'invitedToResubmit', 'notes'],
+    auditedFields: ['articleId', 'journalId', 'submittedAt', 'status', 'decidedAt', 'invitedToResubmit', 'notes', 'manuscriptNumber'],
     labelFields: ['articleId'],
     buildLabel: () => null,
     articleIdField: 'articleId',

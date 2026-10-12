@@ -2029,7 +2029,8 @@
         "UI": "Interface",
         "IMPORT": "Import",
         "CRON": "Scheduled job",
-        "SCRIPT": "Script"
+        "SCRIPT": "Script",
+        "MAIL_AGENT": "Mail agent"
       },
       "entities": {
         "ARTICLE": "Publication",
@@ -2060,6 +2061,7 @@
         "studyId": "Study",
         "submittedAt": "Submitted on",
         "decidedAt": "Decided on",
+        "manuscriptNumber": "Manuscript number",
         "doi": "DOI",
         "pubmedId": "PubMed",
         "name": "Name",
@@ -2072,6 +2074,65 @@
       "articleHistory": {
         "title": "History",
         "empty": "No change recorded for this publication yet."
+      }
+    },
+    "mailAgent": {
+      "title": "Mail agent suggestions",
+      "subtitle": "What the agent picked up in journal emails. Safe cases are applied on their own; the others wait for your approval.",
+      "moduleDescription": "Submissions and decisions spotted in emails",
+      "lastRun": "Last agent run: {date}",
+      "neverRan": "The agent has not run yet.",
+      "stale": "The agent has not run for more than two days.",
+      "pendingTitle": "To review",
+      "pendingEmpty": "No suggestion is waiting.",
+      "historyTitle": "Already handled",
+      "historyEmpty": "Nothing has been handled yet.",
+      "event": {
+        "SUBMISSION": "New submission",
+        "MINOR_REVISIONS": "Minor revision",
+        "MAJOR_REVISIONS": "Major revision",
+        "ACCEPTED": "Acceptance",
+        "REJECTED": "Rejection"
+      },
+      "reason": {
+        "UNKNOWN_ARTICLE": "Article missing from the library",
+        "AMBIGUOUS_ARTICLE": "Several articles share this title",
+        "UNKNOWN_JOURNAL": "Journal missing from the bank",
+        "NO_MATCHING_SUBMISSION": "No known submission to this journal",
+        "ACCEPTANCE": "An acceptance is always confirmed by hand",
+        "OUT_OF_ORDER": "Contradicts the recorded history",
+        "UNSPECIFIED": "Needs checking"
+      },
+      "status": {
+        "APPLIED": "Approved",
+        "AUTO_APPLIED": "Applied by the agent",
+        "REDUNDANT": "Already known",
+        "DISMISSED": "Dismissed"
+      },
+      "manuscript": "Manuscript {number}",
+      "currentStatus": "In the app today: {status}",
+      "sources": "{count, plural, one {Found in # email} other {Found in # emails}}",
+      "openMail": "Open the email",
+      "articleLabel": "Article",
+      "articlePlaceholder": "Choose an article…",
+      "articleSearch": "Search an article…",
+      "articleEmpty": "No article found",
+      "journalLabel": "Journal",
+      "apply": "Approve",
+      "createTeam": "Create the article",
+      "createOutside": "Create as outside team",
+      "dismiss": "Dismiss",
+      "applied": "Suggestion applied",
+      "created": "Article created: complete its authors",
+      "openArticle": "Open the article",
+      "dismissed": "Suggestion dismissed",
+      "notPending": "This suggestion has already been handled.",
+      "columns": {
+        "event": "Event",
+        "article": "Article",
+        "journal": "Journal",
+        "date": "Date",
+        "outcome": "Outcome"
       }
     }
   },

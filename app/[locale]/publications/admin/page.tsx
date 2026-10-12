@@ -13,6 +13,7 @@ import { countStudies, listStudyOptions } from '@/lib/services/publications/stud
 import { countJournals, listJournalNames } from '@/lib/services/publications/journals'
 import { countPendingCarouselEmails } from '@/lib/services/publications/communication'
 import { countPublicationEmails } from '@/lib/services/publications/email-log'
+import { countPendingMailSuggestions } from '@/lib/services/publications/mail-suggestions'
 
 type PageParams = {
   params: Promise<{ locale: 'en' | 'fr' }>
@@ -37,6 +38,7 @@ export default async function PublicationsAdminPage({ params }: PageParams) {
     journalCount,
     pendingCommunications,
     emailCount,
+    pendingMailSuggestions,
   ] = await Promise.all([
     listPendingAuthorRequests(),
     listDashboardArticles(),
@@ -48,6 +50,7 @@ export default async function PublicationsAdminPage({ params }: PageParams) {
     countJournals(),
     countPendingCarouselEmails(),
     countPublicationEmails(),
+    countPendingMailSuggestions(),
   ])
 
   return (
@@ -71,6 +74,7 @@ export default async function PublicationsAdminPage({ params }: PageParams) {
             studies: studyCount,
             pendingCommunications,
             emails: emailCount,
+            pendingMailSuggestions,
           }}
         />
       </div>

@@ -64,12 +64,13 @@ model User {
   UserTag          UserTag[]
 
   //related to publications
-  authoredBy             Author[]
-  studiesCreated         Study[]              @relation("StudyCreatedBy")
-  articlesCreated        Article[]            @relation("ArticleCreatedBy")
-  publicationEmailsSent  PublicationEmail[]   @relation("PublicationEmailSentBy")
-  authorRequestsMade     PublicationRequest[] @relation("PublicationRequestedBy")
-  authorRequestsResolved PublicationRequest[] @relation("PublicationRequestResolvedBy")
+  authoredBy              Author[]
+  studiesCreated          Study[]                     @relation("StudyCreatedBy")
+  articlesCreated         Article[]                   @relation("ArticleCreatedBy")
+  publicationEmailsSent   PublicationEmail[]          @relation("PublicationEmailSentBy")
+  authorRequestsMade      PublicationRequest[]        @relation("PublicationRequestedBy")
+  authorRequestsResolved  PublicationRequest[]        @relation("PublicationRequestResolvedBy")
+  mailSuggestionsResolved PublicationMailSuggestion[] @relation("PublicationMailSuggestionResolvedBy")
 
   @@map("User")
 }
@@ -475,8 +476,9 @@ model Journal {
   updatedAt DateTime @updatedAt
 
   submissions       Submission[]
+  mailSuggestions   PublicationMailSuggestion[]
   targets           JournalTarget[]
-  publishedArticles Article[]       @relation("PublishedJournal")
+  publishedArticles Article[]                   @relation("PublishedJournal")
 
   @@map("Journal")
 }
@@ -621,10 +623,11 @@ model Article {
   createdAt           DateTime           @default(now())
   updatedAt           DateTime           @updatedAt
 
-  authorships    Authorship[]
-  submissions    Submission[]
-  journalTargets JournalTarget[]
-  authorRequests PublicationRequest[]
+  authorships     Authorship[]
+  submissions     Submission[]
+  mailSuggestions PublicationMailSuggestion[]
+  journalTargets  JournalTarget[]
+  authorRequests  PublicationRequest[]
 
   @@map("Article")
 }
@@ -649,10 +652,11 @@ enum PublicationEmailStatus {
 
 // One row, holding the settings the Publications admins share.
 model PublicationSettings {
-  id                  String   @id @default("singleton")
-  recapCcEmails       String[] @default([])
-  acceptedRecapEmails String[] @default([])
-  updatedAt           DateTime @updatedAt
+  id                  String    @id @default("singleton")
+  recapCcEmails       String[]  @default([])
+  acceptedRecapEmails String[]  @default([])
+  mailAgentLastRunAt  DateTime?
+  updatedAt           DateTime  @updatedAt
 
   @@map("PublicationSettings")
 }
@@ -738,10 +742,84 @@ model Submission {
   decidedAt         DateTime?
   invitedToResubmit Boolean          @default(false)
   notes             String?
+  manuscriptNumber  String?
   createdAt         DateTime         @default(now())
   updatedAt         DateTime         @updatedAt
 
+  mailSuggestions PublicationMailSuggestion[]
+
   @@map("Submission")
+}
+
+enum PublicationMailEventKind {
+  SUBMISSION
+  DECISION
+}
+
+enum PublicationMailSuggestionStatus {
+  PENDING
+  APPLIED
+  AUTO_APPLIED
+  REDUNDANT
+  DISMISSED
+}
+
+enum PublicationMailReviewReason {
+  UNKNOWN_ARTICLE
+  AMBIGUOUS_ARTICLE
+  UNKNOWN_JOURNAL
+  NO_MATCHING_SUBMISSION
+  ACCEPTANCE
+  OUT_OF_ORDER
+}
+
+model PublicationMailSuggestion {
+  id               String                          @id @default(cuid())
+  kind             PublicationMailEventKind
+  decision         SubmissionStatus?
+  title            String
+  journalName      String
+  manuscriptNumber String?
+  eventDate        DateTime
+  excerpt          String
+  titleKey         String
+  journalKey       String
+  manuscriptKey    String?
+  status           PublicationMailSuggestionStatus @default(PENDING)
+  reviewReason     PublicationMailReviewReason?
+  articleId        String?
+  article          Article?                        @relation(fields: [articleId], references: [id], onDelete: SetNull)
+  journalId        String?
+  journal          Journal?                        @relation(fields: [journalId], references: [id], onDelete: SetNull)
+  submissionId     String?
+  submission       Submission?                     @relation(fields: [submissionId], references: [id], onDelete: SetNull)
+  createdAt        DateTime                        @default(now())
+  resolvedAt       DateTime?
+  resolvedById     String?
+  resolvedBy       User?                           @relation("PublicationMailSuggestionResolvedBy", fields: [resolvedById], references: [id], onDelete: SetNull)
+
+  sources PublicationMailSource[]
+
+  @@index([status, createdAt])
+  @@index([kind, journalKey])
+  @@map("PublicationMailSuggestion")
+}
+
+model PublicationMailSource {
+  id           String                    @id @default(cuid())
+  suggestionId String
+  suggestion   PublicationMailSuggestion @relation(fields: [suggestionId], references: [id], onDelete: Cascade)
+  mailbox      String
+  messageId    String
+  threadUrl    String?
+  sender       String
+  subject      String
+  receivedAt   DateTime
+  createdAt    DateTime                  @default(now())
+
+  @@unique([mailbox, messageId])
+  @@index([suggestionId])
+  @@map("PublicationMailSource")
 }
 
 model JournalTarget {
@@ -768,6 +846,7 @@ enum AuditSource {
   IMPORT
   CRON
   SCRIPT
+  MAIL_AGENT
 }
 
 enum AuditEntity {

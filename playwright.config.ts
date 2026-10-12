@@ -93,6 +93,7 @@ export default defineConfig({
       CTGOV_FIXTURE_DIR: path.resolve(__dirname, 'tests/e2e/fixtures/ctgov'),
       OPEN_ACCESS_FIXTURE_DIR: path.resolve(__dirname, 'tests/e2e/fixtures/open-access'),
       OPEN_ACCESS_FIXTURE_ORIGIN: `http://localhost:${playwrightPort}`,
+      PUBLICATIONS_MAIL_AGENT_TOKEN: process.env.PUBLICATIONS_MAIL_AGENT_TOKEN ?? 'e2e-mail-agent-token',
     },
   },
 });
