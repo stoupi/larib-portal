@@ -104,6 +104,9 @@ export function SuggestionCard({ suggestion, articleOptions, review }: Suggestio
             emptyLabel={t('mailAgent.articleEmpty')}
             disabled={busy}
           />
+          <p className="text-xs text-text-muted">
+            {articleId === '' ? t('mailAgent.articleHintUnknown') : t('mailAgent.articleHintMatched')}
+          </p>
         </div>
         <div className="space-y-1.5">
           <Label htmlFor={journalFieldId}>{t('mailAgent.journalLabel')}</Label>

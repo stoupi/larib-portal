@@ -2111,7 +2111,7 @@
       "currentStatus": "Aujourd'hui dans l'app : {status}",
       "sources": "{count, plural, one {Relevé dans # mail} other {Relevé dans # mails}}",
       "openMail": "Voir le mail",
-      "articleLabel": "Article concerné",
+      "articleLabel": "Rattacher à un article existant",
       "articlePlaceholder": "Choisir un article…",
       "articleSearch": "Rechercher un article…",
       "articleEmpty": "Aucun article trouvé",
@@ -2131,7 +2131,9 @@
         "journal": "Revue",
         "date": "Date",
         "outcome": "Issue"
-      }
+      },
+      "articleHintUnknown": "L'agent n'a pas reconnu cet article. S'il est déjà dans la bibliothèque sous un autre titre, choisissez-le ici ; sinon, créez-le avec les boutons ci-dessous.",
+      "articleHintMatched": "Article reconnu par l'agent. Changez-le seulement s'il s'est trompé."
     }
   },
   "corelab": {

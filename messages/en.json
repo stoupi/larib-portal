@@ -2113,7 +2113,7 @@
       "currentStatus": "In the app today: {status}",
       "sources": "{count, plural, one {Found in # email} other {Found in # emails}}",
       "openMail": "Open the email",
-      "articleLabel": "Article",
+      "articleLabel": "Link to an existing article",
       "articlePlaceholder": "Choose an article…",
       "articleSearch": "Search an article…",
       "articleEmpty": "No article found",
@@ -2133,7 +2133,9 @@
         "journal": "Journal",
         "date": "Date",
         "outcome": "Outcome"
-      }
+      },
+      "articleHintUnknown": "The agent did not recognise this article. If the library already holds it under another title, pick it here; otherwise create it with the buttons below.",
+      "articleHintMatched": "Article recognised by the agent. Change it only if the agent got it wrong."
     }
   },
   "corelab": {
