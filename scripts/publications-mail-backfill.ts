@@ -29,9 +29,9 @@ import type { ArticleStatusValue } from '@/lib/services/publications/articles'
 //
 // The decisions file holds what the reviewer settled on the plan:
 //   { "skip": ["<article key>", …], "links": { "<normalised mail title>": "<article id>" },
-//     "keepNew": ["<article key>", …] }
+//     "notSame": ["<normalised mail title>", …] }
 // An unknown paper whose title closely resembles a library article is filed under it,
-// unless its key is listed in keepNew.
+// unless one of its titles is listed in notSame.
 
 const eventSchema = z.object({
   messageId: z.string().min(1),
@@ -51,21 +51,21 @@ const eventSchema = z.object({
 const decisionsSchema = z.object({
   skip: z.array(z.string()).default([]),
   links: z.record(z.string(), z.string()).default({}),
-  keepNew: z.array(z.string()).default([]),
+  notSame: z.array(z.string()).default([]),
 })
 
-const AUTO_LINK_THRESHOLD = 0.7
+const AUTO_LINK_THRESHOLD = 0.85
 
-function autoLinks(plan: BackfillPlan, keepNew: Set<string>): TitleLinks {
+function autoLinks(plan: BackfillPlan, notSame: Set<string>): TitleLinks {
   const links: TitleLinks = {}
   for (const article of plan.articles) {
     const best = article.similarArticles[0]
-    if (article.match !== 'NEW' || keepNew.has(article.key) || !best || best.similarity < AUTO_LINK_THRESHOLD) continue
-    for (const submission of article.submissions) {
-      for (const event of submission.events) {
-        if (event.title) links[normalizeTitle(event.title)] = best.id
-      }
-    }
+    if (article.match !== 'NEW' || !best || best.similarity < AUTO_LINK_THRESHOLD) continue
+    const titleKeys = article.submissions.flatMap((submission) =>
+      submission.events.flatMap((event) => (event.title ? [normalizeTitle(event.title)] : [])),
+    )
+    if (titleKeys.some((titleKey) => notSame.has(titleKey))) continue
+    for (const titleKey of titleKeys) links[titleKey] = best.id
   }
   return links
 }
@@ -215,7 +215,7 @@ async function main() {
   const { events, withoutJournal } = readEvents(eventsDirectory)
   const library = await loadLibrary()
   const firstPlan = planBackfill(events, library.articles, library.journals, decisions.links)
-  const suggestedLinks = autoLinks(firstPlan, new Set(decisions.keepNew))
+  const suggestedLinks = autoLinks(firstPlan, new Set(decisions.notSame))
   const plan = planBackfill(events, library.articles, library.journals, { ...suggestedLinks, ...decisions.links })
   writeFileSync(path.join(eventsDirectory, 'auto-links.json'), JSON.stringify(suggestedLinks, null, 2))
   writeFileSync(path.join(eventsDirectory, 'plan.json'), JSON.stringify(plan, null, 2))

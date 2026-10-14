@@ -242,6 +242,37 @@ describe('planBackfill', () => {
   })
 })
 
+describe('planBackfill with conflicting evidence', () => {
+  it('asks which article a manuscript belongs to when its letters name two different papers', () => {
+    const plan = planBackfill(
+      [
+        mailEvent({ title: TITLE, manuscriptNumber: 'RAD-24-0806' }),
+        mailEvent({ title: 'Prognostic value of midwall LGE in dilated cardiomyopathy', manuscriptNumber: 'RAD-24-0806.R4' }),
+      ],
+      [libraryArticle({}), libraryArticle({ id: 'article-2', title: 'Prognostic value of midwall LGE in dilated cardiomyopathy' })],
+      JOURNALS,
+    )
+    expect(plan.articles).toHaveLength(1)
+    expect(plan.articles[0].match).toBe('AMBIGUOUS')
+    expect(plan.articles[0].ambiguousArticleIds.sort()).toEqual(['article-1', 'article-2'])
+  })
+
+  it('keeps two papers apart when their titles only share a theme', () => {
+    const plan = planBackfill(
+      [
+        mailEvent({ title: 'Prognostic value of cardiovascular magnetic resonance midwall late gadolinium enhancement' }),
+        mailEvent({
+          title: 'Incremental prognostic value of cardiovascular magnetic resonance late gadolinium enhancement granularity in hypertrophic cardiomyopathy',
+          journalName: EHJ.name,
+        }),
+      ],
+      [],
+      JOURNALS,
+    )
+    expect(plan.articles).toHaveLength(2)
+  })
+})
+
 describe('planBackfill with reworded titles', () => {
   it('keeps a lightly reworded unknown paper under one new article', () => {
     const plan = planBackfill(

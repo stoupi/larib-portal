@@ -4,7 +4,6 @@ import { articleStatusBackfill } from './submission-rules'
 import {
   daysBetween,
   manuscriptKeyOf,
-  matchArticle,
   matchJournals,
   normalizeJournalName,
   normalizeTitle,
@@ -94,6 +93,7 @@ export type PlannedArticle = {
   nextStatus: ArticleStatusValue | null
   acceptedAt: Date | null
   ambiguousArticleIds: string[]
+  ambiguousArticles: Array<{ id: string; title: string }>
   similarArticles: Array<{ id: string; title: string; similarity: number }>
   submissions: PlannedSubmission[]
   supersededExisting: ExistingSubmissionFix[]
@@ -231,23 +231,27 @@ function matchGroup(group: ManuscriptGroup, library: LibraryArticle[], links: Ti
   const linkedId = group.titleKeys.map((titleKey) => links[titleKey]).find(Boolean)
   const linked = linkedId ? library.find((article) => article.id === linkedId) : undefined
   if (linked) return { kind: 'MATCHED', article: linked, ambiguousIds: [] }
-  const probes = [
-    ...group.manuscriptKeys.map((manuscriptKey) => ({ manuscriptNumber: manuscriptKey, title: group.title ?? '' })),
-    { manuscriptNumber: null, title: group.title ?? '' },
-  ]
-  let ambiguousIds: string[] = []
-  for (const probe of probes) {
-    const match = matchArticle(
-      { kind: 'SUBMISSION', decision: null, journalName: group.journalName, eventDate: new Date(0), ...probe },
-      library,
+
+  // Every number and every title a manuscript went by must point at the same article;
+  // a letter quoting another paper's title would otherwise file it silently elsewhere.
+  const candidateIds = new Set<string>()
+  for (const manuscriptKey of group.manuscriptKeys) {
+    const byManuscript = library.filter((article) =>
+      article.submissions.some((submission) => manuscriptKeyOf(submission.manuscriptNumber) === manuscriptKey),
     )
-    if (match.kind === 'MATCHED') {
-      const article = library.find((candidate) => candidate.id === match.article.id) ?? null
-      return { kind: 'MATCHED', article, ambiguousIds: [] }
-    }
-    if (match.kind === 'AMBIGUOUS') ambiguousIds = match.articleIds
+    if (byManuscript.length === 1) candidateIds.add(byManuscript[0].id)
   }
-  return { kind: ambiguousIds.length > 0 ? 'AMBIGUOUS' : 'NEW', article: null, ambiguousIds }
+  for (const titleKey of group.titleKeys) {
+    for (const article of library.filter((candidate) => normalizeTitle(candidate.title) === titleKey)) {
+      candidateIds.add(article.id)
+    }
+  }
+  if (candidateIds.size === 1) {
+    const article = library.find((candidate) => candidateIds.has(candidate.id)) ?? null
+    return { kind: 'MATCHED', article, ambiguousIds: [] }
+  }
+  if (candidateIds.size > 1) return { kind: 'AMBIGUOUS', article: null, ambiguousIds: [...candidateIds] }
+  return { kind: 'NEW', article: null, ambiguousIds: [] }
 }
 
 function findExistingSubmission(
@@ -380,7 +384,7 @@ function acceptanceDate(planned: PlannedSubmission[]): Date | null {
 
 type ArticleBucket = { key: string; match: GroupMatch; groups: ManuscriptGroup[] }
 
-const SAME_PAPER_THRESHOLD = 0.75
+const SAME_PAPER_THRESHOLD = 0.85
 
 // A paper sent to a new journal often comes back with a reworded title.
 function sharesPaper(bucket: ArticleBucket, group: ManuscriptGroup): boolean {
@@ -435,6 +439,9 @@ export function planBackfill(
       nextStatus,
       acceptedAt: acceptanceDate(submissions),
       ambiguousArticleIds: bucket.match.ambiguousIds,
+      ambiguousArticles: library
+        .filter((candidate) => bucket.match.ambiguousIds.includes(candidate.id))
+        .map((candidate) => ({ id: candidate.id, title: candidate.title })),
       similarArticles: article ? [] : similarArticles(title, library),
       submissions,
       supersededExisting,
