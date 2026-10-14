@@ -2078,7 +2078,7 @@
     },
     "mailAgent": {
       "title": "Mail agent suggestions",
-      "subtitle": "What the agent picked up in journal emails. Safe cases are applied on their own; the others wait for your approval.",
+      "subtitle": "Journal emails the agent could not handle on its own.",
       "moduleDescription": "Submissions and decisions spotted in emails",
       "lastRun": "Last agent run: {date}",
       "neverRan": "The agent has not run yet.",
@@ -2095,13 +2095,13 @@
         "REJECTED": "Rejection"
       },
       "reason": {
-        "UNKNOWN_ARTICLE": "Article missing from the library",
-        "AMBIGUOUS_ARTICLE": "Several articles share this title",
-        "UNKNOWN_JOURNAL": "Journal missing from the bank",
-        "NO_MATCHING_SUBMISSION": "No known submission to this journal",
-        "ACCEPTANCE": "An acceptance is always confirmed by hand",
-        "OUT_OF_ORDER": "Contradicts the recorded history",
-        "UNSPECIFIED": "Needs checking"
+        "UNKNOWN_ARTICLE": "This article is not in the library.",
+        "AMBIGUOUS_ARTICLE": "Several articles share this title: pick the right one.",
+        "UNKNOWN_JOURNAL": "This journal is not in the journal bank: check its name.",
+        "NO_MATCHING_SUBMISSION": "No submission to this journal is recorded for this article.",
+        "ACCEPTANCE": "Acceptance to confirm.",
+        "OUT_OF_ORDER": "This email contradicts the recorded history.",
+        "UNSPECIFIED": "Needs checking."
       },
       "status": {
         "APPLIED": "Approved",
@@ -2109,11 +2109,8 @@
         "REDUNDANT": "Already known",
         "DISMISSED": "Dismissed"
       },
-      "manuscript": "Manuscript {number}",
-      "currentStatus": "In the app today: {status}",
-      "sources": "{count, plural, one {Found in # email} other {Found in # emails}}",
-      "openMail": "Open the email",
-      "articleLabel": "Link to an existing article",
+      "currentStatus": "Current status in the app: {status}",
+      "articleLabel": "Does this article already exist under another title? Pick it:",
       "articlePlaceholder": "Choose an article…",
       "articleSearch": "Search an article…",
       "articleEmpty": "No article found",
@@ -2134,8 +2131,9 @@
         "date": "Date",
         "outcome": "Outcome"
       },
-      "articleHintUnknown": "The agent did not recognise this article. If the library already holds it under another title, pick it here; otherwise create it with the buttons below.",
-      "articleHintMatched": "Article recognised by the agent. Change it only if the agent got it wrong."
+      "readMail": "Read the email",
+      "openInGmail": "Open in Gmail",
+      "mailBodyMissing": "The text of this email was not kept."
     }
   },
   "corelab": {

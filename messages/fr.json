@@ -2076,7 +2076,7 @@
     },
     "mailAgent": {
       "title": "Propositions de l'agent mails",
-      "subtitle": "Ce que l'agent a relevé dans les mails des revues. Les cas sûrs sont appliqués seuls ; les autres attendent votre validation.",
+      "subtitle": "Les mails des revues que l'agent n'a pas pu traiter seul.",
       "moduleDescription": "Soumissions et décisions repérées dans les mails",
       "lastRun": "Dernier passage de l'agent : {date}",
       "neverRan": "L'agent n'est encore jamais passé.",
@@ -2093,13 +2093,13 @@
         "REJECTED": "Refus"
       },
       "reason": {
-        "UNKNOWN_ARTICLE": "Article absent de la bibliothèque",
-        "AMBIGUOUS_ARTICLE": "Plusieurs articles portent ce titre",
-        "UNKNOWN_JOURNAL": "Revue absente de la banque",
-        "NO_MATCHING_SUBMISSION": "Aucune soumission connue à cette revue",
-        "ACCEPTANCE": "Une acceptation est toujours confirmée à la main",
-        "OUT_OF_ORDER": "Contredit l'historique déjà saisi",
-        "UNSPECIFIED": "À vérifier"
+        "UNKNOWN_ARTICLE": "Cet article n'est pas dans la bibliothèque.",
+        "AMBIGUOUS_ARTICLE": "Plusieurs articles portent ce titre : choisissez le bon.",
+        "UNKNOWN_JOURNAL": "Cette revue n'est pas dans la banque des revues : vérifiez son nom.",
+        "NO_MATCHING_SUBMISSION": "Aucune soumission à cette revue n'est enregistrée pour cet article.",
+        "ACCEPTANCE": "Acceptation à confirmer.",
+        "OUT_OF_ORDER": "Ce mail contredit l'historique déjà enregistré.",
+        "UNSPECIFIED": "À vérifier."
       },
       "status": {
         "APPLIED": "Validée",
@@ -2107,11 +2107,8 @@
         "REDUNDANT": "Déjà connue",
         "DISMISSED": "Écartée"
       },
-      "manuscript": "Manuscrit {number}",
-      "currentStatus": "Aujourd'hui dans l'app : {status}",
-      "sources": "{count, plural, one {Relevé dans # mail} other {Relevé dans # mails}}",
-      "openMail": "Voir le mail",
-      "articleLabel": "Rattacher à un article existant",
+      "currentStatus": "Statut actuel dans l'app : {status}",
+      "articleLabel": "Cet article existe déjà sous un autre titre ? Choisissez-le :",
       "articlePlaceholder": "Choisir un article…",
       "articleSearch": "Rechercher un article…",
       "articleEmpty": "Aucun article trouvé",
@@ -2132,8 +2129,9 @@
         "date": "Date",
         "outcome": "Issue"
       },
-      "articleHintUnknown": "L'agent n'a pas reconnu cet article. S'il est déjà dans la bibliothèque sous un autre titre, choisissez-le ici ; sinon, créez-le avec les boutons ci-dessous.",
-      "articleHintMatched": "Article reconnu par l'agent. Changez-le seulement s'il s'est trompé."
+      "readMail": "Lire le mail",
+      "openInGmail": "Ouvrir dans Gmail",
+      "mailBodyMissing": "Le texte de ce mail n'a pas été conservé."
     }
   },
   "corelab": {

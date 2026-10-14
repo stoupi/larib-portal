@@ -34,6 +34,7 @@ async function postObservations(request: APIRequestContext, title: string, obser
         threadUrl: `https://mail.google.com/mail/#all/${observation.messageId}`,
         sender: 'em@editorialmanager.com',
         subject: 'Decision on submission',
+        body: `Dear Dr Garot,\n\n${observation.excerpt}\n\nKind regards,\nThe editorial office`,
         receivedAt: observation.eventDate,
         title,
         manuscriptNumber: observation.journalName === JOURNAL ? `EHJ-D-${observation.messageId.split('-')[0]}R1` : null,
@@ -74,15 +75,20 @@ test('the mail agent files observations, applies the safe ones and leaves the re
   await login(page, 'publications-admin@larib-portal.test')
   await page.goto('/fr/publications/admin/mail-agent', { timeout: 60000 })
   await expect(page.getByRole('heading', { level: 1, name: "Propositions de l'agent mails" })).toBeVisible()
-  await expect(page.getByRole('listitem', { name: title }).getByText('Article absent de la bibliothèque')).toBeVisible()
+  await expect(page.getByRole('listitem', { name: title }).getByText("Cet article n'est pas dans la bibliothèque.")).toBeVisible()
 
   await page.goto('/en/publications/admin/mail-agent', { timeout: 60000 })
   await expect(page.getByRole('heading', { level: 1, name: 'Mail agent suggestions' })).toBeVisible()
   await expect(page.getByRole('status')).toContainText('Last agent run')
   const unknownArticle = page.getByRole('listitem', { name: title })
   await expect(unknownArticle.getByText('New submission')).toBeVisible()
-  await expect(unknownArticle.getByText('Article missing from the library')).toBeVisible()
-  await expect(unknownArticle.getByRole('link', { name: 'Open the email' })).toBeVisible()
+  await expect(unknownArticle.getByText('This article is not in the library.')).toBeVisible()
+  await unknownArticle.getByRole('button', { name: 'Read the email' }).click()
+  const mail = page.getByRole('dialog')
+  await expect(mail.getByText('Thank you for your submission to the European Heart Journal.')).toBeVisible()
+  await expect(mail.getByRole('link', { name: 'Open in Gmail' })).toBeVisible()
+  await page.keyboard.press('Escape')
+  await expect(mail).toBeHidden()
   await unknownArticle.getByRole('button', { name: 'Create as outside team' }).click()
   await expect(page.getByText('Article created: complete its authors')).toBeVisible({ timeout: 15000 })
   await expect(page.getByRole('button', { name: 'Open the article' })).toBeVisible()
@@ -138,12 +144,12 @@ test('the mail agent files observations, applies the safe ones and leaves the re
   await expect(history.getByRole('row').filter({ hasText: title }).filter({ hasText: 'Applied by the agent' })).toBeVisible()
 
   const acceptance = page.getByRole('listitem', { name: title }).filter({ hasText: 'Acceptance' })
-  await expect(acceptance.getByText('An acceptance is always confirmed by hand')).toBeVisible()
+  await expect(acceptance.getByText('Acceptance to confirm.')).toBeVisible()
   await acceptance.getByRole('button', { name: 'Dismiss' }).click()
   await expect(page.getByText('Suggestion dismissed')).toBeVisible({ timeout: 15000 })
 
   const rejection = page.getByRole('listitem', { name: title }).filter({ hasText: 'Rejection' })
-  await expect(rejection.getByText('No known submission to this journal')).toBeVisible()
+  await expect(rejection.getByText('No submission to this journal is recorded for this article.')).toBeVisible()
   await rejection.getByRole('button', { name: 'Approve' }).click()
   await expect(page.getByText('Suggestion applied')).toBeVisible({ timeout: 15000 })
 

@@ -58,7 +58,7 @@ export function SuggestionList({ suggestions, articleOptions }: SuggestionListPr
 
   if (suggestions.length === 0) {
     return (
-      <p className="rounded-xl border border-dashed border-line px-4 py-10 text-center text-sm text-text-muted">
+      <p className="rounded-xl border border-dashed border-line px-4 py-10 text-center text-base text-text-primary">
         {t('mailAgent.pendingEmpty')}
       </p>
     )

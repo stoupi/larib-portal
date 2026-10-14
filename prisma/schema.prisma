@@ -814,6 +814,7 @@ model PublicationMailSource {
   threadUrl    String?
   sender       String
   subject      String
+  body         String?
   receivedAt   DateTime
   createdAt    DateTime                  @default(now())
 

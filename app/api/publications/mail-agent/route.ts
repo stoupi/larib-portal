@@ -17,6 +17,7 @@ const observationSchema = z
     threadUrl: z.string().url().startsWith('https://mail.google.com/').max(500).nullable(),
     sender: z.string().trim().min(1).max(200),
     subject: z.string().trim().min(1).max(300),
+    body: z.string().trim().max(50000).nullable(),
     receivedAt: z.coerce.date(),
     kind: z.enum(MAIL_EVENT_KINDS),
     decision: z.enum(MAIL_DECISIONS).nullable(),

@@ -28,6 +28,7 @@ export type MailSource = {
   threadUrl: string | null
   sender: string
   subject: string
+  body: string | null
   receivedAt: Date
 }
 
@@ -112,6 +113,7 @@ function sourceData(mailbox: string, observation: IncomingObservation) {
     threadUrl: observation.threadUrl,
     sender: observation.sender,
     subject: observation.subject,
+    body: observation.body,
     receivedAt: observation.receivedAt,
   }
 }
@@ -205,6 +207,15 @@ export async function ingestMailObservations(
   return results
 }
 
+export type MailSourceView = {
+  id: string
+  sender: string
+  subject: string
+  body: string | null
+  receivedAt: string
+  threadUrl: string | null
+}
+
 export type MailSuggestionRow = {
   id: string
   kind: MailEventKind
@@ -219,7 +230,7 @@ export type MailSuggestionRow = {
   article: { id: string; title: string; status: ArticleStatusValue } | null
   resolvedJournalName: string | null
   resolvedAt: string | null
-  sources: Array<{ id: string; mailbox: string; sender: string; subject: string; receivedAt: string; threadUrl: string | null }>
+  sources: MailSourceView[]
 }
 
 const ROW_SELECT = {
@@ -238,7 +249,7 @@ const ROW_SELECT = {
   journal: { select: { name: true } },
   sources: {
     orderBy: { receivedAt: 'asc' },
-    select: { id: true, mailbox: true, sender: true, subject: true, receivedAt: true, threadUrl: true },
+    select: { id: true, sender: true, subject: true, body: true, receivedAt: true, threadUrl: true },
   },
 } as const
 

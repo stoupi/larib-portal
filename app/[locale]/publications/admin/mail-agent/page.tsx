@@ -39,7 +39,7 @@ export default async function PublicationsMailAgentPage({ params }: PageParams) 
           <span aria-hidden className="w-[5px] shrink-0 rounded bg-gradient-to-b from-coral-500 to-coral-600" />
           <div>
             <h1 className="text-3xl font-extrabold tracking-tight text-text-primary">{t('title')}</h1>
-            <p className="mt-1.5 max-w-2xl text-sm leading-relaxed text-text-secondary">{t('subtitle')}</p>
+            <p className="mt-1.5 max-w-2xl text-base leading-relaxed text-text-primary">{t('subtitle')}</p>
           </div>
         </header>
 
@@ -47,8 +47,8 @@ export default async function PublicationsMailAgentPage({ params }: PageParams) 
           role="status"
           className={
             isStale
-              ? 'rounded-xl border border-coral-500/40 bg-coral-50 px-4 py-3 text-sm font-semibold text-coral-700 dark:bg-coral-500/15 dark:text-coral-300'
-              : 'text-sm text-text-secondary'
+              ? 'rounded-xl border border-coral-500/40 bg-coral-50 px-4 py-3 text-base font-semibold text-coral-700 dark:bg-coral-500/15 dark:text-coral-300'
+              : 'text-base text-text-primary'
           }
         >
           {lastRunAt ? t('lastRun', { date: formatter.format(lastRunAt) }) : t('neverRan')}
@@ -56,14 +56,14 @@ export default async function PublicationsMailAgentPage({ params }: PageParams) 
         </p>
 
         <section aria-label={t('pendingTitle')} className="space-y-3">
-          <h2 className="text-xs font-extrabold uppercase tracking-[0.14em] text-coral-600">
+          <h2 className="text-base font-extrabold uppercase tracking-[0.1em] text-coral-600">
             {t('pendingTitle')} · {pending.length}
           </h2>
           <SuggestionList suggestions={pending} articleOptions={articleOptions} />
         </section>
 
         <section aria-label={t('historyTitle')} className="space-y-3">
-          <h2 className="text-xs font-extrabold uppercase tracking-[0.14em] text-coral-600">{t('historyTitle')}</h2>
+          <h2 className="text-base font-extrabold uppercase tracking-[0.1em] text-coral-600">{t('historyTitle')}</h2>
           <SuggestionHistory suggestions={resolved} />
         </section>
       </div>
