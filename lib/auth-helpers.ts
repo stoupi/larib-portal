@@ -27,6 +27,7 @@ export const getTypedSession = cache(async (): Promise<BetterAuthSession | null>
 					lastName: true,
 					applications: true,
 					adminApplications: true,
+					canManageUsers: true,
 					phoneNumber: true,
 					profilePhoto: true,
 					country: true,

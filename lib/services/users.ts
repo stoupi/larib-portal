@@ -23,6 +23,7 @@ const userWithAdminFieldsSelect = {
   profilePhoto: true,
   applications: true,
   adminApplications: true,
+  canManageUsers: true,
   accessPeriods: { select: { application: true, startsAt: true, endsAt: true } },
   createdAt: true,
   updatedAt: true,
@@ -68,6 +69,7 @@ export type UpdateUserInput = {
   publicationsEmailOptOut?: boolean
   applications?: ActiveApplication[]
   adminApplications?: ActiveApplication[]
+  canManageUsers?: boolean
 }
 
 export async function updateUser(data: UpdateUserInput): Promise<UserWithAdminFields> {

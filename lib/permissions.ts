@@ -88,3 +88,24 @@ export function accessibleApplications(
   const effective = effectiveApplications(user, now)
   return Array.from(new Set([...effective.applications, ...effective.adminApplications]))
 }
+
+type WithUserManagement = WithAllApps & { canManageUsers?: boolean | null }
+
+export function canManageUsers(user: WithUserManagement): boolean {
+  return isSuperAdmin(user) || user.canManageUsers === true
+}
+
+export function grantableApplications(user: WithUserManagement, now: Date = new Date()): ActiveApplication[] {
+  if (isSuperAdmin(user)) return [...ACTIVE_APPLICATIONS]
+  if (!canManageUsers(user)) return []
+  return toActiveApplications(accessibleApplications(user, now))
+}
+
+export function ungrantableApplications(
+  user: WithUserManagement,
+  requested: Application[],
+  now: Date = new Date(),
+): Application[] {
+  const grantable = new Set<Application>(grantableApplications(user, now))
+  return requested.filter((application) => !grantable.has(application))
+}

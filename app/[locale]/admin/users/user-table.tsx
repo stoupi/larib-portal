@@ -21,7 +21,7 @@ import {
 } from '@/components/ui/alert-dialog'
 import { toast } from 'sonner'
 import type { InvitationStatus } from '@/lib/services/invitations'
-import { Mail, Shield, Trash2, UserIcon } from 'lucide-react'
+import { Mail, Shield, Trash2, UserIcon, UserPlus } from 'lucide-react'
 import { toActiveApplications, type ActiveApplication } from '@/lib/permissions'
 import type { UserWithOnboardingStatus } from '@/lib/services/users'
 
@@ -206,6 +206,12 @@ export function UserTable({ users, positions, locale }: { users: UserRow[]; posi
                         <span className="font-semibold text-text-primary">
                           {[user.firstName, user.lastName].filter(Boolean).join(' ') || user.name || '—'}
                         </span>
+                        {user.canManageUsers && (
+                          <span className="inline-flex items-center gap-1 rounded-full border border-line bg-gray-50 px-2 py-0.5 text-[10px] font-semibold uppercase text-text-secondary">
+                            <UserPlus className="h-2.5 w-2.5" />
+                            {t('userManagerBadge')}
+                          </span>
+                        )}
                       </div>
                     </TableCell>
                     <TableCell className="py-3">{user.email}</TableCell>
@@ -277,6 +283,7 @@ export function UserTable({ users, positions, locale }: { users: UserRow[]; posi
                             })),
                             applications: toActiveApplications(user.applications),
                             adminApplications: toActiveApplications(user.adminApplications),
+                            canManageUsers: user.canManageUsers,
                             congesTotalDays: user.congesTotalDays ?? undefined,
                             profilePhoto: user.profilePhoto ?? undefined,
                           }}

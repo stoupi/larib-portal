@@ -257,7 +257,10 @@
     "accessUntil": "Until",
     "accessExpired": "expired on {date}",
     "accessUntilShort": "until {date}",
-    "accessFromShort": "from {date}"
+    "accessFromShort": "from {date}",
+    "canManageUsers": "Can invite users",
+    "canManageUsersHelp": "Can invite members and open them the applications they have access to, without any admin right.",
+    "userManagerBadge": "Manager"
   },
   "upload": {
     "selectFile": "Select image",
@@ -3143,6 +3146,43 @@
       "addValue": "Add a value",
       "removeValue": "Remove the value",
       "readerName": "Name the reader sees"
+    }
+  },
+  "userManagement": {
+    "navLabel": "Users",
+    "title": "Users",
+    "subtitle": "Invite members and open them the applications you have access to.",
+    "inviteButton": "Invite a user",
+    "inviteTitle": "Invite a user",
+    "inviteDescription": "They will receive an email to set their password.",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "email": "Email",
+    "position": "Position",
+    "noPosition": "No position",
+    "emailLanguage": "Email language",
+    "arrivalDate": "Arrival date",
+    "departureDate": "Departure date",
+    "applications": "Applications",
+    "memberOnlyHint": "Member access only. Only a super administrator can appoint an administrator or remove an access.",
+    "cancel": "Cancel",
+    "sending": "Sending…",
+    "sendInvite": "Send invitation",
+    "inviteSuccess": "Invitation sent",
+    "grantButton": "Add applications",
+    "grantButtonFor": "Add applications to {name}",
+    "grantTitle": "Add applications to {name}",
+    "grantConfirm": "Add",
+    "grantSuccess": "Applications added",
+    "searchPlaceholder": "Search by name or email",
+    "name": "Name",
+    "actions": "Actions",
+    "noResult": "No user found",
+    "errors": {
+      "USER_ALREADY_EXISTS": "An account already exists with this email: add applications to it from the list instead.",
+      "APPLICATION_NOT_GRANTABLE": "You can only grant the applications you have access to.",
+      "Forbidden": "You are not allowed to manage users.",
+      "generic": "The action failed."
     }
   }
 }

@@ -4,6 +4,9 @@ import {
   accessibleApplications,
   canAccessApp,
   canAdminApp,
+  canManageUsers,
+  grantableApplications,
+  ungrantableApplications,
   effectiveApplications,
   filterActiveAppAdmins,
   filterActiveAppMembers,
@@ -107,5 +110,32 @@ describe('active application candidates', () => {
       'permanent@example.test',
       'super@example.test',
     ])
+  })
+})
+
+describe('user managers', () => {
+  const manager = {
+    role: 'USER' as const,
+    canManageUsers: true,
+    applications: ['CONGES' as const, 'PUBLICATIONS' as const],
+    adminApplications: ['BESTOF_LARIB' as const],
+    accessPeriods: [{ application: 'PUBLICATIONS' as const, startsAt: null, endsAt: new Date('2026-01-01T00:00:00.000Z') }],
+  }
+
+  it('only lets the super admin and flagged accounts manage users', () => {
+    expect(canManageUsers({ role: 'ADMIN' })).toBe(true)
+    expect(canManageUsers(manager)).toBe(true)
+    expect(canManageUsers({ ...manager, canManageUsers: false })).toBe(false)
+  })
+
+  it('lets a manager grant only the applications they can open themselves', () => {
+    expect(grantableApplications(manager, NOW).sort()).toEqual(['BESTOF_LARIB', 'CONGES'])
+    expect(grantableApplications({ ...manager, canManageUsers: false }, NOW)).toEqual([])
+    expect(grantableApplications({ role: 'ADMIN' }, NOW)).toEqual(['BESTOF_LARIB', 'CONGES', 'PUBLICATIONS', 'CORELAB'])
+  })
+
+  it('names every requested application the manager may not grant', () => {
+    expect(ungrantableApplications(manager, ['CONGES', 'CORELAB', 'PUBLICATIONS'], NOW)).toEqual(['CORELAB', 'PUBLICATIONS'])
+    expect(ungrantableApplications(manager, ['CONGES'], NOW)).toEqual([])
   })
 })

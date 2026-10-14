@@ -4,6 +4,10 @@ import { resolveAppBaseUrl } from '@/lib/app-url'
 import { renderWelcomeEmail, type WelcomeEmailParams } from '@/lib/email/welcome-template'
 import { renderPublicationRequestEmail } from '@/lib/email/publication-request-template'
 import { renderCarouselRequestEmailHtml } from '@/lib/email/carousel-template'
+import {
+  renderUserManagerNotificationEmail,
+  type UserManagerNotificationEmailParams,
+} from '@/lib/email/user-manager-notification-template'
 
 export { renderCarouselRequestEmailHtml }
 import { eachDayOfInterval, endOfDay, endOfWeek, format, isWithinInterval, startOfDay, startOfWeek } from 'date-fns'
@@ -1070,4 +1074,35 @@ export async function sendCorelabReviewEmail(params: ReviewEmailParams & { to: s
     body: JSON.stringify({ from: `Larib Portal <${fromEmail}>`, to: [params.to], subject, text, html }),
   })
   return { ok: res.ok }
+}
+
+export type UserManagerNotificationMailParams = Omit<UserManagerNotificationEmailParams, 'locale' | 'usersUrl'> & {
+  recipients: Array<{ email: string; language: 'EN' | 'FR' }>
+}
+
+export async function sendUserManagerNotificationEmail(
+  params: UserManagerNotificationMailParams,
+): Promise<{ ok: boolean }> {
+  if (params.recipients.length === 0) return { ok: true }
+  const apiKey = process.env.RESEND_API_KEY
+  if (!apiKey) return { ok: false }
+  const fromEmail = process.env.RESEND_FROM || 'noreply@your-domain.com'
+  const { recipients, ...content } = params
+  const results = await Promise.all(
+    recipients.map(async (recipient) => {
+      const locale = recipient.language === 'FR' ? 'fr' : 'en'
+      const { subject, text, html } = renderUserManagerNotificationEmail({
+        ...content,
+        locale,
+        usersUrl: `${resolveAppBaseUrl()}/${locale}/admin/users`,
+      })
+      const response = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ from: `Larib Portal <${fromEmail}>`, to: [recipient.email], subject, text, html }),
+      })
+      return response.ok
+    }),
+  )
+  return { ok: results.every(Boolean) }
 }
