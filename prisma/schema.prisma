@@ -37,6 +37,7 @@ model User {
   publicationsEmailOptOut Boolean       @default(false)
   applications            Application[]
   adminApplications       Application[] @default([])
+  canManageUsers          Boolean       @default(false)
   createdAt               DateTime      @default(now())
   updatedAt               DateTime      @updatedAt
   image                   String?

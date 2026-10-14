@@ -23,7 +23,7 @@ import {
   type LucideIcon,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { isSuperAdmin, accessibleApplications, canAdminApp, type ActiveApplication } from '@/lib/permissions'
+import { isSuperAdmin, accessibleApplications, canAdminApp, canManageUsers, type ActiveApplication } from '@/lib/permissions'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
   DropdownMenu,
@@ -48,6 +48,7 @@ type SidebarUser = {
   role?: 'ADMIN' | 'USER'
   applications?: ActiveApplication[] | null
   adminApplications?: ActiveApplication[] | null
+  canManageUsers?: boolean | null
 }
 
 type SidebarItem = {
@@ -76,6 +77,7 @@ export function AppSidebar({
   const t = useTranslations('navigation')
   const tDashboard = useTranslations('dashboard')
   const tAdmin = useTranslations('admin')
+  const tUserManagement = useTranslations('userManagement')
   const pathname = usePathname()
   const locale = useLocale()
   const router = useRouter()
@@ -170,6 +172,8 @@ export function AppSidebar({
   }
   if (isAdmin) {
     adminItems.push({ href: '/admin/users', label: tAdmin('usersNav'), icon: Users })
+  } else if (canManageUsers(user)) {
+    adminItems.push({ href: '/users', label: tUserManagement('navLabel'), icon: Users })
   }
 
   if (adminItems.length > 0) {

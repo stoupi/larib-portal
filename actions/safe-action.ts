@@ -1,7 +1,7 @@
 import { createSafeActionClient, DEFAULT_SERVER_ERROR_MESSAGE } from "next-safe-action";
 import { getTypedSession } from "../lib/auth-helpers";
 import type { Application, User } from '@/app/generated/prisma'
-import { canAccessApp, canAdminApp, isSuperAdmin } from '@/lib/permissions'
+import { canAccessApp, canAdminApp, canManageUsers, isSuperAdmin } from '@/lib/permissions'
 import { runAuditedOperation } from '@/lib/audit/context'
 import { writeAuditOperation } from '@/lib/audit/writer'
 import { prismaWithoutAudit } from '@/lib/prisma'
@@ -46,6 +46,13 @@ export const unauthenticatedAction = actionClient;
 
 export const superAdminAction = authenticatedAction.use(async ({ next, ctx }) => {
   if (!isSuperAdmin(ctx.user)) {
+    throw new Error('Forbidden')
+  }
+  return next({ ctx })
+})
+
+export const userManagerAction = authenticatedAction.use(async ({ next, ctx }) => {
+  if (!canManageUsers(ctx.user)) {
     throw new Error('Forbidden')
   }
   return next({ ctx })

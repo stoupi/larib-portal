@@ -14,6 +14,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select } from '@/components/ui/select';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
 import { useState } from 'react';
 import { updateUserAction, createPositionAction, updatePositionAction, deletePositionsAction } from './actions';
@@ -48,6 +49,7 @@ const FormSchema = z.object({
 	departureDate: z.string().optional(),
 	applications: z.array(z.enum(AVAILABLE_APPLICATIONS)),
 	adminApplications: z.array(z.enum(AVAILABLE_APPLICATIONS)),
+	canManageUsers: z.boolean(),
 	accessPeriods: z.array(z.object({
 		application: z.enum(AVAILABLE_APPLICATIONS),
 		startsAt: z.string().optional().nullable(),
@@ -298,6 +300,18 @@ export function UserEditDialog({
 										<option value='FR'>Français</option>
 									</Select>
 								</div>
+								<label className='md:col-span-2 flex items-start gap-3 rounded-lg border border-line bg-bg-app p-3'>
+									<Checkbox
+										className='mt-0.5'
+										checked={watch('canManageUsers')}
+										onCheckedChange={(checked) => setValue('canManageUsers', checked === true)}
+										aria-label={t('canManageUsers')}
+									/>
+									<span>
+										<span className='block text-sm font-medium text-text-primary'>{t('canManageUsers')}</span>
+										<span className='block text-xs text-text-secondary'>{t('canManageUsersHelp')}</span>
+									</span>
+								</label>
 							</div>
 						</section>
 

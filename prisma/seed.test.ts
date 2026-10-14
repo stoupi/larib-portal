@@ -254,6 +254,23 @@ async function main() {
 	});
 	console.log('✅ Created Bestof admin:', bestofAdmin.email);
 
+	const userManagerPassword = await ctx.password.hash('ristifou');
+	const userManager = await prisma.user.create({
+		data: {
+			id: randomUUID(),
+			name: 'User Manager',
+			firstName: 'User',
+			lastName: 'Manager',
+			email: 'user-manager@larib-portal.test',
+			emailVerified: true,
+			role: 'USER',
+			canManageUsers: true,
+			applications: ['CONGES', 'PUBLICATIONS'],
+			accounts: { create: { id: randomUUID(), providerId: 'credential', accountId: 'user-manager@larib-portal.test', password: userManagerPassword } },
+		},
+	});
+	console.log('✅ Created user manager:', userManager.email);
+
 	// Create publications users (member + app-admin) for RBAC tests
 	const publicationsAdminPassword = await ctx.password.hash('ristifou');
 	const publicationsAdmin = await prisma.user.create({

@@ -255,7 +255,10 @@
     "accessUntil": "Jusqu'au",
     "accessExpired": "expiré le {date}",
     "accessUntilShort": "jusqu'au {date}",
-    "accessFromShort": "à partir du {date}"
+    "accessFromShort": "à partir du {date}",
+    "canManageUsers": "Peut inviter des utilisateurs",
+    "canManageUsersHelp": "Peut inviter des membres et leur ouvrir les applications auxquelles il a accès, sans droit d'administration.",
+    "userManagerBadge": "Gestionnaire"
   },
   "upload": {
     "selectFile": "Choisir une image",
@@ -3213,6 +3216,43 @@
       "addValue": "Ajouter une valeur",
       "removeValue": "Retirer la valeur",
       "readerName": "Nom vu par le relecteur"
+    }
+  },
+  "userManagement": {
+    "navLabel": "Utilisateurs",
+    "title": "Utilisateurs",
+    "subtitle": "Invitez des membres et ouvrez-leur les applications auxquelles vous avez accès.",
+    "inviteButton": "Inviter un utilisateur",
+    "inviteTitle": "Inviter un utilisateur",
+    "inviteDescription": "La personne recevra un e-mail pour créer son mot de passe.",
+    "firstName": "Prénom",
+    "lastName": "Nom",
+    "email": "E-mail",
+    "position": "Poste",
+    "noPosition": "Aucun poste",
+    "emailLanguage": "Langue de l'e-mail",
+    "arrivalDate": "Date d'arrivée",
+    "departureDate": "Date de départ",
+    "applications": "Applications",
+    "memberOnlyHint": "Accès membre uniquement. Seul un super administrateur peut nommer un administrateur ou retirer un accès.",
+    "cancel": "Annuler",
+    "sending": "Envoi…",
+    "sendInvite": "Envoyer l'invitation",
+    "inviteSuccess": "Invitation envoyée",
+    "grantButton": "Ajouter des applications",
+    "grantButtonFor": "Ajouter des applications à {name}",
+    "grantTitle": "Ajouter des applications à {name}",
+    "grantConfirm": "Ajouter",
+    "grantSuccess": "Applications ajoutées",
+    "searchPlaceholder": "Rechercher par nom ou e-mail",
+    "name": "Nom",
+    "actions": "Actions",
+    "noResult": "Aucun utilisateur trouvé",
+    "errors": {
+      "USER_ALREADY_EXISTS": "Un compte existe déjà avec cet e-mail : ajoutez-lui plutôt des applications depuis la liste.",
+      "APPLICATION_NOT_GRANTABLE": "Vous ne pouvez attribuer que les applications auxquelles vous avez accès.",
+      "Forbidden": "Vous n'avez pas le droit de gérer les utilisateurs.",
+      "generic": "L'action a échoué."
     }
   }
 }
