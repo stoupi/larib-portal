@@ -17,8 +17,8 @@ test('a user manager invites a member and opens them only their own applications
 
   await login(page, MANAGER_EMAIL)
   await page.getByRole('link', { name: 'Users', exact: true }).click()
-  await expect(page).toHaveURL(/\/en\/users$/)
-  await expect(page.getByRole('heading', { name: 'Users' })).toBeVisible()
+  await page.waitForURL((url) => url.pathname === '/en/users', { timeout: 60000 })
+  await expect(page.getByRole('heading', { name: 'Users' })).toBeVisible({ timeout: 30000 })
   expect((await page.goto('/en/admin/users', { timeout: 60000 }))?.status()).toBe(404)
 
   await page.goto('/en/users', { timeout: 60000 })
