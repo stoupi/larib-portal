@@ -1,7 +1,7 @@
 import { prisma } from '@/lib/prisma'
 import type { ArticleScope } from '@/app/generated/prisma'
+import type { MailTarget } from '@/lib/publications/mail-agent-preview'
 import {
-  findSubmission,
   manuscriptKeyOf,
   type CandidateArticle,
   type MailDecision,
@@ -23,8 +23,7 @@ export type MailEventChange = {
 
 export async function applyMailEvent(change: MailEventChange): Promise<{ submissionId: string }> {
   const newSubmission = { articleId: change.articleId, journalName: change.journalName, submittedAt: change.eventDate }
-  const submissionId =
-    change.kind === 'DECISION' && change.submissionId ? change.submissionId : (await addSubmission(newSubmission)).id
+  const submissionId = change.submissionId ?? (await addSubmission(newSubmission)).id
 
   if (change.kind === 'DECISION' && change.decision) {
     await updateSubmissionStatus({ submissionId, status: change.decision, decidedAt: change.eventDate })
@@ -84,7 +83,7 @@ export async function loadCandidateArticle(articleId: string): Promise<Candidate
 export type ApplySuggestionInput = {
   suggestionId: string
   articleId: string
-  journalName: string
+  target: MailTarget
   adminId: string
 }
 
@@ -94,28 +93,19 @@ export async function applySuggestion(input: ApplySuggestionInput): Promise<{ ar
   const article = await loadCandidateArticle(input.articleId)
   if (!article) throw new Error('ARTICLE_NOT_FOUND')
 
-  const decision = suggestion.decision as MailDecision | null
-  const knownSubmission =
-    suggestion.kind === 'DECISION'
-      ? findSubmission(
-          {
-            kind: suggestion.kind,
-            decision,
-            title: suggestion.title,
-            journalName: input.journalName,
-            manuscriptNumber: suggestion.manuscriptNumber,
-            eventDate: suggestion.eventDate,
-          },
-          article,
-        )
+  const target = input.target
+  const existing =
+    target.kind === 'EXISTING'
+      ? article.submissions.find((submission) => submission.id === target.submissionId) ?? null
       : null
+  if (target.kind === 'EXISTING' && !existing) throw new Error('SUBMISSION_NOT_FOUND')
 
   const applied = await applyMailEvent({
     kind: suggestion.kind,
-    decision,
+    decision: suggestion.decision as MailDecision | null,
     articleId: article.id,
-    journalName: input.journalName.trim(),
-    submissionId: knownSubmission?.id ?? null,
+    journalName: target.kind === 'NEW' ? target.journalName.trim() : existing?.journalName ?? suggestion.journalName,
+    submissionId: existing?.id ?? null,
     manuscriptNumber: suggestion.manuscriptNumber,
     eventDate: suggestion.eventDate,
   })
@@ -153,7 +143,7 @@ export async function createArticleFromSuggestion(input: CreateArticleFromSugges
   return applySuggestion({
     suggestionId: input.suggestionId,
     articleId: article.id,
-    journalName: input.journalName,
+    target: { kind: 'NEW', journalName: input.journalName },
     adminId: input.adminId,
   })
 }

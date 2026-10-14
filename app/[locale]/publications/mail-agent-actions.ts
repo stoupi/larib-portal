@@ -22,7 +22,10 @@ export const applyMailSuggestionAction = appAdminAction('PUBLICATIONS')
     z.object({
       suggestionId: z.string().min(1),
       articleId: z.string().min(1),
-      journalName: z.string().trim().min(1).max(200),
+      target: z.discriminatedUnion('kind', [
+        z.object({ kind: z.literal('EXISTING'), submissionId: z.string().min(1) }),
+        z.object({ kind: z.literal('NEW'), journalName: z.string().trim().min(1).max(200) }),
+      ]),
     }),
   )
   .action(async ({ parsedInput, ctx }) => {

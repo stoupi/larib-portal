@@ -42,7 +42,7 @@ export type CandidateArticle = {
   submissions: CandidateSubmission[]
 }
 
-export type CandidateJournal = { id: string; name: string }
+export type CandidateJournal = { id: string; name: string; abbreviation: string | null }
 
 export type ArticleMatch =
   | { kind: 'MATCHED'; article: CandidateArticle }
@@ -117,10 +117,23 @@ export function matchArticle(observation: MailObservation, candidates: Candidate
   return { kind: 'UNKNOWN' }
 }
 
+function journalKeys(journal: CandidateJournal): string[] {
+  return [journal.name, journal.abbreviation ?? '']
+    .map(normalizeJournalName)
+    .filter((key) => key.length > 0)
+}
+
+// The bank holds one journal under several rows ("JACC Adv", and "JACC. Advances" whose
+// abbreviation is "JACC Adv"): rows sharing a name or an abbreviation are the same journal.
 export function matchJournals(journalName: string, journals: CandidateJournal[]): CandidateJournal[] {
   const journalKey = normalizeJournalName(journalName)
   if (journalKey.length === 0) return []
-  return journals.filter((journal) => normalizeJournalName(journal.name) === journalKey)
+  const direct = journals.filter((journal) => journalKeys(journal).includes(journalKey))
+  const sharedKeys = new Set(direct.flatMap(journalKeys))
+  const equivalent = journals.filter(
+    (journal) => !direct.includes(journal) && journalKeys(journal).some((key) => sharedKeys.has(key)),
+  )
+  return [...direct, ...equivalent]
 }
 
 function latestSubmission(submissions: CandidateSubmission[]): CandidateSubmission | null {
@@ -130,7 +143,11 @@ function latestSubmission(submissions: CandidateSubmission[]): CandidateSubmissi
   )
 }
 
-export function findSubmission(observation: MailObservation, article: CandidateArticle): CandidateSubmission | null {
+export function findSubmission(
+  observation: MailObservation,
+  article: CandidateArticle,
+  journalIds: string[] = [],
+): CandidateSubmission | null {
   const manuscriptKey = manuscriptKeyOf(observation.manuscriptNumber)
   if (manuscriptKey) {
     const byManuscript = article.submissions.filter(
@@ -140,7 +157,10 @@ export function findSubmission(observation: MailObservation, article: CandidateA
   }
   const journalKey = normalizeJournalName(observation.journalName)
   return latestSubmission(
-    article.submissions.filter((submission) => normalizeJournalName(submission.journalName) === journalKey),
+    article.submissions.filter(
+      (submission) =>
+        journalIds.includes(submission.journalId) || normalizeJournalName(submission.journalName) === journalKey,
+    ),
   )
 }
 
@@ -155,9 +175,10 @@ function isClosed(status: ArticleStatusValue): boolean {
 function planSubmission(
   observation: MailObservation,
   article: CandidateArticle,
-  journalId: string | null,
+  journalIds: string[],
 ): ObservationPlan {
-  const known = findSubmission(observation, article)
+  const journalId = journalIds[0] ?? null
+  const known = findSubmission(observation, article, journalIds)
   const base = { articleId: article.id, journalId: known?.journalId ?? journalId }
   const isSameSubmission =
     known != null &&
@@ -178,9 +199,10 @@ function planSubmission(
 function planDecision(
   observation: MailObservation,
   article: CandidateArticle,
-  journalId: string | null,
+  journalIds: string[],
 ): ObservationPlan {
-  const known = findSubmission(observation, article)
+  const journalId = journalIds[0] ?? null
+  const known = findSubmission(observation, article, journalIds)
   if (!known) {
     return { articleId: article.id, journalId, resolution: 'REVIEW', reviewReason: 'NO_MATCHING_SUBMISSION', submissionId: null }
   }
@@ -197,7 +219,8 @@ export function planObservation(
   match: ArticleMatch,
   matchingJournals: CandidateJournal[],
 ): ObservationPlan {
-  const journalId = matchingJournals[0]?.id ?? null
+  const journalIds = matchingJournals.map((journal) => journal.id)
+  const journalId = journalIds[0] ?? null
   if (match.kind === 'UNKNOWN') {
     return { resolution: 'REVIEW', reviewReason: 'UNKNOWN_ARTICLE', articleId: null, journalId, submissionId: null }
   }
@@ -208,8 +231,8 @@ export function planObservation(
     return { resolution: 'REDUNDANT', reviewReason: null, articleId: match.article.id, journalId, submissionId: null }
   }
   return observation.kind === 'SUBMISSION'
-    ? planSubmission(observation, match.article, journalId)
-    : planDecision(observation, match.article, journalId)
+    ? planSubmission(observation, match.article, journalIds)
+    : planDecision(observation, match.article, journalIds)
 }
 
 export type EventKeys = { titleKey: string; journalKey: string; manuscriptKey: string | null }

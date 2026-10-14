@@ -15,8 +15,8 @@ import {
   type MailObservation,
 } from './mail-agent'
 
-const JCMR = { id: 'journal-jcmr', name: 'Journal of Cardiovascular Magnetic Resonance' }
-const CIRC = { id: 'journal-circ', name: 'Circulation: Cardiovascular Imaging' }
+const JCMR = { id: 'journal-jcmr', name: 'Journal of Cardiovascular Magnetic Resonance', abbreviation: null }
+const CIRC = { id: 'journal-circ', name: 'Circulation: Cardiovascular Imaging', abbreviation: null }
 
 function submission(overrides: Partial<CandidateSubmission>): CandidateSubmission {
   return {
@@ -222,6 +222,28 @@ describe('isSameEvent', () => {
     expect(isSameEvent(observation({ journalName: 'Circulation' }), known)).toBe(false)
     expect(isSameEvent(observation({ title: 'Another paper', manuscriptNumber: null }), known)).toBe(false)
     expect(isSameEvent(observation({ kind: 'SUBMISSION', decision: null }), known)).toBe(false)
+  })
+})
+
+describe('journal rows that name the same journal', () => {
+  const advancesFull = { id: 'journal-advances-full', name: 'JACC. Advances', abbreviation: 'JACC Adv' }
+  const advancesShort = { id: 'journal-advances-short', name: 'JACC Adv', abbreviation: null }
+
+  it('treats a row named by the abbreviation of another as the same journal', () => {
+    expect(matchJournals('JACC: Advances', [advancesShort, advancesFull, JCMR]).map((journal) => journal.id)).toEqual([
+      'journal-advances-full',
+      'journal-advances-short',
+    ])
+  })
+
+  it('finds the live submission recorded under the abbreviated row', () => {
+    const mail = observation({ journalName: 'JACC: Advances', manuscriptNumber: 'JADV091526-2557', decision: 'MAJOR_REVISIONS' })
+    const recordedUnderShortName = article({
+      submissions: [submission({ id: 'submission-advances', journalId: advancesShort.id, journalName: advancesShort.name })],
+    })
+    expect(
+      planObservation(mail, { kind: 'MATCHED', article: recordedUnderShortName }, matchJournals(mail.journalName, [advancesFull, advancesShort])),
+    ).toMatchObject({ resolution: 'AUTO', submissionId: 'submission-advances' })
   })
 })
 

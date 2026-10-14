@@ -2,6 +2,7 @@ import { prisma } from '@/lib/prisma'
 import {
   SAME_EVENT_WINDOW_DAYS,
   eventKeysOf,
+  findSubmission,
   isSameEvent,
   matchArticle,
   matchJournals,
@@ -16,7 +17,7 @@ import {
 } from '@/lib/publications/mail-agent'
 import type { SubmissionStatusValue } from '@/lib/publications/status-display'
 import type { ArticleStatusValue } from './articles'
-import { applyMailEvent } from './mail-suggestion-apply'
+import { applyMailEvent, loadCandidateArticle } from './mail-suggestion-apply'
 
 export const PUBLICATIONS_MAIL_SUGGESTIONS_TAG = 'publications:mail-suggestions'
 
@@ -59,9 +60,7 @@ async function loadLibrary(): Promise<Library> {
         },
       },
     }),
-    prisma.journal.findMany({
-      select: { id: true, name: true, _count: { select: { submissions: true } } },
-    }),
+    loadJournals(),
   ])
   return {
     articles: articles.map((article) => ({
@@ -77,11 +76,18 @@ async function loadLibrary(): Promise<Library> {
         submittedAt: submission.submittedAt,
       })),
     })),
-    // Duplicate journal rows exist under punctuation variants: the most used one wins.
-    journals: [...journals]
-      .sort((first, second) => second._count.submissions - first._count.submissions)
-      .map((journal) => ({ id: journal.id, name: journal.name })),
+    journals,
   }
+}
+
+// Duplicate journal rows exist under punctuation variants: the most used one wins.
+async function loadJournals(): Promise<CandidateJournal[]> {
+  const journals = await prisma.journal.findMany({
+    select: { id: true, name: true, abbreviation: true, _count: { select: { submissions: true } } },
+  })
+  return [...journals]
+    .sort((first, second) => second._count.submissions - first._count.submissions)
+    .map((journal) => ({ id: journal.id, name: journal.name, abbreviation: journal.abbreviation }))
 }
 
 async function findSameEvent(observation: MailObservation): Promise<string | null> {
@@ -248,6 +254,7 @@ export type MailSuggestionRow = {
   reviewReason: MailReviewReason | null
   article: { id: string; title: string; status: ArticleStatusValue } | null
   resolvedJournalName: string | null
+  suggestedSubmissionId: string | null
   resolvedAt: string | null
   sources: MailSourceView[]
 }
@@ -262,6 +269,7 @@ const ROW_SELECT = {
   eventDate: true,
   excerpt: true,
   authorNames: true,
+  submissionId: true,
   status: true,
   reviewReason: true,
   resolvedAt: true,
@@ -301,13 +309,34 @@ function toRow(suggestion: SelectedRow): MailSuggestionRow {
       ? { id: suggestion.article.id, title: suggestion.article.title, status: suggestion.article.status as ArticleStatusValue }
       : null,
     resolvedJournalName: suggestion.journal?.name ?? null,
+    suggestedSubmissionId: suggestion.submissionId,
     resolvedAt: suggestion.resolvedAt ? suggestion.resolvedAt.toISOString() : null,
     sources: suggestion.sources.map((source) => ({ ...source, receivedAt: source.receivedAt.toISOString() })),
   }
 }
 
+async function withSuggestedSubmission(row: MailSuggestionRow, journals: CandidateJournal[]): Promise<MailSuggestionRow> {
+  if (!row.article) return row
+  const article = await loadCandidateArticle(row.article.id)
+  if (!article) return row
+  const known = findSubmission(
+    {
+      kind: row.kind,
+      decision: row.decision,
+      title: row.title,
+      journalName: row.journalName,
+      manuscriptNumber: row.manuscriptNumber,
+      eventDate: new Date(row.eventDate),
+    },
+    article,
+    matchJournals(row.journalName, journals).map((journal) => journal.id),
+  )
+  return { ...row, suggestedSubmissionId: known?.id ?? null }
+}
+
 export async function listPendingMailSuggestions(): Promise<MailSuggestionRow[]> {
-  return (await selectRows({ status: 'PENDING' }, 200)).map(toRow)
+  const [rows, journals] = await Promise.all([selectRows({ status: 'PENDING' }, 200), loadJournals()])
+  return Promise.all(rows.map((row) => withSuggestedSubmission(toRow(row), journals)))
 }
 
 export async function listResolvedMailSuggestions(): Promise<MailSuggestionRow[]> {

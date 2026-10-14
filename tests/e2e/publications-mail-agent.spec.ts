@@ -150,6 +150,11 @@ test('the mail agent files observations, applies the safe ones and leaves the re
 
   const acceptance = page.getByRole('listitem', { name: title }).filter({ hasText: 'Acceptance' })
   await expect(acceptance.getByText('Acceptance to confirm.')).toBeVisible()
+  await expect(acceptance.getByRole('radio', { name: /the submission to Eur Heart J/ })).toBeChecked()
+  await expect(acceptance.getByRole('region', { name: 'In the app today' }).getByText('In revision')).toBeVisible()
+  const acceptedAfter = acceptance.getByRole('region', { name: 'After approval' })
+  await expect(acceptedAfter.getByText('Accepted').first()).toBeVisible()
+  await expect(acceptedAfter.getByText('← updated')).toBeVisible()
   await acceptance.getByRole('button', { name: 'Dismiss' }).click()
   await expect(page.getByText('Suggestion dismissed')).toBeVisible({ timeout: 15000 })
 
@@ -168,6 +173,12 @@ test('the mail agent files observations, applies the safe ones and leaves the re
   await picker.getByRole('group', { name: title }).getByRole('button', { name: 'Choose' }).click()
   await expect(picker).toBeHidden()
   await expect(rejection.getByText(title)).toBeVisible()
+  // The journal is unknown to this article: approving opens a new submission, and the panel
+  // says before approval that the one under review will be closed as rejected
+  await expect(rejection.getByRole('radio', { name: 'a new submission to' })).toBeChecked()
+  const rejectionAfter = rejection.getByRole('region', { name: 'After approval' })
+  await expect(rejectionAfter.getByText('← new submission')).toBeVisible()
+  await expect(rejectionAfter.getByText('← will be marked rejected')).toBeVisible()
   await rejection.getByRole('button', { name: 'Approve' }).click()
   await expect(page.getByText('Suggestion applied')).toBeVisible({ timeout: 15000 })
 

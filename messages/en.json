@@ -2112,7 +2112,6 @@
         "REDUNDANT": "Already known",
         "DISMISSED": "Dismissed"
       },
-      "currentStatus": "Current status in the app: {status}",
       "articleLabel": "This article may already be in the library under another title:",
       "journalLabel": "Journal",
       "apply": "Approve",
@@ -2147,6 +2146,22 @@
         "shared": "In common with the email: {names}",
         "choose": "Choose",
         "empty": "No article matches this search."
+      },
+      "preview": {
+        "concerns": "This email is about:",
+        "existingOption": "the submission to {journal} on {date} ({status})",
+        "newOption": "a new submission to",
+        "today": "In the app today",
+        "after": "After approval",
+        "articleStatus": "Article status:",
+        "noSubmission": "No submission recorded.",
+        "submittedOn": "Submitted on {date}",
+        "decidedOn": "decision on {date}",
+        "change": {
+          "UPDATED": "← updated",
+          "CREATED": "← new submission",
+          "REJECTED": "← will be marked rejected"
+        }
       }
     }
   },

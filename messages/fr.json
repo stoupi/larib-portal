@@ -2110,7 +2110,6 @@
         "REDUNDANT": "Déjà connue",
         "DISMISSED": "Écartée"
       },
-      "currentStatus": "Statut actuel dans l'app : {status}",
       "articleLabel": "Cet article est peut-être déjà dans la bibliothèque sous un autre titre :",
       "journalLabel": "Revue",
       "apply": "Valider",
@@ -2145,6 +2144,22 @@
         "shared": "En commun avec le mail : {names}",
         "choose": "Choisir",
         "empty": "Aucun article ne correspond à cette recherche."
+      },
+      "preview": {
+        "concerns": "Ce mail concerne :",
+        "existingOption": "la soumission à {journal} du {date} ({status})",
+        "newOption": "une nouvelle soumission à",
+        "today": "Aujourd'hui dans l'app",
+        "after": "Après validation",
+        "articleStatus": "Statut de l'article :",
+        "noSubmission": "Aucune soumission enregistrée.",
+        "submittedOn": "Soumis le {date}",
+        "decidedOn": "décision le {date}",
+        "change": {
+          "UPDATED": "← mise à jour",
+          "CREATED": "← nouvelle soumission",
+          "REJECTED": "← passera en refusée"
+        }
       }
     }
   },
