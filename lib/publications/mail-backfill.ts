@@ -128,23 +128,63 @@ function isSettledDecision(event: BackfillEvent): boolean {
 }
 
 function belongsToGroup(event: BackfillEvent, group: ManuscriptGroup): boolean {
-  const manuscriptKey = manuscriptKeyOf(event.manuscriptNumber)
+  const manuscriptKey = backfillManuscriptKey(event.manuscriptNumber)
   if (manuscriptKey && group.manuscriptKeys.includes(manuscriptKey)) return true
   if (normalizeJournalName(event.journalName) !== group.journalKey) return false
   if (manuscriptKey && group.manuscriptKeys.length > 0) return false
   // A paper resubmitted "de novo" to the journal that rejected it is a second submission.
   if (event.kind === 'SUBMISSION' && group.events.some(isSettledDecision)) return false
   const titleKey = event.title ? normalizeTitle(event.title) : ''
-  return titleKey.length > 0 && group.titleKeys.includes(titleKey)
+  if (titleKey.length > 0 && group.titleKeys.includes(titleKey)) return true
+  return event.title != null && group.title != null && titleSimilarity(event.title, group.title) >= SAME_PAPER_THRESHOLD
 }
 
 function addToGroup(group: ManuscriptGroup, event: BackfillEvent): void {
   group.events.push(event)
-  const manuscriptKey = manuscriptKeyOf(event.manuscriptNumber)
+  const manuscriptKey = backfillManuscriptKey(event.manuscriptNumber)
   if (manuscriptKey && !group.manuscriptKeys.includes(manuscriptKey)) group.manuscriptKeys.push(manuscriptKey)
   const titleKey = event.title ? normalizeTitle(event.title) : ''
   if (titleKey.length > 0 && !group.titleKeys.includes(titleKey)) group.titleKeys.push(titleKey)
   group.title = longestTitle(group.events)
+}
+
+// A co-author confirmation names the paper but not its number; once a numbered letter
+// carries the same title at the same journal, both describe one manuscript.
+function absorbUnnumberedTwins(groups: ManuscriptGroup[], target: ManuscriptGroup, event: BackfillEvent): void {
+  const titleKey = event.title ? normalizeTitle(event.title) : ''
+  if (titleKey.length === 0) return
+  const twins = groups.filter(
+    (candidate) =>
+      candidate !== target &&
+      candidate.manuscriptKeys.length === 0 &&
+      candidate.journalKey === target.journalKey &&
+      candidate.titleKeys.includes(titleKey) &&
+      !candidate.events.some(isSettledDecision),
+  )
+  for (const twin of twins) {
+    for (const twinEvent of twin.events) addToGroup(target, twinEvent)
+    groups.splice(groups.indexOf(twin), 1)
+  }
+}
+
+const REVISION_SUFFIX = /(?:[._-]?R\d*|-T\d*)$/
+
+// Journals mark revision rounds and transfers in their own way: "JACC053126-2680R",
+// "JADV100725-1662-TRR", "CIRCCQO/2024/011905-T2" all name their bare number. A trailing
+// "D" (de novo resubmission) is a new manuscript and is kept.
+// Elsevier names an accepted paper by a production id ("ACVD_1764", "JOCMR_102808")
+// that no editorial letter ever quotes.
+const PRODUCTION_ID = /^[A-Z]+_\d+$/
+
+export function backfillManuscriptKey(manuscriptNumber: string | null): string | null {
+  let key = manuscriptKeyOf(manuscriptNumber)
+  if (key && PRODUCTION_ID.test(key)) return null
+  while (key) {
+    const stripped = key.replace(REVISION_SUFFIX, '')
+    if (stripped === key || stripped.length === 0) break
+    key = stripped
+  }
+  return key
 }
 
 export function groupManuscripts(events: BackfillEvent[]): { groups: ManuscriptGroup[]; unusable: BackfillEvent[] } {
@@ -152,13 +192,16 @@ export function groupManuscripts(events: BackfillEvent[]): { groups: ManuscriptG
   const unusable: BackfillEvent[] = []
   for (const event of [...events].sort(byEventDate)) {
     const hasTitle = event.title != null && normalizeTitle(event.title).length > 0
-    if (!hasTitle && !manuscriptKeyOf(event.manuscriptNumber)) {
+    if (!hasTitle && !backfillManuscriptKey(event.manuscriptNumber)) {
       unusable.push(event)
       continue
     }
-    const group = groups.findLast((candidate) => belongsToGroup(event, candidate))
+    const manuscriptKey = backfillManuscriptKey(event.manuscriptNumber)
+    const byManuscript = manuscriptKey ? groups.find((candidate) => candidate.manuscriptKeys.includes(manuscriptKey)) : undefined
+    const group = byManuscript ?? groups.findLast((candidate) => belongsToGroup(event, candidate))
     if (group) {
       addToGroup(group, event)
+      if (manuscriptKey) absorbUnnumberedTwins(groups, group, event)
       continue
     }
     const created: ManuscriptGroup = {
@@ -237,7 +280,7 @@ function matchGroup(group: ManuscriptGroup, library: LibraryArticle[], links: Ti
   const candidateIds = new Set<string>()
   for (const manuscriptKey of group.manuscriptKeys) {
     const byManuscript = library.filter((article) =>
-      article.submissions.some((submission) => manuscriptKeyOf(submission.manuscriptNumber) === manuscriptKey),
+      article.submissions.some((submission) => backfillManuscriptKey(submission.manuscriptNumber) === manuscriptKey),
     )
     if (byManuscript.length === 1) candidateIds.add(byManuscript[0].id)
   }
@@ -262,7 +305,7 @@ function findExistingSubmission(
 ): LibrarySubmission | null {
   const sameJournalIds = new Set(matchJournals(group.journalName, journals).map((journal) => journal.id))
   const byManuscript = article.submissions.find((submission) => {
-    const submissionKey = manuscriptKeyOf(submission.manuscriptNumber)
+    const submissionKey = backfillManuscriptKey(submission.manuscriptNumber)
     return submissionKey != null && group.manuscriptKeys.includes(submissionKey)
   })
   if (byManuscript) return byManuscript

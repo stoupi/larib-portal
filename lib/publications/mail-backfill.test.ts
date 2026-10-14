@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import {
+  backfillManuscriptKey,
   finalDecidedAt,
   finalStatus,
   groupManuscripts,
@@ -95,6 +96,30 @@ describe('groupManuscripts with resubmissions', () => {
     ])
     expect(groups).toHaveLength(2)
     expect(manuscriptHistory(groups[1].events)).toMatchObject({ status: 'MINOR_REVISIONS', submittedAt: new Date('2025-11-30') })
+  })
+})
+
+describe('groupManuscripts with an unnumbered co-author confirmation', () => {
+  it('folds a confirmation naming the revised title into the numbered manuscript it belongs to', () => {
+    const { groups } = groupManuscripts([
+      mailEvent({ kind: 'DECISION', decision: 'MAJOR_REVISIONS', title: 'Machine learning using environmental factors', manuscriptNumber: 'EHJ-DH-D-24-00154', eventDate: new Date('2024-10-20') }),
+      mailEvent({ title: 'Machine learning including environmental factors', manuscriptNumber: null, eventDate: new Date('2024-10-25') }),
+      mailEvent({ kind: 'REVISION_SUBMITTED', title: 'Machine learning including environmental factors', manuscriptNumber: 'EHJ-DH-D-24-00154R1', eventDate: new Date('2024-10-26') }),
+      mailEvent({ kind: 'DECISION', decision: 'ACCEPTED', title: 'Machine learning including environmental factors', manuscriptNumber: 'EHJ-DH-D-24-00154R1', eventDate: new Date('2024-11-12') }),
+    ])
+    expect(groups).toHaveLength(1)
+    expect(manuscriptHistory(groups[0].events)).toMatchObject({ status: 'ACCEPTED', submittedAt: new Date('2024-10-20') })
+  })
+})
+
+describe('groupManuscripts with a lightly retitled acceptance', () => {
+  it('files an acceptance known only by its production id under the submission it closes', () => {
+    const { groups } = groupManuscripts([
+      mailEvent({ title: 'Nuclear imaging in cardio-rheumatology: why a global approach matters', manuscriptNumber: 'EANMI-D-26-00017', eventDate: new Date('2026-02-01') }),
+      mailEvent({ kind: 'DECISION', decision: 'ACCEPTED', title: 'Nuclear imaging in cardio-rheumatology: why a global approach matters now', manuscriptNumber: 'EANMI_100264', eventDate: new Date('2026-04-11') }),
+    ])
+    expect(groups).toHaveLength(1)
+    expect(manuscriptHistory(groups[0].events).status).toBe('ACCEPTED')
   })
 })
 
@@ -285,6 +310,19 @@ describe('planBackfill with reworded titles', () => {
     )
     expect(plan.articles).toHaveLength(1)
     expect(plan.articles[0].submissions).toHaveLength(2)
+  })
+})
+
+describe('backfillManuscriptKey', () => {
+  it('names every revision round and transfer by its bare number, but keeps a de novo resubmission apart', () => {
+    expect(backfillManuscriptKey('JACC053126-2680R')).toBe('JACC053126-2680')
+    expect(backfillManuscriptKey('JADV100725-1662-TRR')).toBe('JADV100725-1662')
+    expect(backfillManuscriptKey('CIRCCQO/2024/011905-T2')).toBe('CIRCCQO/2024/011905')
+    expect(backfillManuscriptKey('RAD-24-1147.R4')).toBe('RAD-24-1147')
+    expect(backfillManuscriptKey('JOFCMR-D-26-00087R3')).toBe('JOFCMR-D-26-00087')
+    expect(backfillManuscriptKey('JIMG060325-0873D')).toBe('JIMG060325-0873D')
+    expect(backfillManuscriptKey(null)).toBeNull()
+    expect(backfillManuscriptKey('EANMI_100264')).toBeNull()
   })
 })
 
