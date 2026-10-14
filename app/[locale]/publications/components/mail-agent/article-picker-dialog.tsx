@@ -72,7 +72,7 @@ export function ArticlePickerDialog({ articles, mailAuthors, selectedId, onSelec
           </Button>
         )}
       </div>
-      <DialogContent className="flex max-h-[90vh] max-w-[min(1500px,96vw)] flex-col gap-4">
+      <DialogContent className="flex max-h-[90vh] flex-col gap-4 sm:max-w-[min(1500px,96vw)]">
         <DialogHeader>
           <DialogTitle className="text-xl">{t('mailAgent.picker.title')}</DialogTitle>
         </DialogHeader>
@@ -111,7 +111,7 @@ export function ArticlePickerDialog({ articles, mailAuthors, selectedId, onSelec
           {rows.length === 0 ? (
             <p className="px-4 py-10 text-center text-base text-text-primary">{t('mailAgent.picker.empty')}</p>
           ) : (
-            <div className="min-w-[980px]">
+            <div className="w-max min-w-full">
               <ArticlesHeaderRow
                 sorting={{ value: sort, onSort: (key) => setSort((current) => nextArticleSort(current, key)) }}
               />
