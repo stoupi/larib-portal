@@ -161,11 +161,11 @@ test('the mail agent files observations, applies the safe ones and leaves the re
   await rejection.getByRole('button', { name: 'Find the article in the library' }).click()
   const picker = page.getByRole('dialog', { name: 'Choose the article this email is about' })
   await expect(
-    picker.getByRole('row', { name: 'Carousel pilot: valvular imaging in routine practice' }).getByText('In common with the email: Nina Zellweger, Marc Zurbrugg'),
+    picker.getByRole('group', { name: 'Carousel pilot: valvular imaging in routine practice' }).getByText('In common with the email: Nina Zellweger, Marc Zurbrugg'),
   ).toBeVisible()
   await picker.getByLabel('Search by title, author, journal or study').fill(runId)
-  await expect(picker.getByRole('row', { name: 'Carousel pilot: valvular imaging in routine practice' })).toHaveCount(0)
-  await picker.getByRole('row', { name: title }).getByRole('button', { name: 'Choose' }).click()
+  await expect(picker.getByRole('group', { name: 'Carousel pilot: valvular imaging in routine practice' })).toHaveCount(0)
+  await picker.getByRole('group', { name: title }).getByRole('button', { name: 'Choose' }).click()
   await expect(picker).toBeHidden()
   await expect(rejection.getByText(title)).toBeVisible()
   await rejection.getByRole('button', { name: 'Approve' }).click()

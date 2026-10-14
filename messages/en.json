@@ -2141,8 +2141,6 @@
         "status": "Status",
         "ongoing": "Ongoing articles",
         "allStatuses": "All statuses",
-        "statusColumn": "Status",
-        "year": "Year",
         "shared": "In common with the email: {names}",
         "choose": "Choose",
         "empty": "No article matches this search."

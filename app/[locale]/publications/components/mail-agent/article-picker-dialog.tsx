@@ -1,21 +1,21 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import { useTranslations } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import { Library, Search } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Select } from '@/components/ui/select'
-import { TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import type { DashboardArticleItem } from '@/lib/publications/admin-dashboard'
 import { matchesArticleQuery } from '@/lib/publications/article-search'
 import { sharedAuthorNames } from '@/lib/publications/mail-agent'
-import { ARTICLE_STATUS_TONE, ARTICLE_STATUS_VALUES, TONE_PILL_CLASS } from '@/lib/publications/status-display'
+import { ARTICLE_STATUS_VALUES } from '@/lib/publications/status-display'
+import { nextArticleSort, sortArticles, type ArticleSort } from '@/lib/publications/article-sort'
+import { ArticleListRow, ArticlesHeaderRow } from '../articles/article-list-row'
 
 const ONGOING = 'ONGOING'
 const ALL = 'ALL'
-const VISIBLE_AUTHORS = 4
 
 type ArticlePickerDialogProps = {
   articles: DashboardArticleItem[]
@@ -28,15 +28,11 @@ function isOngoing(article: DashboardArticleItem): boolean {
   return article.status !== 'PUBLISHED' && article.status !== 'ABANDONED'
 }
 
-function authorSummary(article: DashboardArticleItem): string {
-  const names = article.authors.map((author) => author.name)
-  if (names.length <= VISIBLE_AUTHORS) return names.join(', ')
-  return `${names.slice(0, VISIBLE_AUTHORS - 1).join(', ')}, … ${names.at(-1)}`
-}
-
 export function ArticlePickerDialog({ articles, mailAuthors, selectedId, onSelect }: ArticlePickerDialogProps) {
   const t = useTranslations('publications')
+  const locale = useLocale()
   const [open, setOpen] = useState(false)
+  const [sort, setSort] = useState<ArticleSort>(null)
   const [query, setQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState(ONGOING)
   const selected = articles.find((article) => article.id === selectedId) ?? null
@@ -47,13 +43,13 @@ export function ArticlePickerDialog({ articles, mailAuthors, selectedId, onSelec
       if (statusFilter !== ONGOING && statusFilter !== ALL && article.status !== statusFilter) return false
       return matchesArticleQuery(article, query)
     })
-    return visible
-      .map((article) => ({
-        article,
-        shared: sharedAuthorNames(mailAuthors, article.authors.map((author) => author.name)),
-      }))
-      .sort((first, second) => second.shared.length - first.shared.length)
-  }, [articles, mailAuthors, query, statusFilter])
+    const withShared = sortArticles(visible, sort).map((article) => ({
+      article,
+      shared: sharedAuthorNames(mailAuthors, article.authors.map((author) => author.name)),
+    }))
+    if (sort) return withShared
+    return withShared.sort((first, second) => second.shared.length - first.shared.length)
+  }, [articles, mailAuthors, query, statusFilter, sort])
 
   const choose = (articleId: string) => {
     onSelect(articleId)
@@ -76,7 +72,7 @@ export function ArticlePickerDialog({ articles, mailAuthors, selectedId, onSelec
           </Button>
         )}
       </div>
-      <DialogContent className="flex max-h-[90vh] max-w-[min(1200px,95vw)] flex-col gap-4">
+      <DialogContent className="flex max-h-[90vh] max-w-[min(1500px,96vw)] flex-col gap-4">
         <DialogHeader>
           <DialogTitle className="text-xl">{t('mailAgent.picker.title')}</DialogTitle>
         </DialogHeader>
@@ -111,50 +107,28 @@ export function ArticlePickerDialog({ articles, mailAuthors, selectedId, onSelec
             ))}
           </Select>
         </div>
-        <div className="min-h-0 flex-1 overflow-auto rounded-xl border border-line">
+        <div className="min-h-0 flex-1 overflow-auto rounded-2xl border border-line bg-bg-surface">
           {rows.length === 0 ? (
             <p className="px-4 py-10 text-center text-base text-text-primary">{t('mailAgent.picker.empty')}</p>
           ) : (
-            <table className="w-full text-base">
-              <TableHeader>
-                <TableRow>
-                  <TableHead>{t('mailAgent.columns.article')}</TableHead>
-                  <TableHead>{t('mailAgent.columns.journal')}</TableHead>
-                  <TableHead>{t('mailAgent.picker.statusColumn')}</TableHead>
-                  <TableHead>{t('mailAgent.picker.year')}</TableHead>
-                  <TableHead />
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {rows.map(({ article, shared }) => (
-                  <TableRow key={article.id} aria-label={article.title}>
-                    <TableCell className="min-w-[420px] space-y-1 whitespace-normal">
-                      <span className="block font-semibold text-text-primary">{article.title}</span>
-                      <span className="block text-sm text-text-primary">{authorSummary(article)}</span>
-                      {shared.length > 0 && (
-                        <span className="block text-sm font-semibold text-coral-700 dark:text-coral-300">
-                          {t('mailAgent.picker.shared', { names: shared.join(', ') })}
-                        </span>
-                      )}
-                    </TableCell>
-                    <TableCell className="text-text-primary">{article.journal ?? '—'}</TableCell>
-                    <TableCell>
-                      <span
-                        className={`inline-flex whitespace-nowrap rounded-full border px-2.5 py-0.5 text-sm font-bold ${TONE_PILL_CLASS[ARTICLE_STATUS_TONE[article.status]]}`}
-                      >
-                        {t(`articles.status.${article.status}`)}
-                      </span>
-                    </TableCell>
-                    <TableCell className="tabular-nums text-text-primary">{article.year ?? '—'}</TableCell>
-                    <TableCell className="text-right">
-                      <Button type="button" size="sm" onClick={() => choose(article.id)}>
-                        {t('mailAgent.picker.choose')}
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </table>
+            <div className="min-w-[980px]">
+              <ArticlesHeaderRow
+                sorting={{ value: sort, onSort: (key) => setSort((current) => nextArticleSort(current, key)) }}
+              />
+              {rows.map(({ article, shared }) => (
+                <ArticleListRow
+                  key={article.id}
+                  article={article}
+                  locale={locale}
+                  expansion={null}
+                  picking={{
+                    chooseLabel: t('mailAgent.picker.choose'),
+                    onChoose: () => choose(article.id),
+                    note: shared.length > 0 ? t('mailAgent.picker.shared', { names: shared.join(', ') }) : null,
+                  }}
+                />
+              ))}
+            </div>
           )}
         </div>
       </DialogContent>

@@ -3,6 +3,7 @@
 import { useTranslations } from 'next-intl'
 import { ArrowUp, ArrowUpDown, ChevronRight, ExternalLink, FileText, Pencil } from 'lucide-react'
 import { Link } from '@/app/i18n/navigation'
+import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { doiUrl } from '@/lib/publications/doi'
 import { ARTICLE_STATUS_TONE, pillClassName } from '@/lib/publications/status-display'
@@ -22,6 +23,12 @@ const ADMIN_PATHS = publicationsPaths(PUBLICATIONS_ADMIN_BASE)
 
 export const ARTICLES_GRID =
   'grid grid-cols-[minmax(240px,1fr)_150px_128px_72px_128px_176px_132px] items-center gap-3.5'
+
+export type ArticleRowPicking = {
+  chooseLabel: string
+  onChoose: () => void
+  note: string | null
+}
 
 export type ArticleRowExpansion = {
   open: boolean
@@ -56,11 +63,13 @@ export function ArticleListRow({
   locale,
   expansion,
   admin,
+  picking,
 }: {
   article: DashboardArticleItem
   locale: string
   expansion: ArticleRowExpansion | null
   admin?: { studyOptions: StudyOption[] }
+  picking?: ArticleRowPicking
 }) {
   const t = useTranslations('publications')
   const dateFormatter = new Intl.DateTimeFormat(locale, { dateStyle: 'medium' })
@@ -68,7 +77,11 @@ export function ArticleListRow({
   const expanded = expansion?.open ?? false
 
   return (
-    <div className={cn('border-b border-line last:border-b-0', expanded && 'bg-coral-50/40 dark:bg-coral-500/[0.05]')}>
+    <div
+      role={picking ? 'group' : undefined}
+      aria-label={picking ? article.title || t('myPub.untitled') : undefined}
+      className={cn('border-b border-line last:border-b-0', expanded && 'bg-coral-50/40 dark:bg-coral-500/[0.05]')}
+    >
       <div className={cn(ARTICLES_GRID, 'px-5 py-3.5 transition-colors hover:bg-coral-50/40 dark:hover:bg-coral-500/[0.06]')}>
         <div className="flex min-w-0 items-start gap-2.5">
           {expansion && (
@@ -95,13 +108,22 @@ export function ArticleListRow({
             >
               {t(`myPub.type.${article.type}`)}
             </span>
-            <Link
-              href={ADMIN_PATHS.article(article.id)}
-              className="block text-sm font-bold leading-snug text-text-primary underline-offset-2 transition-colors hover:text-coral-600 hover:underline dark:hover:text-coral-300"
-            >
-              {article.title || t('myPub.untitled')}
-            </Link>
+            {picking ? (
+              <span className="block text-sm font-bold leading-snug text-text-primary">
+                {article.title || t('myPub.untitled')}
+              </span>
+            ) : (
+              <Link
+                href={ADMIN_PATHS.article(article.id)}
+                className="block text-sm font-bold leading-snug text-text-primary underline-offset-2 transition-colors hover:text-coral-600 hover:underline dark:hover:text-coral-300"
+              >
+                {article.title || t('myPub.untitled')}
+              </Link>
+            )}
             <AuthorLine authors={article.authors} />
+            {picking?.note && (
+              <div className="mt-1 text-[13px] font-semibold leading-snug text-coral-700 dark:text-coral-300">{picking.note}</div>
+            )}
           </div>
         </div>
 
@@ -166,42 +188,50 @@ export function ArticleListRow({
           ) : null}
         </div>
 
-        <div className="flex items-center justify-end gap-1.5">
-          {article.pdfUrl && (
-            <a
-              href={article.pdfUrl}
-              download
-              target="_blank"
-              rel="noreferrer"
-              title={t('articles.downloadPdf')}
-              aria-label={`${t('articles.downloadPdf')}: ${article.title || t('myPub.untitled')}`}
-              className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-line bg-bg-surface text-navy-600 transition hover:bg-gray-50 dark:text-navy-300 dark:hover:bg-white/5"
+        {picking ? (
+          <div className="flex items-center justify-end">
+            <Button type="button" size="sm" onClick={picking.onChoose}>
+              {picking.chooseLabel}
+            </Button>
+          </div>
+        ) : (
+          <div className="flex items-center justify-end gap-1.5">
+            {article.pdfUrl && (
+              <a
+                href={article.pdfUrl}
+                download
+                target="_blank"
+                rel="noreferrer"
+                title={t('articles.downloadPdf')}
+                aria-label={`${t('articles.downloadPdf')}: ${article.title || t('myPub.untitled')}`}
+                className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-line bg-bg-surface text-navy-600 transition hover:bg-gray-50 dark:text-navy-300 dark:hover:bg-white/5"
+              >
+                <FileText className="h-3.5 w-3.5" strokeWidth={2} />
+              </a>
+            )}
+            {article.doi && (
+              <a
+                href={doiUrl(article.doi) ?? '#'}
+                target="_blank"
+                rel="noreferrer"
+                title={t('myPub.openSite')}
+                className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-line bg-bg-surface text-coral-600 transition hover:bg-coral-50 dark:text-coral-300 dark:hover:bg-white/5"
+              >
+                <ExternalLink className="h-3.5 w-3.5" strokeWidth={2} />
+              </a>
+            )}
+            <Link
+              href={ADMIN_PATHS.articleEdit(article.id)}
+              title={t('myPub.edit')}
+              className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-b from-navy-600 to-navy-700 text-white shadow-[0_6px_14px_-6px_rgba(19,44,74,0.5)] transition hover:brightness-110"
             >
-              <FileText className="h-3.5 w-3.5" strokeWidth={2} />
-            </a>
-          )}
-          {article.doi && (
-            <a
-              href={doiUrl(article.doi) ?? '#'}
-              target="_blank"
-              rel="noreferrer"
-              title={t('myPub.openSite')}
-              className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-line bg-bg-surface text-coral-600 transition hover:bg-coral-50 dark:text-coral-300 dark:hover:bg-white/5"
-            >
-              <ExternalLink className="h-3.5 w-3.5" strokeWidth={2} />
-            </a>
-          )}
-          <Link
-            href={ADMIN_PATHS.articleEdit(article.id)}
-            title={t('myPub.edit')}
-            className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-b from-navy-600 to-navy-700 text-white shadow-[0_6px_14px_-6px_rgba(19,44,74,0.5)] transition hover:brightness-110"
-          >
-            <Pencil className="h-3.5 w-3.5" strokeWidth={2} />
-          </Link>
-          {admin && (
-            <ArticleDeleteButton articleId={article.id} articleTitle={article.title || t('myPub.untitled')} />
-          )}
-        </div>
+              <Pencil className="h-3.5 w-3.5" strokeWidth={2} />
+            </Link>
+            {admin && (
+              <ArticleDeleteButton articleId={article.id} articleTitle={article.title || t('myPub.untitled')} />
+            )}
+          </div>
+        )}
       </div>
 
       {expansion && expanded && (

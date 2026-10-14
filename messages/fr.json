@@ -2139,8 +2139,6 @@
         "status": "Statut",
         "ongoing": "Articles en cours",
         "allStatuses": "Tous les statuts",
-        "statusColumn": "Statut",
-        "year": "Année",
         "shared": "En commun avec le mail : {names}",
         "choose": "Choisir",
         "empty": "Aucun article ne correspond à cette recherche."
