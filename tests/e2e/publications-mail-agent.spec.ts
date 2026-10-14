@@ -14,6 +14,8 @@ type Observation = {
   journalName: string
   eventDate: string
   excerpt: string
+  title?: string
+  authors?: string[]
 }
 
 async function login(page: Page, email: string): Promise<void> {
@@ -36,7 +38,8 @@ async function postObservations(request: APIRequestContext, title: string, obser
         subject: 'Decision on submission',
         body: `Dear Dr Garot,\n\n${observation.excerpt}\n\nKind regards,\nThe editorial office`,
         receivedAt: observation.eventDate,
-        title,
+        title: observation.title ?? title,
+        authors: observation.authors ?? [],
         manuscriptNumber: observation.journalName === JOURNAL ? `EHJ-D-${observation.messageId.split('-')[0]}R1` : null,
       })),
     },
@@ -118,6 +121,8 @@ test('the mail agent files observations, applies the safe ones and leaves the re
       kind: 'DECISION' as const,
       decision: 'REJECTED' as const,
       journalName: `Mail Agent Review ${runId}`,
+      title: `Reworded ${runId}: stress CMR beyond eighty`,
+      authors: ['Nina Zellweger', 'Marc Zurbrugg'],
       eventDate: '2026-10-05T09:00:00.000Z',
       excerpt: 'We are sorry to report that it is not acceptable for publication.',
     },
@@ -148,12 +153,26 @@ test('the mail agent files observations, applies the safe ones and leaves the re
   await acceptance.getByRole('button', { name: 'Dismiss' }).click()
   await expect(page.getByText('Suggestion dismissed')).toBeVisible({ timeout: 15000 })
 
-  const rejection = page.getByRole('listitem', { name: title }).filter({ hasText: 'Rejection' })
-  await expect(rejection.getByText('No submission to this journal is recorded for this article.')).toBeVisible()
+  // A reworded title is not recognised: the admin finds the article in the library window,
+  // where articles sharing authors with the mail come first
+  const rejection = page.getByRole('listitem', { name: `Reworded ${runId}: stress CMR beyond eighty` })
+  await expect(rejection.getByText('This article is not in the library.')).toBeVisible()
+  await expect(rejection.getByText('Authors named in the email: Nina Zellweger, Marc Zurbrugg')).toBeVisible()
+  await rejection.getByRole('button', { name: 'Find the article in the library' }).click()
+  const picker = page.getByRole('dialog', { name: 'Choose the article this email is about' })
+  await expect(
+    picker.getByRole('row', { name: 'Carousel pilot: valvular imaging in routine practice' }).getByText('In common with the email: Nina Zellweger, Marc Zurbrugg'),
+  ).toBeVisible()
+  await picker.getByLabel('Search by title, author, journal or study').fill(runId)
+  await expect(picker.getByRole('row', { name: 'Carousel pilot: valvular imaging in routine practice' })).toHaveCount(0)
+  await picker.getByRole('row', { name: title }).getByRole('button', { name: 'Choose' }).click()
+  await expect(picker).toBeHidden()
+  await expect(rejection.getByText(title)).toBeVisible()
   await rejection.getByRole('button', { name: 'Approve' }).click()
   await expect(page.getByText('Suggestion applied')).toBeVisible({ timeout: 15000 })
 
   await expect(page.getByRole('listitem', { name: title })).toHaveCount(0, { timeout: 15000 })
+  await expect(page.getByRole('listitem', { name: `Reworded ${runId}: stress CMR beyond eighty` })).toHaveCount(0)
   await expect(history.getByRole('row').filter({ hasText: title }).filter({ hasText: 'Approved' })).toHaveCount(2)
   await expect(history.getByRole('link', { name: title }).first()).toHaveAttribute('href', /\/publications\/admin\/articles\//)
   await expect(history.getByRole('row').filter({ hasText: title }).filter({ hasText: 'Dismissed' })).toBeVisible()

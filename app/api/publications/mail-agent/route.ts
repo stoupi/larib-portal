@@ -26,6 +26,7 @@ const observationSchema = z
     manuscriptNumber: z.string().trim().min(1).max(80).nullable(),
     eventDate: z.coerce.date(),
     excerpt: z.string().trim().min(1).max(600),
+    authors: z.array(z.string().trim().min(1).max(120)).max(80).default([]),
   })
   .refine((observation) => (observation.kind === 'DECISION') === (observation.decision !== null), {
     message: 'decision_must_match_kind',

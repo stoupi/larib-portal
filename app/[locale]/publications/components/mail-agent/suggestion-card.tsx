@@ -6,10 +6,11 @@ import { Check, FilePlus2, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { SingleSelect } from '@/components/ui/single-select'
 import type { ArticleScopeValue } from '@/lib/publications/article-scope'
 import { SUBMISSION_STATUS_TONE, TONE_PILL_CLASS } from '@/lib/publications/status-display'
-import type { MailArticleOption, MailSuggestionRow } from '@/lib/services/publications/mail-suggestions'
+import type { DashboardArticleItem } from '@/lib/publications/admin-dashboard'
+import type { MailSuggestionRow } from '@/lib/services/publications/mail-suggestions'
+import { ArticlePickerDialog } from './article-picker-dialog'
 import { MailDialog } from './mail-dialog'
 
 export function mailEventKey(suggestion: Pick<MailSuggestionRow, 'kind' | 'decision'>) {
@@ -30,11 +31,11 @@ export type SuggestionReview = {
 
 type SuggestionCardProps = {
   suggestion: MailSuggestionRow
-  articleOptions: MailArticleOption[]
+  articles: DashboardArticleItem[]
   review: SuggestionReview
 }
 
-export function SuggestionCard({ suggestion, articleOptions, review }: SuggestionCardProps) {
+export function SuggestionCard({ suggestion, articles, review }: SuggestionCardProps) {
   const t = useTranslations('publications')
   const locale = useLocale()
   const dateFormatter = new Intl.DateTimeFormat(locale, { dateStyle: 'long' })
@@ -45,7 +46,6 @@ export function SuggestionCard({ suggestion, articleOptions, review }: Suggestio
   const hasJournal = journalName.trim().length > 0
   const asksForArticle = suggestion.article == null
   const asksForJournal = suggestion.reviewReason === 'UNKNOWN_JOURNAL'
-  const options = articleOptions.map((option) => ({ value: option.id, label: option.title }))
   const journalFieldId = `mail-suggestion-journal-${suggestion.id}`
 
   return (
@@ -62,6 +62,11 @@ export function SuggestionCard({ suggestion, articleOptions, review }: Suggestio
         <p className="text-base font-semibold text-text-primary">
           {t(`mailAgent.reason.${suggestion.reviewReason ?? 'UNSPECIFIED'}`)}
         </p>
+        {suggestion.authorNames.length > 0 && (
+          <p className="text-base text-text-primary">
+            {t('mailAgent.mailAuthors', { names: suggestion.authorNames.join(', ') })}
+          </p>
+        )}
         {suggestion.article && (
           <p className="text-base text-text-primary">
             {t('mailAgent.currentStatus', { status: t(`articles.status.${suggestion.article.status}`) })}
@@ -70,17 +75,13 @@ export function SuggestionCard({ suggestion, articleOptions, review }: Suggestio
       </div>
 
       {asksForArticle && (
-        <div className="max-w-xl space-y-2">
+        <div className="space-y-2">
           <span className="block text-base font-medium text-text-primary">{t('mailAgent.articleLabel')}</span>
-          <SingleSelect
-            options={options}
-            value={articleId}
-            onChange={setArticleId}
-            placeholder={t('mailAgent.articlePlaceholder')}
-            searchable
-            searchPlaceholder={t('mailAgent.articleSearch')}
-            emptyLabel={t('mailAgent.articleEmpty')}
-            disabled={busy}
+          <ArticlePickerDialog
+            articles={articles}
+            mailAuthors={suggestion.authorNames}
+            selectedId={articleId}
+            onSelect={setArticleId}
           />
         </div>
       )}

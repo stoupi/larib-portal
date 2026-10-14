@@ -237,6 +237,25 @@ export function isSameEvent(observation: MailObservation, known: KnownEvent): bo
   return daysBetween(observation.eventDate, known.eventDate) <= SAME_EVENT_WINDOW_DAYS
 }
 
+function nameParts(name: string): string[] {
+  return foldText(name).split(' ').filter((part) => part.length > 0)
+}
+
+// Mails write "Theo Pezel" or "Pezel, Théo"; the library writes "Théo Pezel".
+export function isSameAuthorName(mailName: string, libraryName: string): boolean {
+  const mailParts = nameParts(mailName.includes(',') ? mailName.split(',').reverse().join(' ') : mailName)
+  const libraryParts = nameParts(libraryName)
+  if (mailParts.length === 0 || libraryParts.length === 0) return false
+  if (mailParts.join(' ') === libraryParts.join(' ')) return true
+  const sameLastName = mailParts.at(-1) === libraryParts.at(-1)
+  const sameInitial = mailParts[0][0] === libraryParts[0][0]
+  return sameLastName && sameInitial
+}
+
+export function sharedAuthorNames(mailNames: string[], libraryNames: string[]): string[] {
+  return libraryNames.filter((libraryName) => mailNames.some((mailName) => isSameAuthorName(mailName, libraryName)))
+}
+
 const STALE_AFTER_DAYS = 2
 
 export function isMailAgentStale(lastRunAt: Date | null, now: Date): boolean {

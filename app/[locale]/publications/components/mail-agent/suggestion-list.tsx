@@ -5,7 +5,8 @@ import { useAction } from 'next-safe-action/hooks'
 import { toast } from 'sonner'
 import { useRouter } from '@/app/i18n/navigation'
 import { publicationsPaths, PUBLICATIONS_ADMIN_BASE } from '@/lib/publications/base-path'
-import type { MailArticleOption, MailSuggestionRow } from '@/lib/services/publications/mail-suggestions'
+import type { DashboardArticleItem } from '@/lib/publications/admin-dashboard'
+import type { MailSuggestionRow } from '@/lib/services/publications/mail-suggestions'
 import {
   applyMailSuggestionAction,
   createArticleFromMailSuggestionAction,
@@ -17,10 +18,10 @@ const ADMIN_PATHS = publicationsPaths(PUBLICATIONS_ADMIN_BASE)
 
 type SuggestionListProps = {
   suggestions: MailSuggestionRow[]
-  articleOptions: MailArticleOption[]
+  articles: DashboardArticleItem[]
 }
 
-export function SuggestionList({ suggestions, articleOptions }: SuggestionListProps) {
+export function SuggestionList({ suggestions, articles }: SuggestionListProps) {
   const t = useTranslations('publications')
   const router = useRouter()
 
@@ -74,7 +75,7 @@ export function SuggestionList({ suggestions, articleOptions }: SuggestionListPr
   return (
     <ul className="space-y-4">
       {suggestions.map((suggestion) => (
-        <SuggestionCard key={suggestion.id} suggestion={suggestion} articleOptions={articleOptions} review={review} />
+        <SuggestionCard key={suggestion.id} suggestion={suggestion} articles={articles} review={review} />
       ))}
     </ul>
   )

@@ -2108,10 +2108,7 @@
         "DISMISSED": "Écartée"
       },
       "currentStatus": "Statut actuel dans l'app : {status}",
-      "articleLabel": "Cet article existe déjà sous un autre titre ? Choisissez-le :",
-      "articlePlaceholder": "Choisir un article…",
-      "articleSearch": "Rechercher un article…",
-      "articleEmpty": "Aucun article trouvé",
+      "articleLabel": "Cet article est peut-être déjà dans la bibliothèque sous un autre titre :",
       "journalLabel": "Revue",
       "apply": "Valider",
       "createTeam": "Créer l'article",
@@ -2131,7 +2128,23 @@
       },
       "readMail": "Lire le mail",
       "openInGmail": "Ouvrir dans Gmail",
-      "mailBodyMissing": "Le texte de ce mail n'a pas été conservé."
+      "mailBodyMissing": "Le texte de ce mail n'a pas été conservé.",
+      "mailAuthors": "Auteurs cités dans le mail : {names}",
+      "picker": {
+        "open": "Chercher l'article dans la bibliothèque",
+        "change": "Changer d'article",
+        "clear": "Retirer",
+        "title": "Choisir l'article concerné par ce mail",
+        "search": "Rechercher par titre, auteur, revue ou étude",
+        "status": "Statut",
+        "ongoing": "Articles en cours",
+        "allStatuses": "Tous les statuts",
+        "statusColumn": "Statut",
+        "year": "Année",
+        "shared": "En commun avec le mail : {names}",
+        "choose": "Choisir",
+        "empty": "Aucun article ne correspond à cette recherche."
+      }
     }
   },
   "corelab": {

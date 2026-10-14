@@ -2110,10 +2110,7 @@
         "DISMISSED": "Dismissed"
       },
       "currentStatus": "Current status in the app: {status}",
-      "articleLabel": "Does this article already exist under another title? Pick it:",
-      "articlePlaceholder": "Choose an article…",
-      "articleSearch": "Search an article…",
-      "articleEmpty": "No article found",
+      "articleLabel": "This article may already be in the library under another title:",
       "journalLabel": "Journal",
       "apply": "Approve",
       "createTeam": "Create the article",
@@ -2133,7 +2130,23 @@
       },
       "readMail": "Read the email",
       "openInGmail": "Open in Gmail",
-      "mailBodyMissing": "The text of this email was not kept."
+      "mailBodyMissing": "The text of this email was not kept.",
+      "mailAuthors": "Authors named in the email: {names}",
+      "picker": {
+        "open": "Find the article in the library",
+        "change": "Change article",
+        "clear": "Remove",
+        "title": "Choose the article this email is about",
+        "search": "Search by title, author, journal or study",
+        "status": "Status",
+        "ongoing": "Ongoing articles",
+        "allStatuses": "All statuses",
+        "statusColumn": "Status",
+        "year": "Year",
+        "shared": "In common with the email: {names}",
+        "choose": "Choose",
+        "empty": "No article matches this search."
+      }
     }
   },
   "corelab": {

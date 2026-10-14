@@ -2,7 +2,9 @@ import { describe, expect, it } from 'vitest'
 import {
   baseManuscriptNumber,
   isMailAgentStale,
+  isSameAuthorName,
   isSameEvent,
+  sharedAuthorNames,
   matchArticle,
   matchJournals,
   normalizeJournalName,
@@ -220,6 +222,25 @@ describe('isSameEvent', () => {
     expect(isSameEvent(observation({ journalName: 'Circulation' }), known)).toBe(false)
     expect(isSameEvent(observation({ title: 'Another paper', manuscriptNumber: null }), known)).toBe(false)
     expect(isSameEvent(observation({ kind: 'SUBMISSION', decision: null }), known)).toBe(false)
+  })
+})
+
+describe('author names', () => {
+  it('recognises an author written without accents or surname first', () => {
+    expect(isSameAuthorName('Theo Pezel', 'Théo Pezel')).toBe(true)
+    expect(isSameAuthorName('Pezel, Théo', 'Théo Pezel')).toBe(true)
+    expect(isSameAuthorName('T. Pezel', 'Théo Pezel')).toBe(true)
+  })
+
+  it('keeps apart two people sharing a surname', () => {
+    expect(isSameAuthorName('Philippe Garot', 'Jérôme Garot')).toBe(false)
+    expect(isSameAuthorName('', 'Jérôme Garot')).toBe(false)
+  })
+
+  it('lists the library authors the mail also names', () => {
+    expect(
+      sharedAuthorNames(['Jérôme Garot', 'Solenn Toupin', 'Theo Pezel'], ['Solenn Toupin', 'Alexandre Unger', 'Théo Pezel']),
+    ).toEqual(['Solenn Toupin', 'Théo Pezel'])
   })
 })
 

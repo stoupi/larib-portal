@@ -6,10 +6,10 @@ import { canAdminApp } from '@/lib/permissions'
 import { isMailAgentStale } from '@/lib/publications/mail-agent'
 import {
   getMailAgentLastRunAt,
-  listOpenArticleOptions,
   listPendingMailSuggestions,
   listResolvedMailSuggestions,
 } from '@/lib/services/publications/mail-suggestions'
+import { listDashboardArticles } from '@/lib/services/publications/dashboard'
 import { BackToDashboard } from '@/app/[locale]/publications/components/back-to-dashboard'
 import { SuggestionList } from '@/app/[locale]/publications/components/mail-agent/suggestion-list'
 import { SuggestionHistory } from '@/app/[locale]/publications/components/mail-agent/suggestion-history'
@@ -21,11 +21,11 @@ export default async function PublicationsMailAgentPage({ params }: PageParams) 
   const session = await requireAuth()
   if (!canAdminApp(session.user, 'PUBLICATIONS')) redirect(applicationLink(locale, '/publications'))
 
-  const [t, pending, resolved, articleOptions, lastRunAt] = await Promise.all([
+  const [t, pending, resolved, articles, lastRunAt] = await Promise.all([
     getTranslations({ locale, namespace: 'publications.mailAgent' }),
     listPendingMailSuggestions(),
     listResolvedMailSuggestions(),
-    listOpenArticleOptions(),
+    listDashboardArticles(),
     getMailAgentLastRunAt(),
   ])
   const formatter = new Intl.DateTimeFormat(locale, { dateStyle: 'medium', timeStyle: 'short' })
@@ -59,7 +59,7 @@ export default async function PublicationsMailAgentPage({ params }: PageParams) 
           <h2 className="text-base font-extrabold uppercase tracking-[0.1em] text-coral-600">
             {t('pendingTitle')} · {pending.length}
           </h2>
-          <SuggestionList suggestions={pending} articleOptions={articleOptions} />
+          <SuggestionList suggestions={pending} articles={articles} />
         </section>
 
         <section aria-label={t('historyTitle')} className="space-y-3">

@@ -782,6 +782,7 @@ model PublicationMailSuggestion {
   manuscriptNumber String?
   eventDate        DateTime
   excerpt          String
+  authorNames      String[]                        @default([])
   titleKey         String
   journalKey       String
   manuscriptKey    String?

@@ -32,7 +32,7 @@ export type MailSource = {
   receivedAt: Date
 }
 
-export type IncomingObservation = MailObservation & MailSource & { excerpt: string }
+export type IncomingObservation = MailObservation & MailSource & { excerpt: string; authors: string[] }
 
 export type IngestOutcome = 'ALREADY_SEEN' | 'MERGED' | 'AUTO_APPLIED' | 'PENDING' | 'REDUNDANT'
 
@@ -142,6 +142,22 @@ async function applyAutomatically(
   }
 }
 
+function uniqueNames(names: string[]): string[] {
+  return [...new Set(names.map((name) => name.trim()).filter((name) => name.length > 0))]
+}
+
+async function addAuthorNames(suggestionId: string, names: string[]): Promise<void> {
+  if (names.length === 0) return
+  const suggestion = await prisma.publicationMailSuggestion.findUniqueOrThrow({
+    where: { id: suggestionId },
+    select: { authorNames: true },
+  })
+  await prisma.publicationMailSuggestion.update({
+    where: { id: suggestionId },
+    data: { authorNames: uniqueNames([...suggestion.authorNames, ...names]) },
+  })
+}
+
 async function ingestOne(mailbox: string, observation: IncomingObservation): Promise<IngestResult> {
   const seen = await prisma.publicationMailSource.findUnique({
     where: { mailbox_messageId: { mailbox, messageId: observation.messageId } },
@@ -152,6 +168,7 @@ async function ingestOne(mailbox: string, observation: IncomingObservation): Pro
   const sameEventId = await findSameEvent(observation)
   if (sameEventId) {
     await prisma.publicationMailSource.create({ data: { suggestionId: sameEventId, ...sourceData(mailbox, observation) } })
+    await addAuthorNames(sameEventId, observation.authors)
     return { messageId: observation.messageId, outcome: 'MERGED', suggestionId: sameEventId }
   }
 
@@ -174,6 +191,7 @@ async function ingestOne(mailbox: string, observation: IncomingObservation): Pro
       manuscriptNumber: observation.manuscriptNumber,
       eventDate: observation.eventDate,
       excerpt: observation.excerpt,
+      authorNames: uniqueNames(observation.authors),
       ...eventKeysOf(observation),
       status: outcome,
       reviewReason: outcome === 'PENDING' ? plan.reviewReason : null,
@@ -225,6 +243,7 @@ export type MailSuggestionRow = {
   manuscriptNumber: string | null
   eventDate: string
   excerpt: string
+  authorNames: string[]
   status: 'PENDING' | 'APPLIED' | 'AUTO_APPLIED' | 'REDUNDANT' | 'DISMISSED'
   reviewReason: MailReviewReason | null
   article: { id: string; title: string; status: ArticleStatusValue } | null
@@ -242,6 +261,7 @@ const ROW_SELECT = {
   manuscriptNumber: true,
   eventDate: true,
   excerpt: true,
+  authorNames: true,
   status: true,
   reviewReason: true,
   resolvedAt: true,
@@ -274,6 +294,7 @@ function toRow(suggestion: SelectedRow): MailSuggestionRow {
     manuscriptNumber: suggestion.manuscriptNumber,
     eventDate: suggestion.eventDate.toISOString(),
     excerpt: suggestion.excerpt,
+    authorNames: suggestion.authorNames,
     status: suggestion.status,
     reviewReason: suggestion.reviewReason,
     article: suggestion.article
@@ -303,14 +324,4 @@ export async function getMailAgentLastRunAt(): Promise<Date | null> {
     select: { mailAgentLastRunAt: true },
   })
   return settings?.mailAgentLastRunAt ?? null
-}
-
-export type MailArticleOption = { id: string; title: string }
-
-export async function listOpenArticleOptions(): Promise<MailArticleOption[]> {
-  return prisma.article.findMany({
-    where: { status: { notIn: ['PUBLISHED', 'ABANDONED'] }, title: { not: '' } },
-    orderBy: { title: 'asc' },
-    select: { id: true, title: true },
-  })
 }
