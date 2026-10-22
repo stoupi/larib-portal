@@ -10,6 +10,7 @@ import {
   mergeRecapRecipients,
   filterAlwaysNotifiedRecipients,
   ALWAYS_NOTIFIED_RECIPIENTS,
+  excludeRecipients,
 } from './recap'
 
 describe('getWeekRange', () => {
@@ -168,5 +169,16 @@ describe('groupEmailsByLanguage', () => {
     ])
     expect(grouped.get('FR')).toEqual(['a@x.io', 'c@x.io'])
     expect(grouped.get('EN')).toEqual(['b@x.io'])
+  })
+})
+
+describe('excludeRecipients', () => {
+  it('drops subscribers who already receive the admin recap, case-insensitively', () => {
+    const subscribers = [
+      { email: 'Marie@x.io', language: 'FR' as const },
+      { email: 'paul@x.io', language: 'EN' as const },
+    ]
+    const admins = [{ email: 'marie@x.io', language: 'FR' as const }]
+    expect(excludeRecipients(subscribers, admins)).toEqual([{ email: 'paul@x.io', language: 'EN' }])
   })
 })

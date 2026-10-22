@@ -4,11 +4,14 @@ import {
   getMonthRange,
   getLeaveRecap,
   getCongesAdminRecipients,
+  getCongesTeamRecapSubscribers,
+  excludeRecipients,
   resolvePeriod,
   isAuthorizedCron,
   groupEmailsByLanguage,
 } from '@/lib/services/conges/recap'
 import { sendLeaveRecapEmail } from '@/lib/services/email'
+import { resolveAppBaseUrl } from '@/lib/app-url'
 
 export const runtime = 'nodejs'
 
@@ -25,11 +28,15 @@ export async function GET(request: NextRequest) {
   const today = new Date()
   const range = period === 'monthly' ? getMonthRange(today) : getWeekRange(today)
 
-  const [rows, recipients] = await Promise.all([getLeaveRecap(range), getCongesAdminRecipients()])
+  const [rows, recipients, subscribers] = await Promise.all([
+    getLeaveRecap(range),
+    getCongesAdminRecipients(),
+    getCongesTeamRecapSubscribers(period),
+  ])
+  const teamRecipients = excludeRecipients(subscribers, recipients)
 
   if (recipients.length === 0) {
     console.warn('[conges-recap] no CONGES admin recipients')
-    return NextResponse.json({ period, count: rows.length, recipients: 0, sent: 0, failures: 0 })
   }
 
   const emailsByLanguage = groupEmailsByLanguage(recipients)
@@ -53,12 +60,34 @@ export async function GET(request: NextRequest) {
     }
   }
 
+  const appBaseUrl = resolveAppBaseUrl()
+  for (const teamRecipient of teamRecipients) {
+    const locale = teamRecipient.language === 'FR' ? 'fr' : 'en'
+    const result = await sendLeaveRecapEmail({
+      to: [teamRecipient.email],
+      locale,
+      period,
+      rangeStart: range.start,
+      rangeEnd: range.end,
+      rows,
+      audience: 'team',
+      congesUrl: `${appBaseUrl}/${locale}/conges`,
+    })
+    if ('error' in result) {
+      failures += 1
+      console.error(`[conges-recap] team send failed: ${result.error}`)
+    } else {
+      sent += 1
+    }
+  }
+
   return NextResponse.json({
     period,
     rangeStart: range.start.toISOString(),
     rangeEnd: range.end.toISOString(),
     count: rows.length,
     recipients: recipients.length,
+    teamRecipients: teamRecipients.length,
     sent,
     failures,
   })

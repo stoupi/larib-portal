@@ -876,6 +876,30 @@
         "filterRejected": "Rejected",
         "filterCancelled": "Cancelled"
       }
+    },
+    "stayInformed": {
+      "title": "Stay informed",
+      "subtitle": "Follow the team's absences from your calendar or your inbox.",
+      "saved": "Email preferences saved",
+      "saveError": "Could not save your preferences",
+      "calendar": {
+        "title": "Google Calendar",
+        "description": "Add the team's approved leave to your Google Calendar (or Apple, Outlook).",
+        "urlLabel": "Leave calendar address",
+        "copy": "Copy",
+        "copied": "Address copied",
+        "stepCopy": "Copy the address above.",
+        "stepOpen": "Open Google Calendar › Add calendar › From URL.",
+        "stepPaste": "Paste the address and click “Add calendar”.",
+        "delayNote": "Google refreshes subscribed calendars every few hours: an approved leave can take up to a day to show up. This address is private: only share it with the team.",
+        "unavailable": "The calendar is not available on this server yet."
+      },
+      "email": {
+        "title": "Email recap",
+        "description": "Receive the list of the team's approved leave.",
+        "weekly": "Every Monday, this week's leave",
+        "monthly": "On the 1st of each month, this month's leave"
+      }
     }
   },
   "publications": {

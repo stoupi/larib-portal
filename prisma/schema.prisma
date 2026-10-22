@@ -34,6 +34,8 @@ model User {
   profilePhoto            String?
   profilePhotoKey         String?
   congesTotalDays         Int           @default(0)
+  congesRecapWeekly       Boolean       @default(false)
+  congesRecapMonthly      Boolean       @default(false)
   publicationsEmailOptOut Boolean       @default(false)
   applications            Application[]
   adminApplications       Application[] @default([])

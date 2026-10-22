@@ -874,6 +874,30 @@
         "filterRejected": "Refusées",
         "filterCancelled": "Annulées"
       }
+    },
+    "stayInformed": {
+      "title": "Rester informé",
+      "subtitle": "Suivez les absences de l'équipe depuis votre agenda ou votre boîte mail.",
+      "saved": "Préférences d'envoi enregistrées",
+      "saveError": "Impossible d'enregistrer vos préférences",
+      "calendar": {
+        "title": "Agenda Google",
+        "description": "Ajoutez le calendrier des congés validés de l'équipe à votre agenda Google (ou Apple, Outlook).",
+        "urlLabel": "Adresse de l'agenda des congés",
+        "copy": "Copier",
+        "copied": "Adresse copiée",
+        "stepCopy": "Copiez l'adresse ci-dessus.",
+        "stepOpen": "Ouvrez Google Agenda › Ajouter un agenda › À partir de l'URL.",
+        "stepPaste": "Collez l'adresse puis cliquez sur « Ajouter l'agenda ».",
+        "delayNote": "Google met à jour les agendas abonnés toutes les quelques heures : un congé validé peut mettre jusqu'à une journée à apparaître. Cette adresse est privée : ne la partagez qu'avec l'équipe.",
+        "unavailable": "L'agenda n'est pas encore disponible sur ce serveur."
+      },
+      "email": {
+        "title": "Récapitulatif par mail",
+        "description": "Recevez la liste des congés validés de l'équipe.",
+        "weekly": "Chaque lundi, les congés de la semaine",
+        "monthly": "Chaque 1er du mois, les congés du mois"
+      }
     }
   },
   "publications": {

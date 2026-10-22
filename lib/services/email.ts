@@ -12,7 +12,7 @@ import {
 export { renderCarouselRequestEmailHtml }
 import { eachDayOfInterval, endOfDay, endOfWeek, format, isWithinInterval, startOfDay, startOfWeek } from 'date-fns'
 import { fr, enUS } from 'date-fns/locale'
-import type { RecapPeriod, RecapRow, RecapStatus } from '@/lib/services/conges/recap'
+import type { RecapAudience, RecapPeriod, RecapRow, RecapStatus } from '@/lib/services/conges/recap'
 import {
   selectOngoingArticles,
   selectStalledArticles,
@@ -426,6 +426,8 @@ export type LeaveRecapEmailParams = {
   rangeStart: Date
   rangeEnd: Date
   rows: RecapRow[]
+  audience?: RecapAudience
+  congesUrl?: string
 }
 
 const RECAP_STATUS_STYLE: Record<RecapStatus, { bgColor: string; label: Record<'fr' | 'en', string> }> = {
@@ -445,9 +447,13 @@ export function renderLeaveRecapEmail({
   period,
   rangeStart,
   rangeEnd,
-  rows,
+  rows: allRows,
+  audience = 'admin',
+  congesUrl,
 }: LeaveRecapEmailParams): { subject: string; text: string; html: string } {
   const dateLocale = locale === 'fr' ? fr : enUS
+  const showBalances = audience === 'admin'
+  const rows = showBalances ? allRows : allRows.filter((row) => row.status === 'APPROVED')
 
   const titles: Record<RecapPeriod, Record<'fr' | 'en', string>> = {
     weekly: { fr: 'Congés de la semaine', en: "This week's leave" },
@@ -481,10 +487,16 @@ export function renderLeaveRecapEmail({
         const statusLabel = RECAP_STATUS_STYLE[row.status].label[locale]
         const positionPart = row.position ? ` (${row.position})` : ''
         const remainingPart = locale === 'fr' ? `${row.remainingDays} j restants` : `${row.remainingDays} d left`
-        return `- ${row.name}${positionPart} : ${dates}, ${row.daysInRange} ${daysWord(row.daysInRange)} [${statusLabel}] — ${remainingPart}`
+        const line = `- ${row.name}${positionPart} : ${dates}, ${row.daysInRange} ${daysWord(row.daysInRange)}`
+        return showBalances ? `${line} [${statusLabel}] — ${remainingPart}` : line
       })
     : [emptyStates[period][locale]]
-  const text = `${title}\n${rangeLabel}\n\n${textLines.join('\n')}`
+  const subscriptionNote = showBalances
+    ? ''
+    : locale === 'fr'
+      ? `Vous recevez ce récapitulatif car vous y êtes abonné·e. Pour le modifier : ${congesUrl ?? 'page Congés du portail'}`
+      : `You receive this recap because you subscribed to it. To change this: ${congesUrl ?? 'the portal Leave page'}`
+  const text = `${title}\n${rangeLabel}\n\n${textLines.join('\n')}${subscriptionNote ? `\n\n${subscriptionNote}` : ''}`
 
   const preheader = `${title} — ${rangeLabel}`
 
@@ -531,12 +543,12 @@ export function renderLeaveRecapEmail({
     })
     .join('')
 
-  const legend = `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin-top:14px;">
+  const legend = showBalances ? `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin-top:14px;">
     <tr>
       <td style="padding-right:18px;font-family:${FONT_SANS};font-size:12px;color:${COLORS.mutedForeground};"><span style="display:inline-block;width:10px;height:10px;background-color:${RECAP_STATUS_STYLE.APPROVED.bgColor};border-radius:2px;margin-right:6px;"></span>${RECAP_STATUS_STYLE.APPROVED.label[locale]}</td>
       <td style="font-family:${FONT_SANS};font-size:12px;color:${COLORS.mutedForeground};"><span style="display:inline-block;width:10px;height:10px;background-color:${RECAP_STATUS_STYLE.PENDING.bgColor};border-radius:2px;margin-right:6px;"></span>${RECAP_STATUS_STYLE.PENDING.label[locale]}</td>
     </tr>
-  </table>`
+  </table>` : ''
 
   const listTitle = locale === 'fr' ? 'Détail des congés' : 'Leave details'
 
@@ -593,7 +605,7 @@ export function renderLeaveRecapEmail({
           <td style="padding:10px 0;border-top:1px solid ${COLORS.secondary};font-family:${FONT_SANS};font-size:14px;color:${COLORS.foreground};vertical-align:top;">${person.name}${person.position ? ` <span style="color:${COLORS.mutedForeground};font-size:12px;">· ${person.position}</span>` : ''}</td>
           <td style="padding:10px 0;border-top:1px solid ${COLORS.secondary};text-align:right;vertical-align:top;white-space:nowrap;">
             <div style="font-family:${FONT_SANS};font-size:14px;color:${COLORS.foreground};">${personSpan(person)}</div>
-            <div style="font-family:${FONT_SANS};font-size:11px;color:#9aa5b4;margin-top:2px;">${remainingLabel(person.remainingDays)}</div>
+            ${showBalances ? `<div style="font-family:${FONT_SANS};font-size:11px;color:#9aa5b4;margin-top:2px;">${remainingLabel(person.remainingDays)}</div>` : ''}
           </td>
         </tr>`)
           .join('')}
@@ -619,7 +631,8 @@ export function renderLeaveRecapEmail({
       <tbody>${weekRows}</tbody>
     </table>
     ${legend}
-    ${balancesList}`
+    ${balancesList}
+    ${subscriptionNote ? `<p style="margin:26px 0 0 0;font-family:${FONT_SANS};font-size:12px;line-height:18px;color:${COLORS.mutedForeground};">${escapeHtml(subscriptionNote)}</p>` : ''}`
 
   const html = emailLayout(body, preheader)
   return { subject, text, html }

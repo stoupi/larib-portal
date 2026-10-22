@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/prisma'
-import { LeaveRequestStatus } from '@/app/generated/prisma'
+import { LeaveRequestStatus, type Prisma } from '@/app/generated/prisma'
 import {
   addMonths,
   differenceInCalendarDays,
@@ -21,6 +21,11 @@ export {
   getHolidayDatesForCalendar,
   getHolidayName,
 } from './french-holidays'
+
+export const CONGES_TEAM_MEMBER_WHERE = {
+  applications: { has: 'CONGES' },
+  OR: [{ role: 'USER' }, { congesTotalDays: { gt: 0 } }],
+} satisfies Prisma.UserWhereInput
 
 export type LeaveHistoryEntry = {
   id: string
@@ -160,12 +165,7 @@ export async function getLeaveCalendarData(month: Date): Promise<{
       status: 'APPROVED',
       startDate: { lte: rangeEnd },
       endDate: { gte: rangeStart },
-      user: {
-        role: 'USER',
-        applications: {
-          has: 'CONGES',
-        },
-      },
+      user: CONGES_TEAM_MEMBER_WHERE,
     },
     include: {
       user: {
@@ -336,12 +336,7 @@ export async function getAdminLeaveDashboard(
 ): Promise<AdminDashboardSummary> {
   const [users, requests] = await Promise.all([
     prisma.user.findMany({
-      where: {
-        role: 'USER',
-        applications: {
-          has: 'CONGES',
-        },
-      },
+      where: CONGES_TEAM_MEMBER_WHERE,
       select: {
         id: true,
         email: true,
@@ -356,12 +351,7 @@ export async function getAdminLeaveDashboard(
     }),
     prisma.leaveRequest.findMany({
       where: {
-        user: {
-          role: 'USER',
-          applications: {
-            has: 'CONGES',
-          },
-        },
+        user: CONGES_TEAM_MEMBER_WHERE,
       },
       include: {
         user: {
@@ -515,9 +505,6 @@ export async function createLeaveRequest(
     startDate: Date
     endDate: Date
     reason?: string | null
-    autoApprove?: {
-      approverId: string
-    }
   },
   frenchHolidays: Record<string, string>
 ): Promise<void> {
@@ -572,21 +559,12 @@ export async function createLeaveRequest(
     throw new Error('insufficientDays')
   }
 
-  const shouldAutoApprove = Boolean(input.autoApprove)
-
   await prisma.leaveRequest.create({
     data: {
       userId: input.userId,
       startDate: start,
       endDate: end,
       reason: input.reason?.trim() || null,
-      ...(shouldAutoApprove
-        ? {
-            status: 'APPROVED',
-            approverId: input.autoApprove?.approverId,
-            decisionAt: new Date(),
-          }
-        : {}),
     },
   })
 }

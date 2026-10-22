@@ -18,6 +18,10 @@ import { PendingRequestsSection } from './components/pending-requests-section'
 import { TeamLeaveOverviewSection } from './components/team-leave-overview-section'
 import { DecisionHistorySection, type DecisionEntry } from './components/decision-history-section'
 import { CalendarSkeleton } from './components/calendar-skeleton'
+import { StayInformedCard } from './components/stay-informed-card'
+import { getCongesRecapPreferences } from '@/lib/services/conges/recap'
+import { buildCalendarFeedUrl, getCalendarFeedToken } from '@/lib/services/conges/calendar-feed'
+import { resolveAppBaseUrl } from '@/lib/app-url'
 import { PageHeader } from '@/app/[locale]/components/page-header'
 import { applicationLink } from '@/lib/application-link'
 import { canAccessApp, canAdminApp } from '@/lib/permissions'
@@ -67,12 +71,18 @@ export async function CongesPageContent({ locale, searchParams, adminView }: { l
 
   const frenchHolidays = await fetchFrenchHolidays()
 
-  const [t, userDashboard, calendarData, adminDashboard] = await Promise.all([
+  const [t, userDashboard, calendarData, adminDashboard, recapPreferences] = await Promise.all([
     getTranslations({ locale, namespace: 'conges' }),
     getUserLeaveDashboard(session.user.id, frenchHolidays),
     getLeaveCalendarData(activeMonth),
     adminView ? getAdminLeaveDashboard(frenchHolidays) : Promise.resolve(null),
+    getCongesRecapPreferences(session.user.id),
   ])
+
+  const calendarFeedToken = getCalendarFeedToken()
+  const calendarFeedUrl = calendarFeedToken
+    ? buildCalendarFeedUrl(resolveAppBaseUrl(), calendarFeedToken, locale)
+    : null
 
   const requestTrigger = showAdmin ? t('request.triggerAdmin') : t('request.trigger')
 
@@ -455,6 +465,12 @@ export async function CongesPageContent({ locale, searchParams, adminView }: { l
     </section>
   )
 
+  const stayInformedSection = (
+    <section className='px-6'>
+      <StayInformedCard feedUrl={calendarFeedUrl} initialPreferences={recapPreferences} />
+    </section>
+  )
+
   const historySection = (
     <section className='px-6'>
       <Card>
@@ -537,6 +553,7 @@ export async function CongesPageContent({ locale, searchParams, adminView }: { l
           {summarySection}
           {calendarSection}
           {historySection}
+          {stayInformedSection}
         </>
       )}
     </div>

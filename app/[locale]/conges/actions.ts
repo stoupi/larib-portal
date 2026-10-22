@@ -1,7 +1,6 @@
 'use server'
 
 import { authenticatedAction, appAdminAction } from '@/actions/safe-action'
-import { canAdminApp } from '@/lib/permissions'
 import {
   createLeaveRequest,
   updateLeaveAllocation,
@@ -15,6 +14,8 @@ import {
   getAdminEmails,
 } from '@/lib/services/conges'
 import { sendLeaveNotificationEmail } from '@/lib/services/email'
+import { updateCongesRecapPreferences } from '@/lib/services/conges/recap'
+import { canAccessApp } from '@/lib/permissions'
 import { prisma } from '@/lib/prisma'
 import { revalidatePath } from 'next/cache'
 import { format } from 'date-fns'
@@ -104,7 +105,6 @@ const requestLeaveSchema = z
 export const requestLeaveAction = authenticatedAction
   .inputSchema(requestLeaveSchema)
   .action(async ({ parsedInput, ctx }) => {
-    const shouldAutoApprove = canAdminApp(ctx.user, 'CONGES')
     const frenchHolidays = await fetchFrenchHolidays()
 
     const startDate = new Date(parsedInput.startDate)
@@ -116,21 +116,18 @@ export const requestLeaveAction = authenticatedAction
         startDate,
         endDate,
         reason: parsedInput.reason ?? null,
-        autoApprove: shouldAutoApprove ? { approverId: ctx.userId } : undefined,
       },
       frenchHolidays
     )
 
-    if (!shouldAutoApprove) {
-      sendLeaveNotification({
-        userId: ctx.userId,
-        eventType: 'created',
-        startDate,
-        endDate,
-        reason: parsedInput.reason ?? null,
-        frenchHolidays,
-      })
-    }
+    sendLeaveNotification({
+      userId: ctx.userId,
+      eventType: 'created',
+      startDate,
+      endDate,
+      reason: parsedInput.reason ?? null,
+      frenchHolidays,
+    })
 
     await revalidateConges()
 
@@ -283,5 +280,20 @@ export const adminUpdateLeaveAction = appAdminAction('CONGES')
       frenchHolidays
     )
     await revalidateConges()
+    return { success: true }
+  })
+
+const recapPreferencesSchema = z.object({
+  weekly: z.boolean(),
+  monthly: z.boolean(),
+})
+
+export const updateCongesRecapPreferencesAction = authenticatedAction
+  .inputSchema(recapPreferencesSchema)
+  .action(async ({ parsedInput, ctx }) => {
+    if (!canAccessApp(ctx.user, 'CONGES')) {
+      throw new Error('forbidden')
+    }
+    await updateCongesRecapPreferences(ctx.userId, parsedInput)
     return { success: true }
   })

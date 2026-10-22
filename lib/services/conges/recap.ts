@@ -3,11 +3,18 @@ import { countWorkingDays } from './french-holidays'
 import { prisma } from '@/lib/prisma'
 import { LeaveRequestStatus, type Application, type Role } from '@/app/generated/prisma'
 import { fetchFrenchHolidays } from './french-holidays'
-import { canAdminApp, filterActiveAppAdmins, type AccessPeriodSummary } from '@/lib/permissions'
+import { CONGES_TEAM_MEMBER_WHERE } from './index'
+import {
+  canAdminApp,
+  filterActiveAppAdmins,
+  filterActiveAppMembers,
+  type AccessPeriodSummary,
+} from '@/lib/permissions'
 
 export type DateRange = { start: Date; end: Date }
 export type RecapPeriod = 'weekly' | 'monthly'
 export type RecapStatus = 'APPROVED' | 'PENDING'
+export type RecapAudience = 'admin' | 'team'
 
 export type RecapLeaveInput = {
   userId: string
@@ -122,10 +129,7 @@ export async function getLeaveRecap(range: DateRange): Promise<RecapRow[]> {
       status: { in: [LeaveRequestStatus.APPROVED, LeaveRequestStatus.PENDING] },
       startDate: { lte: range.end },
       endDate: { gte: range.start },
-      user: {
-        role: 'USER',
-        applications: { has: 'CONGES' },
-      },
+      user: CONGES_TEAM_MEMBER_WHERE,
     },
     include: {
       user: {
@@ -215,4 +219,47 @@ export async function getCongesAdminRecipients(): Promise<RecapRecipient[]> {
   }))
   const activeAlwaysNotified = filterAlwaysNotifiedRecipients(ALWAYS_NOTIFIED_RECIPIENTS, admins)
   return mergeRecapRecipients(fromDatabase, activeAlwaysNotified)
+}
+
+export function excludeRecipients(recipients: RecapRecipient[], alreadyNotified: RecapRecipient[]): RecapRecipient[] {
+  const notifiedEmails = new Set(alreadyNotified.map((recipient) => recipient.email.trim().toLowerCase()))
+  return recipients.filter((recipient) => !notifiedEmails.has(recipient.email.trim().toLowerCase()))
+}
+
+export async function getCongesTeamRecapSubscribers(period: RecapPeriod): Promise<RecapRecipient[]> {
+  const subscribers = await prisma.user.findMany({
+    where: period === 'weekly' ? { congesRecapWeekly: true } : { congesRecapMonthly: true },
+    select: {
+      email: true,
+      language: true,
+      role: true,
+      applications: true,
+      adminApplications: true,
+      accessPeriods: { select: { application: true, startsAt: true, endsAt: true } },
+    },
+  })
+  return filterActiveAppMembers(subscribers, 'CONGES').map((subscriber) => ({
+    email: subscriber.email,
+    language: subscriber.language,
+  }))
+}
+
+export type CongesRecapPreferences = { weekly: boolean; monthly: boolean }
+
+export async function getCongesRecapPreferences(userId: string): Promise<CongesRecapPreferences> {
+  const user = await prisma.user.findUniqueOrThrow({
+    where: { id: userId },
+    select: { congesRecapWeekly: true, congesRecapMonthly: true },
+  })
+  return { weekly: user.congesRecapWeekly, monthly: user.congesRecapMonthly }
+}
+
+export async function updateCongesRecapPreferences(
+  userId: string,
+  preferences: CongesRecapPreferences,
+): Promise<void> {
+  await prisma.user.update({
+    where: { id: userId },
+    data: { congesRecapWeekly: preferences.weekly, congesRecapMonthly: preferences.monthly },
+  })
 }

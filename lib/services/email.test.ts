@@ -43,6 +43,40 @@ describe('renderLeaveRecapEmail', () => {
   })
 })
 
+describe('renderLeaveRecapEmail for team subscribers', () => {
+  it('hides balances and pending leave, and explains the subscription', () => {
+    const { text, html } = renderLeaveRecapEmail({
+      to: ['member@x.io'],
+      locale: 'fr',
+      period: 'weekly',
+      rangeStart: new Date('2026-07-06T00:00:00'),
+      rangeEnd: new Date('2026-07-10T23:59:59'),
+      audience: 'team',
+      congesUrl: 'https://portal.test/fr/conges',
+      rows: [
+        {
+          userId: 'u1', name: 'Alice A', position: 'Doctor',
+          startDate: new Date('2026-07-06T00:00:00'), endDate: new Date('2026-07-08T00:00:00'),
+          status: 'APPROVED', daysInRange: 3, remainingDays: 17,
+        },
+        {
+          userId: 'u2', name: 'Bob B', position: null,
+          startDate: new Date('2026-07-09T00:00:00'), endDate: new Date('2026-07-10T00:00:00'),
+          status: 'PENDING', daysInRange: 2, remainingDays: 4,
+        },
+      ],
+    })
+    expect(html).toContain('Alice A')
+    expect(html).not.toContain('Bob B')
+    expect(text).not.toContain('Bob B')
+    expect(html).not.toContain('restant')
+    expect(text).not.toContain('restants')
+    expect(html).not.toContain('En attente')
+    expect(html).toContain('https://portal.test/fr/conges')
+    expect(text).toContain('abonné')
+  })
+})
+
 describe('renderPublicationsRecapEmail', () => {
   const articles: RecapArticle[] = [
     { id: '1', title: 'AI in cardiac MRI', status: 'UNDER_REVIEW', journalName: 'JACC', since: '2026-07-02T00:00:00.000Z', waitingDays: 62 },

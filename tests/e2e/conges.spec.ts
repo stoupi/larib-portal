@@ -89,6 +89,38 @@ test.describe('Conges - Leave Management', () => {
 			});
 		});
 
+		test('lets a team member subscribe to the leave calendar feed and the email recap', async ({ page }) => {
+			await loginAs(page, TEST_USER);
+			await gotoConges(page);
+
+			await expect(page.getByText('Stay informed', { exact: true })).toBeVisible({ timeout: 10000 });
+			const feedInput = page.getByLabel('Leave calendar address');
+			const feedUrl = await feedInput.inputValue();
+			expect(feedUrl).toContain('/api/conges/calendar?token=');
+
+			const feedResponse = await page.request.get(feedUrl.replace(/^https?:\/\/[^/]+/, ''));
+			expect(feedResponse.status()).toBe(200);
+			expect(feedResponse.headers()['content-type']).toContain('text/calendar');
+			expect(await feedResponse.text()).toContain('BEGIN:VCALENDAR');
+
+			const forgedResponse = await page.request.get('/api/conges/calendar?token=forged');
+			expect(forgedResponse.status()).toBe(401);
+
+			const weeklySwitch = page.getByRole('switch', { name: /every monday/i });
+			await expect(weeklySwitch).not.toBeChecked();
+			await weeklySwitch.click();
+			await expect(page.getByText('Email preferences saved')).toBeVisible({ timeout: 10000 });
+
+			await page.reload();
+			await expect(page.getByRole('switch', { name: /every monday/i })).toBeChecked({ timeout: 10000 });
+			await page.getByRole('switch', { name: /every monday/i }).click();
+			await expect(page.getByText('Email preferences saved').first()).toBeVisible({ timeout: 10000 });
+
+			await gotoConges(page, 'fr');
+			await expect(page.getByText('Rester informé', { exact: true })).toBeVisible({ timeout: 10000 });
+			await expect(page.getByRole('switch', { name: /chaque lundi/i })).not.toBeChecked();
+		});
+
 		test('should show request dialog with calendar and submit button', async ({ page }) => {
 			await loginAs(page, TEST_USER);
 			await gotoConges(page);
