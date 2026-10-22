@@ -74,6 +74,7 @@ model User {
   authorRequestsMade      PublicationRequest[]        @relation("PublicationRequestedBy")
   authorRequestsResolved  PublicationRequest[]        @relation("PublicationRequestResolvedBy")
   mailSuggestionsResolved PublicationMailSuggestion[] @relation("PublicationMailSuggestionResolvedBy")
+  pubmedAlertsResolved    PublicationPubmedAlert[]    @relation("PublicationPubmedAlertResolvedBy")
 
   @@map("User")
 }
@@ -629,6 +630,7 @@ model Article {
   authorships     Authorship[]
   submissions     Submission[]
   mailSuggestions PublicationMailSuggestion[]
+  pubmedAlerts    PublicationPubmedAlert[]
   journalTargets  JournalTarget[]
   authorRequests  PublicationRequest[]
 
@@ -646,6 +648,7 @@ enum PublicationEmailKind {
   MONTHLY_RECAP
   ACCEPTED_RECAP
   ISSUE_REPORT
+  PUBMED_ALERT
 }
 
 enum PublicationEmailStatus {
@@ -655,11 +658,12 @@ enum PublicationEmailStatus {
 
 // One row, holding the settings the Publications admins share.
 model PublicationSettings {
-  id                  String    @id @default("singleton")
-  recapCcEmails       String[]  @default([])
-  acceptedRecapEmails String[]  @default([])
-  mailAgentLastRunAt  DateTime?
-  updatedAt           DateTime  @updatedAt
+  id                   String    @id @default("singleton")
+  recapCcEmails        String[]  @default([])
+  acceptedRecapEmails  String[]  @default([])
+  mailAgentLastRunAt   DateTime?
+  pubmedWatchLastRunAt DateTime?
+  updatedAt            DateTime  @updatedAt
 
   @@map("PublicationSettings")
 }
@@ -825,6 +829,44 @@ model PublicationMailSource {
   @@unique([mailbox, messageId])
   @@index([suggestionId])
   @@map("PublicationMailSource")
+}
+
+enum PublicationPubmedAlertStatus {
+  PENDING
+  LINKED
+  AUTO_LINKED
+  IMPORTED
+  DISMISSED
+}
+
+enum PublicationPubmedAlertReason {
+  SIMILAR_TITLE
+  AMBIGUOUS_TITLE
+  PMID_CONFLICT
+  UNKNOWN_ARTICLE
+}
+
+// One row per PubMed paper signed with the MIRACL.ai affiliation that the library did not
+// already hold: either linked on the spot, or waiting for an admin.
+model PublicationPubmedAlert {
+  id           String                        @id @default(cuid())
+  pmid         String                        @unique
+  title        String
+  journalName  String?
+  doi          String?
+  publishedAt  DateTime?
+  authorNames  String[]                      @default([])
+  status       PublicationPubmedAlertStatus  @default(PENDING)
+  reviewReason PublicationPubmedAlertReason?
+  articleId    String?
+  article      Article?                      @relation(fields: [articleId], references: [id], onDelete: SetNull)
+  createdAt    DateTime                      @default(now())
+  resolvedAt   DateTime?
+  resolvedById String?
+  resolvedBy   User?                         @relation("PublicationPubmedAlertResolvedBy", fields: [resolvedById], references: [id], onDelete: SetNull)
+
+  @@index([status, createdAt])
+  @@map("PublicationPubmedAlert")
 }
 
 model JournalTarget {

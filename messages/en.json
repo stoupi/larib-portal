@@ -2022,7 +2022,8 @@
       "acceptedNothing": "Nothing to announce: no publication accepted in the window.",
       "acceptedSendNow": "Send now",
       "acceptedSent": "Announcement sent to {count} recipient(s)",
-      "acceptedNoRecipient": "Add at least one address before sending."
+      "acceptedNoRecipient": "Add at least one address before sending.",
+      "kindPUBMED_ALERT": "PubMed watch"
     },
     "logbook": {
       "title": "Logbook",
@@ -2188,6 +2189,52 @@
           "CREATED": "← new submission",
           "REJECTED": "← will be marked rejected"
         }
+      }
+    },
+    "pubmedWatch": {
+      "title": "PubMed watch · MIRACL.ai",
+      "subtitle": "Every morning, the portal searches PubMed for papers signed with the MIRACL.ai affiliation and links them to the library. Those it could not link on its own wait here.",
+      "moduleDescription": "New MIRACL.ai papers indexed on PubMed",
+      "lastRun": "Last run: {date}",
+      "neverRan": "The watch has not run yet.",
+      "pendingTitle": "To review",
+      "pendingEmpty": "No paper waiting: everything PubMed published is linked.",
+      "historyTitle": "History",
+      "historyEmpty": "No paper handled yet.",
+      "authors": "Authors: {names}",
+      "articleLabel": "Library publication to link",
+      "openPubmed": "View on PubMed",
+      "dismiss": "Dismiss",
+      "import": "Import as a new publication",
+      "link": "Link to this publication",
+      "linked": "Publication linked to its PubMed record",
+      "imported": "Publication imported from PubMed",
+      "dismissed": "Paper dismissed",
+      "openArticle": "Open",
+      "reason": {
+        "SIMILAR_TITLE": "A library publication has a close title, but in another journal: please confirm.",
+        "AMBIGUOUS_TITLE": "Several library publications share this title: pick the right one.",
+        "PMID_CONFLICT": "A library publication has the same DOI but another PubMed record.",
+        "UNKNOWN_ARTICLE": "No library publication matches: import it or link it by hand."
+      },
+      "status": {
+        "PENDING": "To review",
+        "LINKED": "Linked",
+        "AUTO_LINKED": "Linked automatically",
+        "IMPORTED": "Imported",
+        "DISMISSED": "Dismissed"
+      },
+      "columns": {
+        "article": "Publication",
+        "journal": "Journal",
+        "pubmed": "PubMed",
+        "date": "Handled on",
+        "outcome": "Outcome"
+      },
+      "errors": {
+        "ALERT_NOT_PENDING": "This paper has already been handled.",
+        "PMID_ALREADY_LINKED": "This PubMed record is already linked to another publication.",
+        "PUBMED_RECORD_NOT_FOUND": "PubMed no longer returns this record, try again later."
       }
     }
   },

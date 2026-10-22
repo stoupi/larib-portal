@@ -1,7 +1,7 @@
 'use client'
 
 import { useTranslations } from 'next-intl'
-import { Download, Users, Building2, BookOpen, FlaskConical, Megaphone, History, Mail, Inbox } from 'lucide-react'
+import { Download, Users, Building2, BookOpen, FlaskConical, Megaphone, History, Mail, Inbox, Radar } from 'lucide-react'
 import type { ComponentType } from 'react'
 import { Link } from '@/app/i18n/navigation'
 
@@ -14,6 +14,7 @@ export type ModuleCounts = {
   pendingCommunications: number
   emails: number
   pendingMailSuggestions: number
+  pendingPubmedAlerts: number
 }
 
 function ModuleCard({
@@ -80,6 +81,13 @@ export function DashboardModules({ counts }: { counts: ModuleCounts }) {
           title={t('mailAgent.title')}
           description={t('mailAgent.moduleDescription')}
           count={counts.pendingMailSuggestions}
+        />
+        <ModuleCard
+          href="/publications/admin/pubmed-watch"
+          icon={Radar}
+          title={t('pubmedWatch.title')}
+          description={t('pubmedWatch.moduleDescription')}
+          count={counts.pendingPubmedAlerts}
         />
         <ModuleCard
           href="/publications/admin/authors"

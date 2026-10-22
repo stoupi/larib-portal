@@ -62,6 +62,10 @@ export async function searchPubmed(query: string, retmax = 200): Promise<PubmedC
   const plan = pubmedQueryPlan(query)
   if (!plan) return []
   if (FIXTURE_DIR) {
+    if (plan.kind === 'term') {
+      const searches = await readFixture<Record<string, PubmedCandidate[]>>('searches.json')
+      if (searches[plan.term]) return searches[plan.term]
+    }
     const all = await readFixture<PubmedCandidate[]>('candidates.json')
     if (plan.kind === 'pmids') {
       const wanted = new Set(plan.pmids)

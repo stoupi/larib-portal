@@ -94,6 +94,7 @@ export default defineConfig({
       OPEN_ACCESS_FIXTURE_DIR: path.resolve(__dirname, 'tests/e2e/fixtures/open-access'),
       OPEN_ACCESS_FIXTURE_ORIGIN: `http://localhost:${playwrightPort}`,
       PUBLICATIONS_MAIL_AGENT_TOKEN: process.env.PUBLICATIONS_MAIL_AGENT_TOKEN ?? 'e2e-mail-agent-token',
+      CRON_SECRET: 'e2e-cron-secret',
     },
   },
 });

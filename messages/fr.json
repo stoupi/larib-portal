@@ -2020,7 +2020,8 @@
       "acceptedNothing": "Rien à annoncer : aucune publication acceptée sur la période.",
       "acceptedSendNow": "Envoyer maintenant",
       "acceptedSent": "Annonce envoyée à {count} destinataire(s)",
-      "acceptedNoRecipient": "Ajoutez au moins une adresse avant d'envoyer."
+      "acceptedNoRecipient": "Ajoutez au moins une adresse avant d'envoyer.",
+      "kindPUBMED_ALERT": "Veille PubMed"
     },
     "logbook": {
       "title": "Logbook",
@@ -2186,6 +2187,52 @@
           "CREATED": "← nouvelle soumission",
           "REJECTED": "← passera en refusée"
         }
+      }
+    },
+    "pubmedWatch": {
+      "title": "Veille PubMed · MIRACL.ai",
+      "subtitle": "Chaque matin, le portail cherche sur PubMed les papiers signés avec l'affiliation MIRACL.ai et les relie à la base. Ceux qu'il n'a pas pu relier seul attendent ici.",
+      "moduleDescription": "Nouveaux papiers MIRACL.ai indexés sur PubMed",
+      "lastRun": "Dernier passage : {date}",
+      "neverRan": "La veille n'est encore jamais passée.",
+      "pendingTitle": "À vérifier",
+      "pendingEmpty": "Aucun papier en attente : tout ce que PubMed a publié est relié.",
+      "historyTitle": "Historique",
+      "historyEmpty": "Aucun papier traité pour l'instant.",
+      "authors": "Auteurs : {names}",
+      "articleLabel": "Publication de la base à relier",
+      "openPubmed": "Voir sur PubMed",
+      "dismiss": "Ignorer",
+      "import": "Importer comme nouvelle publication",
+      "link": "Relier à cette publication",
+      "linked": "Publication reliée à sa fiche PubMed",
+      "imported": "Publication importée depuis PubMed",
+      "dismissed": "Papier ignoré",
+      "openArticle": "Ouvrir",
+      "reason": {
+        "SIMILAR_TITLE": "Une publication de la base porte un titre proche, mais dans une autre revue : à confirmer.",
+        "AMBIGUOUS_TITLE": "Plusieurs publications de la base portent ce titre : choisir la bonne.",
+        "PMID_CONFLICT": "Une publication de la base a le même DOI mais une autre fiche PubMed.",
+        "UNKNOWN_ARTICLE": "Aucune publication de la base ne correspond : l'importer ou la relier à la main."
+      },
+      "status": {
+        "PENDING": "À vérifier",
+        "LINKED": "Reliée",
+        "AUTO_LINKED": "Reliée automatiquement",
+        "IMPORTED": "Importée",
+        "DISMISSED": "Ignorée"
+      },
+      "columns": {
+        "article": "Publication",
+        "journal": "Revue",
+        "pubmed": "PubMed",
+        "date": "Traité le",
+        "outcome": "Résultat"
+      },
+      "errors": {
+        "ALERT_NOT_PENDING": "Ce papier a déjà été traité.",
+        "PMID_ALREADY_LINKED": "Cette fiche PubMed est déjà reliée à une autre publication.",
+        "PUBMED_RECORD_NOT_FOUND": "PubMed ne renvoie plus cette fiche, réessayer plus tard."
       }
     }
   },

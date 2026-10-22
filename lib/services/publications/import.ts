@@ -12,7 +12,7 @@ export const PUBLICATIONS_JOURNALS_TAG = 'publications:journals'
 export const PUBLICATIONS_AUTHORS_TAG = 'publications:authors'
 export const PUBLICATIONS_ARTICLES_TAG = 'publications:articles'
 
-async function upsertJournal(record: PubmedRecord, report: ImportReport): Promise<string | null> {
+export async function upsertJournal(record: PubmedRecord, report: ImportReport): Promise<string | null> {
   const { name, issn, isoAbbrev } = record.journal
   const journalName = name || isoAbbrev
   if (!journalName) return null
@@ -157,7 +157,7 @@ async function prepareRecord(
   }
 }
 
-function emptyReport(): ImportReport {
+export function emptyReport(): ImportReport {
   return { articlesCreated: 0, articlesSkipped: 0, authorsCreated: 0, journalsCreated: 0, errors: [] }
 }
 

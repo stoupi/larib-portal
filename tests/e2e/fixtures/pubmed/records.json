@@ -93,5 +93,107 @@
         "orcid": null
       }
     ]
+  },
+  {
+    "pmid": "39000101",
+    "title": "PubMed watch pilot: late gadolinium enhancement in dilated cardiomyopathy.",
+    "abstract": "Fixture paper for the MIRACL.ai PubMed watch.",
+    "doi": "10.1016/j.jocmr.2026.900101",
+    "publishedAt": "2026-10-20",
+    "receivedAt": null,
+    "acceptedAt": null,
+    "journal": {
+      "name": "Journal of cardiovascular magnetic resonance : official journal of the Society for Cardiovascular Magnetic Resonance",
+      "isoAbbrev": "J Cardiovasc Magn Reson",
+      "issn": "1097-6647",
+      "publisher": null
+    },
+    "publicationTypes": [
+      "Journal Article"
+    ],
+    "authors": [
+      {
+        "lastName": "Pezel",
+        "foreName": "Theo",
+        "initials": "T",
+        "affiliation": "MIRACL.ai, Lariboisiere Hospital, APHP, Paris, France.",
+        "orcid": null
+      },
+      {
+        "lastName": "Toupin",
+        "foreName": "Solenn",
+        "initials": "S",
+        "affiliation": "MIRACL.ai, Lariboisiere Hospital, APHP, Paris, France.",
+        "orcid": null
+      }
+    ]
+  },
+  {
+    "pmid": "39000102",
+    "title": "PubMed watch pilot: a visual extent cutoff for risk stratification in ischemic cardiomyopathy.",
+    "abstract": "Fixture paper for the MIRACL.ai PubMed watch.",
+    "doi": "10.1016/j.jocmr.2026.900102",
+    "publishedAt": "2026-10-10",
+    "receivedAt": null,
+    "acceptedAt": null,
+    "journal": {
+      "name": "Journal of cardiovascular magnetic resonance : official journal of the Society for Cardiovascular Magnetic Resonance",
+      "isoAbbrev": "J Cardiovasc Magn Reson",
+      "issn": "1097-6647",
+      "publisher": null
+    },
+    "publicationTypes": [
+      "Journal Article"
+    ],
+    "authors": [
+      {
+        "lastName": "Pezel",
+        "foreName": "Theo",
+        "initials": "T",
+        "affiliation": "MIRACL.ai, Lariboisiere Hospital, APHP, Paris, France.",
+        "orcid": null
+      },
+      {
+        "lastName": "Toupin",
+        "foreName": "Solenn",
+        "initials": "S",
+        "affiliation": "MIRACL.ai, Lariboisiere Hospital, APHP, Paris, France.",
+        "orcid": null
+      }
+    ]
+  },
+  {
+    "pmid": "39000103",
+    "title": "PubMed watch pilot: valve-in-valve procedures after surgical bioprosthesis failure.",
+    "abstract": "Fixture paper for the MIRACL.ai PubMed watch.",
+    "doi": "10.1016/S0140-6736(26)90103-0",
+    "publishedAt": "2026-09-03",
+    "receivedAt": null,
+    "acceptedAt": null,
+    "journal": {
+      "name": "Lancet (London, England)",
+      "isoAbbrev": "Lancet",
+      "issn": "1474-547X",
+      "publisher": null
+    },
+    "publicationTypes": [
+      "Journal Article"
+    ],
+    "authors": [
+      {
+        "lastName": "Pezel",
+        "foreName": "Theo",
+        "initials": "T",
+        "affiliation": "MIRACL.ai, Lariboisiere Hospital, APHP, Paris, France.",
+        "orcid": null
+      },
+      {
+        "lastName": "Toupin",
+        "foreName": "Solenn",
+        "initials": "S",
+        "affiliation": "MIRACL.ai, Lariboisiere Hospital, APHP, Paris, France.",
+        "orcid": null
+      }
+    ]
   }
 ]
