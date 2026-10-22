@@ -18,7 +18,7 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { GripVertical, Mail, X } from 'lucide-react'
+import { GripVertical, Lock, Mail, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import type { AuthorshipEntry } from '@/lib/publications/author-list'
@@ -76,18 +76,21 @@ function SortableAuthorRow({
   entry,
   rank,
   content,
+  pinned,
   onToggleCorresponding,
   onRemove,
 }: {
   entry: AuthorshipEntry
   rank: number
   content: AuthorRowContent
+  pinned: boolean
   onToggleCorresponding: () => void
   onRemove: () => void
 }) {
   const t = useTranslations('publications.editor')
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: entry.authorId,
+    disabled: pinned,
   })
 
   return (
@@ -102,15 +105,21 @@ function SortableAuthorRow({
         isDragging && 'z-10 shadow-lg',
       )}
     >
-      <button
-        type="button"
-        aria-label={t('order.reorder')}
-        className="shrink-0 cursor-grab touch-none rounded-md p-1 text-text-muted transition hover:bg-gray-50 hover:text-text-secondary active:cursor-grabbing dark:hover:bg-white/5"
-        {...attributes}
-        {...listeners}
-      >
-        <GripVertical className="h-4 w-4" />
-      </button>
+      {pinned ? (
+        <span className="inline-flex shrink-0 p-1 text-text-muted" title={t('order.leadPinned')}>
+          <Lock className="h-4 w-4" />
+        </span>
+      ) : (
+        <button
+          type="button"
+          aria-label={t('order.reorder')}
+          className="shrink-0 cursor-grab touch-none rounded-md p-1 text-text-muted transition hover:bg-gray-50 hover:text-text-secondary active:cursor-grabbing dark:hover:bg-white/5"
+          {...attributes}
+          {...listeners}
+        >
+          <GripVertical className="h-4 w-4" />
+        </button>
+      )}
       <AuthorIdentity rank={rank} content={content} isCorresponding={entry.isCorresponding} />
       <Button
         type="button"
@@ -123,34 +132,40 @@ function SortableAuthorRow({
       >
         <Mail className="h-4 w-4" />
       </Button>
-      <Button
-        type="button"
-        variant="ghost"
-        size="icon"
-        aria-label={t('order.remove')}
-        onClick={onRemove}
-        className="h-8 w-8 shrink-0 text-text-muted hover:text-coral-600 dark:hover:text-coral-300"
-      >
-        <X className="h-4 w-4" />
-      </Button>
+      {!pinned && (
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          aria-label={t('order.remove')}
+          onClick={onRemove}
+          className="h-8 w-8 shrink-0 text-text-muted hover:text-coral-600 dark:hover:text-coral-300"
+        >
+          <X className="h-4 w-4" />
+        </Button>
+      )}
     </li>
   )
+}
+
+export type AuthorOrderActions = {
+  onReorder: (entries: AuthorshipEntry[]) => void
+  onToggleCorresponding: (authorId: string) => void
+  onRemove: (authorId: string) => void
 }
 
 export function AuthorOrderList({
   entries,
   authorsById,
-  onReorder,
-  onToggleCorresponding,
-  onRemove,
+  actions,
   editable,
+  pinnedAuthorId,
 }: {
   entries: AuthorshipEntry[]
   authorsById: Map<string, PickerAuthor>
-  onReorder: (entries: AuthorshipEntry[]) => void
-  onToggleCorresponding: (authorId: string) => void
-  onRemove: (authorId: string) => void
+  actions: AuthorOrderActions
   editable: boolean
+  pinnedAuthorId: string | null
 }) {
   const t = useTranslations('publications.editor')
   const sensors = useSensors(
@@ -164,7 +179,9 @@ export function AuthorOrderList({
     const fromIndex = entries.findIndex((entry) => entry.authorId === active.id)
     const toIndex = entries.findIndex((entry) => entry.authorId === over.id)
     if (fromIndex === -1 || toIndex === -1) return
-    onReorder(arrayMove(entries, fromIndex, toIndex))
+    const reordered = arrayMove(entries, fromIndex, toIndex)
+    if (pinnedAuthorId && reordered[0]?.authorId !== pinnedAuthorId) return
+    actions.onReorder(reordered)
   }
 
   if (!editable) {
@@ -206,8 +223,9 @@ export function AuthorOrderList({
                 entry={entry}
                 rank={index + 1}
                 content={rowContent(entry.authorId, authorsById.get(entry.authorId))}
-                onToggleCorresponding={() => onToggleCorresponding(entry.authorId)}
-                onRemove={() => onRemove(entry.authorId)}
+                pinned={entry.authorId === pinnedAuthorId}
+                onToggleCorresponding={() => actions.onToggleCorresponding(entry.authorId)}
+                onRemove={() => actions.onRemove(entry.authorId)}
               />
             ))}
           </ul>

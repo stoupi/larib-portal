@@ -114,6 +114,14 @@ export async function userIsFirstAuthor(userId: string, articleId: string): Prom
   return found != null
 }
 
+export async function getLeadAuthorId(articleId: string): Promise<string | null> {
+  const lead = await prisma.authorship.findFirst({
+    where: { articleId, order: 1 },
+    select: { authorId: true },
+  })
+  return lead?.authorId ?? null
+}
+
 export type PublicationEditData = NonNullable<Awaited<ReturnType<typeof getPublicationForEdit>>>
 
 export async function getPublicationForEdit(articleId: string) {

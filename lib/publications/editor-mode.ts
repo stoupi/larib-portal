@@ -3,15 +3,18 @@ import type { ArticleStatusValue } from './status-values'
 
 export type EditorMode = 'read' | 'edit'
 
-// The author list is only editable from the admin area: in their own space, a user
-// requests the list from an admin instead of composing it.
+// The admin composes the list from the admin area. The first author composes it from
+// their own space too, and may still ask the admins to do it instead.
 export function canComposeAuthorList({
   isAdmin,
+  isFirstAuthor,
   basePath,
 }: {
   isAdmin: boolean
+  isFirstAuthor: boolean
   basePath: PublicationsBasePath
 }): boolean {
+  if (isFirstAuthor) return true
   return isAdmin && basePath === PUBLICATIONS_ADMIN_BASE
 }
 

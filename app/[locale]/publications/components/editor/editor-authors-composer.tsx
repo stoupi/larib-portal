@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useRef, useState } from 'react'
+import { useMemo, useRef, useState, type ReactNode } from 'react'
 import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import { useAction } from 'next-safe-action/hooks'
@@ -17,18 +17,32 @@ import { AuthorListExportDialog } from '../authors/author-list-export-dialog'
 import { AuthorOrderList } from '../authors/author-order-list'
 import { CollapsibleCard } from './collapsible-card'
 
-export function EditorAuthorsAdmin({
+export type AuthorBank = {
+  authors: PickerAuthor[]
+  centres: { id: string; name: string; city: string | null; isOwn: boolean }[]
+}
+
+export type AuthorListComposer = 'admin' | 'firstAuthor'
+
+export function EditorAuthorsComposer({
   article,
-  pickerAuthors,
-  centres,
+  bank,
   editable,
+  composer,
+  children,
 }: {
   article: PublicationEditData
-  pickerAuthors: PickerAuthor[]
-  centres: { id: string; name: string; city: string | null; isOwn: boolean }[]
+  bank: AuthorBank
   editable: boolean
+  composer: AuthorListComposer
+  children?: ReactNode
 }) {
   const t = useTranslations('publications.editor')
+  const pickerAuthors = bank.authors
+  const pinnedAuthorId =
+    composer === 'firstAuthor'
+      ? (article.authorships.find((authorship) => authorship.order === 1)?.author.id ?? null)
+      : null
   const router = useRouter()
   const [entries, setEntries] = useState<AuthorshipEntry[]>(() =>
     article.authorships.map((authorship) => ({
@@ -117,6 +131,7 @@ export function EditorAuthorsAdmin({
   }
 
   function removeAuthor(authorId: string) {
+    if (authorId === pinnedAuthorId) return
     persist(entries.filter((entry) => entry.authorId !== authorId))
   }
 
@@ -139,7 +154,7 @@ export function EditorAuthorsAdmin({
         )
       }
     >
-      <p className="text-sm text-text-secondary">{t('authorsAdminHint')}</p>
+      <p className="text-sm text-text-secondary">{t(composer === 'admin' ? 'authorsAdminHint' : 'authorsFirstAuthorHint')}</p>
 
       {entries.length === 0 ? (
         <p className="mt-4 rounded-xl border border-dashed border-line px-4 py-6 text-center text-sm text-text-muted">
@@ -150,10 +165,9 @@ export function EditorAuthorsAdmin({
           <AuthorOrderList
             entries={entries}
             authorsById={authorsById}
-            onReorder={persist}
-            onToggleCorresponding={toggleCorresponding}
-            onRemove={removeAuthor}
+            actions={{ onReorder: persist, onToggleCorresponding: toggleCorresponding, onRemove: removeAuthor }}
             editable={editable}
+            pinnedAuthorId={pinnedAuthorId}
           />
         </div>
       )}
@@ -172,12 +186,14 @@ export function EditorAuthorsAdmin({
             open={pickerOpen}
             onOpenChange={setPickerOpen}
             authors={pickerAuthors}
-            centres={centres}
+            centres={bank.centres}
             alreadyAddedIds={entries.map((entry) => entry.authorId)}
             onConfirm={addAuthors}
           />
         </>
       )}
+
+      {children}
     </CollapsibleCard>
   )
 }

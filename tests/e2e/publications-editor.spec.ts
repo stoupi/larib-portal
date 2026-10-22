@@ -24,7 +24,21 @@ test('user creates + edits a publication and requests the author list; admin res
   await page.getByRole('button', { name: 'Save changes' }).click()
   await expect(page.getByText('Changes saved')).toBeVisible({ timeout: 15000 })
 
-  // Request the author list to the admin, which only a paper in preparation allows
+  // The first author composes the list themselves, pinned at the top of it
+  await expect(page.getByText('Compose your co-author list yourself')).toBeVisible()
+  await page.getByRole('button', { name: 'Add authors' }).click()
+  const picker = page.getByRole('dialog')
+  await picker.getByLabel('Search the author bank').fill('coauthor')
+  await picker.getByRole('checkbox', { name: 'Jane COAUTHOR' }).click()
+  await picker.getByRole('button', { name: 'Add authors', exact: true }).click()
+  await expect(page.getByText('Author list updated')).toBeVisible({ timeout: 20000 })
+  const composedRows = page.getByRole('listitem').filter({ has: page.getByRole('button', { name: 'Mark as corresponding' }) })
+  await expect(composedRows).toHaveCount(2)
+  await expect(composedRows.nth(1)).toContainText('Jane COAUTHOR')
+  await expect(composedRows.nth(0).getByRole('button', { name: 'Remove author' })).toHaveCount(0)
+  await expect(composedRows.nth(1).getByRole('button', { name: 'Remove author' })).toBeVisible()
+
+  // Asking the admins stays possible alongside: request the author list, which only a paper in preparation allows
   await page.getByPlaceholder(/Marie Lambert/).fill('Dr. Test helped with imaging analysis')
   await page.getByRole('button', { name: /request author list to admin/i }).click()
   await expect(page.getByText('Request sent to the admin')).toBeVisible({ timeout: 15000 })

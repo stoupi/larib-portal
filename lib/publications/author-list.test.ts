@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { moveAuthorship, planAuthorshipChanges } from './author-list'
+import { keepsLeadAuthor, moveAuthorship, planAuthorshipChanges } from './author-list'
 
 describe('planAuthorshipChanges', () => {
   it('numbers the desired list from one and drops the authors left out', () => {
@@ -41,5 +41,17 @@ describe('moveAuthorship', () => {
     const entries = ['a', 'b']
     expect(moveAuthorship(entries, 0, -1)).toBe(entries)
     expect(moveAuthorship(entries, 1, 1)).toBe(entries)
+  })
+})
+
+describe('keepsLeadAuthor', () => {
+  it('accepts a list that still opens with the lead author', () => {
+    expect(keepsLeadAuthor([{ authorId: 'lead', isCorresponding: false }, { authorId: 'b', isCorresponding: true }], 'lead')).toBe(true)
+  })
+
+  it('refuses a list where the lead author moved down or left', () => {
+    expect(keepsLeadAuthor([{ authorId: 'b', isCorresponding: false }, { authorId: 'lead', isCorresponding: false }], 'lead')).toBe(false)
+    expect(keepsLeadAuthor([{ authorId: 'b', isCorresponding: false }], 'lead')).toBe(false)
+    expect(keepsLeadAuthor([], 'lead')).toBe(false)
   })
 })

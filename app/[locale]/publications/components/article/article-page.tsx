@@ -21,7 +21,7 @@ import {
   canImportAnyPublication,
   type EditorMode,
 } from '@/lib/publications/editor-mode'
-import { PUBLICATIONS_ADMIN_BASE, type PublicationsBasePath } from '@/lib/publications/base-path'
+import { PUBLICATIONS_ADMIN_BASE, PUBLICATIONS_BASE, type PublicationsBasePath } from '@/lib/publications/base-path'
 import type { PublicationEditData } from '@/lib/services/publications/publication-editor'
 import type { JournalTargetItem } from '@/lib/services/publications/journal-targets'
 import type { StudyOption } from '@/lib/services/publications/studies'
@@ -29,7 +29,8 @@ import type { PickerAuthor } from '@/lib/publications/author-picker'
 import { updateArticleCoreAction, deleteDraftArticleAction } from '../../actions'
 import { EditorHeader } from '../editor/editor-header'
 import { EditorAuthors } from '../editor/editor-authors'
-import { EditorAuthorsAdmin } from '../editor/editor-authors-admin'
+import { EditorAuthorsComposer } from '../editor/editor-authors-composer'
+import { EditorAuthorsRequest } from '../editor/editor-authors-request'
 import { EditorReferences } from '../editor/editor-references'
 import { EditorSubmissions } from '../editor/editor-submissions'
 import { EditorJournalQueue } from '../editor/editor-journal-queue'
@@ -230,13 +231,23 @@ export function ArticlePage({
 
         <div className={cn('grid grid-cols-1 gap-5 lg:grid-cols-2')}>
           <div className="space-y-5">
-            {canComposeAuthorList({ isAdmin: viewer.isAdmin, basePath }) ? (
-              <EditorAuthorsAdmin
+            {canComposeAuthorList({ isAdmin: viewer.isAdmin, isFirstAuthor: viewer.isFirstAuthor, basePath }) ? (
+              <EditorAuthorsComposer
                 article={article}
-                pickerAuthors={pickerAuthors}
-                centres={centres}
+                bank={{ authors: pickerAuthors, centres }}
                 editable={visibility.cardsEditable}
-              />
+                composer={viewer.isAdmin && basePath === PUBLICATIONS_ADMIN_BASE ? 'admin' : 'firstAuthor'}
+              >
+                {basePath === PUBLICATIONS_BASE && (
+                  <EditorAuthorsRequest
+                    article={article}
+                    viewer={viewer}
+                    form={form}
+                    editable={visibility.cardsEditable}
+                    basePath={basePath}
+                  />
+                )}
+              </EditorAuthorsComposer>
             ) : (
               <EditorAuthors article={article} viewer={viewer} form={form} editable={visibility.cardsEditable} basePath={basePath} />
             )}

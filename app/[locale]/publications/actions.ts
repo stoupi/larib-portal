@@ -5,9 +5,10 @@ import { revalidateTag } from 'next/cache'
 import { appAdminAction, appMemberAction, authenticatedAction } from '@/actions/safe-action'
 import { canAccessApp, canAdminApp } from '@/lib/permissions'
 import { prisma } from '@/lib/prisma'
+import { keepsLeadAuthor } from '@/lib/publications/author-list'
 import { addSubmission, updateSubmissionStatus, updateSubmission, deleteSubmission, userOwnsSubmission, SUBMISSION_STATUSES } from '@/lib/services/publications/submissions'
 import { userIsAuthorOfArticle } from '@/lib/services/publications/my-publications'
-import { createDraftArticle, updateArticleCore, deleteDraft, userIsFirstAuthor, setArticlePdf, setArticleAuthors, setArticleStatistician, getViewerIdentity, findOrCreateAuthorForUser } from '@/lib/services/publications/publication-editor'
+import { createDraftArticle, updateArticleCore, deleteDraft, userIsFirstAuthor, getLeadAuthorId, setArticlePdf, setArticleAuthors, setArticleStatistician, getViewerIdentity, findOrCreateAuthorForUser } from '@/lib/services/publications/publication-editor'
 import { searchPubmedWithLibraryMatches, buildRecordPreview, loadRecordWithPreview } from '@/lib/services/publications/pubmed-search'
 import { viewerIsAmongAuthors, defaultPubmedQueryForViewer } from '@/lib/publications/pubmed-import'
 import {
@@ -806,14 +807,21 @@ export const importPubmedIntoArticleAction = authenticatedAction
     return { articleId: parsedInput.articleId, alreadyPresent: false }
   })
 
-export const setArticleAuthorsAction = appAdminAction('PUBLICATIONS')
+export const setArticleAuthorsAction = appMemberAction('PUBLICATIONS')
   .inputSchema(
     z.object({
       articleId: z.string().min(1),
       authors: z.array(z.object({ authorId: z.string().min(1), isCorresponding: z.boolean() })),
     }),
   )
-  .action(async ({ parsedInput }) => {
+  .action(async ({ parsedInput, ctx }) => {
+    if (!canAdminApp(ctx.user, 'PUBLICATIONS')) {
+      const leadAuthorId = await getLeadAuthorId(parsedInput.articleId)
+      const composesOwnPaper = await userIsFirstAuthor(ctx.userId, parsedInput.articleId)
+      if (!composesOwnPaper || !leadAuthorId || !keepsLeadAuthor(parsedInput.authors, leadAuthorId)) {
+        throw new Error('Forbidden')
+      }
+    }
     const updated = await setArticleAuthors(parsedInput.articleId, parsedInput.authors)
     revalidateTag(PUBLICATIONS_ARTICLES_TAG)
     return updated

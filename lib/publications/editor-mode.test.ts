@@ -37,13 +37,18 @@ describe('computeEditorVisibility', () => {
 
 describe('canComposeAuthorList', () => {
   it('lets an admin compose the author list only inside the admin area', () => {
-    expect(canComposeAuthorList({ isAdmin: true, basePath: PUBLICATIONS_ADMIN_BASE })).toBe(true)
-    expect(canComposeAuthorList({ isAdmin: true, basePath: PUBLICATIONS_BASE })).toBe(false)
+    expect(canComposeAuthorList({ isAdmin: true, isFirstAuthor: false, basePath: PUBLICATIONS_ADMIN_BASE })).toBe(true)
+    expect(canComposeAuthorList({ isAdmin: true, isFirstAuthor: false, basePath: PUBLICATIONS_BASE })).toBe(false)
   })
 
-  it('never lets a non-admin compose the author list', () => {
-    expect(canComposeAuthorList({ isAdmin: false, basePath: PUBLICATIONS_ADMIN_BASE })).toBe(false)
-    expect(canComposeAuthorList({ isAdmin: false, basePath: PUBLICATIONS_BASE })).toBe(false)
+  it('lets the first author compose the list from their own space', () => {
+    expect(canComposeAuthorList({ isAdmin: false, isFirstAuthor: true, basePath: PUBLICATIONS_BASE })).toBe(true)
+    expect(canComposeAuthorList({ isAdmin: true, isFirstAuthor: true, basePath: PUBLICATIONS_BASE })).toBe(true)
+  })
+
+  it('never lets a co-author compose the author list', () => {
+    expect(canComposeAuthorList({ isAdmin: false, isFirstAuthor: false, basePath: PUBLICATIONS_ADMIN_BASE })).toBe(false)
+    expect(canComposeAuthorList({ isAdmin: false, isFirstAuthor: false, basePath: PUBLICATIONS_BASE })).toBe(false)
   })
 })
 

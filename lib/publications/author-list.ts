@@ -27,3 +27,7 @@ export function moveAuthorship<T>(entries: T[], index: number, direction: -1 | 1
   next.splice(target, 0, moved)
   return next
 }
+
+export function keepsLeadAuthor(desired: AuthorshipEntry[], leadAuthorId: string): boolean {
+  return desired[0]?.authorId === leadAuthorId
+}

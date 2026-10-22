@@ -1057,7 +1057,8 @@
         "corresponding": "Corresponding",
         "markCorresponding": "Mark as corresponding",
         "remove": "Remove author",
-        "reorder": "Reorder author"
+        "reorder": "Reorder author",
+        "leadPinned": "The first author stays first"
       },
       "editPublication": "Edit publication",
       "editButton": "Edit",
@@ -1151,6 +1152,7 @@
         "fetchFailed": "The search failed. Please try again."
       },
       "authorsAdminHint": "You maintain the author list: add co-authors, order them and mark the corresponding author.",
+      "authorsFirstAuthorHint": "Compose your co-author list yourself — add them, order them and mark the corresponding author — or ask the admins to do it for you.",
       "addAuthor": "Add an author",
       "selectAuthor": "Select an author",
       "noAuthorYet": "No author yet — add the first one.",

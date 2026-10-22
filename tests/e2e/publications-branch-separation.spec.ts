@@ -45,8 +45,8 @@ test('a member stays on the user branch and a shared admin link still resolves',
 test('an admin reading their own paper from their space can still ask for the author list', async ({ page }) => {
   await login(page, 'publications-admin@larib-portal.test')
 
-  // In their own space an admin leads a publication like any member: no composer here,
-  // so the request button has to be the way out.
+  // In their own space an admin leads a publication like any member: as first author they
+  // may compose the list, and the request to the admins stays open alongside it.
   await page.goto('/en/publications', { timeout: 60000 })
   await page.getByRole('button', { name: /new publication/i }).click()
   await page.waitForURL(/\/en\/publications\/articles\/[^/]+\?mode=edit/, { timeout: 60000 })

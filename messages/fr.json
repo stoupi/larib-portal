@@ -1055,7 +1055,8 @@
         "corresponding": "Correspondant",
         "markCorresponding": "Marquer comme correspondant",
         "remove": "Retirer l'auteur",
-        "reorder": "Réordonner l'auteur"
+        "reorder": "Réordonner l'auteur",
+        "leadPinned": "Le premier auteur reste en première position"
       },
       "editPublication": "Modifier la publication",
       "editButton": "Éditer",
@@ -1149,6 +1150,7 @@
         "fetchFailed": "La recherche a échoué. Réessayez."
       },
       "authorsAdminHint": "Vous maintenez la liste d'auteurs : ajoutez les co-auteurs, ordonnez-les et désignez l'auteur correspondant.",
+      "authorsFirstAuthorHint": "Composez vous-même la liste de vos co-auteurs — ajoutez-les, ordonnez-les et désignez l'auteur correspondant — ou demandez aux admins de le faire pour vous.",
       "addAuthor": "Ajouter un auteur",
       "selectAuthor": "Sélectionner un auteur",
       "noAuthorYet": "Aucun auteur pour le moment — ajoutez le premier.",
