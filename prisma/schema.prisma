@@ -648,7 +648,6 @@ enum PublicationEmailKind {
   MONTHLY_RECAP
   ACCEPTED_RECAP
   ISSUE_REPORT
-  PUBMED_ALERT
 }
 
 enum PublicationEmailStatus {

@@ -2020,8 +2020,7 @@
       "acceptedNothing": "Rien à annoncer : aucune publication acceptée sur la période.",
       "acceptedSendNow": "Envoyer maintenant",
       "acceptedSent": "Annonce envoyée à {count} destinataire(s)",
-      "acceptedNoRecipient": "Ajoutez au moins une adresse avant d'envoyer.",
-      "kindPUBMED_ALERT": "Veille PubMed"
+      "acceptedNoRecipient": "Ajoutez au moins une adresse avant d'envoyer."
     },
     "logbook": {
       "title": "Logbook",
@@ -2107,7 +2106,7 @@
     "mailAgent": {
       "title": "Propositions de l'agent mails",
       "subtitle": "Les mails des revues que l'agent n'a pas pu traiter seul.",
-      "moduleDescription": "Soumissions et décisions repérées dans les mails",
+      "moduleDescription": "Mails des revues et nouveaux papiers MIRACL.ai sur PubMed",
       "lastRun": "Dernier passage de l'agent : {date}",
       "neverRan": "L'agent n'est encore jamais passé.",
       "stale": "L'agent n'est pas passé depuis plus de deux jours.",
@@ -2192,12 +2191,10 @@
     "pubmedWatch": {
       "title": "Veille PubMed · MIRACL.ai",
       "subtitle": "Chaque matin, le portail cherche sur PubMed les papiers signés avec l'affiliation MIRACL.ai et les relie à la base. Ceux qu'il n'a pas pu relier seul attendent ici.",
-      "moduleDescription": "Nouveaux papiers MIRACL.ai indexés sur PubMed",
       "lastRun": "Dernier passage : {date}",
       "neverRan": "La veille n'est encore jamais passée.",
-      "pendingTitle": "À vérifier",
       "pendingEmpty": "Aucun papier en attente : tout ce que PubMed a publié est relié.",
-      "historyTitle": "Historique",
+      "historyTitle": "Historique PubMed",
       "historyEmpty": "Aucun papier traité pour l'instant.",
       "authors": "Auteurs : {names}",
       "articleLabel": "Publication de la base à relier",

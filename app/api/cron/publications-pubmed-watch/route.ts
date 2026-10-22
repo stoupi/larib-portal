@@ -6,7 +6,6 @@ import { writeAuditOperation } from '@/lib/audit/writer'
 import { prismaWithoutAudit } from '@/lib/prisma'
 import { PUBLICATIONS_ARTICLES_TAG } from '@/lib/services/publications/import'
 import { PUBLICATIONS_PUBMED_ALERTS_TAG, runPubmedWatch } from '@/lib/services/publications/pubmed-watch'
-import { sendPubmedAlertEmails } from '@/lib/services/publications/pubmed-alert-send'
 
 export const runtime = 'nodejs'
 export const maxDuration = 60
@@ -27,12 +26,10 @@ export async function GET(request: NextRequest) {
   )
   revalidateTag(PUBLICATIONS_PUBMED_ALERTS_TAG)
   revalidateTag(PUBLICATIONS_ARTICLES_TAG)
-  const emails = await sendPubmedAlertEmails(report)
 
   return NextResponse.json({
     found: report.found,
     autoLinked: report.autoLinked.map((alert) => alert.pmid),
     pending: report.pending.map((alert) => alert.pmid),
-    ...emails,
   })
 }

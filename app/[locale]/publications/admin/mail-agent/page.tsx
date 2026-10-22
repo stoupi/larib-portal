@@ -9,10 +9,17 @@ import {
   listPendingMailSuggestions,
   listResolvedMailSuggestions,
 } from '@/lib/services/publications/mail-suggestions'
+import {
+  getPubmedWatchLastRunAt,
+  listPendingPubmedAlerts,
+  listResolvedPubmedAlerts,
+} from '@/lib/services/publications/pubmed-watch'
 import { listDashboardArticles } from '@/lib/services/publications/dashboard'
 import { BackToDashboard } from '@/app/[locale]/publications/components/back-to-dashboard'
 import { SuggestionList } from '@/app/[locale]/publications/components/mail-agent/suggestion-list'
 import { SuggestionHistory } from '@/app/[locale]/publications/components/mail-agent/suggestion-history'
+import { AlertList } from '@/app/[locale]/publications/components/pubmed-watch/alert-list'
+import { AlertHistory } from '@/app/[locale]/publications/components/pubmed-watch/alert-history'
 
 type PageParams = { params: Promise<{ locale: 'en' | 'fr' }> }
 
@@ -21,12 +28,16 @@ export default async function PublicationsMailAgentPage({ params }: PageParams) 
   const session = await requireAuth()
   if (!canAdminApp(session.user, 'PUBLICATIONS')) redirect(applicationLink(locale, '/publications'))
 
-  const [t, pending, resolved, articles, lastRunAt] = await Promise.all([
+  const [t, tPubmed, pending, resolved, articles, lastRunAt, pubmedPending, pubmedResolved, pubmedLastRunAt] = await Promise.all([
     getTranslations({ locale, namespace: 'publications.mailAgent' }),
+    getTranslations({ locale, namespace: 'publications.pubmedWatch' }),
     listPendingMailSuggestions(),
     listResolvedMailSuggestions(),
     listDashboardArticles(),
     getMailAgentLastRunAt(),
+    listPendingPubmedAlerts(),
+    listResolvedPubmedAlerts(),
+    getPubmedWatchLastRunAt(),
   ])
   const formatter = new Intl.DateTimeFormat(locale, { dateStyle: 'medium', timeStyle: 'short' })
   const isStale = isMailAgentStale(lastRunAt, new Date())
@@ -62,9 +73,25 @@ export default async function PublicationsMailAgentPage({ params }: PageParams) 
           <SuggestionList suggestions={pending} articles={articles} />
         </section>
 
+        <section aria-label={tPubmed('title')} className="space-y-3">
+          <h2 className="text-base font-extrabold uppercase tracking-[0.1em] text-coral-600">
+            {tPubmed('title')} · {pubmedPending.length}
+          </h2>
+          <p className="max-w-2xl text-base text-text-primary">
+            {tPubmed('subtitle')}{' '}
+            {pubmedLastRunAt ? tPubmed('lastRun', { date: formatter.format(pubmedLastRunAt) }) : tPubmed('neverRan')}
+          </p>
+          <AlertList alerts={pubmedPending} articles={articles} />
+        </section>
+
         <section aria-label={t('historyTitle')} className="space-y-3">
           <h2 className="text-base font-extrabold uppercase tracking-[0.1em] text-coral-600">{t('historyTitle')}</h2>
           <SuggestionHistory suggestions={resolved} />
+        </section>
+
+        <section aria-label={tPubmed('historyTitle')} className="space-y-3">
+          <h2 className="text-base font-extrabold uppercase tracking-[0.1em] text-coral-600">{tPubmed('historyTitle')}</h2>
+          <AlertHistory alerts={pubmedResolved} />
         </section>
       </div>
     </div>

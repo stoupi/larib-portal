@@ -51,7 +51,6 @@ test('the PubMed watch links what it is sure of and leaves the rest to the admin
   const admin = await prisma.user.findUniqueOrThrow({ where: { email: 'publications-admin@larib-portal.test' } })
   const sameTitleId = await acceptedArticle(SAME_TITLE, JCMR, admin.id)
   const rewordedId = await acceptedArticle(REWORDED_TITLE, 'European Heart Journal', admin.id)
-  const alertEmailsBefore = await prisma.publicationEmail.count({ where: { kind: 'PUBMED_ALERT' } })
 
   const unauthorized = await request.get(WATCH_ENDPOINT)
   expect(unauthorized.status()).toBe(401)
@@ -74,7 +73,6 @@ test('the PubMed watch links what it is sure of and leaves the rest to the admin
     publishedJournal: { name: JCMR },
   })
   expect(await prisma.journal.count({ where: { name: { startsWith: 'Journal of cardiovascular magnetic resonance :' } } })).toBe(0)
-  expect(await prisma.publicationEmail.count({ where: { kind: 'PUBMED_ALERT' } })).toBeGreaterThan(alertEmailsBefore)
 
   // A paper already handled never comes back
   const secondRun = await request.get(WATCH_ENDPOINT, { headers: { authorization: `Bearer ${CRON_SECRET}` } })
@@ -82,9 +80,10 @@ test('the PubMed watch links what it is sure of and leaves the rest to the admin
 
   await login(page, 'publications-admin@larib-portal.test')
   await page.goto('/fr/publications/admin', { timeout: 60000 })
-  await page.getByRole('link', { name: /Veille PubMed · MIRACL\.ai/ }).click()
-  await expect(page.getByRole('heading', { level: 1, name: 'Veille PubMed · MIRACL.ai' })).toBeVisible({ timeout: 60000 })
-  await expect(page.getByRole('heading', { name: 'À vérifier · 2' })).toBeVisible()
+  // The PubMed watch lives with the mail agent's suggestions, behind the same module
+  await page.getByRole('link', { name: /Propositions de l'agent mails/ }).click()
+  await expect(page.getByRole('heading', { level: 1, name: "Propositions de l'agent mails" })).toBeVisible({ timeout: 60000 })
+  await expect(page.getByRole('heading', { name: 'Veille PubMed · MIRACL.ai · 2' })).toBeVisible()
 
   const reworded = page.getByRole('listitem', { name: REWORDED_PAPER })
   await expect(reworded.getByText('Une publication de la base porte un titre proche, mais dans une autre revue : à confirmer.')).toBeVisible()
@@ -101,7 +100,7 @@ test('the PubMed watch links what it is sure of and leaves the rest to the admin
   await expect(page.getByText('Publication importée depuis PubMed')).toBeVisible({ timeout: 30000 })
   await expect(page.getByText('Aucun papier en attente : tout ce que PubMed a publié est relié.')).toBeVisible({ timeout: 15000 })
 
-  const history = page.getByRole('region', { name: 'Historique' })
+  const history = page.getByRole('region', { name: 'Historique PubMed' })
   await expect(history.getByRole('row').filter({ hasText: SAME_TITLE }).filter({ hasText: 'Reliée automatiquement' })).toBeVisible()
   await expect(history.getByRole('row').filter({ hasText: REWORDED_TITLE }).filter({ hasText: 'Reliée' })).toBeVisible()
   await expect(history.getByRole('row').filter({ hasText: '39000103' }).filter({ hasText: 'Importée' })).toBeVisible()
@@ -114,10 +113,10 @@ test('the PubMed watch links what it is sure of and leaves the rest to the admin
   })
   expect(imported).toEqual({ status: 'PUBLISHED', scope: 'LARIB_TEAM', _count: { authorships: 2 } })
 
-  await page.goto('/en/publications/admin/pubmed-watch', { timeout: 60000 })
-  await expect(page.getByRole('heading', { level: 1, name: 'PubMed watch · MIRACL.ai' })).toBeVisible({ timeout: 60000 })
+  await page.goto('/en/publications/admin/mail-agent', { timeout: 60000 })
+  await expect(page.getByRole('heading', { name: 'PubMed watch · MIRACL.ai · 0' })).toBeVisible({ timeout: 60000 })
   await expect(page.getByText('No paper waiting: everything PubMed published is linked.')).toBeVisible()
   await expect(
-    page.getByRole('region', { name: 'History' }).getByRole('row').filter({ hasText: SAME_TITLE }).filter({ hasText: 'Linked automatically' }),
+    page.getByRole('region', { name: 'PubMed history' }).getByRole('row').filter({ hasText: SAME_TITLE }).filter({ hasText: 'Linked automatically' }),
   ).toBeVisible()
 })

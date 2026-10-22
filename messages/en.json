@@ -2022,8 +2022,7 @@
       "acceptedNothing": "Nothing to announce: no publication accepted in the window.",
       "acceptedSendNow": "Send now",
       "acceptedSent": "Announcement sent to {count} recipient(s)",
-      "acceptedNoRecipient": "Add at least one address before sending.",
-      "kindPUBMED_ALERT": "PubMed watch"
+      "acceptedNoRecipient": "Add at least one address before sending."
     },
     "logbook": {
       "title": "Logbook",
@@ -2109,7 +2108,7 @@
     "mailAgent": {
       "title": "Mail agent suggestions",
       "subtitle": "Journal emails the agent could not handle on its own.",
-      "moduleDescription": "Submissions and decisions spotted in emails",
+      "moduleDescription": "Journal emails and new MIRACL.ai papers on PubMed",
       "lastRun": "Last agent run: {date}",
       "neverRan": "The agent has not run yet.",
       "stale": "The agent has not run for more than two days.",
@@ -2194,12 +2193,10 @@
     "pubmedWatch": {
       "title": "PubMed watch · MIRACL.ai",
       "subtitle": "Every morning, the portal searches PubMed for papers signed with the MIRACL.ai affiliation and links them to the library. Those it could not link on its own wait here.",
-      "moduleDescription": "New MIRACL.ai papers indexed on PubMed",
       "lastRun": "Last run: {date}",
       "neverRan": "The watch has not run yet.",
-      "pendingTitle": "To review",
       "pendingEmpty": "No paper waiting: everything PubMed published is linked.",
-      "historyTitle": "History",
+      "historyTitle": "PubMed history",
       "historyEmpty": "No paper handled yet.",
       "authors": "Authors: {names}",
       "articleLabel": "Library publication to link",

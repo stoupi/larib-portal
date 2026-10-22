@@ -77,8 +77,7 @@ export default async function PublicationsAdminPage({ params }: PageParams) {
             studies: studyCount,
             pendingCommunications,
             emails: emailCount,
-            pendingMailSuggestions,
-            pendingPubmedAlerts,
+            pendingMailSuggestions: pendingMailSuggestions + pendingPubmedAlerts,
           }}
         />
       </div>
