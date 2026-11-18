@@ -1,6 +1,13 @@
 import { test, expect, type Page } from '@playwright/test'
+import { PrismaClient } from '../../app/generated/prisma'
 
 test.setTimeout(60000)
+
+const prisma = new PrismaClient()
+
+test.afterAll(async () => {
+  await prisma.$disconnect()
+})
 
 async function login(page: Page, email: string): Promise<void> {
   await page.goto('/en/login', { timeout: 60000 })
@@ -11,6 +18,14 @@ async function login(page: Page, email: string): Promise<void> {
 }
 
 test('admin browses, edits and merges authors', async ({ page }) => {
+  const duplicateLastName = `Duplicate${Date.now().toString(36)}`
+  await prisma.author.createMany({
+    data: [
+      { firstName: 'Merge', lastName: duplicateLastName },
+      { firstName: 'Merge', lastName: duplicateLastName, degrees: 'MD' },
+    ],
+  })
+
   await login(page, 'publications-admin@larib-portal.test')
   await page.goto('/en/publications/admin/authors', { timeout: 60000 })
   await expect(page.getByRole('heading', { name: 'Authors', exact: true })).toBeVisible()
@@ -61,12 +76,16 @@ test('admin browses, edits and merges authors', async ({ page }) => {
   await page.waitForURL('**/publications/admin/articles/**', { timeout: 30000 })
   await page.goBack()
 
-  // Merge the two seeded authors (same single article -> keeper keeps 1 authorship)
-  const rows = page.locator('tbody tr')
-  await rows.nth(0).getByRole('checkbox').click()
-  await rows.nth(1).getByRole('checkbox').click()
+  // Merge two records of the same person, created for this test: the seeded authors are
+  // shared with the specs that run after this one
+  const duplicates = page.getByRole('row', { name: new RegExp(`Merge ${duplicateLastName}`, 'i') })
+  await expect(duplicates).toHaveCount(2)
+  await duplicates.nth(0).getByRole('checkbox').click()
+  await duplicates.nth(1).getByRole('checkbox').click()
   await page.getByRole('button', { name: /merge duplicates/i }).click()
   await expect(page.getByRole('dialog')).toBeVisible()
   await page.getByRole('button', { name: /^merge$/i }).click()
   await expect(page.getByText(/merged:/i)).toBeVisible()
+  await expect(duplicates).toHaveCount(1, { timeout: 15000 })
+  await expect(page.getByRole('row', { name: /Jane COAUTHOR/i })).toBeVisible()
 })
