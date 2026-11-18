@@ -168,6 +168,9 @@ test('the mail agent files observations, applies the safe ones and leaves the re
   await expect(
     picker.getByRole('group', { name: 'Carousel pilot: valvular imaging in routine practice' }).getByText('In common with the email: Nina Zellweger, Marc Zurbrugg'),
   ).toBeVisible()
+  await expect(
+    picker.getByRole('group', { name: 'Carousel pilot: valvular imaging in routine practice' }).getByRole('button', { name: 'Choose' }),
+  ).toBeInViewport()
   await picker.getByLabel('Search by title, author, journal or study').fill(runId)
   await expect(picker.getByRole('group', { name: 'Carousel pilot: valvular imaging in routine practice' })).toHaveCount(0)
   await picker.getByRole('group', { name: title }).getByRole('button', { name: 'Choose' }).click()

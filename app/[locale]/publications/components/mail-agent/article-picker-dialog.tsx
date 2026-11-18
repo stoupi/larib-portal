@@ -111,7 +111,7 @@ export function ArticlePickerDialog({ articles, mailAuthors, selectedId, onSelec
           {rows.length === 0 ? (
             <p className="px-4 py-10 text-center text-base text-text-primary">{t('mailAgent.picker.empty')}</p>
           ) : (
-            <div className="w-max min-w-full">
+            <div className="min-w-[980px]">
               <ArticlesHeaderRow
                 sorting={{ value: sort, onSort: (key) => setSort((current) => nextArticleSort(current, key)) }}
               />
