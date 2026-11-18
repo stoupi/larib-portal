@@ -45,6 +45,7 @@ async function main() {
 	for (const table of immutableTables) await prisma.$executeRawUnsafe(`ALTER TABLE "${table}" DISABLE TRIGGER USER`);
 	await prisma.auditChange.deleteMany();
 	await prisma.auditEvent.deleteMany();
+	await prisma.publicationAgentReview.deleteMany();
 	await prisma.corelabSignature.deleteMany();
 	await prisma.corelabCalibrationReview.deleteMany();
 	await prisma.corelabReadingSubmission.deleteMany();

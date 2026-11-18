@@ -9,7 +9,7 @@ import { PILL_BASE, TONE_PILL_CLASS, type StatusTone } from '@/lib/publications/
 import { changeDisplayValues, logbookFieldKey } from '@/lib/publications/logbook-labels'
 import type { LogbookChange, LogbookEntry } from '@/lib/services/publications/logbook'
 
-const ACTION_TONE: Record<string, StatusTone> = {
+export const ACTION_TONE: Record<string, StatusTone> = {
   CREATE: 'success',
   UPDATE: 'info',
   DELETE: 'danger',
@@ -21,7 +21,7 @@ function formatMoment(value: Date, locale: string): string {
   return new Intl.DateTimeFormat(locale, { dateStyle: 'medium', timeStyle: 'short' }).format(value)
 }
 
-function ChangeLine({ change }: { change: LogbookChange }) {
+export function ChangeLine({ change }: { change: LogbookChange }) {
   const t = useTranslations('publications.logbook')
   const { from, to } = changeDisplayValues(change)
 

@@ -15,11 +15,13 @@ import {
   listResolvedPubmedAlerts,
 } from '@/lib/services/publications/pubmed-watch'
 import { listDashboardArticles } from '@/lib/services/publications/dashboard'
+import { listAgentChangesToReview } from '@/lib/services/publications/agent-review'
 import { BackToDashboard } from '@/app/[locale]/publications/components/back-to-dashboard'
 import { SuggestionList } from '@/app/[locale]/publications/components/mail-agent/suggestion-list'
 import { SuggestionHistory } from '@/app/[locale]/publications/components/mail-agent/suggestion-history'
 import { AlertList } from '@/app/[locale]/publications/components/pubmed-watch/alert-list'
 import { AlertHistory } from '@/app/[locale]/publications/components/pubmed-watch/alert-history'
+import { AgentReviewList } from '@/app/[locale]/publications/components/agent-review/agent-review-list'
 
 type PageParams = { params: Promise<{ locale: 'en' | 'fr' }> }
 
@@ -28,9 +30,22 @@ export default async function PublicationsMailAgentPage({ params }: PageParams) 
   const session = await requireAuth()
   if (!canAdminApp(session.user, 'PUBLICATIONS')) redirect(applicationLink(locale, '/publications'))
 
-  const [t, tPubmed, pending, resolved, articles, lastRunAt, pubmedPending, pubmedResolved, pubmedLastRunAt] = await Promise.all([
+  const [
+    t,
+    tPubmed,
+    tReview,
+    pending,
+    resolved,
+    articles,
+    lastRunAt,
+    pubmedPending,
+    pubmedResolved,
+    pubmedLastRunAt,
+    agentChanges,
+  ] = await Promise.all([
     getTranslations({ locale, namespace: 'publications.mailAgent' }),
     getTranslations({ locale, namespace: 'publications.pubmedWatch' }),
+    getTranslations({ locale, namespace: 'publications.agentReview' }),
     listPendingMailSuggestions(),
     listResolvedMailSuggestions(),
     listDashboardArticles(),
@@ -38,6 +53,7 @@ export default async function PublicationsMailAgentPage({ params }: PageParams) 
     listPendingPubmedAlerts(),
     listResolvedPubmedAlerts(),
     getPubmedWatchLastRunAt(),
+    listAgentChangesToReview(),
   ])
   const formatter = new Intl.DateTimeFormat(locale, { dateStyle: 'medium', timeStyle: 'short' })
   const isStale = isMailAgentStale(lastRunAt, new Date())
@@ -82,6 +98,14 @@ export default async function PublicationsMailAgentPage({ params }: PageParams) 
             {pubmedLastRunAt ? tPubmed('lastRun', { date: formatter.format(pubmedLastRunAt) }) : tPubmed('neverRan')}
           </p>
           <AlertList alerts={pubmedPending} articles={articles} />
+        </section>
+
+        <section aria-label={tReview('title')} className="space-y-3">
+          <h2 className="text-base font-extrabold uppercase tracking-[0.1em] text-coral-600">
+            {tReview('title')} · {agentChanges.length}
+          </h2>
+          <p className="max-w-2xl text-base text-text-primary">{tReview('subtitle')}</p>
+          <AgentReviewList groups={agentChanges} />
         </section>
 
         <section aria-label={t('historyTitle')} className="space-y-3">

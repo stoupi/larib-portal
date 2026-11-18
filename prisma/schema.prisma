@@ -75,6 +75,7 @@ model User {
   authorRequestsResolved  PublicationRequest[]        @relation("PublicationRequestResolvedBy")
   mailSuggestionsResolved PublicationMailSuggestion[] @relation("PublicationMailSuggestionResolvedBy")
   pubmedAlertsResolved    PublicationPubmedAlert[]    @relation("PublicationPubmedAlertResolvedBy")
+  agentReviews            PublicationAgentReview[]    @relation("PublicationAgentReviewedBy")
 
   @@map("User")
 }
@@ -866,6 +867,17 @@ model PublicationPubmedAlert {
 
   @@index([status, createdAt])
   @@map("PublicationPubmedAlert")
+}
+
+// articleId carries no foreign key: a publication deleted after an agent change must stay markable.
+model PublicationAgentReview {
+  articleId    String   @id
+  reviewedUpTo DateTime
+  reviewedAt   DateTime @updatedAt
+  reviewedById String?
+  reviewedBy   User?    @relation("PublicationAgentReviewedBy", fields: [reviewedById], references: [id], onDelete: SetNull)
+
+  @@map("PublicationAgentReview")
 }
 
 model JournalTarget {

@@ -148,6 +148,21 @@ test('the mail agent files observations, applies the safe ones and leaves the re
   const history = page.getByRole('region', { name: 'Already handled' })
   await expect(history.getByRole('row').filter({ hasText: title }).filter({ hasText: 'Applied by the agent' })).toBeVisible()
 
+  // What the agent changed on its own waits for an admin's check, then leaves the list
+  await page.goto('/fr/publications/admin/mail-agent', { timeout: 60000 })
+  const agentChangeFr = page.getByRole('region', { name: "Modifications de l'agent à vérifier" }).getByRole('listitem', { name: title })
+  await expect(agentChangeFr.getByText('Publication modifiée')).toBeVisible()
+  await expect(agentChangeFr.getByText('Agent mails')).toBeVisible()
+  await page.goto('/en/publications/admin/mail-agent', { timeout: 60000 })
+  const agentChange = page.getByRole('region', { name: 'Agent changes to check' }).getByRole('listitem', { name: title })
+  await expect(agentChange.getByText('Publication changed')).toBeVisible()
+  await expect(agentChange.getByText('Submission', { exact: true }).first()).toBeVisible()
+  await expect(agentChange.getByRole('link', { name: 'Open the record' })).toHaveAttribute('href', /\/publications\/admin\/articles\//)
+  await expect(agentChange.getByRole('link', { name: 'See in the logbook' })).toHaveAttribute('href', /\/publications\/admin\/logbook\?articleId=/)
+  await agentChange.getByRole('button', { name: 'Checked' }).click()
+  await expect(page.getByText('Publication marked as checked')).toBeVisible({ timeout: 15000 })
+  await expect(agentChange).toHaveCount(0, { timeout: 15000 })
+
   const acceptance = page.getByRole('listitem', { name: title }).filter({ hasText: 'Acceptance' })
   await expect(acceptance.getByText('Acceptance to confirm.')).toBeVisible()
   await expect(acceptance.getByRole('radio', { name: /the submission to Eur Heart J/ })).toBeChecked()

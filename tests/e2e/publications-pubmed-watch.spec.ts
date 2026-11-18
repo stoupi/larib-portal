@@ -84,6 +84,12 @@ test('the PubMed watch links what it is sure of and leaves the rest to the admin
   await page.getByRole('link', { name: /Propositions de l'agent mails/ }).click()
   await expect(page.getByRole('heading', { level: 1, name: "Propositions de l'agent mails" })).toBeVisible({ timeout: 60000 })
   await expect(page.getByRole('heading', { name: 'Veille PubMed · MIRACL.ai · 2' })).toBeVisible()
+  const watchChange = page
+    .getByRole('region', { name: "Modifications de l'agent à vérifier" })
+    .getByRole('listitem', { name: SAME_TITLE })
+    .filter({ hasNotText: 'Publication supprimée depuis' })
+  await expect(watchChange.getByText('Veille PubMed')).toBeVisible()
+  await expect(watchChange.getByText('Publication modifiée')).toBeVisible()
 
   const reworded = page.getByRole('listitem', { name: REWORDED_PAPER })
   await expect(reworded.getByText('Une publication de la base porte un titre proche, mais dans une autre revue : à confirmer.')).toBeVisible()

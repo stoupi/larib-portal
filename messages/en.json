@@ -2190,6 +2190,23 @@
         }
       }
     },
+    "agentReview": {
+      "title": "Agent changes to check",
+      "subtitle": "Publications the mail agent or the PubMed watch created or changed on their own. Read each change, then mark the publication as checked: it comes back here if the agent changes it again.",
+      "empty": "Nothing to check: every agent change has been reviewed.",
+      "newArticle": "New publication",
+      "updatedArticle": "Publication changed",
+      "deletedArticle": "Publication since deleted",
+      "sources": {
+        "MAIL_AGENT": "Mail agent",
+        "CRON": "PubMed watch"
+      },
+      "openArticle": "Open the record",
+      "openLogbook": "See in the logbook",
+      "verify": "Checked",
+      "verifyAll": "Mark all as checked",
+      "verified": "{count, plural, one {Publication marked as checked} other {# publications marked as checked}}"
+    },
     "pubmedWatch": {
       "title": "PubMed watch · MIRACL.ai",
       "subtitle": "Every morning, the portal searches PubMed for papers signed with the MIRACL.ai affiliation and links them to the library. Those it could not link on its own wait here.",

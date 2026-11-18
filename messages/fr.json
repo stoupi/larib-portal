@@ -2188,6 +2188,23 @@
         }
       }
     },
+    "agentReview": {
+      "title": "Modifications de l'agent à vérifier",
+      "subtitle": "Les publications que l'agent mails ou la veille PubMed ont créées ou modifiées seuls. Relisez chaque changement puis marquez la publication comme vérifiée : elle reviendra ici si l'agent la modifie de nouveau.",
+      "empty": "Rien à vérifier : toutes les modifications de l'agent ont été relues.",
+      "newArticle": "Nouvelle publication",
+      "updatedArticle": "Publication modifiée",
+      "deletedArticle": "Publication supprimée depuis",
+      "sources": {
+        "MAIL_AGENT": "Agent mails",
+        "CRON": "Veille PubMed"
+      },
+      "openArticle": "Ouvrir la fiche",
+      "openLogbook": "Voir dans le journal",
+      "verify": "Vérifié",
+      "verifyAll": "Tout marquer comme vérifié",
+      "verified": "{count, plural, one {Publication marquée comme vérifiée} other {# publications marquées comme vérifiées}}"
+    },
     "pubmedWatch": {
       "title": "Veille PubMed · MIRACL.ai",
       "subtitle": "Chaque matin, le portail cherche sur PubMed les papiers signés avec l'affiliation MIRACL.ai et les relie à la base. Ceux qu'il n'a pas pu relier seul attendent ici.",
