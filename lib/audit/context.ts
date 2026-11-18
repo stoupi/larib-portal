@@ -35,7 +35,12 @@ export type AuditOperation = AuditOperationMeta & {
 
 export type AuditFlush = (operation: AuditOperation) => Promise<void>
 
-const auditStorage = new AsyncLocalStorage<AuditOperation>()
+// lib/prisma.ts caches the audited client on global in development: the client built by the
+// first bundle to load it pushes into that bundle's storage, so a route handler bundle carrying
+// its own copy of this module must reach the same instance.
+const globalForAudit = globalThis as unknown as { auditStorage?: AsyncLocalStorage<AuditOperation> }
+const auditStorage = globalForAudit.auditStorage ?? new AsyncLocalStorage<AuditOperation>()
+globalForAudit.auditStorage = auditStorage
 
 export function currentAuditOperation(): AuditOperation | null {
   return auditStorage.getStore() ?? null

@@ -171,3 +171,20 @@ describe('deferred captures', () => {
     expect(() => pushAuditCapture(async () => [statusEvent()])).not.toThrow()
   })
 })
+
+describe('audit storage shared across module copies', () => {
+  it('collects an event pushed from another copy of the module, as a route handler bundle does in development', async () => {
+    vi.resetModules()
+    const routeCopy = await import('./context')
+    vi.resetModules()
+    const prismaExtensionCopy = await import('./context')
+    expect(prismaExtensionCopy).not.toBe(routeCopy)
+
+    const flush = vi.fn()
+    await routeCopy.runAuditedOperation(META, async () => prismaExtensionCopy.pushAuditEvent(statusEvent()), flush)
+
+    expect(flush).toHaveBeenCalledTimes(1)
+    const [operation] = flush.mock.calls[0] as [AuditOperation]
+    expect(operation.events).toHaveLength(1)
+  })
+})
