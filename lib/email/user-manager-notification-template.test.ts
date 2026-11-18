@@ -31,3 +31,19 @@ describe('renderUserManagerNotificationEmail', () => {
     expect(html).toContain('&lt;script&gt;')
   })
 })
+
+describe('renderUserManagerNotificationEmail leave days', () => {
+  it('shows the leave days the manager set, in both languages', () => {
+    const french = renderUserManagerNotificationEmail({ ...base, leaveDays: 25, kind: 'INVITED', locale: 'fr' })
+    expect(french.html).toContain('Jours de congés')
+    expect(french.text).toContain('Jours de congés : 25')
+    const english = renderUserManagerNotificationEmail({ ...base, leaveDays: 0, kind: 'APPLICATIONS_ADDED', locale: 'en' })
+    expect(english.text).toContain('Leave days : 0')
+  })
+
+  it('omits the line when no leave days were set', () => {
+    const { html, text } = renderUserManagerNotificationEmail({ ...base, leaveDays: null, kind: 'INVITED', locale: 'fr' })
+    expect(html).not.toContain('Jours de congés')
+    expect(text).not.toContain('Jours de congés')
+  })
+})

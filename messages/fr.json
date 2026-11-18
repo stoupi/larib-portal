@@ -3319,6 +3319,7 @@
     "arrivalDate": "Date d'arrivée",
     "departureDate": "Date de départ",
     "applications": "Applications",
+    "leaveDaysHint": "Capital annuel de congés de la personne. Il reste modifiable ensuite par un administrateur des congés.",
     "memberOnlyHint": "Accès membre uniquement. Seul un super administrateur peut nommer un administrateur ou retirer un accès.",
     "cancel": "Annuler",
     "sending": "Envoi…",

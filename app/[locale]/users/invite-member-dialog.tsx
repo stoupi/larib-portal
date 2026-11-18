@@ -16,6 +16,7 @@ import { ACTIVE_APPLICATIONS, type ActiveApplication } from "@/lib/permissions"
 import { inviteMemberAction } from "./actions"
 import { ApplicationChecklist } from "./application-checklist"
 import { knownUserManagementError } from "./action-error"
+import { LeaveDaysField, parseLeaveDays } from "./leave-days-field"
 
 const InviteFormSchema = z.object({
   firstName: z.string().trim().min(1),
@@ -26,6 +27,9 @@ const InviteFormSchema = z.object({
   departureDate: z.string().min(1),
   locale: z.enum(["en", "fr"]),
   applications: z.array(z.enum(ACTIVE_APPLICATIONS)),
+  leaveDays: z.string(),
+}).refine((values) => !values.applications.includes("CONGES") || parseLeaveDays(values.leaveDays) !== null, {
+  path: ["leaveDays"],
 })
 
 type InviteFormValues = z.infer<typeof InviteFormSchema>
@@ -51,6 +55,7 @@ export function InviteMemberDialog({
     departureDate: "",
     locale,
     applications: [],
+    leaveDays: "",
   }
   const { register, handleSubmit, watch, setValue, reset, formState } = useForm<InviteFormValues>({
     resolver: zodResolver(InviteFormSchema),
@@ -70,7 +75,13 @@ export function InviteMemberDialog({
     },
   })
 
-  const onSubmit = handleSubmit((values) => execute({ ...values, position: values.position || null }))
+  const opensLeaveManagement = watch("applications").includes("CONGES")
+
+  const onSubmit = handleSubmit(({ leaveDays, ...values }) => execute({
+    ...values,
+    position: values.position || null,
+    leaveDays: values.applications.includes("CONGES") ? parseLeaveDays(leaveDays) : null,
+  }))
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -132,6 +143,14 @@ export function InviteMemberDialog({
               onChange={(next) => setValue("applications", next)}
             />
           </div>
+
+          {opensLeaveManagement && (
+            <LeaveDaysField
+              value={watch("leaveDays")}
+              onChange={(next) => setValue("leaveDays", next, { shouldValidate: formState.isSubmitted })}
+              invalid={Boolean(formState.errors.leaveDays)}
+            />
+          )}
 
           <div className="flex justify-end gap-3">
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>{t("cancel")}</Button>

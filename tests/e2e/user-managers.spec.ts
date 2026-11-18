@@ -14,6 +14,7 @@ async function login(page: Page, email: string) {
 
 test('a user manager invites a member and opens them only their own applications', async ({ page }) => {
   const inviteeEmail = `invitee-${Date.now()}@larib-portal.test`
+  const secondInviteeEmail = `invitee-publications-${Date.now()}@larib-portal.test`
 
   await login(page, MANAGER_EMAIL)
   await page.getByRole('link', { name: 'Users', exact: true }).click()
@@ -35,7 +36,12 @@ test('a user manager invites a member and opens them only their own applications
   await inviteDialog.getByLabel('Email', { exact: true }).fill(inviteeEmail)
   await inviteDialog.getByLabel('Arrival date').fill('2026-10-01')
   await inviteDialog.getByLabel('Departure date').fill('2027-09-30')
+  await expect(inviteDialog.getByLabel('Number of leave days')).toHaveCount(0)
   await inviteDialog.getByRole('checkbox', { name: 'Leave management' }).click()
+  await inviteDialog.getByRole('button', { name: 'Send invitation' }).click()
+  await expect(inviteDialog.getByLabel('Number of leave days')).toHaveAttribute('aria-invalid', 'true')
+  await expect(inviteDialog).toBeVisible()
+  await inviteDialog.getByLabel('Number of leave days').fill('25')
   await inviteDialog.getByRole('button', { name: 'Send invitation' }).click()
   await expect(page.getByText('Invitation sent')).toBeVisible({ timeout: 30000 })
 
@@ -62,8 +68,38 @@ test('a user manager invites a member and opens them only their own applications
   await duplicateDialog.getByRole('button', { name: 'Send invitation' }).click()
   await expect(page.getByText(/An account already exists with this email/)).toBeVisible({ timeout: 30000 })
 
+  await page.goto('/en/users', { timeout: 60000 })
+  await page.getByRole('button', { name: 'Invite a user' }).click()
+  const secondInviteDialog = page.getByRole('dialog')
+  await secondInviteDialog.getByLabel('First name').fill('Grace')
+  await secondInviteDialog.getByLabel('Last name').fill('Hopper')
+  await secondInviteDialog.getByLabel('Email', { exact: true }).fill(secondInviteeEmail)
+  await secondInviteDialog.getByLabel('Arrival date').fill('2026-10-01')
+  await secondInviteDialog.getByLabel('Departure date').fill('2027-09-30')
+  await secondInviteDialog.getByRole('checkbox', { name: 'Publications' }).click()
+  await secondInviteDialog.getByRole('button', { name: 'Send invitation' }).click()
+  await expect(page.getByText('Invitation sent')).toBeVisible({ timeout: 30000 })
+
+  const secondInviteeRow = page.getByRole('row').filter({ hasText: secondInviteeEmail })
+  await secondInviteeRow.getByRole('button', { name: 'Add applications to Grace Hopper' }).click()
+  const leaveGrantDialog = page.getByRole('dialog')
+  await leaveGrantDialog.getByRole('checkbox', { name: 'Leave management' }).click()
+  await leaveGrantDialog.getByRole('button', { name: 'Add', exact: true }).click()
+  await expect(leaveGrantDialog.getByLabel('Number of leave days')).toHaveAttribute('aria-invalid', 'true')
+  await leaveGrantDialog.getByLabel('Number of leave days').fill('12')
+  await leaveGrantDialog.getByRole('button', { name: 'Add', exact: true }).click()
+  await expect(page.getByText('Applications added')).toBeVisible({ timeout: 30000 })
+  await expect(secondInviteeRow).toContainText('Leave management')
+
   await page.goto('/fr/users', { timeout: 60000 })
   await expect(page.getByRole('heading', { name: 'Utilisateurs' })).toBeVisible()
+
+  await page.context().clearCookies()
+  await login(page, 'conges-admin@larib-portal.test')
+  await page.goto('/en/conges/admin', { timeout: 60000 })
+  const allocationCell = (email: string) => page.getByRole('row').filter({ hasText: email }).getByRole('cell').nth(3)
+  await expect(allocationCell(inviteeEmail)).toContainText('25', { timeout: 30000 })
+  await expect(allocationCell(secondInviteeEmail)).toContainText('12')
 })
 
 test('only flagged accounts reach the user page, and the super admin sees who they are', async ({ page }) => {

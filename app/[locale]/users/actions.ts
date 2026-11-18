@@ -18,8 +18,10 @@ import type { ActiveApplication } from "@/lib/permissions"
 import type { SessionUser } from "@/types/session"
 import { resolveAppBaseUrl } from "@/lib/app-url"
 import { directoryUserName } from "@/lib/user-management/display-name"
+import { MAX_LEAVE_DAYS, leaveDaysToRecord } from "@/lib/user-management/grants"
 
 const ApplicationEnum = z.enum(ACTIVE_APPLICATIONS)
+const LeaveDaysSchema = z.number().int().min(0).max(MAX_LEAVE_DAYS).optional().nullable()
 
 function assertGrantable(manager: SessionUser, requested: ActiveApplication[]) {
   if (ungrantableApplications(manager, requested).length > 0) {
@@ -32,6 +34,7 @@ async function notifySuperAdmins(params: {
   kind: UserManagerNotificationKind
   target: { email: string; name: string | null; firstName: string | null; lastName: string | null }
   applications: ActiveApplication[]
+  leaveDays: number | null
 }) {
   if (isSuperAdmin(params.manager)) return
   const recipients = await listSuperAdminRecipients()
@@ -42,6 +45,7 @@ async function notifySuperAdmins(params: {
     targetName: directoryUserName(params.target),
     targetEmail: params.target.email,
     applications: params.applications,
+    leaveDays: params.leaveDays,
   })
 }
 
@@ -54,6 +58,7 @@ const InviteMemberSchema = z.object({
   arrivalDate: z.string().min(1),
   departureDate: z.string().min(1),
   locale: z.enum(["en", "fr"]),
+  leaveDays: LeaveDaysSchema,
 })
 
 export const inviteMemberAction = userManagerAction
@@ -71,6 +76,7 @@ export const inviteMemberAction = userManagerAction
       : null
     const arrivalDate = new Date(parsedInput.arrivalDate)
     const departureDate = new Date(parsedInput.departureDate)
+    const leaveDays = leaveDaysToRecord(parsedInput.applications, parsedInput.leaveDays)
 
     const placeholder = await createPlaceholderUserWithAccessPeriods(
       {
@@ -84,6 +90,7 @@ export const inviteMemberAction = userManagerAction
         adminApplications: [],
         arrivalDate,
         departureDate,
+        congesTotalDays: leaveDays ?? 0,
       },
       accessPeriodsEndingOnDay(parsedInput.applications, parsedInput.departureDate),
     )
@@ -99,6 +106,7 @@ export const inviteMemberAction = userManagerAction
       adminApplications: [],
       arrivalDate,
       departureDate,
+      congesTotalDays: leaveDays ?? 0,
     })
 
     await sendWelcomeEmail({
@@ -116,16 +124,19 @@ export const inviteMemberAction = userManagerAction
       kind: "INVITED",
       target: placeholder,
       applications: parsedInput.applications,
+      leaveDays,
     })
 
     revalidatePath("/users")
     revalidatePath("/admin/users")
+    revalidatePath("/conges/admin")
     return { ok: true, expiresAt }
   })
 
 const GrantApplicationsSchema = z.object({
   userId: z.string().min(1),
   applications: z.array(ApplicationEnum).min(1),
+  leaveDays: LeaveDaysSchema,
 })
 
 export const grantMemberApplicationsAction = userManagerAction
@@ -133,13 +144,24 @@ export const grantMemberApplicationsAction = userManagerAction
   .action(async ({ parsedInput, ctx }) => {
     assertGrantable(ctx.user, parsedInput.applications)
 
-    const { user, added } = await addMemberApplications(parsedInput.userId, parsedInput.applications)
+    const { user, added, recordedLeaveDays } = await addMemberApplications(
+      parsedInput.userId,
+      parsedInput.applications,
+      parsedInput.leaveDays,
+    )
 
     if (added.length > 0) {
-      await notifySuperAdmins({ manager: ctx.user, kind: "APPLICATIONS_ADDED", target: user, applications: added })
+      await notifySuperAdmins({
+        manager: ctx.user,
+        kind: "APPLICATIONS_ADDED",
+        target: user,
+        applications: added,
+        leaveDays: recordedLeaveDays,
+      })
     }
 
     revalidatePath("/users")
     revalidatePath("/admin/users")
+    revalidatePath("/conges/admin")
     return { added }
   })

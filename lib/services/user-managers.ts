@@ -1,6 +1,6 @@
 import { prisma } from '@/lib/prisma'
 import type { Application, Prisma } from '@/app/generated/prisma'
-import { applicationsToAdd } from '@/lib/user-management/grants'
+import { applicationsToAdd, leaveDaysToRecord } from '@/lib/user-management/grants'
 import { endOfDayUtc } from './access-periods'
 import type { ActiveApplication } from '@/lib/permissions'
 
@@ -32,17 +32,22 @@ export async function findUserIdByEmail(email: string): Promise<string | null> {
 export async function addMemberApplications(
   userId: string,
   requested: Application[],
-): Promise<{ user: DirectoryUser; added: ActiveApplication[] }> {
+  leaveDays?: number | null,
+): Promise<{ user: DirectoryUser; added: ActiveApplication[]; recordedLeaveDays: number | null }> {
   return prisma.$transaction(async (transaction) => {
     const holder = await transaction.user.findUniqueOrThrow({
       where: { id: userId },
       select: { applications: true, adminApplications: true, departureDate: true },
     })
     const added = applicationsToAdd(holder, requested)
+    const recordedLeaveDays = leaveDaysToRecord(added, leaveDays)
     if (added.length > 0) {
       await transaction.user.update({
         where: { id: userId },
-        data: { applications: { set: [...holder.applications, ...added] } },
+        data: {
+          applications: { set: [...holder.applications, ...added] },
+          ...(recordedLeaveDays === null ? {} : { congesTotalDays: recordedLeaveDays }),
+        },
       })
     }
     if (added.length > 0 && holder.departureDate) {
@@ -56,7 +61,7 @@ export async function addMemberApplications(
       }
     }
     const user = await transaction.user.findUniqueOrThrow({ where: { id: userId }, select: directoryUserSelect })
-    return { user, added }
+    return { user, added, recordedLeaveDays }
   })
 }
 

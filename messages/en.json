@@ -3321,6 +3321,7 @@
     "arrivalDate": "Arrival date",
     "departureDate": "Departure date",
     "applications": "Applications",
+    "leaveDaysHint": "The person's annual leave allowance. A leave administrator can still change it later.",
     "memberOnlyHint": "Member access only. Only a super administrator can appoint an administrator or remove an access.",
     "cancel": "Cancel",
     "sending": "Sending…",

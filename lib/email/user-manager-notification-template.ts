@@ -10,6 +10,7 @@ export type UserManagerNotificationEmailParams = {
   targetName: string
   targetEmail: string
   applications: ActiveApplication[]
+  leaveDays?: number | null
   usersUrl: string
 }
 
@@ -31,6 +32,7 @@ const WORDING = {
     },
     applicationsLabel: 'Applications (accès membre)',
     noApplication: 'Aucune application',
+    leaveDaysLabel: 'Jours de congés',
     cta: 'Voir les utilisateurs',
   },
   en: {
@@ -45,6 +47,7 @@ const WORDING = {
     },
     applicationsLabel: 'Applications (member access)',
     noApplication: 'No application',
+    leaveDaysLabel: 'Leave days',
     cta: 'View users',
   },
 }
@@ -64,6 +67,7 @@ export function renderUserManagerNotificationEmail({
   targetName,
   targetEmail,
   applications,
+  leaveDays,
   usersUrl,
 }: UserManagerNotificationEmailParams): { subject: string; text: string; html: string } {
   const wording = WORDING[locale]
@@ -73,7 +77,16 @@ export function renderUserManagerNotificationEmail({
 
   const subject = wording.subject[kind](managerName, targetName)
   const intro = wording.intro[kind](managerName)
-  const text = [intro, targetLine, `${wording.applicationsLabel} : ${applicationsLine}`, usersUrl].join('\n\n')
+  const hasLeaveDays = leaveDays !== null && leaveDays !== undefined
+  const leaveDaysLine = hasLeaveDays ? `${wording.leaveDaysLabel} : ${leaveDays}` : null
+  const text = [intro, targetLine, `${wording.applicationsLabel} : ${applicationsLine}`, leaveDaysLine, usersUrl]
+    .filter((line) => line !== null)
+    .join('\n\n')
+  const leaveDaysHtml = hasLeaveDays
+    ? `
+          <p style="margin:12px 0 4px 0;font-family:${FONT_SANS};font-size:12px;font-weight:600;color:${COLORS.mutedForeground};">${wording.leaveDaysLabel}</p>
+          <p style="margin:0;font-family:${FONT_SANS};font-size:14px;color:${COLORS.foreground};">${leaveDays}</p>`
+    : ''
 
   const body = `
     <p style="margin:0 0 12px 0;font-family:${FONT_SANS};font-size:12px;font-weight:600;letter-spacing:1.5px;color:${COLORS.accent};">${wording.eyebrow}</p>
@@ -85,7 +98,7 @@ export function renderUserManagerNotificationEmail({
           <p style="margin:0 0 4px 0;font-family:${FONT_SANS};font-size:15px;font-weight:600;color:${COLORS.primary};">${escapeHtml(targetName)}</p>
           <p style="margin:0 0 12px 0;font-family:${FONT_SANS};font-size:13px;color:${COLORS.mutedForeground};">${escapeHtml(targetEmail)}</p>
           <p style="margin:0 0 4px 0;font-family:${FONT_SANS};font-size:12px;font-weight:600;color:${COLORS.mutedForeground};">${wording.applicationsLabel}</p>
-          <p style="margin:0;font-family:${FONT_SANS};font-size:14px;color:${COLORS.foreground};">${escapeHtml(applicationsLine)}</p>
+          <p style="margin:0;font-family:${FONT_SANS};font-size:14px;color:${COLORS.foreground};">${escapeHtml(applicationsLine)}</p>${leaveDaysHtml}
         </td>
       </tr>
     </table>

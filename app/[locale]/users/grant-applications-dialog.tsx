@@ -11,6 +11,7 @@ import type { ActiveApplication } from "@/lib/permissions"
 import { grantMemberApplicationsAction } from "./actions"
 import { ApplicationChecklist } from "./application-checklist"
 import { knownUserManagementError } from "./action-error"
+import { LeaveDaysField, parseLeaveDays } from "./leave-days-field"
 
 export function GrantApplicationsDialog({
   userId,
@@ -25,12 +26,19 @@ export function GrantApplicationsDialog({
   const router = useRouter()
   const [open, setOpen] = useState(false)
   const [selected, setSelected] = useState<ActiveApplication[]>([])
+  const [leaveDays, setLeaveDays] = useState("")
+  const [submitted, setSubmitted] = useState(false)
+  const opensLeaveManagement = selected.includes("CONGES")
+  const parsedLeaveDays = parseLeaveDays(leaveDays)
+  const leaveDaysMissing = opensLeaveManagement && parsedLeaveDays === null
 
   const { execute, isExecuting } = useAction(grantMemberApplicationsAction, {
     onSuccess() {
       toast.success(t("grantSuccess"))
       setOpen(false)
       setSelected([])
+      setLeaveDays("")
+      setSubmitted(false)
       router.refresh()
     },
     onError({ error }) {
@@ -38,6 +46,12 @@ export function GrantApplicationsDialog({
       toast.error(known ? t(`errors.${known}`) : t("errors.generic"))
     },
   })
+
+  function grantSelectedApplications() {
+    setSubmitted(true)
+    if (leaveDaysMissing) return
+    execute({ userId, applications: selected, leaveDays: opensLeaveManagement ? parsedLeaveDays : null })
+  }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -53,12 +67,15 @@ export function GrantApplicationsDialog({
           <DialogDescription>{t("memberOnlyHint")}</DialogDescription>
         </DialogHeader>
         <ApplicationChecklist options={options} selected={selected} onChange={setSelected} />
+        {opensLeaveManagement && (
+          <LeaveDaysField value={leaveDays} onChange={setLeaveDays} invalid={submitted && leaveDaysMissing} />
+        )}
         <div className="flex justify-end gap-3">
           <Button type="button" variant="outline" onClick={() => setOpen(false)}>{t("cancel")}</Button>
           <Button
             type="button"
             disabled={selected.length === 0 || isExecuting}
-            onClick={() => execute({ userId, applications: selected })}
+            onClick={grantSelectedApplications}
           >
             {isExecuting ? t("sending") : t("grantConfirm")}
           </Button>
